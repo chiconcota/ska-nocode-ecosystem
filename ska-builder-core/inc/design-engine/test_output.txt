@@ -1,0 +1,36 @@
+/* Ska JIT Compiled CSS (Atomic Standards - High Specificity Scope) */
+html body.ska-builder { --wp--style--block-gap: 0px; }
+/* Source: bg-white */
+html body.ska-builder .bg-white.bg-white { background-color: #ffffff; }
+.editor-styles-wrapper .bg-white.bg-white { background-color: #ffffff; }
+/* Source: px-10 */
+html body.ska-builder .px-10.px-10 { padding-left: 2.500rem; padding-right: 2.500rem; }
+.editor-styles-wrapper .px-10.px-10 { padding-left: 2.500rem; padding-right: 2.500rem; }
+/* Source: py-5 */
+html body.ska-builder .py-5.py-5 { padding-top: 1.250rem; padding-bottom: 1.250rem; }
+.editor-styles-wrapper .py-5.py-5 { padding-top: 1.250rem; padding-bottom: 1.250rem; }
+/* Source: rounded-xl */
+html body.ska-builder .rounded-xl.rounded-xl { border-radius: 0.75rem; }
+.editor-styles-wrapper .rounded-xl.rounded-xl { border-radius: 0.75rem; }
+/* Source: font-bold */
+html body.ska-builder .font-bold.font-bold { font-weight: 700; }
+.editor-styles-wrapper .font-bold.font-bold { font-weight: 700; }
+/* Source: text-lg */
+html body.ska-builder .text-lg.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.editor-styles-wrapper .text-lg.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+/* Source: hover:bg-slate-50 */
+html body.ska-builder .hover\:bg-slate-50.hover\:bg-slate-50:hover { background-color: #f8fafc; }
+.editor-styles-wrapper .hover\:bg-slate-50.hover\:bg-slate-50:hover { background-color: #f8fafc; }
+/* Source: transition-colors */
+html body.ska-builder .transition-colors.transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.editor-styles-wrapper .transition-colors.transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+/* Source: shadow-xl */
+html body.ska-builder .shadow-xl.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+.editor-styles-wrapper .shadow-xl.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+
+
+UNRESOLVED:
+Array
+(
+    [0] => text-primary
+)

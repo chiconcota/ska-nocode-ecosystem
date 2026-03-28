@@ -1,0 +1,1116 @@
+<?php
+/**
+ * Tailwind Compiler Class
+ *
+ * Handles JIT compilation of Tailwind classes.
+ *
+ * @package Ska_Builder_Core
+ */
+
+namespace Ska\Builder\Design;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Class Tailwind_Compiler
+ */
+class Tailwind_Compiler {
+
+	/**
+	 * Constructor.
+	 */
+	public function __construct() {
+		$this->init_hooks();
+	}
+
+	/**
+	 * Initialize hooks.
+	 */
+	private function init_hooks() {
+		add_filter( 'ska_compile_tailwind', array( $this, 'compile_classes' ) );
+	}
+
+	/**
+	 * Compile Tailwind classes to CSS.
+	 *
+	 * @param string $classes Space-separated classes.
+	 * @return array { css: string, unresolved: array }
+	 */
+	public function compile_classes( $classes ): array {
+		if ( empty( $classes ) ) {
+			return array( 'css' => '', 'unresolved' => array() );
+		}
+
+		$class_list = array_unique( array_filter( explode( ' ', $classes ) ) );
+		$compiled_css = "/* Ska JIT Compiled CSS (Atomic Standards - High Specificity Scope) */\n";
+        $compiled_css .= "html body.ska-builder [class*='wp-block-ska-builder'] { --wp--style--block-gap: 0px; }\n";
+        $compiled_css .= "html body.ska-builder [class*='wp-block-ska-builder'] button { border: 0; background: none; padding: 0; margin: 0; cursor: pointer; font-family: inherit; }\n";
+        $compiled_css .= "html body.ska-builder [class*='wp-block-ska-builder'] a { text-decoration: none; color: inherit; }\n";
+        $compiled_css .= "html body.ska-builder [class*='wp-block-ska-builder'] a.underline { text-decoration: underline; }\n";
+		$unresolved   = array();
+
+		$media_queries = array(
+			'sm'  => '@media (min-width: 640px) { ',
+			'md'  => '@media (min-width: 768px) { ',
+			'lg'  => '@media (min-width: 1024px) { ',
+			'xl'  => '@media (min-width: 1280px) { ',
+			'2xl' => '@media (min-width: 1536px) { ',
+			'max-sm'  => '@media (max-width: 639px) { ',
+			'max-md'  => '@media (max-width: 767px) { ',
+			'max-lg'  => '@media (max-width: 1023px) { ',
+			'max-xl'  => '@media (max-width: 1279px) { ',
+			'max-2xl' => '@media (max-width: 1535px) { ',
+		);
+		$responsive_css = array();
+
+		foreach ( $class_list as $class ) {
+			// Extract responsive prefix or pseudo-class if any
+			$prefix     = '';
+			$pseudo     = '';
+			$base_class = $class;
+
+			if ( strpos( $class, ':' ) !== false ) {
+				$parts = explode( ':', $class );
+				if ( count( $parts ) === 2 ) {
+					if ( in_array( $parts[0], array( 'hover', 'focus', 'active', 'disabled', 'group-hover' ) ) ) {
+						$pseudo     = ':' . $parts[0];
+						$base_class = $parts[1];
+						if ( $parts[0] === 'group-hover' ) {
+							$pseudo = '';
+						}
+					} else {
+						$prefix     = $parts[0];
+						$base_class = $parts[1];
+					}
+				} elseif ( count( $parts ) === 3 ) {
+					$prefix     = $parts[0];
+					$pseudo     = ':' . $parts[1];
+					$base_class = $parts[2];
+					if ( $parts[1] === 'group-hover' ) {
+						$pseudo = '';
+					}
+				}
+			}
+
+			// Handle negative prefix: -mt-4, -translate-y-1/2, etc.
+			$is_negative = false;
+			if ( strpos( $base_class, '-' ) === 0 && strlen( $base_class ) > 1 ) {
+				$is_negative = true;
+				$base_class  = substr( $base_class, 1 );
+			}
+
+			$css_rule = $this->resolve_class( $base_class );
+
+			// Apply negation: prepend - to numeric values
+			if ( $is_negative && $css_rule ) {
+				$css_rule = preg_replace( '/:\s*([0-9])/', ': -$1', $css_rule );
+				$css_rule = preg_replace( '/:\s*calc/', ': calc(-1 * ', $css_rule );
+			}
+			if ( $css_rule ) {
+				$escaped_class = str_replace( array( ':', '[', ']', '/', '.' ), array( '\:', '\[', '\]', '\/', '\.' ), $class );
+
+				$selector_suffix = $pseudo;
+				$group_prefix    = '';
+				if ( strpos( $class, 'group-hover:' ) !== false ) {
+					$group_prefix = '.group:hover ';
+				}
+
+				// Architecture Scope Fix: Use `body .ska-builder` to naturally bypass 90% of WordPress Default layout themes instead of `!important`
+				if ( strpos( $css_rule, '&' ) === 0 ) {
+					// Support space-x-*, space-y-* nested selector
+					$rule_body_ska = str_replace( '&', "html body.ska-builder {$group_prefix}.{$escaped_class}.{$escaped_class}{$selector_suffix}", $css_rule );
+					$full_rule = "{$rule_body_ska}";
+				} else {
+					$full_rule = "html body.ska-builder {$group_prefix}.{$escaped_class}.{$escaped_class}{$selector_suffix} { {$css_rule} }\n.editor-styles-wrapper {$group_prefix}.{$escaped_class}.{$escaped_class}{$selector_suffix} { {$css_rule} }";
+				}
+
+				if ( $prefix ) {
+					if ( isset( $media_queries[ $prefix ] ) ) {
+						if ( ! isset( $responsive_css[ $prefix ] ) ) {
+							$responsive_css[ $prefix ] = "";
+						}
+						$responsive_css[ $prefix ] .= "/* Source: {$class} */\n" . $full_rule . "\n";
+					} else {
+						$unresolved[] = $class;
+						continue;
+					}
+				} else {
+					$compiled_css .= "/* Source: {$class} */\n" . $full_rule . "\n";
+				}
+			} else {
+				$unresolved[] = $class;
+			}
+		}
+
+		// Append responsive CSS in correct order (mobile-first)
+		foreach ( $media_queries as $prefix => $query ) {
+			if ( ! empty( $responsive_css[ $prefix ] ) ) {
+				$compiled_css .= "\n" . $query . "\n" . $responsive_css[ $prefix ] . "}\n";
+			}
+		}
+
+		return array(
+			'css'        => $compiled_css,
+			'unresolved' => $unresolved,
+		);
+	}
+
+	/**
+	 * Resolve a single Tailwind class to its CSS rule.
+	 *
+	 * @param string $class The Tailwind class.
+	 * @return string|null CSS rule content or null if not supported.
+	 */
+	private function resolve_class( $class ): ?string {
+		// 0. Custom Color Registry (Brand Colors from Dashboard)
+		$custom_result = $this->resolve_custom_color( $class );
+		if ( $custom_result ) {
+			return $custom_result;
+		}
+
+		// 1. Colors (text-*, bg-*)
+		if ( preg_match( '/^(text|bg)-([a-z0-9-]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
+			$type    = $matches[1] === 'text' ? 'color' : 'background-color';
+			$color   = $matches[2];
+			$shade   = $matches[3];
+			$opacity = isset( $matches[4] ) ? intval( $matches[4] ) : null;
+			
+			$hex = $this->get_color_hex( $color, $shade );
+			
+			if ( null !== $opacity ) {
+				$rgb   = $this->hex_to_rgb( $hex );
+				$alpha = round( $opacity / 100, 2 );
+				return "{$type}: rgba({$rgb}, {$alpha});";
+			}
+			
+			return "{$type}: {$hex};";
+		}
+		
+		// 1.2 Basic colors (text-white, text-black, etc)
+		$basic_colors = array(
+			'text-white' => 'color: #ffffff;',
+			'text-black' => 'color: #000000;',
+			'bg-white'   => 'background-color: #ffffff;',
+			'bg-black'   => 'background-color: #000000;',
+			'bg-transparent' => 'background-color: transparent;',
+		);
+		if ( isset( $basic_colors[ $class ] ) ) {
+			return $basic_colors[ $class ];
+		}
+
+		// 1.3 Basic colors with opacity (bg-black/30, bg-white/80, text-white/50, text-black/70)
+		if ( preg_match( '/^(text|bg)-(white|black)\/([0-9]+)$/', $class, $matches ) ) {
+			$type    = $matches[1] === 'text' ? 'color' : 'background-color';
+			$hex     = $matches[2] === 'white' ? '#ffffff' : '#000000';
+			$opacity = intval( $matches[3] );
+			$rgb     = $this->hex_to_rgb( $hex );
+			$alpha   = round( $opacity / 100, 2 );
+			return "{$type}: rgba({$rgb}, {$alpha});";
+		}
+
+		// 2. Font Weights (font-*)
+		$weights = array(
+			'font-thin'      => 'font-weight: 100;',
+			'font-light'     => 'font-weight: 300;',
+			'font-normal'    => 'font-weight: 400;',
+			'font-medium'    => 'font-weight: 500;',
+			'font-semibold'  => 'font-weight: 600;',
+			'font-bold'      => 'font-weight: 700;',
+			'font-extrabold' => 'font-weight: 800;',
+			'font-black'     => 'font-weight: 900;',
+		);
+		if ( isset( $weights[ $class ] ) ) {
+			return $weights[ $class ];
+		}
+
+		// 3. Spacing (p-*, m-*, px-*, py-*, pt-*, etc.)
+		if ( preg_match( '/^([pm][trblxy]?)-([0-9\.]+)$/', $class, $matches ) ) {
+			return $this->resolve_spacing( $matches[1], $matches[2] );
+		}
+		// 3.1 Spacing with arbitrary values: p-[20px], mx-[1.5rem], mt-[calc(100%-2rem)]
+		if ( preg_match( '/^([pm][trblxy]?)-\[(.+)\]$/', $class, $matches ) ) {
+			$type = $matches[1][0] === 'p' ? 'padding' : 'margin';
+			$val  = str_replace( '_', ' ', $matches[2] );
+			$dir  = substr( $matches[1], 1 );
+			$dir_map = array(
+				''  => "{$type}: {$val};",
+				'x' => "{$type}-left: {$val}; {$type}-right: {$val};",
+				'y' => "{$type}-top: {$val}; {$type}-bottom: {$val};",
+				't' => "{$type}-top: {$val};",
+				'b' => "{$type}-bottom: {$val};",
+				'l' => "{$type}-left: {$val};",
+				'r' => "{$type}-right: {$val};",
+			);
+			return $dir_map[ $dir ] ?? null;
+		}
+
+		// 4. Dimensions (w-*, h-*)
+		if ( preg_match( '/^(w|h)-(.+)$/', $class, $matches ) ) {
+			$prop   = $matches[1] === 'w' ? 'width' : 'height';
+			$value  = $matches[2];
+			$mapped = $this->resolve_dimension( $value );
+			return $mapped ? "{$prop}: {$mapped};" : null;
+		}
+
+		// 4.0 Size utility (Tailwind v3.4: size-10, size-full, size-[50px])
+		if ( preg_match( '/^size-(.+)$/', $class, $matches ) ) {
+			$mapped = $this->resolve_dimension( $matches[1] );
+			return $mapped ? "width: {$mapped}; height: {$mapped};" : null;
+		}
+
+        // 4.0.1 Min/Max Dimensions
+        if ( preg_match( '/^(min|max)-(w|h)-(.+)$/', $class, $matches ) ) {
+            $prefix = $matches[1];
+            $prop   = $matches[2] === 'w' ? 'width' : 'height';
+            $value  = $matches[3];
+            $mapped = $this->resolve_dimension( $value );
+            // Special for max-w-none/full etc
+            if ( $value === 'none' ) $mapped = 'none';
+            elseif ( $value === 'full' ) $mapped = '100%';
+            return $mapped ? "{$prefix}-{$prop}: {$mapped};" : null;
+        }
+
+		// 4.1 Object Fit
+		if ( preg_match( '/^object-(cover|contain|fill|none|scale-down)$/', $class, $matches ) ) {
+			return "object-fit: {$matches[1]};";
+		}
+
+        // 4.1.2 Aspect Ratio (standard + arbitrary values)
+        if ( preg_match( '/^aspect-(video|square|auto|(\d+)\/(\d+))$/', $class, $matches ) ) {
+            $val = $matches[1];
+            if ( $val === 'video' ) $val = '16 / 9';
+            elseif ( $val === 'square' ) $val = '1 / 1';
+            elseif ( strpos($val, '/') !== false ) $val = str_replace('/', ' / ', $val);
+            return "aspect-ratio: {$val};";
+        }
+        // Arbitrary value: aspect-[4/5], aspect-[16/9], aspect-[0.5] etc.
+        if ( preg_match( '/^aspect-\[(.+)\]$/', $class, $matches ) ) {
+            $val = $matches[1];
+            if ( strpos( $val, '/' ) !== false ) {
+                $val = str_replace( '/', ' / ', $val );
+            }
+            return "aspect-ratio: {$val};";
+        }
+
+		// 4.2 Shadows
+		$shadow_map = array(
+			'shadow-sm' => 'box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);',
+			'shadow'    => 'box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);',
+			'shadow-md' => 'box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);',
+			'shadow-lg' => 'box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);',
+			'shadow-xl' => 'box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);',
+			'shadow-2xl' => 'box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);',
+			'shadow-none' => 'box-shadow: none;',
+		);
+		if ( isset( $shadow_map[ $class ] ) ) {
+			return $shadow_map[ $class ];
+		}
+
+        // 4.3 Z-Index
+        if ( preg_match( '/^z-(\d+)$/', $class, $matches ) ) {
+            return "z-index: {$matches[1]};";
+        }
+        if ( $class === 'z-auto' ) return "z-index: auto;";
+        
+        // 4.4 Container
+        if ( $class === 'container' ) {
+            return "width: 100%; max-width: 1280px; margin-right: auto; margin-left: auto;";
+        }
+
+		// 4.5 Max Width (max-w-*)
+		if ( preg_match( '/^max-w-([a-z0-9]+)$/', $class, $matches ) ) {
+			$map = array(
+				'xs' => '20rem',
+				'sm' => '24rem',
+				'md' => '28rem',
+				'lg' => '32rem',
+				'xl' => '36rem',
+				'2xl' => '42rem',
+				'3xl' => '48rem',
+				'4xl' => '56rem',
+				'5xl' => '64rem',
+				'6xl' => '72rem',
+				'7xl' => '80rem',
+				'full' => '100%',
+				'none' => 'none',
+			);
+			if ( isset( $map[ $matches[1] ] ) ) {
+				return "max-width: {$map[$matches[1]]};";
+			}
+		}
+
+		// 4.6 Margin Auto
+		if ( in_array( $class, array( 'mx-auto', 'my-auto', 'ml-auto', 'mr-auto', 'mt-auto', 'mb-auto' ) ) ) {
+			$map = array(
+				'mx-auto' => 'margin-left: auto; margin-right: auto;',
+				'my-auto' => 'margin-top: auto; margin-bottom: auto;',
+				'ml-auto' => 'margin-left: auto;',
+				'mr-auto' => 'margin-right: auto;',
+				'mt-auto' => 'margin-top: auto;',
+				'mb-auto' => 'margin-bottom: auto;',
+			);
+			return $map[ $class ];
+		}
+
+		// 5. Flexbox & Grid
+		$layout_map = array(
+			'flex'           => 'display: flex;',
+			'inline-flex'    => 'display: inline-flex;',
+			'grid'           => 'display: grid;',
+			'inline-grid'    => 'display: inline-grid;',
+			'flex-col'       => 'flex-direction: column;',
+			'flex-row'       => 'flex-direction: row;',
+			'flex-wrap'      => 'flex-wrap: wrap;',
+			'items-start'    => 'align-items: flex-start;',
+			'items-center'   => 'align-items: center;',
+			'items-end'      => 'align-items: flex-end;',
+            'items-stretch'  => 'align-items: stretch;',
+			'justify-start'  => 'justify-content: flex-start;',
+			'justify-center' => 'justify-content: center;',
+			'justify-end'    => 'justify-content: flex-end;',
+			'justify-between' => 'justify-content: space-between;',
+            'justify-around' => 'justify-content: space-around;',
+		);
+		if ( isset( $layout_map[ $class ] ) ) {
+			return $layout_map[ $class ];
+		}
+		if ( preg_match( '/^gap-([0-9\.]+)$/', $class, $matches ) ) {
+			$val = floatval( $matches[1] ) * 0.25;
+            $val_str = number_format( $val, 3, '.', '' );
+			return "gap: {$val_str}rem; row-gap: {$val_str}rem; column-gap: {$val_str}rem; --wp--style--block-gap: {$val_str}rem;";
+		}
+        if ( preg_match( '/^gap-(x|y)-([0-9\.]+)$/', $class, $matches ) ) {
+            $prop = $matches[1] === 'x' ? 'column-gap' : 'row-gap';
+			$val = floatval( $matches[2] ) * 0.25;
+            $val_str = number_format( $val, 3, '.', '' );
+			return "{$prop}: {$val_str}rem;";
+		}
+		
+		if ( preg_match( '/^grid-cols-([1-9]|1[0-2])$/', $class, $matches ) ) {
+			return "grid-template-columns: repeat({$matches[1]}, minmax(0, 1fr)); display: grid;";
+		}
+        if ( preg_match( '/^col-span-([1-9]|1[0-2])$/', $class, $matches ) ) {
+			return "grid-column: span {$matches[1]} / span {$matches[1]};";
+		}
+        if ( $class === 'col-span-full' ) return "grid-column: 1 / -1;";
+        
+        if ( preg_match( '/^grid-rows-([1-9]|1[0-2])$/', $class, $matches ) ) {
+			return "grid-template-rows: repeat({$matches[1]}, minmax(0, 1fr));";
+		}
+
+		// 5.5 Typography (text-*)
+		if ( preg_match( '/^text-([a-z0-9]+)$/', $class, $matches ) ) {
+			$size_map = array(
+				'xs'   => 'font-size: 0.75rem; line-height: 1rem;',
+				'sm'   => 'font-size: 0.875rem; line-height: 1.25rem;',
+				'base' => 'font-size: 1rem; line-height: 1.5rem;',
+				'lg'   => 'font-size: 1.125rem; line-height: 1.75rem;',
+				'xl'   => 'font-size: 1.25rem; line-height: 1.75rem;',
+				'2xl'  => 'font-size: 1.5rem; line-height: 2rem;',
+				'3xl'  => 'font-size: 1.875rem; line-height: 2.25rem;',
+				'4xl'  => 'font-size: 2.25rem; line-height: 2.5rem;',
+				'5xl'  => 'font-size: 3rem; line-height: 1;',
+				'6xl'  => 'font-size: 3.75rem; line-height: 1;',
+				'7xl'  => 'font-size: 4.5rem; line-height: 1;',
+				'8xl'  => 'font-size: 6rem; line-height: 1;',
+				'9xl'  => 'font-size: 8rem; line-height: 1;',
+			);
+			if ( isset( $size_map[ $matches[1] ] ) ) {
+				return "{$size_map[$matches[1]]}";
+			}
+		}
+
+		// 5.6 Text Alignment
+		$text_align_map = array(
+			'text-left'    => 'text-align: left;',
+			'text-center'  => 'text-align: center;',
+			'text-right'   => 'text-align: right;',
+			'text-justify' => 'text-align: justify;',
+		);
+		if ( isset( $text_align_map[ $class ] ) ) {
+			return $text_align_map[ $class ];
+		}
+
+		// 5.7 Text Decoration
+		$text_deco_map = array(
+			'underline'    => 'text-decoration-line: underline;',
+			'overline'     => 'text-decoration-line: overline;',
+			'line-through' => 'text-decoration-line: line-through;',
+			'no-underline' => 'text-decoration-line: none;',
+		);
+		if ( isset( $text_deco_map[ $class ] ) ) {
+			return $text_deco_map[ $class ];
+		}
+
+		// 5.8 Text Transform & Font Style
+		$text_misc_map = array(
+			'uppercase'    => 'text-transform: uppercase;',
+			'lowercase'    => 'text-transform: lowercase;',
+			'capitalize'   => 'text-transform: capitalize;',
+			'normal-case'  => 'text-transform: none;',
+			'italic'       => 'font-style: italic;',
+			'not-italic'   => 'font-style: normal;',
+			'truncate'     => 'overflow: hidden; text-overflow: ellipsis; white-space: nowrap;',
+		);
+		if ( isset( $text_misc_map[ $class ] ) ) {
+			return $text_misc_map[ $class ];
+		}
+
+		// 5.9 Whitespace
+		$whitespace_map = array(
+			'whitespace-normal'  => 'white-space: normal;',
+			'whitespace-nowrap'  => 'white-space: nowrap;',
+			'whitespace-pre'     => 'white-space: pre;',
+			'whitespace-pre-line' => 'white-space: pre-line;',
+			'whitespace-pre-wrap' => 'white-space: pre-wrap;',
+			'whitespace-break-spaces' => 'white-space: break-spaces;',
+		);
+		if ( isset( $whitespace_map[ $class ] ) ) {
+			return $whitespace_map[ $class ];
+		}
+
+		// 5.10 Leading (line-height)
+		if ( preg_match( '/^leading-([a-z0-9\.]+)$/', $class, $matches ) ) {
+			$leading_map = array(
+				'none'    => '1',
+				'tight'   => '1.25',
+				'snug'    => '1.375',
+				'normal'  => '1.5',
+				'relaxed' => '1.625',
+				'loose'   => '2',
+			);
+			if ( isset( $leading_map[ $matches[1] ] ) ) {
+				return "line-height: {$leading_map[$matches[1]]};";
+			}
+			if ( is_numeric( $matches[1] ) ) {
+				$rem = floatval( $matches[1] ) * 0.25;
+				$rem_str = number_format( $rem, 3, '.', '' );
+				return "line-height: {$rem_str}rem;";
+			}
+		}
+
+		// 5.11 Tracking (letter-spacing)
+		if ( preg_match( '/^tracking-([a-z]+)$/', $class, $matches ) ) {
+			$tracking_map = array(
+				'tighter' => '-0.05em',
+				'tight'   => '-0.025em',
+				'normal'  => '0em',
+				'wide'    => '0.025em',
+				'wider'   => '0.05em',
+				'widest'  => '0.1em',
+			);
+			if ( isset( $tracking_map[ $matches[1] ] ) ) {
+				return "letter-spacing: {$tracking_map[$matches[1]]};";
+			}
+		}
+
+		// 5.12 Line Clamp
+		if ( preg_match( '/^line-clamp-([0-9]+)$/', $class, $matches ) ) {
+			return "overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: {$matches[1]};";
+		}
+		if ( $class === 'line-clamp-none' ) {
+			return "overflow: visible; display: block; -webkit-box-orient: horizontal; -webkit-line-clamp: none;";
+		}
+		if ( preg_match( '/^space-(x|y)-([0-9\.]+)$/', $class, $matches ) ) {
+			$val = floatval( $matches[2] ) * 0.25;
+			$prop = $matches[1] === 'x' ? 'margin-left' : 'margin-top';
+			$opp = $matches[1] === 'x' ? 'margin-right' : 'margin-bottom';
+			// Nested selector support
+			return "& > :not([hidden]) ~ :not([hidden]) { {$prop}: {$val}rem; {$opp}: 0; }";
+		}
+
+		// 6. Borders & Rounded
+		if ( $class === 'border' ) {
+			return 'border-width: 1px; border-style: solid;';
+		}
+
+		// 6.1 Border Style
+		$border_style_map = array(
+			'border-solid'  => 'border-style: solid;',
+			'border-dashed' => 'border-style: dashed;',
+			'border-dotted' => 'border-style: dotted;',
+			'border-double' => 'border-style: double;',
+			'border-hidden' => 'border-style: hidden;',
+			'border-none'   => 'border-style: none;',
+		);
+		if ( isset( $border_style_map[ $class ] ) ) {
+			return $border_style_map[ $class ];
+		}
+
+		// 6.2 Border Width (border-2, border-4, border-8, border-0)
+		if ( preg_match( '/^border-([0-9]+)$/', $class, $matches ) ) {
+			return "border-width: {$matches[1]}px; border-style: solid;";
+		}
+
+		// 6.3 Directional Border Width (border-t, border-t-2, border-r-0, etc.)
+		if ( preg_match( '/^border-([trbl])(?:-([0-9]+))?$/', $class, $matches ) ) {
+			$side_map = array( 't' => 'top', 'r' => 'right', 'b' => 'bottom', 'l' => 'left' );
+			$side  = $side_map[ $matches[1] ];
+			$width = isset( $matches[2] ) ? $matches[2] . 'px' : '1px';
+			return "border-{$side}-width: {$width}; border-style: solid;";
+		}
+
+		// 6.4 Border Color (border-{color}-{shade}, border-{color}-{shade}/{opacity})
+		if ( preg_match( '/^border-([a-z]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
+			$color   = $matches[1];
+			$shade   = $matches[2];
+			$opacity = isset( $matches[3] ) ? intval( $matches[3] ) : null;
+			$hex     = $this->get_color_hex( $color, $shade );
+
+			if ( null !== $opacity ) {
+				$rgb   = $this->hex_to_rgb( $hex );
+				$alpha = round( $opacity / 100, 2 );
+				return "border-color: rgba({$rgb}, {$alpha});";
+			}
+			return "border-color: {$hex};";
+		}
+
+		// 6.5 Border basic colors (border-white, border-black, border-transparent)
+		$border_basic_map = array(
+			'border-white'       => 'border-color: #ffffff;',
+			'border-black'       => 'border-color: #000000;',
+			'border-transparent' => 'border-color: transparent;',
+		);
+		if ( isset( $border_basic_map[ $class ] ) ) {
+			return $border_basic_map[ $class ];
+		}
+
+		// 6.6 Ring Width
+		if ( $class === 'ring' ) {
+			return 'box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);'; // ring-3 blue-500/50 default
+		}
+		if ( $class === 'ring-0' ) return 'box-shadow: 0 0 0 0px transparent;';
+		if ( $class === 'ring-1' ) return 'box-shadow: 0 0 0 1px var(--tw-ring-color, rgba(59, 130, 246, 0.5));';
+		if ( $class === 'ring-2' ) return 'box-shadow: 0 0 0 2px var(--tw-ring-color, rgba(59, 130, 246, 0.5));';
+		if ( $class === 'ring-4' ) return 'box-shadow: 0 0 0 4px var(--tw-ring-color, rgba(59, 130, 246, 0.5));';
+		if ( $class === 'ring-8' ) return 'box-shadow: 0 0 0 8px var(--tw-ring-color, rgba(59, 130, 246, 0.5));';
+		if ( $class === 'ring-inset' ) return '--tw-ring-inset: inset;';
+
+		// 6.7 Ring Color (ring-{color}-{shade})
+		if ( preg_match( '/^ring-([a-z]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
+			$hex     = $this->get_color_hex( $matches[1], $matches[2] );
+			$opacity = isset( $matches[3] ) ? intval( $matches[3] ) : null;
+			if ( null !== $opacity ) {
+				$rgb   = $this->hex_to_rgb( $hex );
+				$alpha = round( $opacity / 100, 2 );
+				return "--tw-ring-color: rgba({$rgb}, {$alpha});";
+			}
+			return "--tw-ring-color: {$hex};";
+		}
+		$ring_basic = array(
+			'ring-white'       => '--tw-ring-color: #ffffff;',
+			'ring-black'       => '--tw-ring-color: #000000;',
+			'ring-transparent' => '--tw-ring-color: transparent;',
+		);
+		if ( isset( $ring_basic[ $class ] ) ) return $ring_basic[ $class ];
+
+		// 6.8 Ring Offset
+		if ( preg_match( '/^ring-offset-([0-9]+)$/', $class, $matches ) ) {
+			return "--tw-ring-offset-width: {$matches[1]}px;";
+		}
+		if ( preg_match( '/^ring-offset-([a-z]+)-([1-9]00|950|50)$/', $class, $matches ) ) {
+			$hex = $this->get_color_hex( $matches[1], $matches[2] );
+			return "--tw-ring-offset-color: {$hex};";
+		}
+		$ring_offset_basic = array(
+			'ring-offset-white' => '--tw-ring-offset-color: #ffffff;',
+			'ring-offset-black' => '--tw-ring-offset-color: #000000;',
+		);
+		if ( isset( $ring_offset_basic[ $class ] ) ) return $ring_offset_basic[ $class ];
+
+		// 6.9 Background Utilities
+		$bg_util_map = array(
+			'bg-cover'      => 'background-size: cover;',
+			'bg-contain'    => 'background-size: contain;',
+			'bg-auto'       => 'background-size: auto;',
+			'bg-center'     => 'background-position: center;',
+			'bg-top'        => 'background-position: top;',
+			'bg-bottom'     => 'background-position: bottom;',
+			'bg-left'       => 'background-position: left;',
+			'bg-right'      => 'background-position: right;',
+			'bg-left-top'   => 'background-position: left top;',
+			'bg-right-top'  => 'background-position: right top;',
+			'bg-left-bottom'  => 'background-position: left bottom;',
+			'bg-right-bottom' => 'background-position: right bottom;',
+			'bg-repeat'     => 'background-repeat: repeat;',
+			'bg-no-repeat'  => 'background-repeat: no-repeat;',
+			'bg-repeat-x'   => 'background-repeat: repeat-x;',
+			'bg-repeat-y'   => 'background-repeat: repeat-y;',
+			'bg-repeat-round' => 'background-repeat: round;',
+			'bg-repeat-space' => 'background-repeat: space;',
+			'bg-fixed'      => 'background-attachment: fixed;',
+			'bg-local'      => 'background-attachment: local;',
+			'bg-scroll'     => 'background-attachment: scroll;',
+			'bg-clip-border'  => 'background-clip: border-box;',
+			'bg-clip-padding' => 'background-clip: padding-box;',
+			'bg-clip-content' => 'background-clip: content-box;',
+			'bg-clip-text'    => '-webkit-background-clip: text; background-clip: text;',
+			'bg-origin-border'  => 'background-origin: border-box;',
+			'bg-origin-padding' => 'background-origin: padding-box;',
+			'bg-origin-content' => 'background-origin: content-box;',
+		);
+		if ( isset( $bg_util_map[ $class ] ) ) return $bg_util_map[ $class ];
+
+		// 6.10 Gradient Direction
+		if ( preg_match( '/^bg-gradient-to-(t|tr|r|br|b|bl|l|tl)$/', $class, $matches ) ) {
+			$dir_map = array(
+				't' => 'to top', 'tr' => 'to top right', 'r' => 'to right', 'br' => 'to bottom right',
+				'b' => 'to bottom', 'bl' => 'to bottom left', 'l' => 'to left', 'tl' => 'to top left',
+			);
+			return "background-image: linear-gradient({$dir_map[$matches[1]]}, var(--tw-gradient-stops));";
+		}
+
+		// 6.11 Gradient Colors (from-*, via-*, to-*)
+		if ( preg_match( '/^(from|via|to)-([a-z]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
+			$type    = $matches[1];
+			$hex     = $this->get_color_hex( $matches[2], $matches[3] );
+			$opacity = isset( $matches[4] ) ? intval( $matches[4] ) : null;
+			if ( null !== $opacity ) {
+				$rgb   = $this->hex_to_rgb( $hex );
+				$alpha = round( $opacity / 100, 2 );
+				$color = "rgba({$rgb}, {$alpha})";
+			} else {
+				$color = $hex;
+			}
+			$grad_map = array(
+				'from' => "--tw-gradient-from: {$color}; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);",
+				'via'  => "--tw-gradient-stops: var(--tw-gradient-from), {$color}, var(--tw-gradient-to, transparent);",
+				'to'   => "--tw-gradient-to: {$color};",
+			);
+			return $grad_map[ $type ];
+		}
+		$grad_basic = array(
+			'from-white'       => '--tw-gradient-from: #ffffff; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);',
+			'from-black'       => '--tw-gradient-from: #000000; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);',
+			'from-transparent'  => '--tw-gradient-from: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);',
+			'to-white'         => '--tw-gradient-to: #ffffff;',
+			'to-black'         => '--tw-gradient-to: #000000;',
+			'to-transparent'   => '--tw-gradient-to: transparent;',
+			'via-white'        => '--tw-gradient-stops: var(--tw-gradient-from), #ffffff, var(--tw-gradient-to, transparent);',
+			'via-black'        => '--tw-gradient-stops: var(--tw-gradient-from), #000000, var(--tw-gradient-to, transparent);',
+			'via-transparent'  => '--tw-gradient-stops: var(--tw-gradient-from), transparent, var(--tw-gradient-to, transparent);',
+		);
+		if ( isset( $grad_basic[ $class ] ) ) return $grad_basic[ $class ];
+		if ( preg_match( '/^rounded(-[a-z]+)?$/', $class, $matches ) ) {
+			$type = $matches[1] ?? '';
+			$radius_map = array(
+				''     => '0.25rem',
+				'-sm'  => '0.125rem',
+				'-md'  => '0.375rem',
+				'-lg'  => '0.5rem',
+				'-xl'  => '0.75rem',
+				'-2xl' => '1rem',
+                '-3xl' => '1.5rem',
+				'-full' => '9999px',
+                '-none' => '0px',
+			);
+			return isset( $radius_map[ $type ] ) ? "border-radius: {$radius_map[$type]};" : null;
+		}
+
+		// 7. Display & Visibility
+		if ( in_array( $class, array( 'hidden', 'block', 'inline-block', 'flex', 'grid', 'inline-flex' ) ) ) {
+			$val = $class === 'hidden' ? 'none' : $class;
+			return "display: {$val};";
+		}
+
+		// 7.0.1 Marker classes (no CSS output, but needed as selector targets)
+		if ( $class === 'group' ) {
+			// Tailwind "group" class: no CSS properties, just a marker for group-hover: selectors.
+			// Return empty string (truthy) so it won't be marked as unresolved.
+			return '/* group marker */';
+		}
+
+        // 7.1 Overflow
+        if ( preg_match( '/^overflow-(auto|hidden|visible|scroll|x-auto|x-hidden|y-auto|y-hidden)$/', $class, $matches ) ) {
+            $prop = 'overflow';
+            if ( strpos($matches[1], 'x-') === 0 ) $prop = 'overflow-x';
+            if ( strpos($matches[1], 'y-') === 0 ) $prop = 'overflow-y';
+            $val = str_replace( array('x-', 'y-'), '', $matches[1] );
+            return "{$prop}: {$val};";
+        }
+
+        // 7.2 Position
+        if ( in_array( $class, array( 'relative', 'absolute', 'fixed', 'sticky', 'static' ) ) ) {
+            return "position: {$class};";
+        }
+
+        // 7.3 Position values (inset, top, right, bottom, left)
+        if ( preg_match( '/^(inset|inset-x|inset-y|top|right|bottom|left)-(\d+\.?\d*|full|auto|px)$/', $class, $matches ) ) {
+            $type  = $matches[1];
+            $value = $matches[2];
+
+            if ( $value === 'full' ) {
+                $css_val = '100%';
+            } elseif ( $value === 'auto' ) {
+                $css_val = 'auto';
+            } elseif ( $value === 'px' ) {
+                $css_val = '1px';
+            } elseif ( $value === '0' ) {
+                $css_val = '0px';
+            } else {
+                $rem = floatval( $value ) * 0.25;
+                $css_val = number_format( $rem, 3, '.', '' ) . 'rem';
+            }
+
+            $prop_map = array(
+                'inset'   => "inset: {$css_val};",
+                'inset-x' => "left: {$css_val}; right: {$css_val};",
+                'inset-y' => "top: {$css_val}; bottom: {$css_val};",
+                'top'     => "top: {$css_val};",
+                'right'   => "right: {$css_val};",
+                'bottom'  => "bottom: {$css_val};",
+                'left'    => "left: {$css_val};",
+            );
+            return $prop_map[ $type ] ?? null;
+        }
+        // Arbitrary position values: top-[50%], inset-[10px], left-[var(--x)] etc.
+        if ( preg_match( '/^(inset|inset-x|inset-y|top|right|bottom|left)-\[(.+)\]$/', $class, $matches ) ) {
+            $type = $matches[1];
+            $val  = $matches[2];
+            $prop_map = array(
+                'inset'   => "inset: {$val};",
+                'inset-x' => "left: {$val}; right: {$val};",
+                'inset-y' => "top: {$val}; bottom: {$val};",
+                'top'     => "top: {$val};",
+                'right'   => "right: {$val};",
+                'bottom'  => "bottom: {$val};",
+                'left'    => "left: {$val};",
+            );
+            return $prop_map[ $type ] ?? null;
+        }
+
+		// 8. Transitions & Transforms
+		if ( preg_match( '/^transition(-[a-z]+)?$/', $class, $matches ) ) {
+			$type = $matches[1] ?? '-all';
+			$map = array(
+				'-all' => 'transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;',
+				'-colors' => 'transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;',
+				'-opacity' => 'transition-property: opacity; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;',
+				'-shadow' => 'transition-property: box-shadow; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;',
+				'-transform' => 'transition-property: transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;',
+			);
+			return $map[ $type ] ?? null;
+		}
+
+		if ( preg_match( '/^duration-([0-9]+)$/', $class, $matches ) ) {
+			return "transition-duration: {$matches[1]}ms;";
+		}
+		
+		if ( preg_match( '/^ease-(linear|in|out|in-out)$/', $class, $matches ) ) {
+			$map = array(
+				'linear' => 'linear',
+				'in'     => 'cubic-bezier(0.4, 0, 1, 1)',
+				'out'    => 'cubic-bezier(0, 0, 0.2, 1)',
+				'in-out' => 'cubic-bezier(0.4, 0, 0.2, 1)',
+			);
+			return isset( $map[ $matches[1] ] ) ? "transition-timing-function: {$map[$matches[1]]};" : null;
+		}
+
+		// 8.5 Translate
+		if ( preg_match( '/^translate-([xy])-(\d+\.?\d*|full|px|1\/2|1\/3|2\/3|1\/4|2\/4|3\/4)$/', $class, $matches ) ) {
+			$axis  = $matches[1] === 'x' ? 'X' : 'Y';
+			$value = $matches[2];
+			$frac_map = array( '1/2' => '50%', '1/3' => '33.333333%', '2/3' => '66.666667%', '1/4' => '25%', '2/4' => '50%', '3/4' => '75%' );
+			if ( isset( $frac_map[ $value ] ) ) {
+				$css_val = $frac_map[ $value ];
+			} elseif ( $value === 'full' ) {
+				$css_val = '100%';
+			} elseif ( $value === 'px' ) {
+				$css_val = '1px';
+			} elseif ( $value === '0' ) {
+				$css_val = '0px';
+			} else {
+				$rem = floatval( $value ) * 0.25;
+				$css_val = number_format( $rem, 3, '.', '' ) . 'rem';
+			}
+			return "transform: translate{$axis}({$css_val});";
+		}
+		// Arbitrary translate: translate-x-[50%], translate-y-[var(--x)]
+		if ( preg_match( '/^translate-([xy])-\[(.+)\]$/', $class, $matches ) ) {
+			$axis = $matches[1] === 'x' ? 'X' : 'Y';
+			$val  = str_replace( '_', ' ', $matches[2] );
+			return "transform: translate{$axis}({$val});";
+		}
+
+		// 8.6 Rotate
+		if ( preg_match( '/^rotate-([0-9]+)$/', $class, $matches ) ) {
+			return "transform: rotate({$matches[1]}deg);";
+		}
+		if ( preg_match( '/^rotate-\[(.+)\]$/', $class, $matches ) ) {
+			return "transform: rotate({$matches[1]});";
+		}
+
+		if ( preg_match( '/^scale-\[([0-9\.]+)\]$/', $class, $matches ) ) {
+			return "transform: scale({$matches[1]});";
+		}
+		if ( preg_match( '/^scale-([0-9]+)$/', $class, $matches ) ) {
+			$val = intval( $matches[1] ) / 100;
+			return "transform: scale({$val});";
+		}
+
+		// 9. Filters & Effects
+		if ( preg_match( '/^backdrop-blur(-[a-z0-9]+)?$/', $class, $matches ) ) {
+			$size = $matches[1] ?? '';
+			$blur_map = array(
+				'' => '8px', '-none' => '0', '-sm' => '4px', '-md' => '12px',
+				'-lg' => '16px', '-xl' => '24px', '-2xl' => '40px', '-3xl' => '64px',
+			);
+			$val = $blur_map[ $size ] ?? null;
+			return $val ? "-webkit-backdrop-filter: blur({$val}); backdrop-filter: blur({$val});" : null;
+		}
+		if ( preg_match( '/^blur(-[a-z0-9]+)?$/', $class, $matches ) ) {
+			$size = $matches[1] ?? '';
+			$blur_map = array(
+				'' => '8px', '-none' => '0', '-sm' => '4px', '-md' => '12px',
+				'-lg' => '16px', '-xl' => '24px', '-2xl' => '40px', '-3xl' => '64px',
+			);
+			$val = $blur_map[ $size ] ?? null;
+			return $val ? "filter: blur({$val});" : null;
+		}
+		if ( preg_match( '/^brightness-([0-9]+)$/', $class, $matches ) ) {
+			$val = intval( $matches[1] ) / 100;
+			return "filter: brightness({$val});";
+		}
+		if ( preg_match( '/^contrast-([0-9]+)$/', $class, $matches ) ) {
+			$val = intval( $matches[1] ) / 100;
+			return "filter: contrast({$val});";
+		}
+		if ( preg_match( '/^opacity-([0-9]+)$/', $class, $matches ) ) {
+			$val = intval( $matches[1] ) / 100;
+			return "opacity: {$val};";
+		}
+		if ( $class === 'isolate' ) return 'isolation: isolate;';
+
+		// 10. Flex extras & align-self
+		$flex_extra = array(
+			'flex-1' => 'flex: 1 1 0%;', 'flex-auto' => 'flex: 1 1 auto;',
+			'flex-initial' => 'flex: 0 1 auto;', 'flex-none' => 'flex: none;',
+			'flex-shrink' => 'flex-shrink: 1;', 'flex-shrink-0' => 'flex-shrink: 0;',
+			'flex-grow' => 'flex-grow: 1;', 'flex-grow-0' => 'flex-grow: 0;',
+			'self-auto' => 'align-self: auto;', 'self-start' => 'align-self: flex-start;',
+			'self-end' => 'align-self: flex-end;', 'self-center' => 'align-self: center;',
+			'self-stretch' => 'align-self: stretch;',
+			'order-first' => 'order: -9999;', 'order-last' => 'order: 9999;', 'order-none' => 'order: 0;',
+		);
+		if ( isset( $flex_extra[ $class ] ) ) return $flex_extra[ $class ];
+		if ( preg_match( '/^order-([0-9]+)$/', $class, $matches ) ) return "order: {$matches[1]};";
+
+		// 11. Cursor, Pointer Events, User Select
+		if ( preg_match( '/^cursor-(pointer|default|wait|text|move|not-allowed|grab|grabbing|auto)$/', $class, $matches ) ) {
+			return "cursor: {$matches[1]};";
+		}
+		if ( $class === 'pointer-events-none' ) return 'pointer-events: none;';
+		if ( $class === 'pointer-events-auto' ) return 'pointer-events: auto;';
+		if ( preg_match( '/^select-(none|text|all|auto)$/', $class, $matches ) ) {
+			return "user-select: {$matches[1]}; -webkit-user-select: {$matches[1]};";
+		}
+
+		return null;
+	}
+
+	/**
+	 * Helper for spacing resolution.
+	 */
+	private function resolve_spacing( $prefix, $value ): string {
+		$type = $prefix[0] === 'p' ? 'padding' : 'margin';
+		$rem  = floatval( $value ) * 0.25;
+        $rem_str = number_format( $rem, 3, '.', '' );
+		$dir  = substr( $prefix, 1 );
+
+		$map = array(
+			''  => "{$type}: {$rem_str}rem;",
+			'x' => "{$type}-left: {$rem_str}rem; {$type}-right: {$rem_str}rem;",
+			'y' => "{$type}-top: {$rem_str}rem; {$type}-bottom: {$rem_str}rem;",
+			't' => "{$type}-top: {$rem_str}rem;",
+			'b' => "{$type}-bottom: {$rem_str}rem;",
+			'l' => "{$type}-left: {$rem_str}rem;",
+			'r' => "{$type}-right: {$rem_str}rem;",
+		);
+
+		return $map[ $dir ] ?? '';
+	}
+
+	/**
+	 * Helper for dimension resolution.
+	 */
+	private function resolve_dimension( $value ): ?string {
+		if ( $value === 'full' ) {
+			return '100%';
+		}
+		if ( $value === 'screen' ) {
+			return '100vh';
+		}
+		if ( $value === 'auto' ) {
+			return 'auto';
+		}
+		if ( is_numeric( $value ) ) {
+			$rem = floatval( $value ) * 0.25;
+            $rem_str = number_format( $rem, 3, '.', '' );
+			return "{$rem_str}rem";
+		}
+		// Arbitrary bracket values: [120px], [50vh], [calc(100%-2rem)], [var(--x)]
+		if ( preg_match( '/^\[(.+)\]$/', $value, $matches ) ) {
+			// Strip underscores → spaces (Tailwind convention: w-[calc(100%_-_2rem)])
+			return str_replace( '_', ' ', $matches[1] );
+		}
+		return null;
+	}
+
+	/**
+	 * Mock helper for Tailwind color palette.
+	 */
+	private function get_color_hex( $color, $shade ) {
+		$palette = array(
+			'slate'   => ['50' => '#f8fafc', '100' => '#f1f5f9', '200' => '#e2e8f0', '300' => '#cbd5e1', '400' => '#94a3b8', '500' => '#64748b', '600' => '#475569', '700' => '#334155', '800' => '#1e293b', '900' => '#0f172a', '950' => '#020617'],
+			'gray'    => ['50' => '#f9fafb', '100' => '#f3f4f6', '200' => '#e5e7eb', '300' => '#d1d5db', '400' => '#9ca3af', '500' => '#6b7280', '600' => '#4b5563', '700' => '#374151', '800' => '#1f2937', '900' => '#111827', '950' => '#030712'],
+			'zinc'    => ['50' => '#fafafa', '100' => '#f4f4f5', '200' => '#e4e4e7', '300' => '#d4d4d8', '400' => '#a1a1aa', '500' => '#71717a', '600' => '#52525b', '700' => '#3f3f46', '800' => '#27272a', '900' => '#18181b', '950' => '#09090b'],
+			'neutral' => ['50' => '#fafafa', '100' => '#f5f5f5', '200' => '#e5e5e5', '300' => '#d4d4d4', '400' => '#a3a3a3', '500' => '#737373', '600' => '#525252', '700' => '#404040', '800' => '#262626', '900' => '#171717', '950' => '#0a0a0a'],
+			'stone'   => ['50' => '#fafaf9', '100' => '#f5f5f4', '200' => '#e7e5e4', '300' => '#d6d3d1', '400' => '#a8a29e', '500' => '#78716c', '600' => '#57534e', '700' => '#44403c', '800' => '#292524', '900' => '#1c1917', '950' => '#0c0a09'],
+			'red'     => ['50' => '#fef2f2', '100' => '#fee2e2', '200' => '#fecaca', '300' => '#fca5a5', '400' => '#f87171', '500' => '#ef4444', '600' => '#dc2626', '700' => '#b91c1c', '800' => '#991b1b', '900' => '#7f1d1d', '950' => '#450a0a'],
+			'orange'  => ['50' => '#fff7ed', '100' => '#ffedd5', '200' => '#fed7aa', '300' => '#fdba74', '400' => '#fb923c', '500' => '#f97316', '600' => '#ea580c', '700' => '#c2410c', '800' => '#9a3412', '900' => '#7c2d12', '950' => '#431407'],
+			'amber'   => ['50' => '#fffbeb', '100' => '#fef3c7', '200' => '#fde68a', '300' => '#fcd34d', '400' => '#fbbf24', '500' => '#f59e0b', '600' => '#d97706', '700' => '#b45309', '800' => '#92400e', '900' => '#78350f', '950' => '#451a03'],
+			'yellow'  => ['50' => '#fefce8', '100' => '#fef9c3', '200' => '#fef08a', '300' => '#fde047', '400' => '#facc15', '500' => '#eab308', '600' => '#ca8a04', '700' => '#a16207', '800' => '#854d0e', '900' => '#713f12', '950' => '#422006'],
+			'lime'    => ['50' => '#f7fee7', '100' => '#ecfccb', '200' => '#d9f99d', '300' => '#bef264', '400' => '#a3e635', '500' => '#84cc16', '600' => '#65a30d', '700' => '#4d7c0f', '800' => '#3f6212', '900' => '#365314', '950' => '#1a2e05'],
+			'green'   => ['50' => '#f0fdf4', '100' => '#dcfce7', '200' => '#bbf7d0', '300' => '#86efac', '400' => '#4ade80', '500' => '#22c55e', '600' => '#16a34a', '700' => '#15803d', '800' => '#166534', '900' => '#14532d', '950' => '#052e16'],
+			'emerald' => ['50' => '#ecfdf5', '100' => '#d1fae5', '200' => '#a7f3d0', '300' => '#6ee7b7', '400' => '#34d399', '500' => '#10b981', '600' => '#059669', '700' => '#047857', '800' => '#065f46', '900' => '#064e3b', '950' => '#022c22'],
+			'teal'    => ['50' => '#f0fdfa', '100' => '#ccfbf1', '200' => '#99f6e4', '300' => '#5eead4', '400' => '#2dd4bf', '500' => '#14b8a6', '600' => '#0d9488', '700' => '#0f766e', '800' => '#115e59', '900' => '#134e4a', '950' => '#042f2e'],
+			'cyan'    => ['50' => '#ecfeff', '100' => '#cffafe', '200' => '#a5f3fc', '300' => '#67e8f9', '400' => '#22d3ee', '500' => '#06b6d4', '600' => '#0891b2', '700' => '#0e7490', '800' => '#155e75', '900' => '#164e63', '950' => '#083344'],
+			'sky'     => ['50' => '#f0f9ff', '100' => '#e0f2fe', '200' => '#bae6fd', '300' => '#7dd3fc', '400' => '#38bdf8', '500' => '#0ea5e9', '600' => '#0284c7', '700' => '#0369a1', '800' => '#075985', '900' => '#0c4a6e', '950' => '#082f49'],
+			'blue'    => ['50' => '#eff6ff', '100' => '#dbeafe', '200' => '#bfdbfe', '300' => '#93c5fd', '400' => '#60a5fa', '500' => '#3b82f6', '600' => '#2563eb', '700' => '#1d4ed8', '800' => '#1e40af', '900' => '#1e3a8a', '950' => '#172554'],
+			'indigo'  => ['50' => '#eef2ff', '100' => '#e0e7ff', '200' => '#c7d2fe', '300' => '#a5b4fc', '400' => '#818cf8', '500' => '#6366f1', '600' => '#4f46e5', '700' => '#4338ca', '800' => '#3730a3', '900' => '#312e81', '950' => '#1e1b4b'],
+			'violet'  => ['50' => '#f5f3ff', '100' => '#ede9fe', '200' => '#ddd6fe', '300' => '#c4b5fd', '400' => '#a78bfa', '500' => '#8b5cf6', '600' => '#7c3aed', '700' => '#6d28d9', '800' => '#5b21b6', '900' => '#4c1d95', '950' => '#2e1065'],
+			'purple'  => ['50' => '#faf5ff', '100' => '#f3e8ff', '200' => '#e9d5ff', '300' => '#d8b4fe', '400' => '#c084fc', '500' => '#a855f7', '600' => '#9333ea', '700' => '#7e22ce', '800' => '#6b21a8', '900' => '#581c87', '950' => '#3b0764'],
+			'fuchsia' => ['50' => '#fdf4ff', '100' => '#fae8ff', '200' => '#f5d0fe', '300' => '#f0abfc', '400' => '#e879f9', '500' => '#d946ef', '600' => '#c026d3', '700' => '#a21caf', '800' => '#86198f', '900' => '#701a75', '950' => '#4a044e'],
+			'pink'    => ['50' => '#fdf2f8', '100' => '#fce7f3', '200' => '#fbcfe8', '300' => '#f9a8d4', '400' => '#f472b6', '500' => '#ec4899', '600' => '#db2777', '700' => '#be185d', '800' => '#9d174d', '900' => '#831843', '950' => '#500724'],
+			'rose'    => ['50' => '#fff1f2', '100' => '#ffe4e6', '200' => '#fecdd3', '300' => '#fda4af', '400' => '#fb7185', '500' => '#f43f5e', '600' => '#e11d48', '700' => '#be123c', '800' => '#9f1239', '900' => '#881337', '950' => '#4c0519'],
+			'black'   => ['default' => '#000000'],
+			'white'   => ['default' => '#ffffff'],
+		);
+
+		return $palette[$color][$shade] ?? ($palette[$color]['default'] ?? '#000');
+	}
+
+	/**
+	 * Lấy bảng màu tùy chỉnh từ Options API.
+	 *
+	 * @return array Associative array { 'primary' => '#0d46f2', ... }
+	 */
+	public function get_custom_colors(): array {
+		$colors = get_option( 'ska_custom_colors', array() );
+		return is_array( $colors ) ? $colors : array();
+	}
+
+	/**
+	 * Resolve custom brand color classes.
+	 *
+	 * Hỗ trợ: bg-{name}, text-{name}, border-{name}, ring-{name}
+	 * Hỗ trợ opacity modifier: bg-{name}/{opacity}
+	 *
+	 * @param string $class Tailwind class.
+	 * @return string|null CSS rule hoặc null nếu không khớp.
+	 */
+	private function resolve_custom_color( string $class ): ?string {
+		$custom_colors = $this->get_custom_colors();
+		if ( empty( $custom_colors ) ) {
+			return null;
+		}
+
+		$css_prop_map = array(
+			'bg'     => 'background-color',
+			'text'   => 'color',
+			'border' => 'border-color',
+			'ring'   => '--tw-ring-color',
+			'shadow' => '--tw-shadow-color',
+			'from'   => '--tw-gradient-from',
+			'to'     => '--tw-gradient-to',
+		);
+
+		// Pattern: {prefix}-{color_name} hoặc {prefix}-{color_name}/{opacity}
+		if ( ! preg_match( '/^(bg|text|border|ring|shadow|from|to)-([a-z0-9-]+?)(?:\/([0-9]+))?$/', $class, $matches ) ) {
+			return null;
+		}
+
+		$prefix     = $matches[1];
+		$color_name = $matches[2];
+		$opacity    = isset( $matches[3] ) ? intval( $matches[3] ) : null;
+
+		if ( ! isset( $custom_colors[ $color_name ] ) || ! isset( $css_prop_map[ $prefix ] ) ) {
+			return null;
+		}
+
+		$hex      = $custom_colors[ $color_name ];
+		$css_prop = $css_prop_map[ $prefix ];
+
+		if ( null !== $opacity ) {
+			// Chuyển hex sang rgb để hỗ trợ opacity
+			$rgb = $this->hex_to_rgb( $hex );
+			$alpha = round( $opacity / 100, 2 );
+			return "{$css_prop}: rgba({$rgb}, {$alpha});";
+		}
+
+		return "{$css_prop}: {$hex};";
+	}
+
+	/**
+	 * Chuyển đổi Hex sang RGB string.
+	 *
+	 * @param string $hex Mã hex (ví dụ: #0d46f2).
+	 * @return string RGB string (ví dụ: "13, 70, 242").
+	 */
+	private function hex_to_rgb( string $hex ): string {
+		$hex = ltrim( $hex, '#' );
+		if ( strlen( $hex ) === 3 ) {
+			$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+		}
+		return intval( substr( $hex, 0, 2 ), 16 ) . ', ' . intval( substr( $hex, 2, 2 ), 16 ) . ', ' . intval( substr( $hex, 4, 2 ), 16 );
+	}
+
+	/**
+	 * Generate a complete CSS block for all custom brand colors.
+	 * This is useful for pre-generating "Source of Truth" styles for the editor.
+	 *
+	 * @return string CSS block.
+	 */
+	public function get_brand_colors_css(): string {
+		$custom_colors = $this->get_custom_colors();
+		if ( empty( $custom_colors ) ) {
+			return '';
+		}
+
+		$css = "/* Ska Brand Colors - Plugin Source Truth */\n";
+		foreach ( array_keys( $custom_colors ) as $name ) {
+			$base_classes = array(
+				"bg-{$name}",
+				"text-{$name}",
+				"border-{$name}",
+				"shadow-{$name}",
+			);
+
+            // Generate standard classes and common opacity variants (20, 50, 80)
+			foreach ( $base_classes as $base ) {
+                $classes_to_compile = array( $base, "{$base}/20", "{$base}/50", "{$base}/80" );
+				foreach ( $classes_to_compile as $class ) {
+                    $rule = $this->resolve_custom_color( $class );
+                    if ( $rule ) {
+                        $escaped = str_replace( array( '/', '.' ), array( '\/', '\.' ), $class );
+                        $css .= ".{$escaped} { {$rule} }\n";
+                        // Specificity boost for editor
+                        $css .= "html body.ska-builder .{$escaped}.{$escaped} { {$rule} }\n";
+                    }
+                }
+			}
+		}
+		return $css;
+	}
+
+	/**
+	 * Static helper to call compile.
+	 *
+	 * @param string $classes Classes to compile.
+	 * @return string
+	 */
+	public static function compile( $classes ): string {
+		$result = apply_filters( 'ska_compile_tailwind', $classes );
+        return is_array( $result ) ? ( $result['css'] ?? '' ) : (string) $result;
+	}
+}

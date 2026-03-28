@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "ska-builder/list",
+    "version": "1.0.0",
+    "title": "Ska List",
+    "category": "ska-blocks",
+    "icon": "editor-ul",
+    "description": "Create an ordered or unordered list container.",
+    "attributes": {
+        "listType": {
+            "type": "string",
+            "default": "ul"
+        },
+        "tailwindClasses": {
+            "type": "string",
+            "default": ""
+        },
+        "className": {
+            "type": "string",
+            "default": ""
+        },
+        "logic": {
+            "type": "object",
+            "default": {
+                "enabled": false,
+                "key": "",
+                "operator": "==",
+                "value": ""
+            }
+        }
+    },
+    "supports": {
+        "html": false,
+        "className": false,
+        "customClassName": false,
+        "align": [
+            "wide",
+            "full"
+        ]
+    },
+    "allowedBlocks": [ "ska-builder/list-item" ],
+    "textdomain": "ska-builder-core",
+    "editorScript": "file:./index.js",
+    "render": "file:./render.php"
+}
+
