@@ -1,9 +1,30 @@
-# Dependencies
+# Core WP
+wp-admin/
+wp-includes/
+wp-config.php
+wp-config-sample.php
+readme.html
+license.txt
+xmlrpc.php
+
+# wp-content standard
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/cache/
+wp-content/mu-plugins/
+wp-content/themes/twentytwenty*
+wp-content/themes/index.php
+wp-content/plugins/akismet/
+wp-content/plugins/hello.php
+wp-content/plugins/index.php
+
+# Other plugins not related to Ska
+# (We will only track ska-* and .ska-ai and .agent)
+
+# Node
 node_modules/
 
 # IDE/OS files
 .DS_Store
 .vscode/
-
-# Ignore other plugins if needed, but right now we include all folders in this directory
-# Specifically tracking .ska-ai, ska-builder-core, and secure-custom-fields
+Thumbs.db
