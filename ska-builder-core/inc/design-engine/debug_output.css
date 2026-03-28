@@ -1,0 +1,5 @@
+/* Ska JIT Compiled CSS (Atomic Standards - High Specificity Scope) */
+html body.ska-builder { --wp--style--block-gap: 0px; }
+/* Source: hover:bg-slate-50 */
+html body.ska-builder .hover\:bg-slate-50.hover\:bg-slate-50:hover { background-color: #f8fafc; }
+.editor-styles-wrapper .hover\:bg-slate-50.hover\:bg-slate-50:hover { background-color: #f8fafc; }
