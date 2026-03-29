@@ -1,3 +1,10 @@
+## 2026-03-29 - Ska Data Pro Initialization & UX Strategy
+- **Decision:** Khởi tạo plugin `ska-data-pro` làm trung tâm Database (Flat Tables) của hệ sinh thái Ska App Builder.
+- **Decision (UX):** Áp dụng mô hình UX "Airtable-like". Giấu toàn bộ logic phức tạp (SQL, Hooks) xuống Backend. Giao diện quản lý Schema phải trực quan dạng "Tạo bộ dữ liệu".
+- **Decision (Data Templates Feature):** Phát triển tính năng "Pre-built Data Templates". Cung cấp sẵn các bộ Schema (Bảng & Cột) chuẩn cho các mô hình: E-Commerce, Học trực tuyến (LMS), Đặt lịch (Booking), Bất động sản (Real Estate).
+- **Automation:** Khi cài đặt Template, hệ thống sẽ tự động cấu hình Table và bơm sẵn Dummy Data (Sample Data).
+- **Reason:** Đập tan rào cản với user không rành công nghệ, tạo hiệu ứng "Wow" tức thì vì có Data thật để lấy ra thiết kế ngay (Time-to-Value).
+
 ## 2026-03-29 - Hardening Ska Builder CSS Engine & Editor Parity (WYSIWYG Fidelity)
 - **Decision:** Nâng cấp Tailwind JIT `resolve_dimension` bằng regex hỗ trợ phân số (VD: `1/2`, `1/3`) với độ chính xác chuẩn Tailwind (`33.333333%`), khắc phục lỗi class responsive (như `w-1/2`) không sinh ra CSS ở Backend, dẫn đến mất tác dụng trước `w-full`.
 - **Decision:** Bổ sung `margin: 0;` vào hàm `get_core_reset_css()` nhắm thẳng vào `[class*='wp-block-ska-builder']` trên cả Frontend và Editor để tiêu diệt triệt để cơ chế tự động Center của Gutenberg.

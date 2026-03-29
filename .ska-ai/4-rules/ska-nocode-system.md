@@ -15,7 +15,8 @@ Trước khi Code, Agent BẮT BUỘC nhận diện code mình viết sẽ rơi 
 - **Ska Logic Engine:** Nhận `<div ska-if="{{check}}">` và quyết định Render hay Ẩn mất thẻ đó.
 
 ## 2. AI WORKFLOW PROTOCOL BẮT BUỘC
-- **Step 1 (Context):** Quét `/1-overview/` để nắm giới hạn ranh giới (System Map).
+- **Step 1 (Context):** Quét `/1-overview/` để nắm giới hạn ranh giới (System Map). 
+  🚨 **QUAN TRỌNG:** Dự án đang ở Phase 2 (Ska Data Pro). **BẮT BUỘC ĐỌC** file `.ska-ai/1-overview/project_manager_phase2.md` và tuân thủ lộ trình Phase 2 trước khi code bất kỳ tính năng gì liên quan tới Data, Form hay UI Block có dính líu đến dữ liệu.
 - **Step 2 (Isolate Memory):** Thay vì đọc toàn bộ, hãy hỏi user xem đang làm việc với Plugin nào? Rồi chỉ quét tài liệu trong `/3-ecosystem/[Tên Plugin]/`. (Ví dụ: Đang dev Theme thì cấm AI đọc doc của Logic Engine).
 - **Step 3 (Schema First):** Lên thiết kế Interface & WP Hooks giữa các khối TRƯỚC khi gõ Code vào File. Cấm vội vã.
 - **Step 4 (Documentation Loop):** Code xong, cập nhật tài liệu ở `/3-ecosystem/[Plugin]/` và ném Log lịch sử vào `/2-memory/decision-log.md`.
