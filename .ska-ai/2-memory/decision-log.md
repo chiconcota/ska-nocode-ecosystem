@@ -1,3 +1,19 @@
+## 2026-03-29 - Hardening Ska Builder CSS Engine & Editor Parity (WYSIWYG Fidelity)
+- **Decision:** Nâng cấp Tailwind JIT `resolve_dimension` bằng regex hỗ trợ phân số (VD: `1/2`, `1/3`) với độ chính xác chuẩn Tailwind (`33.333333%`), khắc phục lỗi class responsive (như `w-1/2`) không sinh ra CSS ở Backend, dẫn đến mất tác dụng trước `w-full`.
+- **Decision:** Bổ sung `margin: 0;` vào hàm `get_core_reset_css()` nhắm thẳng vào `[class*='wp-block-ska-builder']` trên cả Frontend và Editor để tiêu diệt triệt để cơ chế tự động Center của Gutenberg.
+- **Decision:** Điều chỉnh thuộc tính CSS `display: inline-flex; align-items: center; justify-content: center;` mặc định cho class `.ska-button-block` (Ska Button) trong JIT Compiler Reset. Việc này giải phóng thẻ `<a>` và `<button>` khỏi giới hạn của Inline element gốc, giúp chúng tiếp nhận hoàn hảo các lệnh `margin` (-mt-10), padding, width, height mà không bắt buộc người dùng phải gõ thêm `inline-flex`.
+- **Decision:** Xóa cờ `margin: 0 !important;` quá khích trong `ska-editor-helper.js` đối với các khối con của `.wp-block-ska-builder-container`. Điều này trả lại sự tự do (Specificity behavior) cho các class do Tailwind CDN sinh ra như `-mt-10` trong môi trường Editor.
+- **Decision:** Áp dụng chặt chẽ "Clean Slate Rule": Từ chối hỗ trợ các thông số ngụy tạo ngoài hệ đo lường chuẩn của Tailwind (như `-mt-50`). Người dùng bắt buộc phải dùng hệ quy chiếu chuẩn (như `-mt-48`, `-mt-52`) hoặc Arbitrary values (`-mt-[50px]`) để bảo vệ tính đồng nhất của Design Engine và giữ nguyên giá trị giáo dục (Selling Point) của hệ thống.
+
+## 2026-03-29 - Ska Canvas Theme Initialization & Architecture
+- **Decision:** Khởi tạo `ska-canvas` (Ska Blank Theme) làm vật chủ siêu nhẹ, loại bỏ hoàn toàn WP default CSS (wp-block-library, global-styles).
+- **Decision:** Tắt hoàn toàn FSE (Full Site Editing) qua `theme.json` để ngăn WordPress ép CSS layout.
+- **Decision:** Cập nhật JIT Compiler (Plugin): Phát hiện nguyên nhân thực sự khiến `text-primary` bị gạch ngang và biến thành màu trắng trong Editor. Sự cố KHÔNG PHẢI do Specificity War, mà là do JIT Compiler đã **bỏ qua hoàn toàn class này** vì Options `ska_custom_colors` trong Database bị rỗng, khiến nó không tạo ra mã CSS. WordPress Core Editor mặc định chèn `color: #fff` cho thẻ Button khiến nút bị trắng.
+- **Fix:** Code Fallback mặc định cho Brand Colors (`primary`, `secondary`, `background-light`, `background-dark`) bên trong `Tailwind_Color_Registry` để JIT Compiler luôn hoạt động kể cả khi chưa lưu cấu hình thiết kế từ UI. Đồng thời rút lại kĩ thuật `:where()` để duy trì sức mạnh `2,1` cho Custom CSS Reset, đè chết WP Core CSS mặc định.
+- **Decision:** Giữ Brand Styles (Primary Colors/Typography) ở lại Plugin (Ska Design Engine) thay vì đưa vào Theme, nhằm ngăn chặn hiện tượng "Theme Lock-in" - giúp người dùng có thể đổi Theme mà không mất thiết kế.
+- **Decision:** Trong tương lai, **Ska Theme Builder** (Header/Footer/Archive Design) sẽ được phát triển như một tính năng bên trong `ska-builder-core` thay vì tách thành một Plugin riêng biệt để giới hạn lượng Plugin phải cài đặt.
+- **Decision:** File `index.php` của Ska Canvas chỉ chứa mã cơ sở và các Hook rỗng (`ska_theme_header`, `ska_theme_footer`) để Plugin Theme Builder tương lai có thể cắm thiết kế vào một cách tự nhiên.
+
 ## 2026-03-28 - JIT Compiler: Ring & Backgrounds (Bonus)
 - **Decision:** Thêm `ring-*` (width, color, inset), `ring-offset-*` (width, color) sử dụng `box-shadow` approach chuẩn Tailwind.
 - **Decision:** Thêm Background utilities đầy đủ: `bg-cover/contain/auto`, `bg-center/top/bottom/left/right`, `bg-no-repeat`, `bg-fixed/local/scroll`, `bg-clip-*`, `bg-origin-*`.

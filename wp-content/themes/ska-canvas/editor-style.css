@@ -1,0 +1,37 @@
+/*
+ * SKA CANVAS - EDITOR UX STYLES
+ * File này CHỈ nạp trong giao diện Backend Editor của WordPress.
+ * Mục tiêu: Tạo "Không gian thở" (Padding/Max-width) cho các block cơ bản (Title, Văn bản)
+ * giúp người dùng không bị dính sát dật màn hình. TRONG KHI ĐÓ vẫn giữ nguyên khả năng 
+ * Full-width (100%) của Ska Container.
+ */
+
+/* 1. Tiêu đề bài viết (Post Title) */
+.wp-block-post-title {
+	max-width: 1120px !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+	padding-left: 2rem !important;
+	padding-right: 2rem !important;
+	margin-top: 3rem !important;
+	margin-bottom: 2rem !important;
+	font-weight: 700 !important;
+}
+
+/* 2. Dòng Gợi ý chọn Block ("Type / to choose a block") */
+.block-editor-default-block-appender {
+	max-width: 1120px !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+	padding-left: 2rem !important;
+	padding-right: 2rem !important;
+}
+
+/* 3. Các block văn bản thường (Core Blocks) nằm ở thư mục gốc */
+.editor-styles-wrapper .block-editor-block-list__layout.is-root-container > :not([class*="wp-block-ska-builder"]) {
+	max-width: 1120px !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+	padding-left: 2rem !important;
+	padding-right: 2rem !important;
+}

@@ -1,0 +1,22 @@
+/*
+Theme Name: Ska Canvas
+Theme URI: https://ska-builder.com
+Author: Ska Builder Team
+Author URI: https://lytatthanh.com
+Description: A barebone, zero-CSS, clean-slate WordPress theme designed exclusively as a framework-agnostic host for the Ska App Builder Ecosystem. 
+Version: 1.0.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: ska-canvas
+Tags: block-theme, one-column, custom-colors, custom-typography
+*/
+
+/* 
+ * ⚠️ WARNING: DO NOT ADD CSS HERE.
+ * 
+ * This theme acts as a "Blank Canvas" for the Ska Design Engine.
+ * All styling is dynamically generated via Tailwind JIT Compiler
+ * and injected into the `<head>` of the site.
+ * 
+ * Adding CSS here violates the Clean Slate Architecture Protocol.
+ */

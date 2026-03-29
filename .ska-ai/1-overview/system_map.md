@@ -39,7 +39,7 @@ ska-ecosystem/ (mapped to app/public/)
 ## 4. MODULE REGISTRY & STATUS
 | App Module | Path | Responsibilities | Status |
 | :--- | :--- | :--- | :--- |
-| **Ska Blank Theme** | `themes/ska-blank-theme/` | Nullify WP CSS, Blank Canvas | 🔴 Pending |
+| **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Done (v1) |
 | **Ska Builder Core** | `plugins/ska-builder-core/`| Base Blocks, Admin Menu | 🟢 Done (v1) |
 | **Ska Design Engine** | `plugins/ska-no-code-design/`| Tailwind JIT, Inspector UI | 🔴 Setup Pending |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, Schema | 🔴 Arch Phase |
@@ -54,6 +54,11 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-03-29 - Hardening Ska Builder CSS Engine & Editor Parity:**
+  - **JIT Compiler Fractional Resolving:** Hỗ trợ tính tỷ lệ phần trăm (percent `%`) cho CSS width/height theo cấu trúc đuôi phân số của Tailwind CDN như `w-1/2` (50%), `w-1/3` (33.333333%).
+  - **Inline Element Fix (Atomic Reset):** Ấn định block Ska Button luôn khởi tạo bằng class Default Inline-Flex (`display: inline-flex; align-items: center; justify-content: center;`) để Button/Link tag có thể nhận diện và thích ứng các class margin padding (-mt-10) mà vẫn bám sát "Clean Slate".
+  - **Constrained Layout Nullification:** Trị dứt điểm căn bệnh Theme Default Content Size. Bằng cách gán `null` Layout trong `theme.json` và chèn base `margin: 0` từ JIT Compiler Reset CSS cho mọi Block (`[class*='wp-block-ska-builder']`), dỡ bỏ hoàn toàn đặc quyền `margin: auto` cấy ngầm vào khối.
+  - **Editor Context Cleanup:** Giải nén cờ CSS `margin: 0 !important;` mặc định trong `ska-editor-helper.js` bị trỏ lầm vào block con, khai thông các hiệu ứng `mt-`, `mb-` từ Tailwind CDN trên Editor.
 - **2026-03-28 - JIT Compiler Comprehensive Audit:**
   - **Color Palette (Critical):** Bổ sung đầy đủ 11 shade (50-950) cho 17 màu chromatic. Trước đó chỉ có 5 shade → shade thiếu fallback `#000000` (đen).
   - **Border Section:** Thêm `border-solid/dashed/dotted`, `border-{width}`, `border-t/r/b/l-{width}`, `border-{color}-{shade}`, `border-white/black/transparent`.
