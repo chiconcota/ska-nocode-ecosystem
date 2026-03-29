@@ -5,6 +5,10 @@
 - **Decision:** Xóa cờ `margin: 0 !important;` quá khích trong `ska-editor-helper.js` đối với các khối con của `.wp-block-ska-builder-container`. Điều này trả lại sự tự do (Specificity behavior) cho các class do Tailwind CDN sinh ra như `-mt-10` trong môi trường Editor.
 - **Decision:** Áp dụng chặt chẽ "Clean Slate Rule": Từ chối hỗ trợ các thông số ngụy tạo ngoài hệ đo lường chuẩn của Tailwind (như `-mt-50`). Người dùng bắt buộc phải dùng hệ quy chiếu chuẩn (như `-mt-48`, `-mt-52`) hoặc Arbitrary values (`-mt-[50px]`) để bảo vệ tính đồng nhất của Design Engine và giữ nguyên giá trị giáo dục (Selling Point) của hệ thống.
 
+## 2026-03-29 - Deployment & Build Ecosystem Standardization
+- **Decision:** Thống nhất sử dụng thư viện `node-archiver` (JS) làm công cụ đóng gói (Zip) duy nhất khi xuất bản Plugin thay cho các công cụ có sẵn của hệ điều hành (như `tar` hay `Compress-Archive` của Windows). Mọi thao tác đóng gói tệp tin sẽ được thực hiện thông qua script `build-zip.js`.
+- **Reason:** Các công cụ nén mặc định của Windows 10/11 thường sinh ra Metadata dị biệt, hoặc tạo cấu trúc root folder không liền mạch khiến hàm `unzip_file()` của WordPress (trên máy chủ Linux) thất bại trong việc định vị file kích hoạt plugin (gây ra lỗi "Tập tin của plugin không tồn tại"). `node-archiver` giúp thiết lập Stream tệp nén theo chuẩn công nghiệp, bảo đảm độ chính xác 100% khi PHP ZipArchive đọc vào.
+
 ## 2026-03-29 - Ska Canvas Theme Initialization & Architecture
 - **Decision:** Khởi tạo `ska-canvas` (Ska Blank Theme) làm vật chủ siêu nhẹ, loại bỏ hoàn toàn WP default CSS (wp-block-library, global-styles).
 - **Decision:** Tắt hoàn toàn FSE (Full Site Editing) qua `theme.json` để ngăn WordPress ép CSS layout.

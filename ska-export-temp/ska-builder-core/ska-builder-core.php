@@ -1,0 +1,44 @@
+<?php
+/**
+ * Plugin Name: Ska Builder Core
+ * Description: The core engine for Ska No-Code Builder.
+ * Version: 1.0.0
+ * Author: Ska Team
+ * Text Domain: ska-builder-core
+ *
+ * @package Ska_Builder_Core
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+// Define Constants
+define( 'SKA_CORE_PATH', plugin_dir_path( __FILE__ ) );
+define( 'SKA_CORE_URL', plugin_dir_url( __FILE__ ) );
+
+/**
+ * Load Modules
+ */
+function ska_builder_core_init() {
+	// 0. Utilities
+	require_once SKA_CORE_PATH . 'inc/utils/class-assets.php';
+
+	// 1. Data Engine
+	require_once SKA_CORE_PATH . 'inc/data-engine/data-engine.php';
+
+	// 2. Logic Engine
+	require_once SKA_CORE_PATH . 'inc/logic-engine/logic-engine.php';
+
+	// 3. Design Engine
+	require_once SKA_CORE_PATH . 'inc/design-engine/design-engine.php';
+
+	// 3. Blocks System
+	require_once SKA_CORE_PATH . 'blocks/init.php';
+
+	// 4. Admin Dashboard
+	require_once SKA_CORE_PATH . 'inc/admin-dashboard/admin-dashboard.php';
+
+	// 5. Demo Content (Dev only)
+	require_once SKA_CORE_PATH . 'inc/demo-content.php';
+}
+
+add_action( 'plugins_loaded', 'ska_builder_core_init' );
