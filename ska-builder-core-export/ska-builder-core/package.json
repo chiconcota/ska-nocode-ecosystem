@@ -1,0 +1,14 @@
+{
+    "name": "ska-builder-core",
+    "version": "1.0.0",
+    "description": "Ska Builder Core Plugin",
+    "scripts": {
+        "build": "wp-scripts build",
+        "start": "wp-scripts start",
+        "sync": "node scripts/sync-php.js"
+    },
+    "devDependencies": {
+        "@wordpress/icons": "^11.8.0",
+        "@wordpress/scripts": "^27.0.0"
+    }
+}

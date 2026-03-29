@@ -1,0 +1,56 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "ska-builder/text",
+    "version": "1.0.0",
+    "title": "Ska Text",
+    "category": "common",
+    "icon": "text",
+    "description": "A dynamic text block with JIT Tailwind support.",
+    "attributes": {
+        "content": {
+            "type": "string",
+            "default": "Hello World"
+        },
+        "tagName": {
+            "type": "string",
+            "default": "p"
+        },
+        "tailwindClasses": {
+            "type": "string",
+            "default": ""
+        },
+        "className": {
+            "type": "string",
+            "default": ""
+        },
+        "dynamic": {
+            "type": "object",
+            "default": {
+                "source": "text",
+                "key": ""
+            }
+        },
+        "logic": {
+            "type": "object",
+            "default": {
+                "enabled": false,
+                "key": "",
+                "operator": "==",
+                "value": ""
+            }
+        },
+        "customStyle": {
+            "type": "string",
+            "default": ""
+        }
+    },
+    "supports": {
+        "html": false,
+        "customClassName": false
+    },
+    "textdomain": "ska-builder-core",
+    "editorScript": "file:./index.js",
+    "render": "file:./render.php"
+}
+
