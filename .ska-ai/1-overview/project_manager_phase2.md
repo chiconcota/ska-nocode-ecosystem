@@ -40,7 +40,8 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - Đúc các khối nhập liệu: `<Input>`, `<Select>`, `<Form Wrapper>`. (Các khối này nằm trong `ska-builder-core`).
 - Đúc Cỗ máy bắt Sự Kiện (Trigger/Action): Trả lời câu hỏi "Submit xong thì làm gì?". (Ví dụ: `Insert Row` vào Ska Data Pro, Gửi Email báo cáo...).
 
-### 3.3. Tính Năng Độc Lập Mọi Thời Điểm (UI Features)
+### 3.3. Tính Năng Độc Lập Mọi Thời Điểm (UI Features & Canvas App)
 - **Theme Builder** (Lắp Header, Footer từ CPT `ska_template`).
+- **App Dashboards / Sub-Admin Portals (🔴 Pending):** Tạo Custom Post Type (`ska_portal`) trong `ska-builder-core`. Giúp User dùng luôn quyền trượng Editor để tự do kéo thả bộ khung giao diện trang quản lý Khóa Học, Thành Viên ra Frontend Portal thay vì ép phải xài trang cấu hình xám xịt của WordPress Admin.
 - **Custom Block / UI Symbols** (Khối tái sử dụng thiết kế).
-- *Lưu ý:* Mấy tính năng này bản chất là UI/Design (Lưu cục HTML), không cần đợi Phase 3, có thể tranh thủ làm luôn ngay trong Phase 2 bất cứ khi nào rảnh rỗi.
+- *Lưu ý:* Mấy tính năng này bản chất là Hệ Giao diện Canvas UI/Design (Lưu cục HTML), không cần đợi Phase 3, có thể tranh thủ làm luôn ngay trong Phase 2 bất cứ khi nào rảnh rỗi.

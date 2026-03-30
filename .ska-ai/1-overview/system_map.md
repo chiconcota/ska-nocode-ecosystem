@@ -54,6 +54,7 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-03-30 - Brainstorm: Frontend App Portals (Unified Canvas):** Chốt hạ tư tưởng kiến trúc không sử dụng `wp-admin` và code thuần PHP để làm trang quản lý cho Sub-admin (VD: Kế toán, Giảng viên). Sử dụng phương pháp Single Canvas: Mở rộng `ska-builder-core` tạo ra CPT `App Portals` chuyên biệt, kết hợp RBAC của Logic Engine và Form CRUD của Data Pro để user tự cấu hình Giao diện Dashboard quản trị bằng kéo thả hoàn toàn trên Frontend ngoài.
 - **2026-03-30 - Ska Data Pro Schema Core & UI:**
   - Hoàn tất Table CRUD (Tạo, Sửa Ký Danh, Xóa Bảng) và Column CRUD trên nền tảng `ska_data_dictionary` (Alias Label) giúp bảo vệ toàn vẹn MySQL query.
   - Tích hợp Dynamic App Category (`__table_info['group']`) vào Modals & Sidebar để tổ chức Database như một Workspace thư mục (E-Commerce, LMS, v.v).
@@ -189,6 +190,7 @@ ska-ecosystem/ (mapped to app/public/)
 
 ## 7. FUTURE ROADMAP (PLANNED) - PHASE 2: APP BUILDER ARCHITECTURE
 - **Ska Theme (Barebone):** Tạo WordPress theme trống, loại bỏ 100% CSS mặc định của WP, nhường toàn quyền layout cho khối Ska.
+- **Ska App Portals (CPT Dashboards):** Tích hợp CPT `ska_portal` vào `ska-builder-core` chuyên dùng để dựng các màn hình Frontend Admin (Dành cho Học viên, Giảng viên, Manager) sử dụng các Builder Blocks tiêu chuẩn và cô lập hoàn toàn khỏi hệ thống phân tích SEO (No-index by default) + Cơ chế chặn URL dựa trên Role (Logic Engine).
 - **Micro-Ecosystem Decoupling:** Tách `ska-builder-core` hiện tại thành 3 plugins độc lập (No-code Design, Data Pro, Logic Engine).
 - **Ska Data Pro (Flat Tables):** Khởi tạo hệ thống Database tự trị với bảng phẳng `ska_data_*`. Thoát ly hoàn toàn khỏi bảng `wp_postmeta`. Xây dựng Schema Manager và Query Builder trực quan.
 - **Ska Attributes (Key-Value Dynamic Panel):** Trong plugin Design Engine, thay thế `customStyle` bằng mảng `htmlAttributes` để rải thuộc tính HTML (`data-*`, `aria-*`, `style`...) vào thẻ wrapper Frontend.

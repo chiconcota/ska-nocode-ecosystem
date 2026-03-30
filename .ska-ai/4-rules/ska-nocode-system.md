@@ -22,10 +22,15 @@ Trước khi Code, Agent BẮT BUỘC nhận diện code mình viết sẽ rơi 
 - **Step 4 (Documentation Loop):** Code xong, cập nhật tài liệu ở `/3-ecosystem/[Plugin]/` và ném Log lịch sử vào `/2-memory/decision-log.md`.
 
 ## 3. FILE SIZE LIMIT (DIVIDE & CONQUER)
-- Cấm để file to vượt mốc 500 lines. 
+- Cấm để file to vượt mốc 700 lines. 
 - Giữ logic ở các Hook callback, thay vì ném code dồn toa vào constructor `__construct`.
 
 ## 4. STYLING & FRONTEND RULE
 - Nếu có Tailwind, chỉ xài Design Engine.
 - Ở ngoài Editor (Backend JSX), hạn chế hardcode CSS, bắt mọi thuộc tính phải quy về class Tailwind (Nguồn gốc: Single Source Of Truth).
 - Tránh ghi đè global nếu không có scope `.ska-builder [class*='wp-block-ska-builder']`. Tránh làm gãy Theme khác.
+
+## 5. QUY LUẬT TẠO TÀI LIỆU (ANTI-CLUTTER DIRECTIVE)
+- **Hạn chế tạo rác:** Yêu cầu các Agent Tuyệt đối KHÔNG ĐƯỢC tự ý tạo mới bất kỳ file Markdown (`.md`) nào ở thư mục gốc (Root) của project hoặc thư mục gốc của `.ska-ai` nếu chưa xin phép.
+- **Bắt buộc hỏi Ý kiến:** Nếu trong lúc thực hiện luồng /end_session hoặc theo lệnh từ Workflow mà nhận thấy CẦN PHẢI TẠO file mới nằm ngoài 4 thư mục lớn (`1-overview`, `2-memory`, `3-ecosystem`, `4-rules`) thì **BẮT BUỘC phải đặt câu hỏi xin phép User trước**. Nếu User trả lời OK/Yes thì mới được phép khởi tạo.
+- Khuyến nghị: Ưu tiên update trực tiếp (Replace_content) trên các tài liệu đã có sẵn trong 4 ngăn kéo để hạn chế sinh sôi nảy nở file rác.
