@@ -1,3 +1,13 @@
+## 2026-03-30 - Hệ tư tưởng: Frontend App Portals & Sub-Admin Dashboards (Unified Canvas Paradigm)
+- **Decision:** Chốt hạ Kiến trúc xây dựng Trang Quản trị (Admin/Sub-admin Dashboards) theo nguyên lý "Frontend App Portals" thay vì tự viết code PHP giao diện Backend truyền thống (wp-admin).
+- **Reason (Unified Canvas):** Mọi giao diện (bất kể của Học viên hay Quản lý) bản chất đều là "Giao diện người dùng" được xây dựng bằng cùng một bộ công cụ kéo thả duy nhất (`ska-builder-core` kết hợp Design Engine). Điểm khác biệt duy nhất làm nên một "Trang Admin" là Data Context và phân quyền RBAC (Role-Based Access Control) thông qua `ska-logic-engine`.
+- **Implementation Strategy:** 
+  1. TUYỆT ĐỐI KHÔNG sinh thêm một Plugin Builder mới chỉ để làm giao diện Admin để tránh gây nhũng nhiễu (Bloatware).
+  2. Dùng chính `ska-builder-core` để đăng ký một Custom Post Type (Ví dụ: `ska_portal` hoặc `App Portals`).
+  3. UI/UX (Layout tĩnh) do `ska-builder-core` và thẻ Tailwind tạo ra sẽ được lưu vào `post_content` của CPT này.
+  4. Data động đổ vào bảng/danh sách nằm chung Dashboard sẽ được kéo từ Khóa Ngoại (Foreign Keys) của Flat Tables trong `Ska Data Pro`.
+  5. CPT này sẽ mang cờ `publicly_queryable = false` để ẩn hoàn toàn khỏi Google Search Index (SEO Protection) và bảo vệ an ninh ở tầng `template_redirect` bằng phân quyền Role.
+
 ## 2026-03-30 - Table Categories & I18n UI Strategy
 - **Decision:** Đổi mới mô hình Table CRUD: Cung cấp tính năng "Thuộc Hệ Sinh Thái (Nhóm)" thông qua thuộc tính `__table_info['group']`.
 - **Reason:** Cấu trúc tổ chức Dữ liệu của Admin không bị vứt hỗn độn vào một rổ "Tùy Biến". Những Table rác tạo mới có thể được gom nhóm vào (Ví dụ: nhóm "booking" cùng các bảng Lịch khám gốc) để tiện API. Frontend Model Modal Dropdown cũng được Render Tự động quét các Group đang hoạt động.

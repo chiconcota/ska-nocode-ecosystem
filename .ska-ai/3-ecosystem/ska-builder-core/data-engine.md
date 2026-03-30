@@ -1,6 +1,7 @@
-# MODULE: DATA ENGINE
+# MODULE: DATA ENGINE (CORE DATA BINDER)
 > **Namespace:** `Ska\Builder\Data`
 > **Path:** `ska-builder-core/inc/data-engine/`
+> **Status:** 🟢 Hoạt động | Đã tích hợp với `ska-data-pro` (Phase 2).
 
 ## 1. Nhiệm vụ (Responsibility)
 Module này là "Trái tim" của hệ thống, chịu trách nhiệm lấy và xử lý dữ liệu động.
@@ -22,8 +23,9 @@ Module này là "Trái tim" của hệ thống, chịu trách nhiệm lấy và 
 ### A. Providers (Implemented)
 | Provider | Slug | Mô tả |
 | :--- | :--- | :--- |
+| **Ska Data** | `ska-data` | Tích hợp từ `ska-data-pro`. Lấy dữ liệu từ mảng Flat Tables (`ska_data_xyz`). (*New Phase 2*) |
 | **WP Post** | `post` | Lấy dữ liệu Post (title, content, id, meta). |
-| **SCF** | `scf` | Lấy dữ liệu từ Secure Custom Fields (ACF). Hỗ trợ `term_{id}`, `user_{id}`. |
+| **SCF (ACF)** | `scf` | ⚠️ **(Legacy - Ít Dùng)** Lấy dữ liệu Custom Fields (Postmeta EAV cũ) mục đích hỗ trợ Cũ. *Luật: App mới nên xài Ska Data*. |
 | **Term** | `term` | Lấy dữ liệu Taxonomy Term (name, slug, desc). |
 | **User** | `user` | Lấy dữ liệu User (name, email, avatar). |
 
