@@ -19,7 +19,7 @@ Bước 3. **Ghi sổ quyết định (Decision Log , System Map & Update):**
      - **Tình trạng Plugin/Theme:** Chuyển trạng thái từ 🔴 Pending -> 🟡 In Progress -> 🟢 Done trong bảng Module Registry.
      - **Change Log:** Thêm dòng gạch đầu dòng ngắn ngọn cho ngày cập nhật.
    -  Tìm, Đọc và cập nhật file module tương ứng trong folder '.ska-ai\3-ecosystem' đã sửa trong phiên làm việc.
-   - cập nhật git và push lên github cho dự án sau mỗi phiên làm việc.
+   - Cập nhật git và push lên github cho dự án sau mỗi phiên làm việc.
  
 Bước 4. **Xác nhận kết thúc:**
    - Thông báo rõ ràng: "Sổ bộ nhớ App Builder đã được niêm phong. 
