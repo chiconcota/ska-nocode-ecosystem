@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # SKA APP BUILDER RULES (v2.0.0)
 @target: Ska Micro-Ecosystem | @architecture: 4 Plugins + 1 Theme | @ai_token_saving: Maximum (Decoupled Focus)
 
@@ -21,7 +25,7 @@ Trước khi Code, Agent BẮT BUỘC nhận diện code mình viết sẽ rơi 
 - **Step 4 (Documentation Loop):** Code xong, cập nhật tài liệu ở `/3-ecosystem/[Plugin]/` và ném Log lịch sử vào `/2-memory/decision-log.md`.
 
 ## 3. FILE SIZE LIMIT (DIVIDE & CONQUER)
-- Cấm để file to vượt mốc 500 lines. 
+- Cấm để file to vượt mốc 700 lines. 
 - Giữ logic ở các Hook callback, thay vì ném code dồn toa vào constructor `__construct`.
 
 ## 4. STYLING & FRONTEND RULE

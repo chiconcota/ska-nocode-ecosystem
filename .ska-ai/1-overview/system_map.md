@@ -42,7 +42,7 @@ ska-ecosystem/ (mapped to app/public/)
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Done (v1) |
 | **Ska Builder Core** | `plugins/ska-builder-core/`| Base Blocks, Admin Menu | 🟢 Done (v1) |
 | **Ska Design Engine** | `plugins/ska-no-code-design/`| Tailwind JIT, Inspector UI | 🔴 Setup Pending |
-| **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, Schema, Templates | 🟡 In Progress |
+| **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, Schema, Templates | 🟡 In Progress (Core Done) |
 | **Ska Logic Engine** | `plugins/ska-logic-engine/`| If/Foreach Tags, Workflows | 🔴 Plan Phase |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API | 🟢 Done (v1) |
 
@@ -54,6 +54,10 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-03-30 - Ska Data Pro Schema Core & UI:**
+  - Hoàn tất Table CRUD (Tạo, Sửa Ký Danh, Xóa Bảng) và Column CRUD trên nền tảng `ska_data_dictionary` (Alias Label) giúp bảo vệ toàn vẹn MySQL query.
+  - Tích hợp Dynamic App Category (`__table_info['group']`) vào Modals & Sidebar để tổ chức Database như một Workspace thư mục (E-Commerce, LMS, v.v).
+  - Hoãn thực thi Quốc tế hóa I18n cho đến giai đoạn Packaging để tối đa tốc độ code MVP.
 - **2026-03-29 - Phase 2 (Ska Data Pro) Initialization:** Brainstorm kết thúc. Chốt kiến trúc Flat Tables, Template Gallery, Data Providers (`wp_users`, WooCommerce). Khởi tạo giao diện Dashboard Admin bằng Tailwind UI tĩnh. Cập nhật roadmap tại `project_manager_phase2.md`.
 - **2026-03-29 - Hardening Ska Builder CSS Engine & Editor Parity:**
   - **JIT Compiler Fractional Resolving:** Hỗ trợ tính tỷ lệ phần trăm (percent `%`) cho CSS width/height theo cấu trúc đuôi phân số của Tailwind CDN như `w-1/2` (50%), `w-1/3` (33.333333%).

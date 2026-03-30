@@ -1,5 +1,11 @@
+## 2026-03-30 - Table Categories & I18n UI Strategy
+- **Decision:** Đổi mới mô hình Table CRUD: Cung cấp tính năng "Thuộc Hệ Sinh Thái (Nhóm)" thông qua thuộc tính `__table_info['group']`.
+- **Reason:** Cấu trúc tổ chức Dữ liệu của Admin không bị vứt hỗn độn vào một rổ "Tùy Biến". Những Table rác tạo mới có thể được gom nhóm vào (Ví dụ: nhóm "booking" cùng các bảng Lịch khám gốc) để tiện API. Frontend Model Modal Dropdown cũng được Render Tự động quét các Group đang hoạt động.
+- **Decision (Data Schema Core):** Bản thân Physical database table sẽ giữ nguyên tên slug hệ thống `ska_data_*`. Tính năng Rename đổi Ký danh, Biểu tượng được thực hiện thông qua JSON map của `ska_data_dictionary` thay vì `ALTER TABLE` nhằm duy trì 100% tính toàn vẹn câu lệnh SQL Query.
+- **Decision (Internationalization - i18n):** Tạm hoãn hệ thống GNU Gettext `__()` ở Giai đoạn MVP.
+- **Reason:** Quyết tâm giữ nguyên Code Base = Hardcoded Vietnamese để tối đa hóa "Time to value" và sự tường minh Code. Giai đoạn sau (Vận hành), chạy Scripts Regex quét và bọc i18n, kết hợp AI generate `.po`, `.mo` phục vụ mục đích Pitching (Gọi Vốn) & Bán Global Plugin. Lời giải này giải phóng nguồn lực của Coder.
+
 ## 2026-03-29 - Ska Data Pro Initialization & UX Strategy
-- **Decision:** Khởi tạo plugin `ska-data-pro` làm trung tâm Database (Flat Tables) của hệ sinh thái Ska App Builder.
 - **Decision (UX):** Áp dụng mô hình UX "Airtable-like". Giấu toàn bộ logic phức tạp (SQL, Hooks) xuống Backend. Giao diện quản lý Schema phải trực quan dạng "Tạo bộ dữ liệu".
 - **Decision (Data Templates Feature):** Phát triển tính năng "Pre-built Data Templates". Cung cấp sẵn các bộ Schema (Bảng & Cột) chuẩn cho các mô hình: E-Commerce, Học trực tuyến (LMS), Đặt lịch (Booking), Bất động sản (Real Estate).
 - **Automation:** Khi cài đặt Template, hệ thống sẽ tự động cấu hình Table và bơm sẵn Dummy Data (Sample Data).
