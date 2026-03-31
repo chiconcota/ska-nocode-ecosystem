@@ -1,5 +1,5 @@
 # PROJECT MANAGER: PHASE 2 (SKA DATA PRO) & TẦM NHÌN HỆ SINH THÁI
-@status: 🔴 Kế hoạch Đã duyệt | @last_update: 2026-03-29 | @context: Brainstorming Session Log
+@status: 🟡 In Progress | @last_update: 2026-04-01 | @context: Core Architecture & Roadmap
 
 ---
 
@@ -22,18 +22,18 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - Xây dựng Cỗ máy khởi chạy câu SQL thô từ Hook `apply_filters('ska_data_query', ...)` thông qua `Query_Builder`.
 - Mở khóa tính năng gõ tay `{{ska:product_price}}` vào khối Ska Text thông qua `Ska_Provider` cắm trực tiếp vào Data Engine của lõi Builder.
 
-### 2.3. Data Providers / Thích Ứng Mở Rộng
+### 2.3. Data Providers / Thích Ứng Mở Rộng - 🟢 [HOÀN TẤT]
 - Xây dựng cơ chế Adapter để kéo dữ liệu từ nhiều Nguồn: 
-  - Nguồn nội bộ: `Ska Native Flat Tables`
-  - Nguồn Core WP: `WP Posts`, `WP Users`
-  - Nguồn Ngoại lai: `WooCommerce` (Không copy data Woo qua bảng Ska, mà dùng Adapter để đọc trực tiếp bằng `wc_get_products`).
+  - Nguồn nội bộ: `Ska Native Flat Tables` (Đã có sẵn).
+  - Nguồn Core WP: Tích hợp thành công `WP Posts`, `WP Users` thẳng vào Cột Relation thông qua Bypass Layer tại Data Fetcher để đạt tốc độ O(1) query.
+  - Nguồn Ngoại lai: Xây dựng thành công Provider POC khởi chạy tại `plugins_loaded` để sẵn sàng cho `WooCommerce` hoặc bất kì Custom API nào.
 
-### 2.4. DataGrid: Nâng Cấp Hệ Sinh Thái RDBMS - 🔴 [Pending]
-- Triển khai Cột **Tham Chiếu Nối Bảng (Reference / Foreign Key)**: Cho phép nối bảng Sản Phẩm với Danh Mục hoặc Users thông qua giao diện Popover chọn lựa.
-- Khai mở Cột **Tính Toán Cục Bộ (Formula / Compute)**: Nghiên cứu khả năng tính toán Virtual Columns hoặc Render bằng PHP (Data Engine) vì Flat Tables không lưu giá trị Formula trực tiếp thành cột vật lý.
-- Triển khai **Ô Tìm Kiếm Tổng hợp (Global Search Box)** cho bảng dữ liệu.
-- Bật Menu **Lọc (Filter)**: Chọn Cột -> Điều kiện Lọc -> Giá Trị.
-- Bật Sắp Xếp (Sort - A-Z, Order) để tối ưu sức mạnh thao tác lên hàng nghìn Rows.
+### 2.4. DataGrid: Nâng Cấp Hệ Sinh Thái RDBMS - 🟡 [IN PROGRESS]
+- 🟢 **Tham Chiếu Nối Bảng (Relation)**: Cho phép nối bảng Sản Phẩm với Danh Mục hoặc Users thông qua giao diện Popover chọn lựa (Hỗ trợ Data Flat Tables + WP Core).
+- 🟢 **Bộ Công Cụ Lưới (Grid Controls)**: Hoàn tất xây dựng thanh URL-driven cho Lọc (Filter), Sắp Xếp (Sort), và Gộp Nhóm (Group Zero-overhead).
+- 🔴 **Cột Tra Cứu (Rollup / Lookup) [TASK NGÀY MAI]**: Xây dựng loại cột mới cho phép màn hình Admin "soi ống nhòm" sang Bảng đích của cột Relation để tự động hiển thị dữ liệu (Vd: Chọn User -> Tự hiện Slug/SĐT của User đó).
+- 🔴 **Tính Toán Cục Bộ (Formula / Compute) [TASK NGÀY MAI]**: Nghiên cứu khả năng tính toán Virtual Columns hoặc Render bằng PHP (Data Engine) dựa trên các giá trị có trong Grid (Ví dụ: Số lượng * Đơn giá).
+- 🔴 Triển khai Ô Tìm Kiếm Tổng hợp (Global Search Box) cho bảng dữ liệu.
 
 ### 2.5. Đại Tu Codebase (The Great Refactor) - 🔴 [Pending]
 - Khi Ska Data Pro hoàn tất các tính năng cốt lõi (Field Types, Lọc, Tìm Kiếm), tiến hành cấu trúc lại toàn bộ Front-end JS của DataGrid (`admin-datagrid.js`).
