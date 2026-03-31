@@ -9,7 +9,8 @@
 
 ## 2. WP HOOKS EXPOSED (GIAO TIẾP XUYÊN PLUGIN)
 *Dự kiến triển khai trong Phase 2:*
-- `apply_filters( 'ska_data_query', $results, $query_args )`: Hook để Logic Engine hoặc Design Engine gọi dữ liệu từ Data Pro mà không cần hardcode gọi Class.
+- `apply_filters( 'ska_data_query', $results, $query_args )`: Hook để Logic Engine hoặc Design Engine gọi dữ liệu danh sách từ Data Pro.
+- `apply_filters( 'ska_data_get_row', null, $table, $id )`: Hook truy xuất nhanh 1 dòng dữ liệu duy nhất bằng Khóa chính.
 - `do_action( 'ska_data_schema_installed', $template_id )`: Hook báo hiệu một Template (vd: ecommerce) vừa được cài đặt thành công.
 - `apply_filters( 'ska_data_get_schema_registry', $schemas )`: Hook trả về cấu trúc mảng của tất cả các Bảng đang tồn tại (để Frontend Dynamic Tag Picker liệt kê ra Dropdown).
 
@@ -18,3 +19,6 @@
 2. **Ký Danh Bảng Thông Minh (Table Alias):** Bản thân DB vật lý MySQL không thay đổi Tên. Tất cả Nhãn Tiếng Việt, Icon và Group App Category được định cấu hình bằng mảng `__table_info` cắm vào JSON `ska_data_dictionary`.
 3. **Môi Trường Quốc Tế (i18n):** Ngành mã lõi (Plugin) hiện đang Code Base = Tiếng Việt cho quá trình Fast-MVP. Tính năng Global sẽ được chuyển dịch tự động qua WordPress `__()` bằng file `.po` trong Phase Packaging cuối.
 4. **Data Retrieval (Query):** Dùng `Class_Query_Builder` nhận Array conditions từ Hook, tự Generate câu lệnh raw SQL `SELECT * FROM ska_data_xyz WHERE...` và trả về mảng dữ liệu sạch (Clean Array).
+5. **Data Engine Integration:** File `class-ska-provider.php` (Định danh Prefix `ska:`) làm Middleware cho phép Hệ sinh thái Ska Builder Core móc nối trực tiếp các Cột phẳng (Flat fields). Nó trả Format nguyên thủy: `Boolean` bằng `1/0`, `Media Gallery` và `Multi Select` bằng chuỗi mảng CSV.
+6. **Query Builder UX (Auto-Prefix):** DB Engine tự động ghép rào bảo mật cộng phân giải tiền tố `ska_data_` vào các param `table` tĩnh từ Data API để hỗ trợ Coder Dev không bao giờ gặp lỗi ngớ ngẩn No Table Detected.
+7. **UI Component (DataGrid):** Gạt phăng HTML form truyền thống. Mọi tương tác Input (Boolean CSS Switch, Media Uploads) đều dùng công nghệ Live AJAX 1-Click. Quản lý chặt trật tự `mousedown` để không va chạm `z-index` với Component gốc `wp.media` của WP.

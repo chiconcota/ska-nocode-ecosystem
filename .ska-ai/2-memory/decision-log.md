@@ -1,5 +1,14 @@
+## 2026-03-31 - Cơ sở dữ liệu Quan Hệ (Relational DB) & Cột Tính Toán (Formula)
+- **Decision:** Tích hợp tính năng Nối Bảng (Reference) vào DataGrid đại diện cho Database Quan Hệ. Áp dụng chuẩn Flat Table: không dùng FOREIGN KEY constraint cứng để tránh Locking DB, dùng cột dạng `TEXT` lưu list ID cách nhau bởi dấu phẩy để hỗ trợ cả quan hệ 1-N (Multi-reference). UI sẽ là Popover Live Search AJAX.
+- **Decision:** Chấp thuận thiết kế Cột Công Thức (Formula). Không lưu thẳng thành cột dạng `GENERATED ALWAYS AS` của MySQL (vì khó tương thích chéo version), mà Render On-the-fly (Tính toán bằng Data Engine PHP Backend) lúc Frontend đọc dữ liệu.
+- **Decision:** Kế hoạch này được đẩy sang Session tiếp theo.
+
+## 2026-03-31 - DataGrid UX/UI & System Auto-Prefix
+- **Decision (Boolean Toggle):** Loại bỏ Checkbox thuần tẻ nhạt, xây dựng Component CSS Toggle Switch dựa vào Tailwind. Chỉ sử dụng hàm API 1-Click (Gạt -> Gọi AJAX -> Lưu ngầm) để loại bỏ Nút "Lưu" thừa thãi.
+- **Decision (WP Media Z-index Collision):** Xử lý triệt để bug Popover của Datagrid bị xóa tự động khi người dùng nhấp vào khung Modal Chọn Ảnh `wp.media` (do Focus events). Áp dụng cờ `isMediaOpen` và check `.media-modal` cực kỳ bulletproof.
+- **Decision (Dev UX Auto-Prefix):** Cỗ máy Query Builder tự động gắn tiền tố `ska_data_` nếu Dev gõ thiếu (ví dụ gõ `products` thay vì `ska_data_products`). Đảm bảo an toàn bảo mật (Ngăn chặn đọc trộm `wp_users` trái phép) mà vẫn đem lại trải nghiệm lập trình thân thiện, nhàn rỗi.
+
 ## 2026-03-30 - Hệ tư tưởng: Frontend App Portals & Sub-Admin Dashboards (Unified Canvas Paradigm)
-- **Decision:** Chốt hạ Kiến trúc xây dựng Trang Quản trị (Admin/Sub-admin Dashboards) theo nguyên lý "Frontend App Portals" thay vì tự viết code PHP giao diện Backend truyền thống (wp-admin).
 - **Reason (Unified Canvas):** Mọi giao diện (bất kể của Học viên hay Quản lý) bản chất đều là "Giao diện người dùng" được xây dựng bằng cùng một bộ công cụ kéo thả duy nhất (`ska-builder-core` kết hợp Design Engine). Điểm khác biệt duy nhất làm nên một "Trang Admin" là Data Context và phân quyền RBAC (Role-Based Access Control) thông qua `ska-logic-engine`.
 - **Implementation Strategy:** 
   1. TUYỆT ĐỐI KHÔNG sinh thêm một Plugin Builder mới chỉ để làm giao diện Admin để tránh gây nhũng nhiễu (Bloatware).

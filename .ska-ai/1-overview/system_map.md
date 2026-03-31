@@ -41,10 +41,10 @@ ska-ecosystem/ (mapped to app/public/)
 | :--- | :--- | :--- | :--- |
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Done (v1) |
 | **Ska Builder Core** | `plugins/ska-builder-core/`| Base Blocks, Admin Menu | 🟢 Done (v1) |
-| **Ska Design Engine** | `plugins/ska-no-code-design/`| Tailwind JIT, Inspector UI | 🔴 Setup Pending |
+| **Ska Design Engine** | `plugins/ska-no-code-design/`| Tailwind JIT, Inspector UI | 🟢 Done (v1) |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, Schema, Templates | 🟡 In Progress (Core Done) |
 | **Ska Logic Engine** | `plugins/ska-logic-engine/`| If/Foreach Tags, Workflows | 🔴 Plan Phase |
-| **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API | 🟢 Done (v1) |
+| **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API (JSON Export) | 🟡 In Progress (html2tailwind Done) |
 
 ## 5. GLOBAL CONSTRAINTS (FOR AI)
 1. **Micro-Ecosystem Boundary:** Plugins DO NOT call each other's classes directly. They communicate exclusively via WP `do_action` and `apply_filters`.
@@ -54,6 +54,11 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-03-31 - Relational DB (Reference) & Compute Fields (Formula):** Lên kế hoạch mô hình hóa Dữ liệu Quan hệ cho Flat Tables. Chốt lưu khóa ngoại (Foreign Keys) dưới dạng chuỗi `TEXT` CSV để đáp ứng Multi-reference (1-N). Chốt phương án Render cột Formula thông qua hàm suy luận (Virtual Column logic) lúc Runtime Backend thay vì ép chết SQL format.
+- **2026-03-31 - Ska Data Pro UX Vanguard:**
+  - Hoàn thiện xử lý va chạm Z-index giữa WP Media Modal và Custom JS Popover của DataGrid.
+  - Phế bỏ Default Checkbox, triển khai Component CSS Toggle Switch (1-click trigger AJAX) để tối đa hóa UX.
+  - Tự động hóa lớp Query_Builder: Auto-prefix `ska_data_` nếu Dev truy xuất bằng Alias ngắn nhằm nâng cao độ thân thiện của APIs.
 - **2026-03-30 - Brainstorm: Frontend App Portals (Unified Canvas):** Chốt hạ tư tưởng kiến trúc không sử dụng `wp-admin` và code thuần PHP để làm trang quản lý cho Sub-admin (VD: Kế toán, Giảng viên). Sử dụng phương pháp Single Canvas: Mở rộng `ska-builder-core` tạo ra CPT `App Portals` chuyên biệt, kết hợp RBAC của Logic Engine và Form CRUD của Data Pro để user tự cấu hình Giao diện Dashboard quản trị bằng kéo thả hoàn toàn trên Frontend ngoài.
 - **2026-03-30 - Ska Data Pro Schema Core & UI:**
   - Hoàn tất Table CRUD (Tạo, Sửa Ký Danh, Xóa Bảng) và Column CRUD trên nền tảng `ska_data_dictionary` (Alias Label) giúp bảo vệ toàn vẹn MySQL query.
