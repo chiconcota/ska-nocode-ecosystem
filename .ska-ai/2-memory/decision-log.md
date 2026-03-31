@@ -1,3 +1,24 @@
+## 2026-04-01 - Tích hợp WP Core (Posts & Users) vào Relation Column
+- **Decision:** Chấp thuận việc móc trực tiếp bảng vật lý của WordPress (`wp_posts` và `wp_users`) vào Cột "Tham Chiếu Nối Bảng" (Relation) của Ska Data Pro. Đặt chế độ Bypass bảo mật tĩnh cho 2 bảng này tại `class-admin-ajax.php` và `class-data-fetcher.php`.
+- **Reason:** Việc đi vòng qua Data Providers (Adapter) ở Layer hiển thị (như ban đầu đã test `Test_Provider`) là KHÔNG ĐỦ hiệu năng để giải bài toán `WHERE IN` của CSDL Quan Hệ. SQL Native là con đường duy nhất để giải quyết N+1 Queries khi User lọc/gộp (Sort/Group/Filter) cột Liên kết.
+- **Data Hydration Strategy:** Các cột Rollup (Ví dụ lấy Slug, Lấy Ảnh) từ các posts/users này sẽ được xử lý ở Layer phía trên (Logic Engine Frontend hoặc Cột Tra Cứu của Grid) thay vì lưu chết vào Flat tables để giữ đúng triết lý Decoupled Data.
+
+## 2026-04-01 - Chốt Kiến trúc Lõi: Application-Level Relation & Formula Engine (Brainstorm)
+- **Decision (Core Architecture):** Tiếp tục duy trì hệ sinh thái CSDL "Bảng Phẳng" (Flat Tables) kết hợp với Cơ chế "Quan hệ mềm ở tầng Ứng dụng" (Application-Level Relation) thay vì Foreign Key cứng của MySQL hoặc EAV Postmeta. Lưu ID dưới dạng CSV thô (ví dụ: `15, 20`).
+- **Reason:** Đảm bảo khả năng Drop Column/Table an toàn tuyệt đối từ Giao diện Admin mà không kích hoạt Database Locking của SQL. Khai thác tốc độ đọc 1-chạm cực lẹ của cấu trúc Bảng Rộng (Wide Tables) để tối ưu hệ thống App-Scale của Ska App Builder.
+- **Decision (Formula Engine Compatibility):** Cách duy nhất để Formula Engine có thể thực hiện phép tính chéo bảng (như `SUM(Đơn hàng)`) trên kiến trúc này là dời luồng **Phân giải Quan hệ (Resolution)** xuống tận đáy của Data Engine (Hàm `Data_Fetcher::get_table_data`).
+- **Data Flow:** PHP Query Builder xuất mảng Flat -> Tự động đánh hơi cột `relation` -> Fetch ngay dữ liệu Bảng Đích bằng 1 lệnh `WHERE IN` -> Cấy (Enrich) dữ liệu vào Payload (biến IDs thành `[{id:15, label:"Tên"}]`) -> Bắn qua Hook `apply_filters('ska_data_query')` -> Các tầng trên như Admin UI, Vòng lặp Giao diện Web, và Cỗ máy Formula cứ việc lấy xài, không cần lo nghĩ về Logic.
+
+## 2026-04-01 - Extensibility POC (Data Providers) & Logic Engine Root Hooking
+- **Decision (Plugin Load Order fix):** Ràng buộc tiến trình nạp Adapter (vd: `class-ska-provider.php` và `class-test-provider.php`) vào giai đoạn Event Loop `plugins_loaded`.
+- **Reason:** Trước đây, do WordPress nạp file `ska-data-pro.php` (A-Z) trước khi cấu trúc xương sống `ska-builder-core` hoàn thiện, chốt chặn Fatal Error `interface_exists` gạt bỏ hoàn toàn bộ sậu Provider, làm vòng lặp Data Backend trở nên vô dụng bấy lâu nay. Việc đổi order nạp sẽ khắc phục triệt để và vững chắc mô hình Extensible Data Adapter (Chuẩn bị làm móng cho WordPress Rest User và WooCommerce Products List).
+
+## 2026-04-01 - Pivot Chiến Lược: Tạm hoãn Formula & Nâng cấp DataGrid Controls
+- **Decision:** Tạm hoãn hệ thống Formula (Virtual Column) do độ phức tạp cao, ưu tiên chuyển hỏa lực phát triển sang các công cụ điều khiển Bảng Dữ Liệu cốt lõi (DataGrid Controls): Lọc (Filter), Sắp Xếp (Sort), Nhóm (Group).
+- **Reason:** Đảm bảo trải nghiệm xương sống của một nền tảng dữ liệu "Airtable-like". Nếu Data cứng không thể Lọc và Nhóm thì các tính năng râu ria khác vô nghĩa.
+- **Decision (Architecture):** Toàn bộ trạng thái Lọc, Xếp, Nhóm đều được mã hóa (Driven) lên URL Parameters (GET requests: `?filter_field=...&orderby=...`). Điều này cho phép user Bookmark link, tạo ra các "Views" tĩnh dễ dàng chia sẻ nội bộ mà không đòi hỏi thêm cơ sở dữ liệu State Management ở Frontend JS.
+- **Decision (Group Rendering):** Thay vì dùng PHP để lồng ghép và parse mảng JSON mệt nhọc ở Backend, Tính năng "Gộp Nhóm (Group)" thực thi theo triết lý nhẹ: MySQL chỉ việc SORT vật lý theo cột. Tầng Frontend PHP nhận dữ liệu, chèn vào các Dòng Divider ngang (Group Headers) mỗi khi phát hiện bước nhảy đổi giá trị ở dòng kế tiếp. Cách tiếp cận này hiệu suất vượt trội và UI Code mỏng đi đáng kể.
+
 ## 2026-03-31 - Cơ sở dữ liệu Quan Hệ (Relational DB) & Cột Tính Toán (Formula)
 - **Decision:** Tích hợp tính năng Nối Bảng (Reference) vào DataGrid đại diện cho Database Quan Hệ. Áp dụng chuẩn Flat Table: không dùng FOREIGN KEY constraint cứng để tránh Locking DB, dùng cột dạng `TEXT` lưu list ID cách nhau bởi dấu phẩy để hỗ trợ cả quan hệ 1-N (Multi-reference). UI sẽ là Popover Live Search AJAX.
 - **Decision:** Chấp thuận thiết kế Cột Công Thức (Formula). Không lưu thẳng thành cột dạng `GENERATED ALWAYS AS` của MySQL (vì khó tương thích chéo version), mà Render On-the-fly (Tính toán bằng Data Engine PHP Backend) lúc Frontend đọc dữ liệu.

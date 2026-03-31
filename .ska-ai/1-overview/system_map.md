@@ -54,6 +54,19 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-01 - ✅ [DONE] Triển khai DataGrid Relation & Formula Engine Ready:**
+  - Hoàn tất xây dựng Cổng Nối Bảng (Relation) theo chiến lược lưu CSV ID tại Bảng Phẳng `ska_data_*`.
+  - Hook phân giải Enrichment Resolution được cấy êm ái tại tầng Lõi Data Fetcher, giúp đái ra cục JSON Objects sẵn sàng cho API / Logic Engine thụ hưởng (tránh giật lag Query 1-N ở View Layer).
+  - Cập nhật Bypass bảo mật ở Backend Data Fetcher và AJAX Search để hỗ trợ tích hợp trực tiếp bảng truyền thống lõi của WordPress (`$wpdb->posts`, `$wpdb->users`) vào thẳng tính năng Cột Tham Chiếu (Relation) mà không cần cấu trúc Table mới. Mảng `json` phân giải sẽ tự động ánh xạ cấu trúc (Title, Name) thông minh.
+  - Hoàn tất UI Popover Relation Search (Debounce) cho Grid Dashboard. 
+  - Đóng gói Update sửa lỗi Cache Click Outsite Dropdown UI DataGrid và bổ sung đổi Label Icon `dashicons-edit` (Bút chì) cho Cột Editable.
+- **2026-04-01 - Extensibility POC (Data Providers) & Logic Engine Hooking:**
+  - Sửa lỗi nghiêm trọng (Plugin Load Order Bubble): Các Data Provider hiện tại bị WordPress Alphabetical Load Order bóp chế chết từ trong nôi do gọi quá sớm. Cập nhật dời luồng Load Adapter vào `init()` (`plugins_loaded`) để tương thích với Ska Builder Core.
+  - Sửa lỗi Frontend không render biến: Bật Filter `the_content` (độ ưu tiên 90) cho Logic Engine để tự động biên dịch `{{...}}` ngoài Frontend.
+- **2026-04-01 - Tạm Hoãn Formula Component & Hoàn thiện DataGrid Controls (Phân tích Data/UI):**
+  - Pivot kiến trúc từ việc triển khai "Virtual Column Formula Engine" tốn kém thành việc tập trung hoàn thiện 3 tính năng DataGrid then chốt: Filter, Sort, Group.
+  - Xây dựng DataGrid View State (URL-Driven) cho phép Frontend chia sẻ và load các Bộ lộc data trực tiếp thông qua URL `?filter_field=x&orderby=y`.
+  - Triển khai "Nhóm dữ liệu" tối ưu (Zero-overhead Grouping): Data Backend dùng MySQL `ORDER BY` thuần túy, và PHP tự sinh dải Heading chia nhóm mỗi khi phát hiện bước nhảy dữ liệu nhằm giữ cho Data flow không bị phình to dưới dạng nested Array tĩnh.
 - **2026-03-31 - Relational DB (Reference) & Compute Fields (Formula):** Lên kế hoạch mô hình hóa Dữ liệu Quan hệ cho Flat Tables. Chốt lưu khóa ngoại (Foreign Keys) dưới dạng chuỗi `TEXT` CSV để đáp ứng Multi-reference (1-N). Chốt phương án Render cột Formula thông qua hàm suy luận (Virtual Column logic) lúc Runtime Backend thay vì ép chết SQL format.
 - **2026-03-31 - Ska Data Pro UX Vanguard:**
   - Hoàn thiện xử lý va chạm Z-index giữa WP Media Modal và Custom JS Popover của DataGrid.
