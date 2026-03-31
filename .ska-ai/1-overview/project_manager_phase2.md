@@ -13,20 +13,35 @@
 ## 2. ROADMAP PHASE 2: SKA DATA PRO (DATABASE ENGINE)
 Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập hệ thống truy xuất dữ liệu (Query).
 
-### 2.1. Template Gallery & Schema Manager (Đang làm)
+### 2.1. Template Gallery & Schema Manager - 🟢 [HOÀN TẤT]
 - Màn hình chọn Mẫu dữ liệu (Data Templates: E-Commerce, LMS, Booking...)
 - Kịch bản: Bấm chọn Mẫu -> Chạy SQL ngầm -> Tạo bảng `ska_data_*` -> Bơm dữ liệu giả (Dummy Data) -> Hiện giao diện quản lý dạng Lưới (Grid).
-- **Task Hiện tại:** Xây dựng cục xử lý AJAX và Class Database (`dbDelta`).
+- **Trạng thái:** Toàn bộ DB Engine (dbDelta), Form CRUD (Thêm/Sửa/Xóa Schema và Bản ghi) qua Ajax đã tích hợp thành công với Dashboard tĩnh.
 
-### 2.2. Query Builder & Cỗ Máy Nội Suy (Backend Dynamic Content)
-- Xây dựng Cỗ máy đọc dữ liệu thông qua Hook `apply_filters('ska_data_query', ...)`.
-- Mở khóa tính năng gõ tay `{{product_price}}` vào khối Ska Text để nó tự đổi thành giá tiền trên Frontend.
+### 2.2. Query Builder & Cỗ Máy Nội Suy (Backend Dynamic Content) - 🟢 [HOÀN TẤT]
+- Xây dựng Cỗ máy khởi chạy câu SQL thô từ Hook `apply_filters('ska_data_query', ...)` thông qua `Query_Builder`.
+- Mở khóa tính năng gõ tay `{{ska:product_price}}` vào khối Ska Text thông qua `Ska_Provider` cắm trực tiếp vào Data Engine của lõi Builder.
 
 ### 2.3. Data Providers / Thích Ứng Mở Rộng
 - Xây dựng cơ chế Adapter để kéo dữ liệu từ nhiều Nguồn: 
   - Nguồn nội bộ: `Ska Native Flat Tables`
   - Nguồn Core WP: `WP Posts`, `WP Users`
   - Nguồn Ngoại lai: `WooCommerce` (Không copy data Woo qua bảng Ska, mà dùng Adapter để đọc trực tiếp bằng `wc_get_products`).
+
+### 2.4. DataGrid: Nâng Cấp Hệ Sinh Thái RDBMS - 🔴 [Pending]
+- Triển khai Cột **Tham Chiếu Nối Bảng (Reference / Foreign Key)**: Cho phép nối bảng Sản Phẩm với Danh Mục hoặc Users thông qua giao diện Popover chọn lựa.
+- Khai mở Cột **Tính Toán Cục Bộ (Formula / Compute)**: Nghiên cứu khả năng tính toán Virtual Columns hoặc Render bằng PHP (Data Engine) vì Flat Tables không lưu giá trị Formula trực tiếp thành cột vật lý.
+- Triển khai **Ô Tìm Kiếm Tổng hợp (Global Search Box)** cho bảng dữ liệu.
+- Bật Menu **Lọc (Filter)**: Chọn Cột -> Điều kiện Lọc -> Giá Trị.
+- Bật Sắp Xếp (Sort - A-Z, Order) để tối ưu sức mạnh thao tác lên hàng nghìn Rows.
+
+### 2.5. Đại Tu Codebase (The Great Refactor) - 🔴 [Pending]
+- Khi Ska Data Pro hoàn tất các tính năng cốt lõi (Field Types, Lọc, Tìm Kiếm), tiến hành cấu trúc lại toàn bộ Front-end JS của DataGrid (`admin-datagrid.js`).
+- **Mục tiêu:** Phá vỡ quái vật JavaScript Monolithic (>700 dòng).
+- **Chiến thuật:**
+  - Áp dụng **ES6 Modules** (chia nhỏ thành `core.js`, `modals.js`, `cells/`...).
+  - Dùng **Vite/Webpack** để biên dịch và nén lại thành 1 file duy nhất siêu nhẹ.
+  - Triển khai **Strategy Pattern** cho Cell Engine để Scale gọn gàng, đón đầu các kiểu dữ liệu mới trong tương lai.
 
 ---
 

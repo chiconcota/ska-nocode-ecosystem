@@ -6,11 +6,23 @@ trigger: always_on
 @target: All AI Agents | @trigger: /end_session or any documentation update
 
 ## 1. THIẾT QUÂN LUẬT KHÔNG RÁC (ZERO-TRASH DIRECTIVE)
-- Mọi tài liệu bắt buộc phải nằm gọn bên trong 4 ngăn kéo:
-  - `1-overview/`: File quy hoạch chung, System Map.
-  - `2-memory/`: Nơi ghi chép nhật ký (Decision Log, Bug Fix Log).
-  - `3-ecosystem/`: Chứa file tài liệu riêng cho từng Plugin (VD: `ska-data-pro/architecture.md`).
-  - `4-rules/`: Luật cho AI.
+- Mọi tài liệu bắt buộc phải nằm gọn bên trong 4 ngăn kéo. **Dưới đây là Cấu trúc Hệ thống (Directory Tree) BẮT BUỘC tuân thủ:**
+
+```text
+.ska-ai/
+├── 1-overview/
+│   ├── system_map.md (Bản đồ kiến trúc tổng thể, Trạng thái Dự án, Nhật ký ngắn)
+│   └── project_manager_*.md (Roadmap, Kế hoạch cho từng Phase)
+├── 2-memory/
+│   └── decision-log.md (Nơi ghi chép các Quy định Kiến trúc lớn, Lịch sử thay đổi cốt lõi)
+├── 3-ecosystem/
+│   ├── ska-builder-core/       (Tài liệu kiến trúc module Core)
+│   ├── ska-data-pro/           (Tài liệu kiến trúc Database)
+│   ├── ska-logic-engine/       (Tài liệu kiến trúc Logic)
+│   └── ska-no-code-design/     (Tài liệu kiến trúc Design)
+└── 4-rules/
+    └── (Tầng chứa các quy chuẩn/luật lệ AI cũ - Thường đã được di chuyển sang thư mục .agent/rules/)
+```
 
 ## 2. QUY TRÌNH GHI ĐÈ LỖ LỖI (ANTI-DUPLICATION PROTOCOL)
 - Trước khi cập nhật bất kỳ tài liệu nào (`system_map.md`, `decision-log.md`...), AI BẮT BUỘC phải dùng Lệnh `Hỏi Hệ Thống (List_dir)` để xem file đó đang nằm ở thư mục nào (Vd: `1-overview` hay `2-memory`).
@@ -30,4 +42,3 @@ trigger: always_on
 - **Hạn chế tạo rác:** Yêu cầu các Agent Tuyệt đối KHÔNG ĐƯỢC tự ý tạo mới bất kỳ file Markdown (`.md`) nào ở thư mục gốc (Root) của project hoặc thư mục gốc của `.ska-ai` nếu chưa xin phép.
 - **Bắt buộc hỏi Ý kiến:** Nếu trong lúc thực hiện luồng /end_session hoặc theo lệnh từ Workflow mà nhận thấy CẦN PHẢI TẠO file mới nằm ngoài 4 thư mục lớn (`1-overview`, `2-memory`, `3-ecosystem`, `4-rules`) thì **BẮT BUỘC phải đặt câu hỏi xin phép User trước**. Nếu User trả lời OK/Yes thì mới được phép khởi tạo.
 - Khuyến nghị: Ưu tiên update trực tiếp (Replace_content) trên các tài liệu đã có sẵn trong 4 ngăn kéo để hạn chế sinh sôi nảy nở file rác.
-
