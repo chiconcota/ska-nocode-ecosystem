@@ -19,8 +19,8 @@ ska-ecosystem/ (mapped to app/public/)
 ├── wp-content/themes/
 │   └── ska-blank-theme/     # [THEME] Barebone WP Theme (Zero CSS)
 └── wp-content/plugins/
-    ├── ska-builder-core/    # [FOUNDATION] Base Atomic Blocks & Dashboard
-    ├── ska-no-code-design/  # [UI/UX] Tailwind v4 JIT & Inspector Panel
+    ├── ska-no-code-home/    # [MASTER] Ecosystem Manager, Dashboard & Settings
+    ├── ska-no-code-design/  # [UI/UX] Base Atomic Blocks, Tailwind JIT, Inspector
     ├── ska-data-pro/        # [DATA] Flat Tables, Schema, Query Builder
     ├── ska-logic-engine/    # [LOGIC] Workflows, If/Foreach Triggers
     └── ska-bridge/          # [ADAPTER] html2tailwind & JSON API
@@ -40,8 +40,8 @@ ska-ecosystem/ (mapped to app/public/)
 | App Module | Path | Responsibilities | Status |
 | :--- | :--- | :--- | :--- |
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Done (v1) |
-| **Ska Builder Core** | `plugins/ska-builder-core/`| Base Blocks, Admin Menu | 🟢 Done (v1) |
-| **Ska Design Engine** | `plugins/ska-no-code-design/`| Tailwind JIT, Inspector UI | 🟢 Done (v1) |
+| **Ska No-Code Home** | `plugins/ska-no-code-home/`| Master Ecosystem Manager, Settings | 🔴 Plan Phase |
+| **Ska No-Code Design** | `plugins/ska-no-code-design/`| Base Blocks, Tailwind JIT, Inspector UI | 🟢 Done (v1) |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, Schema, Templates | 🟡 In Progress (Core Done) |
 | **Ska Logic Engine** | `plugins/ska-logic-engine/`| If/Foreach Tags, Workflows | 🔴 Plan Phase |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API (JSON Export) | 🟡 In Progress (html2tailwind Done) |
@@ -209,7 +209,7 @@ ska-ecosystem/ (mapped to app/public/)
 ## 7. FUTURE ROADMAP (PLANNED) - PHASE 2: APP BUILDER ARCHITECTURE
 - **Ska Theme (Barebone):** Tạo WordPress theme trống, loại bỏ 100% CSS mặc định của WP, nhường toàn quyền layout cho khối Ska.
 - **Ska App Portals (CPT Dashboards):** Tích hợp CPT `ska_portal` vào `ska-builder-core` chuyên dùng để dựng các màn hình Frontend Admin (Dành cho Học viên, Giảng viên, Manager) sử dụng các Builder Blocks tiêu chuẩn và cô lập hoàn toàn khỏi hệ thống phân tích SEO (No-index by default) + Cơ chế chặn URL dựa trên Role (Logic Engine).
-- **Micro-Ecosystem Decoupling:** Tách `ska-builder-core` hiện tại thành 3 plugins độc lập (No-code Design, Data Pro, Logic Engine).
+- **Micro-Ecosystem Decoupling:** Tách `ska-no-code-design` (trước là `ska-builder-core`) mảng Data và Logic ra thành các plugins độc lập (`ska-data-pro`, `ska-logic-engine`). Quản lý toàn bộ thông qua Master Plugin `ska-no-code-home`.
 - **Ska Data Pro (Flat Tables):** Khởi tạo hệ thống Database tự trị với bảng phẳng `ska_data_*`. Thoát ly hoàn toàn khỏi bảng `wp_postmeta`. Xây dựng Schema Manager và Query Builder trực quan.
 - **Ska Attributes (Key-Value Dynamic Panel):** Trong plugin Design Engine, thay thế `customStyle` bằng mảng `htmlAttributes` để rải thuộc tính HTML (`data-*`, `aria-*`, `style`...) vào thẻ wrapper Frontend.
 - **Tailwind CSS v4:** Nâng cấp cỗ máy Local JIT từ v3 lên cấu trúc của v4 để hỗ trợ mở rộng động.

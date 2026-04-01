@@ -1,3 +1,13 @@
+## 2026-04-02 - Hoạch định Kiến trúc Ecosystem (Master Plugin) & Renaming
+- **Decision:** Đổi tên thư mục gốc và file lõi của phần mềm thiết kế từ `ska-builder-core` thành `ska-no-code-design`.
+- **Reason:** Chuẩn hóa tên gọi đúng với chức năng (Cung cấp Atomic Blocks và Tailwind JIT Engine). Khái niệm "Core" sẽ được quy hoạch thành một Master Plugin độc lập trong tương lai với tên gọi `ska-no-code-home` để đóng vai trò làm Bộ điều khiển Trung tâm (Ecosystem Manager).
+- **Decision:** Di dời toàn bộ tài liệu AI của mảng Design Engine sang `.ska-ai/3-ecosystem/ska-no-code-design/` và xóa folder rác cũ.
+
+## 2026-04-02 - Frontend Parser: SVG ClassName Fix (Bug Fix)
+- **Problem:** Công cụ html2tailwind bị crash (`classes.replace is not a function`) khi copy HTML chứa thẻ SVG.
+- **Root Cause:** Thuộc tính `className` của thẻ SVG trong DOM trả về một object `SVGAnimatedString` thay vì chuỗi Text, khiến hàm xử lý regex bị sụp đổ.
+- **Fix:** Thay thế gọi ngầm `node.className` bằng hàm lấy thuộc tính hệ thống `node.getAttribute('class') || ''` nhằm ép kiểu dữ liệu luôn luôn trả về một mảng String cho Parser.
+
 ## 2026-04-01 - Tích hợp WP Core (Posts & Users) vào Relation Column
 - **Decision:** Chấp thuận việc móc trực tiếp bảng vật lý của WordPress (`wp_posts` và `wp_users`) vào Cột "Tham Chiếu Nối Bảng" (Relation) của Ska Data Pro. Đặt chế độ Bypass bảo mật tĩnh cho 2 bảng này tại `class-admin-ajax.php` và `class-data-fetcher.php`.
 - **Reason:** Việc đi vòng qua Data Providers (Adapter) ở Layer hiển thị (như ban đầu đã test `Test_Provider`) là KHÔNG ĐỦ hiệu năng để giải bài toán `WHERE IN` của CSDL Quan Hệ. SQL Native là con đường duy nhất để giải quyết N+1 Queries khi User lọc/gộp (Sort/Group/Filter) cột Liên kết.

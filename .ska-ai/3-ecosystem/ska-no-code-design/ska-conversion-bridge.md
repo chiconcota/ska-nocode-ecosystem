@@ -22,7 +22,8 @@
 | `ul, ol` | `ska-builder/list` | Mapping danh sách |
 | `li` | `ska-builder/list-item` | Mapping mục danh sách |
 
-## 3. Đã giải quyết (Cập nhật 2026-03-27)
+## 3. Đã giải quyết (Cập nhật 2026-04-02)
+- [x] **SVG ClassName Crash Fix:** Thay thế truy cập `node.className` bằng `node.getAttribute('class') || ''` nhằm khắc phục lỗi Crash DOM Parser khi copy mã HTML có chứa phần tử SVG (do thuộc tính className của SVG trả về object `SVGAnimatedString` thay vì chuỗi text).
 - [x] **Smart Text Detection:** Khi thẻ `<p>` hoặc `<span>` chứa con là Block-level element (Icon, Button, Image), parser sẽ thăng cấp cha thành Container `div` và parse con thành các block vệ tinh.
 - [x] **Whitespace Fix:** Sử dụng `.replace(/\s+/g, ' ').trim()` để xóa bỏ khoảng trắng thừa gây rớt dòng khi convert nút/văn bản.
 - [x] **Nested Placement Fix:** Truyền tọa độ `clientId` của khối Import gốc vào hàm chuyển đổi, sử dụng `wp.data.dispatch('core/block-editor').replaceBlocks(clientId, blocks)` thay vì lệnh `insertBlocks` lỗi thời để giúp khối DOM convert xong giữ nguyên được gốc phả hệ nằm ngay vị trí con đang chèn (nested context).
@@ -40,4 +41,4 @@
 - `window.ska.bridge.convert(html, clientId)`: Hàm chính để thực hiện chuyển đổi, tự động đục khoét thay thế HTML trực tiếp vào tọa độ clientId được truyền vào.
 
 ---
-*Cập nhật lần cuối: 2026-03-27*
+*Cập nhật lần cuối: 2026-04-02*
