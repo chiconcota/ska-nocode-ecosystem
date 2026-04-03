@@ -419,4 +419,8 @@ window.skaDataConfig = {
     nonce: '<?php echo esc_js( wp_create_nonce("ska_data_nonce") ); ?>'
 };
 </script>
-<script src="<?php echo esc_url( plugins_url( 'assets/js/admin-datagrid.js', dirname(dirname(dirname(__FILE__))) ) ); ?>"></script>
+<?php
+$bundle_path = dirname(dirname(dirname(__FILE__))) . '/assets/js/admin-datagrid.bundle.js';
+$bundle_ver  = file_exists($bundle_path) ? filemtime($bundle_path) : SKA_DATA_PRO_VERSION;
+?>
+<script src="<?php echo esc_url( plugins_url( 'assets/js/admin-datagrid.bundle.js', dirname(dirname(dirname(__FILE__))) ) . '?v=' . $bundle_ver ); ?>"></script>

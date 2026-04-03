@@ -42,7 +42,7 @@ ska-ecosystem/ (mapped to app/public/)
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Done (v1) |
 | **Ska No-Code Home** | `plugins/ska-no-code-home/`| Master Ecosystem Manager, Settings | 🔴 Plan Phase |
 | **Ska No-Code Design** | `plugins/ska-no-code-design/`| Base Blocks, Tailwind JIT, Inspector UI | 🟢 Done (v1) |
-| **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, Schema, Templates | 🟡 In Progress (Core Done) |
+| **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, Schema, Templates | 🟢 Done (MVP & Packaged) |
 | **Ska Logic Engine** | `plugins/ska-logic-engine/`| If/Foreach Tags, Workflows | 🔴 Plan Phase |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API (JSON Export) | 🟡 In Progress (html2tailwind Done) |
 
@@ -54,6 +54,12 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-04 - ✅ [DONE] The Great Refactor & Packaging Ska Data Pro:**
+  - Hoàn tất đập đi xây lại cấu trúc Javascript Backend nguyên khối 1200 dòng của DataGrid thành mô hình ES6 Modules, kết hợp biên dịch tối tân qua **Vite**. Output file giảm thiểu còn `18.82 kB (gzip: 5.22 kB)`.
+  - Áp dụng quy chuẩn **Strategy Pattern** cho DataGrid Cell Engine: Các thao tác Inline Edit cho ô (Media, Boolean, Dropdown Options, Nhập Văn bản) được tách lập thành từng Strategy Class riêng biệt để giải quyết hiện trạng If/Else nhằng nhịt, sẵn sàng tiếp nhận thêm 50 loại Data Type trong Phase tới.
+  - Sửa lỗi (Hotfix) mất Logic Rollup Cascading và Relation Search do bất cẩn đợt Refactor nguyên khối. Phục hồi qua `RelationCell.js` Component độc lập.
+  - Nâng cấp API: Đồng bộ tất cả Request HTTP từ jQuery (`$.post`) sang ES6 Fetch Core (`apiFetch`) nhằm dứt điểm lệ thuộc thư viện. Tích hợp giải pháp Cache-Busting bằng `filemtime()` tự động cập nhật URL version sau mỗi lần biên dịch gói Vite để chống trình duyệt lưu Cache file `.js` thô thiển.
+  - Triển khai kịch bản đóng gói `node-archiver` chuẩn xác cho Ska Data Pro. Hoàn tất chu kỳ phát triển MVP!
 - **2026-04-03 - Nâng cấp Cỗ máy Rollup & Heuristic Filters:**
   - Hoàn thiện UI DataGrid bằng cách tích hợp trực tiếp **Heuristic Filter** vào SQL Query của AJAX Backend. Chặn đứng hàng trăm meta keys rác của WordPress (`_wp_%`, `session_%`, `_edit_%`) lọt vào khung tra cứu Rollup, đem lại trải nghiệm "Clean Slack" gọn gàng ở Dropdown.
   - Sửa lỗi UX (Async Race Condition & Stale Computed Data) bằng cách bắt buộc **trình duyệt Reload** (F5) ngay sau khi Lưu Tham Chiếu mảng Relation ID. Thay đổi tĩnh này buộc hệ thống Backend Server đẩy mảng ID mới chạy qua Data_Fetcher để "bơm" (Enrich) tức thời Data lên toàn bộ các Cột Toán Hạng (Rollup) cùng dòng bị phụ thuộc, xóa bỏ tận gốc cảnh user bấm lưu mà Rollup "trơ" như đá.
