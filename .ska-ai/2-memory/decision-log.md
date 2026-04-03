@@ -1,3 +1,9 @@
+## 2026-04-03 - Nâng cấp Cỗ máy Rollup (Lookup Virtualization) & Xử lý Async Race Condition
+- **Decision (Architecture):** Xây dựng hệ thống giải quyết tham chiếu chéo (Rollup) hoàn toàn VIRTUAL. Cột Rollup lưu trữ dưới DB là `NULL` để tránh dư thừa (No Data Redundancy). Tại điểm Fetcher, sử dụng thuật toán Gom mảng IDs (Batching) để truy vấn bảng đích thông qua 1 câu `SQL IN (...)` trọn gói, sau đó cấy (Enrich) kết quả ảo ngược lên Payload thành định dạng chuỗi phân tách mảng.
+- **Reason:** Tối ưu hóa tuyệt đối tốc độ Ghi/Cập nhật (Write Speed). Tránh việc phải Update hàng ngàn dòng con khi Data ở bảng mẹ thay đổi.
+- **Decision (DataGrid UX Bugfix):** Đại tu bộ nạp Cascading Dropdown (chọn Cột nguồn -> load Cột đích) của Rollup. Hủy bỏ cơ chế dùng `window.skaGlobalDict` (Từ điển mềm) thay bằng AJAX trực tiếp chọc cấu trúc MySQL Vật lý `DESCRIBE` để ngăn chặn lỗi mất đồng bộ Từ điển khi Schema bị tháo lắp từ nguồn khác.
+- **Decision (Race Condition Fix):** Loại bỏ chiến thuật đợi `setTimeout(50ms)` (Gây lỗi trống lựa chọn Cột do AJAX chưa load kịp) khi mở form Chỉnh sửa Rollup. Triển khai phương pháp gắn cờ trạng thái `data-selected-val` vào thẻ HTML để hứng giá trị an toàn sau khi AJAX đã resolve.
+
 ## 2026-04-02 - Hoạch định Kiến trúc Ecosystem (Master Plugin) & Renaming
 - **Decision:** Đổi tên thư mục gốc và file lõi của phần mềm thiết kế từ `ska-builder-core` thành `ska-no-code-design`.
 - **Reason:** Chuẩn hóa tên gọi đúng với chức năng (Cung cấp Atomic Blocks và Tailwind JIT Engine). Khái niệm "Core" sẽ được quy hoạch thành một Master Plugin độc lập trong tương lai với tên gọi `ska-no-code-home` để đóng vai trò làm Bộ điều khiển Trung tâm (Ecosystem Manager).
