@@ -1,3 +1,12 @@
+## 2026-04-04 - Đại Tu Kiến Trúc Frontend JS (The Great Refactor) & Packaging Ska Data Pro
+- **Decision (Architecture):** Tách file `admin-datagrid.js` monolithic (>1200 dòng) thành kiến trúc ES6 Modules đặt tại `assets/js/src/`. Sử dụng `Vite` làm công cụ bundler (tạo ra `admin-datagrid.bundle.js`).
+- **Reason:** Cải thiện khả năng bảo trì. Gỡ khối lượng logic rác ra khỏi Global Window Interface. Tuân thủ nguyên tắc Modular hóa Enterprise-Level. Dung lượng build mới cực kỳ tối ưu: 18.82 kB (gzip: 5.22 kB).
+- **Decision (Pattern):** Áp dụng **Strategy Pattern** cho Cell Engine qua `CellRegistry`. Các Type Input khác nhau (Boolean, Media, Select, Text) tách biệt thành các Class xử lý UI/API riêng biệt kế thừa qua `BaseCell`.
+- **Reason:** Đảm bảo triết lý Open-Closed Principle (OCP). Tương lai khi làm các Type như Màu Sắc, Rich Text, File Upload, chỉ cần làm một `abcCell.js` rồi cắm vào Registry mà không phải đụng tới Event Loop lõi.
+- **Decision (Packaging):** Xây dựng hệ thống Đóng Gói qua kịch bản `build-zip.js` (dùng `archiver`). Cài đặt `npm run build:zip` tạo gói `ska-data-pro.zip` để sẵn sàng cho khách tải xuống.
+- **Status:** Kế hoạch MVP của `Ska Data Pro` (Core Engine) chính thức hoàn thành và đóng gói thành công.
+- **Decision (Hotfixes):** Cấu trúc lại giao diện Rollup Cascading (nâng cấp sang API Fetch Promise của ES6 thay vì jQuery Ajax). Áp dụng tính năng tự động Anti-Caching bằng Timestamp trên URL Output. Mọi nỗ lực nhắm vào UX tuyệt đối cho người dùng!
+
 ## 2026-04-03 - Nâng cấp Heuristic Filter & Rollup Bugfix
 - **Decision (Data Filter):** Tích hợp bộ lọc Heuristic `NOT LIKE` trực tiếp vào SQL Query của DataGrid khi truy xuất Meta Keys từ `wp_postmeta` (loại bỏ `_wp_%`, `_edit_%`, `_oembed_%`, `_pingme`, `_encloseme`) và `wp_usermeta` (loại bỏ `session_%`, `closedpostboxes_%`, `metaboxhidden_%`, `wp_dashboard_%`, `nav_menu_%`).
 - **Reason:** Cứu vãn UI trải nghiệm (UX) khỏi bãi rác khổng lồ (hàng trăm meta key hệ thống ngầm) do WordPress wp_core tự đẻ ra, chỉ giữ lại những meta data thực sự hữu ích (ACF, SCF, WooCommerce `_price`, `_sku`, `_thumbnail_id`).

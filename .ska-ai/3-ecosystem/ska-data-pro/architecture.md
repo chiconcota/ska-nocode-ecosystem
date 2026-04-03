@@ -26,3 +26,23 @@
 8. **DataGrid View State (URL-Driven):** Quản lý trạng thái Lọc (Filter), Sắp xếp (Sort) và Gộp nhóm (Group) bằng URL Parameters. Tính năng "Gộp Nhóm (Group)" vận hành qua câu lệnh MySQL `ORDER BY` tĩnh ở Backend, vòng lặp PHP tự sinh Divider để giữ Light Weight.
 9. **Extensibility Adapter:** Sẵn sàng kết nối đa nguồn dữ liệu (như `wp_users`, WooCommerce). Các Cỗ máy đọc Data (Provider Layer) phải được móc sau khi File Lõi `ska-builder-core.php` khởi tạo hoàn toàn (Hook lúc `plugins_loaded`) để né sự cố Plugin Load Order do WP Alphabetical Loading gây ra.
 10. **Rollup (Lookup Virtualization):** Các cột dữ liệu Rollup không lưu trữ giá trị nhân bản ở tầng CSDL (`NULL` trên MySQL) để bảo toàn nguyên tắc chống trùng lặp (No-Data-Redundancy). Tại điểm nút truy xuất `Data_Fetcher::enrich_rollups()`, hệ thống chạy một lượt Query O(1) chọc sang bảng đích và Cấy (Enrich) dữ liệu ảo ngược vào Array Payload ở tầng ứng dụng (PHP RAM) trước khi nhả ra REST API hoặc Logic Engine. Hỗ trợ truy xuất xuyên thẳng mảng EAV của WordPress (`wp_postmeta`, `wp_usermeta`) bằng hệ thống Nhận diện Meta Key thông minh, kết hợp bộ lọc Lưới Heuristic Filters loại bỏ tức thời các Rác hệ thống ngầm (`_wp_%`, `session_%`, `_edit_%`) để giao diện Admin Builder trở nên siêu sạch. Các thay đổi về Tham chiếu (Relation) trên UI sẽ buộc tự động Reload để ép Backend bơm lại Data ảo (Rollup) kịp thời mà không bị stale data.
+
+## 4. BỨC TRANH JAVASCRIPT TOÀN CẢNH (ES6 + VITE + STRATEGY PATTERN)
+Từng là một file monolithic, Ska DataGrid JS Frontend giờ được phân chia theo kiến trúc Modular qua Vite, bảo đảm tuân thủ Single Responsibility và Open-Closed Principle (OCP):
+
+### 4.1. Strategy Pattern cho Cell Engine (Inline Edit)
+Khi User Click vào 1 Cell bất kỳ (`.ska-editable-cell`), `CellRegistry` sẽ chặn đứng sự kiện và xác định `Strategy Class` tương ứng thông qua cấu trúc thư mục `/cells/types`:
+- **`BooleanCell`**: Toggle tức thời (Nút gạt).
+- **`MediaCell`**: Mở WP Media Modal.
+- **`GalleryCell`**: Quản lý nhiều ảnh qua Popover thả xuống.
+- **`SelectCell`**: Đọc Data Type Array và tạo Popover (Checkbox nếu multiselect).
+- **`TextCell`**: Thả Text Input cho phép lưu khi Blur hoặc Enter.
+
+Tất cả đều kế thừa Interface ngầm `BaseCell` đảm nhiệm việc tương tác duy nhất qua hàm `apiFetch('ska_data_update_cell')`.
+
+### 4.2. Kiến Trúc Modular
+Nằm tại `assets/js/src`:
+- `/modules/schema.js`: Chịu trách nhiệm Cấu hình Cột, Bảng (Create, Edit, Drop).
+- `/modules/rows.js`: Thêm và Xoá dòng logic.
+- `/modules/modals.js`: Quản lý các Dropdown/Popup Option Cascading. Export các hàm xử lý global `window.ska*` để hỗ trợ Inline-binding từ Backend `.php` Views cũ, đóng vai trò như Bridge Pattern.
+- `/utils/api.js`: Tổng hợp Ajax URL và Nonce Header.
