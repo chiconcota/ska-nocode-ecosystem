@@ -1,5 +1,5 @@
-# PROJECT MANAGER: PHASE 2 (SKA DATA PRO) & TẦM NHÌN HỆ SINH THÁI
-@status: 🟡 In Progress | @last_update: 2026-04-01 | @context: Core Architecture & Roadmap
+# PROJECT MANAGER: PHASE 3 (SKA LOGIC ENGINE) & TẦM NHÌN HỆ SINH THÁI
+@status: 🔴 Plan Phase | @last_update: 2026-04-04 | @context: Logic Engine Architecture & Roadmap
 
 ---
 
@@ -10,8 +10,8 @@
 
 ---
 
-## 2. ROADMAP PHASE 2: SKA DATA PRO (DATABASE ENGINE)
-Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập hệ thống truy xuất dữ liệu (Query).
+## 2. ROADMAP PHASE 2: SKA DATA PRO (DATABASE ENGINE) - 🟢 [ĐÃ HOÀN TẤT]
+Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập hệ thống truy xuất dữ liệu (Query) hiện tại đã vể đích.
 
 ### 2.1. Template Gallery & Schema Manager - 🟢 [HOÀN TẤT]
 - Màn hình chọn Mẫu dữ liệu (Data Templates: E-Commerce, LMS, Booking...)
@@ -36,8 +36,8 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - 🔴 **Tính Toán Cục Bộ (Formula / Compute) [ĐANG CHỜ]**: Nghiên cứu khả năng tính toán Virtual Columns hoặc Render bằng PHP (Data Engine) dựa trên các giá trị có trong Grid (Ví dụ: Số lượng * Đơn giá).
 
 
-### 2.5. Đại Tu Codebase (The Great Refactor) - 🔴 [Pending]
-- Khi Ska Data Pro hoàn tất các tính năng cốt lõi (Field Types, Lọc, Tìm Kiếm), tiến hành cấu trúc lại toàn bộ Front-end JS của DataGrid (`admin-datagrid.js`).
+### 2.5. Đại Tu Codebase (The Great Refactor) - 🟢 [HOÀN TẤT]
+- Ska Data Pro đã hoàn tất các tính năng cốt lõi (Field Types, Lọc, Tìm Kiếm), và phân tách cấu trúc lại toàn bộ Front-end JS của DataGrid (`admin-datagrid.js`).
 - **Mục tiêu:** Phá vỡ quái vật JavaScript Monolithic (>700 dòng).
 - **Chiến thuật:**
   - Áp dụng **ES6 Modules** (chia nhỏ thành `core.js`, `modals.js`, `cells/`...).
@@ -52,9 +52,10 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - Việc: Tạo cái nút Lấp lánh (Sparkle Icon) trên trình soạn thảo Gutenberg của Ska Builder.
 - Tác dụng: Cho phép người dùng chọn thẳng Fields (Cột: Giá, Tên) từ một cái Dropdown thay vì phải học thuộc lòng cú pháp `{{tag}}`.
 
-### 3.2. Phase 3: Ska Logic Engine & Khối Form (The Flow)
+### 3.2. Phase 3: Ska Logic Engine & Khối Form (The Flow) - 🟡 [Sắp Khởi Chạy]
 - Đúc các khối nhập liệu: `<Input>`, `<Select>`, `<Form Wrapper>`. (Các khối này nằm trong `ska-builder-core`).
 - Đúc Cỗ máy bắt Sự Kiện (Trigger/Action): Trả lời câu hỏi "Submit xong thì làm gì?". (Ví dụ: `Insert Row` vào Ska Data Pro, Gửi Email báo cáo...).
+- Xử lý hệ thống Role-Based Access Control (RBAC) và vòng lặp danh sách (Foreach/Map).
 
 ### 3.3. Tính Năng Độc Lập Mọi Thời Điểm (UI Features & Canvas App)
 - **Theme Builder** (Lắp Header, Footer từ CPT `ska_template`).
