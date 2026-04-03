@@ -54,10 +54,11 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
-- **2026-04-03 - Nâng cấp Cỗ máy Rollup (Lookup Virtualization) & UX Bugfix:**
+- **2026-04-03 - Nâng cấp Cỗ máy Rollup & Heuristic Filters:**
+  - Hoàn thiện UI DataGrid bằng cách tích hợp trực tiếp **Heuristic Filter** vào SQL Query của AJAX Backend. Chặn đứng hàng trăm meta keys rác của WordPress (`_wp_%`, `session_%`, `_edit_%`) lọt vào khung tra cứu Rollup, đem lại trải nghiệm "Clean Slack" gọn gàng ở Dropdown.
+  - Sửa lỗi UX (Async Race Condition & Stale Computed Data) bằng cách bắt buộc **trình duyệt Reload** (F5) ngay sau khi Lưu Tham Chiếu mảng Relation ID. Thay đổi tĩnh này buộc hệ thống Backend Server đẩy mảng ID mới chạy qua Data_Fetcher để "bơm" (Enrich) tức thời Data lên toàn bộ các Cột Toán Hạng (Rollup) cùng dòng bị phụ thuộc, xóa bỏ tận gốc cảnh user bấm lưu mà Rollup "trơ" như đá.
   - Phân phát thành công cấu trúc Cột Rollup với tính chất hoàn toàn Ảo (Virtual). Áp dụng chiến lược không lưu dữ liệu (NULL) xuống DB nhằm cắt đứt Data Redundancy, song song đó trang bị tính năng Gom mảng N+1 tại tầng Data_Fetcher giúp ép MySQL hoàn trả dữ liệu Rollup với tốc độ 1 cú `SELECT IN (...)`.
-  - Thay máu Javascript Load Logic thành dạng Fetch AJAX nguyên bản, nhổ bỏ điểm mù của window.skaGlobalDict và triệt tiêu lỗi Race Condition khi mở Modal chỉnh sửa.
-  - Xây sẵn máy chiếu Shortcode `[ska_dump_table]` giúp Test giao tiếp API từ Frontend tiện lợi.
+  - Giữa vững máy chiếu Shortcode `[ska_dump_table]` giúp Test giao tiếp API từ Frontend tiện lợi.
 - **2026-04-01 - ✅ [DONE] Triển khai DataGrid Relation & Formula Engine Ready:**
   - Hoàn tất xây dựng Cổng Nối Bảng (Relation) theo chiến lược lưu CSV ID tại Bảng Phẳng `ska_data_*`.
   - Hook phân giải Enrichment Resolution được cấy êm ái tại tầng Lõi Data Fetcher, giúp đái ra cục JSON Objects sẵn sàng cho API / Logic Engine thụ hưởng (tránh giật lag Query 1-N ở View Layer).
