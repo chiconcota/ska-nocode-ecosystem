@@ -31,8 +31,9 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 ### 2.4. DataGrid: Nâng Cấp Hệ Sinh Thái RDBMS - 🟡 [IN PROGRESS]
 - 🟢 **Tham Chiếu Nối Bảng (Relation)**: Cho phép nối bảng Sản Phẩm với Danh Mục hoặc Users thông qua giao diện Popover chọn lựa (Hỗ trợ Data Flat Tables + WP Core).
 - 🟢 **Bộ Công Cụ Lưới (Grid Controls)**: Hoàn tất xây dựng thanh URL-driven cho Lọc (Filter), Sắp Xếp (Sort), và Gộp Nhóm (Group Zero-overhead).
-- 🔴 **Cột Tra Cứu (Rollup / Lookup) [TASK NGÀY MAI]**: Xây dựng loại cột mới cho phép màn hình Admin "soi ống nhòm" sang Bảng đích của cột Relation để tự động hiển thị dữ liệu (Vd: Chọn User -> Tự hiện Slug/SĐT của User đó).
-- 🔴 **Tính Toán Cục Bộ (Formula / Compute) [TASK NGÀY MAI]**: Nghiên cứu khả năng tính toán Virtual Columns hoặc Render bằng PHP (Data Engine) dựa trên các giá trị có trong Grid (Ví dụ: Số lượng * Đơn giá).
+- 🟢 **Cột Tra Cứu (Rollup / Lookup) [HOÀN TẤT]**: Nâng cấp Cascading Dropdown dựa trên AJAX để cấy trực tiếp Dữ liệu ảo (Virtual Data) tại thời điểm Render (N-1 Query gom nhóm).
+- 🔴 **[TASK TIẾP THEO] Chạy Test Cột Rollup Trắc nghiệm với System Core WP:** Cần cấu hình và test thử việc ép Lookup trích xuất dữ liệu từ các cột của WordPress Native (`wp_posts`, `wp_users`) thông qua giao thức Relation Bypass đã định hình trước đó để chắc chắn kiến trúc Không độc quyền nhánh rẽ.
+- 🔴 **Tính Toán Cục Bộ (Formula / Compute) [ĐANG CHỜ]**: Nghiên cứu khả năng tính toán Virtual Columns hoặc Render bằng PHP (Data Engine) dựa trên các giá trị có trong Grid (Ví dụ: Số lượng * Đơn giá).
 - 🔴 Triển khai Ô Tìm Kiếm Tổng hợp (Global Search Box) cho bảng dữ liệu.
 
 ### 2.5. Đại Tu Codebase (The Great Refactor) - 🔴 [Pending]
@@ -60,3 +61,8 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - **App Dashboards / Sub-Admin Portals (🔴 Pending):** Tạo Custom Post Type (`ska_portal`) trong `ska-builder-core`. Giúp User dùng luôn quyền trượng Editor để tự do kéo thả bộ khung giao diện trang quản lý Khóa Học, Thành Viên ra Frontend Portal thay vì ép phải xài trang cấu hình xám xịt của WordPress Admin.
 - **Custom Block / UI Symbols** (Khối tái sử dụng thiết kế).
 - *Lưu ý:* Mấy tính năng này bản chất là Hệ Giao diện Canvas UI/Design (Lưu cục HTML), không cần đợi Phase 3, có thể tranh thủ làm luôn ngay trong Phase 2 bất cứ khi nào rảnh rỗi.
+
+### 3.4. Milestone 4++: Tối ưu Big Data (SQL Indexing & Caching cho Cột Ảo)
+- Kế hoạch dự phòng cho ứng dụng quy mô lớn (>1,000,000 mẩu dữ liệu). Khi DataGrid/App Frontend cần thực thi các lệnh `ORDER BY` hoặc Tương tác Lọc (Filter) lên các Cột Ảo (`Rollup` / `Formula`).
+- Xây dựng Cỗ máy Caching Webhook/Trigger: Lưu vết giá trị tính toán cục bộ giấu xuống thẳng bảng MySQL (`SQL Persistence Layer`).
+- Không cần ưu tiên trong MVP hiện tại vì nó nằm ở độ khó Enterprise, Trade-off kiến trúc nặng.
