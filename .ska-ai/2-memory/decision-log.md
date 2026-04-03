@@ -1,3 +1,9 @@
+## 2026-04-03 - Nâng cấp Heuristic Filter & Rollup Bugfix
+- **Decision (Data Filter):** Tích hợp bộ lọc Heuristic `NOT LIKE` trực tiếp vào SQL Query của DataGrid khi truy xuất Meta Keys từ `wp_postmeta` (loại bỏ `_wp_%`, `_edit_%`, `_oembed_%`, `_pingme`, `_encloseme`) và `wp_usermeta` (loại bỏ `session_%`, `closedpostboxes_%`, `metaboxhidden_%`, `wp_dashboard_%`, `nav_menu_%`).
+- **Reason:** Cứu vãn UI trải nghiệm (UX) khỏi bãi rác khổng lồ (hàng trăm meta key hệ thống ngầm) do WordPress wp_core tự đẻ ra, chỉ giữ lại những meta data thực sự hữu ích (ACF, SCF, WooCommerce `_price`, `_sku`, `_thumbnail_id`).
+- **Decision (Frontend Behavior):** Chuyển đổi trạng thái xử lý sau khi lưu (Save Reference) của Cột Relation từ việc chỉ Replace DOM hiện tại sang Reload trang toàn cục (`window.location.reload()`).
+- **Reason:** Đảm bảo triệt tiêu lỗi Stale Computed Data (Rollup không update sau khi nối khóa ngoại) cực kỳ kinh điển trong Flat Table Model. Máy bơm PHP sẽ tự động Refresh mọi cột công thức phụ thuộc tức thời.
+
 ## 2026-04-03 - Nâng cấp Cỗ máy Rollup (Lookup Virtualization) & Xử lý Async Race Condition
 - **Decision (Architecture):** Xây dựng hệ thống giải quyết tham chiếu chéo (Rollup) hoàn toàn VIRTUAL. Cột Rollup lưu trữ dưới DB là `NULL` để tránh dư thừa (No Data Redundancy). Tại điểm Fetcher, sử dụng thuật toán Gom mảng IDs (Batching) để truy vấn bảng đích thông qua 1 câu `SQL IN (...)` trọn gói, sau đó cấy (Enrich) kết quả ảo ngược lên Payload thành định dạng chuỗi phân tách mảng.
 - **Reason:** Tối ưu hóa tuyệt đối tốc độ Ghi/Cập nhật (Write Speed). Tránh việc phải Update hàng ngàn dòng con khi Data ở bảng mẹ thay đổi.

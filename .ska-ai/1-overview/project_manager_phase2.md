@@ -32,9 +32,9 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - 🟢 **Tham Chiếu Nối Bảng (Relation)**: Cho phép nối bảng Sản Phẩm với Danh Mục hoặc Users thông qua giao diện Popover chọn lựa (Hỗ trợ Data Flat Tables + WP Core).
 - 🟢 **Bộ Công Cụ Lưới (Grid Controls)**: Hoàn tất xây dựng thanh URL-driven cho Lọc (Filter), Sắp Xếp (Sort), và Gộp Nhóm (Group Zero-overhead).
 - 🟢 **Cột Tra Cứu (Rollup / Lookup) [HOÀN TẤT]**: Nâng cấp Cascading Dropdown dựa trên AJAX để cấy trực tiếp Dữ liệu ảo (Virtual Data) tại thời điểm Render (N-1 Query gom nhóm).
-- 🔴 **[TASK TIẾP THEO] Chạy Test Cột Rollup Trắc nghiệm với System Core WP:** Cần cấu hình và test thử việc ép Lookup trích xuất dữ liệu từ các cột của WordPress Native (`wp_posts`, `wp_users`) thông qua giao thức Relation Bypass đã định hình trước đó để chắc chắn kiến trúc Không độc quyền nhánh rẽ.
+- 🟢 **[HOÀN TẤT] Trắc nghiệm Cột Rollup với System Core WP:** Đã tích hợp thành công cầu nối "Hút máu" dữ liệu Metadata của WordPress EAV (`wp_postmeta`, `wp_usermeta`). Xây dựng Màng Lọc Heuristics Scanner thông minh hất văng hàng trăm file meta rác hệ thống, trải thảm xanh cho DataGrid truy cập siêu tốc vào ACF, WooCommerce `_price`, `_sku`. Xử lý rốt ráo Lỗi Stale Computed UX bằng cơ chế Reload chớp nhoáng (Micro-reload).
 - 🔴 **Tính Toán Cục Bộ (Formula / Compute) [ĐANG CHỜ]**: Nghiên cứu khả năng tính toán Virtual Columns hoặc Render bằng PHP (Data Engine) dựa trên các giá trị có trong Grid (Ví dụ: Số lượng * Đơn giá).
-- 🔴 Triển khai Ô Tìm Kiếm Tổng hợp (Global Search Box) cho bảng dữ liệu.
+
 
 ### 2.5. Đại Tu Codebase (The Great Refactor) - 🔴 [Pending]
 - Khi Ska Data Pro hoàn tất các tính năng cốt lõi (Field Types, Lọc, Tìm Kiếm), tiến hành cấu trúc lại toàn bộ Front-end JS của DataGrid (`admin-datagrid.js`).
