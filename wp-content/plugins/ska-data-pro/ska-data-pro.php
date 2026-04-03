@@ -1,0 +1,156 @@
+<?php
+/**
+ * Plugin Name: Ska Data Pro
+ * Plugin URI: https://ska.net
+ * Description: Hệ thống Database hiệu năng cao (Flat Tables) và tự động hóa Schema thông qua Template Gallery.
+ * Version: 1.0.0
+ * Author: Ly Tat Thanh + antigravity AI
+ * Author URI: https://lytatthanh.com
+ * Text Domain: ska-data-pro
+ * Domain Path: /languages
+ */
+
+namespace Ska\Data;
+
+defined( 'ABSPATH' ) || exit;
+
+// Định nghĩa Path & URL
+define( 'SKA_DATA_PRO_VERSION', '1.0.0' );
+define( 'SKA_DATA_PRO_PATH', plugin_dir_path( __FILE__ ) );
+define( 'SKA_DATA_PRO_URL', plugin_dir_url( __FILE__ ) );
+
+// Load Core Classes
+require_once SKA_DATA_PRO_PATH . 'inc/admin/class-admin-menu.php';
+require_once SKA_DATA_PRO_PATH . 'inc/admin/class-admin-ajax.php';
+require_once SKA_DATA_PRO_PATH . 'inc/core/class-template-registry.php';
+require_once SKA_DATA_PRO_PATH . 'inc/core/class-data-fetcher.php';
+require_once SKA_DATA_PRO_PATH . 'inc/core/class-database-engine.php';
+require_once SKA_DATA_PRO_PATH . 'inc/core/class-query-builder.php';
+// Khởi tạo hệ thống
+function init() {
+	Admin\Admin_Menu::get_instance();
+	$ajax = new Admin\Admin_Ajax(); // Khởi tạo xử lý Request (AJAX)
+	Core\Query_Builder::get_instance(); // Đánh thức cỗ máy xử lý Truy Xuất Dữ Liệu SQL
+
+	// Require file chứa Provider lúc hệ thống Hook Plugins_loaded (tránh bị return early)
+	require_once SKA_DATA_PRO_PATH . 'inc/core/class-ska-provider.php';
+
+	// Cắm Provider Dữ liệu của Ska Flat Tables vào hệ sinh thái của App Builder (Nếu có)
+	if ( class_exists( '\Ska\Builder\Data\Core' ) && class_exists( '\Ska\Data\Core\Ska_Provider' ) ) {
+		\Ska\Builder\Data\Core::instance()->registry->register( new Core\Ska_Provider() );
+
+		// Đăng ký Provider Thử nghiệm Extensibility
+		require_once SKA_DATA_PRO_PATH . 'inc/core/class-test-provider.php';
+		\Ska\Builder\Data\Core::instance()->registry->register( new Core\Test_Provider() );
+	}
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
+
+// --- ĐOẠN CODE TEST NHANH (MÁY BƠM DỮ LIỆU THỬ NGHIỆM) ---
+add_shortcode('ska_test_data', function($atts) {
+    if (!class_exists('\Ska\Data\Core\Database_Engine')) return 'Thiếu DB Engine';
+    $atts = shortcode_atts(['table' => '', 'id' => '', 'col' => ''], $atts);
+    
+    // Gọi thẳng Cỗ máy Query vòng qua Backend Hook
+    $row = apply_filters('ska_data_get_row', null, $atts['table'], intval($atts['id']));
+    
+    if (is_array($row) && isset($row[$atts['col']])) {
+        return "<b>Kết quả từ DB:</b> <span style='color:green'>" . esc_html($row[$atts['col']]) . "</span>";
+    }
+    return '<i>Không tìm thấy dữ liệu. Hãy check lại tên bảng/ID!</i>';
+});
+// --- ĐOẠN CODE TEST TRỰC TIẾP EXTENSIBILITY DATA PROVIDERS ---
+add_shortcode('ska_test_ext', function() {
+    if ( ! class_exists('\Ska\Builder\Logic\Core') ) return '<i>Chưa bật Ska Builder Core (Thiếu Logic Engine)</i>';
+    
+    $raw_html = '
+    <div style="padding:15px; border: 2px dashed #10b981; border-radius: 8px; background: #ecfdf5; margin-top:20px;">
+        <h4 style="color:#047857; margin-top:0;">1. Trạng thái kết nối (Đơn):</h4>
+        <p><strong>Status:</strong> {{test:status}}</p>
+        <p><strong>Server Time:</strong> {{test:time}}</p>
+        
+        <h4 style="color:#047857;">2. Cỗ máy Lặp Mảng Object Ảo (Giả lập WooCommerce Loop):</h4>
+        <ul style="padding-left: 20px;">
+            {{#foreach test:mock_users}}
+            <li style="margin-bottom: 5px;">
+                User Name: <b>{{test:name}}</b><br>
+                Role: <span style="background:#d1fae5; padding:2px 8px; border-radius:4px; font-size:12px;">{{test:role}}</span>
+            </li>
+            {{/foreach}}
+        </ul>
+    </div>';
+
+    // Gọi thẳng lõi Logic Engine biên dịch đoạn HTML thô này ra kết quả Frontend
+    return \Ska\Builder\Logic\Core::instance()->compile($raw_html);
+});
+
+// --- SHORTCODE KIỂM CHỨNG TÍNH NĂNG VIRTUAL ROLLUP ---
+// Cách dùng: [ska_dump_table table="wp_ska_data_hoc_sinh"]
+add_shortcode('ska_dump_table', function($atts) {
+    if (!class_exists('\Ska\Data\Core\Data_Fetcher')) return 'Thiếu Core';
+    
+    global $wpdb;
+    $atts = shortcode_atts(['table' => ''], $atts);
+    $table = $atts['table'];
+    
+    if (empty($table)) return '<b style="color:red">Chưa nhập tham số table=""</b>';
+
+    $fetcher = new \Ska\Data\Core\Data_Fetcher();
+    // Kéo 5 dòng đầu tiên, quá trình này tự động kích hoạt Cỗ máy Enrich (Rollup & Relation)
+    $args = array(
+        'orderby' => 'id',
+        'order'   => 'DESC'
+    );
+    $rows = $fetcher->get_table_rows($table, $args, 5);
+
+    if (empty($rows)) return "<i>Bảng $table trống hoặc không tồn tại.</i>";
+
+    // Build cấu trúc HTML để giả lập Frontend Component
+    $html = '<div style="font-family: sans-serif; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 1px solid #e2e8f0;">';
+    $html .= '<h3 style="margin-top:0; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">Dữ Liệu Trả Về Frontend (Table: <span style="color:#059669">'.$table.'</span>)</h3>';
+    
+    $html .= '<div style="overflow-x:auto;"><table style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: left;">';
+    
+    // Header
+    $first_row = $rows[0];
+    $html .= '<thead><tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0; color:#475569;">';
+    foreach (array_keys($first_row) as $col) {
+        if ($col === 'chi_tien' || $col === 'gia_tien' || strpos($col, 'tien') !== false) {
+             $html .= "<th style='padding: 12px; border-bottom: 1px solid #ddd; color: #d97706;'>🔥 $col (Rollup)</th>";
+        } else {
+             $html .= "<th style='padding: 12px; border-bottom: 1px solid #ddd;'>$col</th>";
+        }
+    }
+    $html .= '</tr></thead><tbody>';
+
+    // Body
+    foreach ($rows as $row) {
+        $html .= '<tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background=\'#f8fafc\'" onmouseout="this.style.background=\'#fff\'">';
+        foreach ($row as $col_key => $val) {
+            $display_val = esc_html($val);
+            
+            // Nếu là Mảng JSON do Cỗ máy Rollup nhả ra
+            if (is_string($val) && (strpos($val, '[') === 0 || strpos($val, '{') === 0) ) {
+                $decoded = json_decode($val, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    // Dễ nhìn trên Frontend
+                    $display_val = '<i>(Mảng JSON ảo) -> </i> <strong style="color:#059669">' . esc_html(print_r($decoded, true)) . '</strong>';
+                }
+            } else if ($val === '' || $val === null) {
+                $display_val = '<em style="color:#cbd5e1">NULL Dưới Database</em>';
+            }
+            
+            $html .= "<td style='padding: 12px; vertical-align: top;'>{$display_val}</td>";
+        }
+        $html .= '</tr>';
+    }
+    $html .= '</tbody></table></div>';
+    
+    $html .= '<div style="margin-top: 15px; padding: 12px; background: #fffbeb; border-left: 4px solid #fbbf24; border-radius: 4px; font-size: 13px; color: #b45309;">';
+    $html .= '<strong>Sự Mầu Nhiệm:</strong> Bạn thấy đấy, dù dưới <code>MySQL DB</code> giá trị là NULL, nhưng khi gọi lên Frontend bằng PHP, Cỗ máy <code style="background:#fcd34d; padding:2px 4px; border-radius:4px;">Data_Fetcher</code> đã âm thầm dịch ngược ID và lấp đầy con chữ vào cho bạn rồi! Đây chính là VIRTUAL DATA!';
+    $html .= '</div>';
+    
+    $html .= '</div>';
+    
+    return $html;
+});

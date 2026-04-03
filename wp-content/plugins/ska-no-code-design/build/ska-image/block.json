@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ska-builder/image",
+  "version": "1.0.0",
+  "title": "Ska Image",
+  "category": "common",
+  "icon": "format-image",
+  "description": "A dynamic image block with JIT Tailwind support.",
+  "attributes": {
+    "url": {
+      "type": "string",
+      "default": ""
+    },
+    "alt": {
+      "type": "string",
+      "default": ""
+    },
+    "id": {
+      "type": "number"
+    },
+    "tailwindClasses": {
+      "type": "string",
+      "default": ""
+    },
+    "className": {
+      "type": "string",
+      "default": ""
+    },
+    "dynamic": {
+      "type": "object",
+      "default": {
+        "source": "static",
+        "key": ""
+      }
+    },
+    "logic": {
+      "type": "object",
+      "default": {
+        "enabled": false,
+        "key": "",
+        "operator": "==",
+        "value": ""
+      }
+    }
+  },
+  "supports": {
+    "html": false,
+    "customClassName": false
+  },
+  "textdomain": "ska-builder-core",
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}
