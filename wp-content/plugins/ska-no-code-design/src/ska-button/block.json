@@ -4,7 +4,7 @@
     "name": "ska-builder/button",
     "version": "1.0.0",
     "title": "Ska Button",
-    "category": "ska-builder",
+    "category": "ska-atomic",
     "description": "Atomic button block with Tailwind and Dynamic support.",
     "attributes": {
         "text": {
@@ -83,4 +83,3 @@
     "style": "file:./index.css",
     "render": "file:./render.php"
 }
-

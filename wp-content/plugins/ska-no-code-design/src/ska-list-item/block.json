@@ -4,10 +4,12 @@
     "name": "ska-builder/list-item",
     "version": "1.0.0",
     "title": "Ska List Item",
-    "category": "ska-blocks",
+    "category": "ska-atomic",
     "icon": "minus",
     "description": "A single list item (li).",
-    "parent": [ "ska-builder/list" ],
+    "parent": [
+        "ska-builder/list"
+    ],
     "attributes": {
         "tailwindClasses": {
             "type": "string",
@@ -36,4 +38,3 @@
     "editorScript": "file:./index.js",
     "render": "file:./render.php"
 }
-

@@ -4,7 +4,7 @@
     "name": "ska-builder/video",
     "version": "1.0.0",
     "title": "Ska Video",
-    "category": "ska-builder",
+    "category": "ska-atomic",
     "description": "Atomic video block supporting YouTube, Vimeo, and Local files.",
     "attributes": {
         "url": {
@@ -76,4 +76,3 @@
     "editorScript": "file:./index.js",
     "render": "file:./render.php"
 }
-

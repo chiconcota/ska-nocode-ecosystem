@@ -1,20 +1,28 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "name": "ska-builder/text",
+    "name": "ska-builder/input",
     "version": "1.0.0",
-    "title": "Ska Text",
+    "title": "Ska Input",
     "category": "ska-atomic",
-    "icon": "text",
-    "description": "A dynamic text block with JIT Tailwind support.",
+    "icon": "edit",
+    "description": "Atomic text/number input block for Ska Forms.",
     "attributes": {
-        "content": {
+        "fieldName": {
             "type": "string",
-            "default": "Hello World"
+            "default": "my_field"
         },
-        "tagName": {
+        "inputType": {
             "type": "string",
-            "default": "p"
+            "default": "text"
+        },
+        "placeholder": {
+            "type": "string",
+            "default": "Enter text..."
+        },
+        "isRequired": {
+            "type": "boolean",
+            "default": false
         },
         "tailwindClasses": {
             "type": "string",
@@ -24,22 +32,6 @@
             "type": "string",
             "default": ""
         },
-        "dynamic": {
-            "type": "object",
-            "default": {
-                "source": "text",
-                "key": ""
-            }
-        },
-        "logic": {
-            "type": "object",
-            "default": {
-                "enabled": false,
-                "key": "",
-                "operator": "==",
-                "value": ""
-            }
-        },
         "customStyle": {
             "type": "string",
             "default": ""
@@ -47,7 +39,7 @@
     },
     "supports": {
         "html": false,
-        "customClassName": false
+        "customClassName": true
     },
     "textdomain": "ska-builder-core",
     "editorScript": "file:./index.js",

@@ -4,7 +4,7 @@
     "name": "ska-builder/list",
     "version": "1.0.0",
     "title": "Ska List",
-    "category": "ska-blocks",
+    "category": "ska-atomic",
     "icon": "editor-ul",
     "description": "Create an ordered or unordered list container.",
     "attributes": {
@@ -39,9 +39,10 @@
             "full"
         ]
     },
-    "allowedBlocks": [ "ska-builder/list-item" ],
+    "allowedBlocks": [
+        "ska-builder/list-item"
+    ],
     "textdomain": "ska-builder-core",
     "editorScript": "file:./index.js",
     "render": "file:./render.php"
 }
-

@@ -1,20 +1,24 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "name": "ska-builder/text",
+    "name": "ska-builder/form",
     "version": "1.0.0",
-    "title": "Ska Text",
+    "title": "Ska Form Container",
     "category": "ska-atomic",
-    "icon": "text",
-    "description": "A dynamic text block with JIT Tailwind support.",
+    "icon": "feedback",
+    "description": "Form wrapper that intercepts submit and sends payload to specific action URLs or Ska Logic Engine.",
     "attributes": {
-        "content": {
+        "actionName": {
             "type": "string",
-            "default": "Hello World"
+            "default": "default_form_submit"
         },
-        "tagName": {
+        "formMethod": {
             "type": "string",
-            "default": "p"
+            "default": "POST"
+        },
+        "formAction": {
+            "type": "string",
+            "default": ""
         },
         "tailwindClasses": {
             "type": "string",
@@ -24,22 +28,6 @@
             "type": "string",
             "default": ""
         },
-        "dynamic": {
-            "type": "object",
-            "default": {
-                "source": "text",
-                "key": ""
-            }
-        },
-        "logic": {
-            "type": "object",
-            "default": {
-                "enabled": false,
-                "key": "",
-                "operator": "==",
-                "value": ""
-            }
-        },
         "customStyle": {
             "type": "string",
             "default": ""
@@ -47,7 +35,7 @@
     },
     "supports": {
         "html": false,
-        "customClassName": false
+        "customClassName": true
     },
     "textdomain": "ska-builder-core",
     "editorScript": "file:./index.js",

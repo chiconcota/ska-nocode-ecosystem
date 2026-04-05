@@ -109,6 +109,9 @@ registerBlockType(metadata.name, {
             'ska-builder/container',
             'ska-builder/list',
             'ska-builder/html2tailwind',
+            'ska-builder/form',
+            'ska-builder/input',
+            'ska-builder/select',
             'core/paragraph',
             'core/heading',
             'core/image'

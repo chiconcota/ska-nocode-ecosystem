@@ -1,18 +1,17 @@
 {
-	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 3,
-	"name": "ska-builder/html2tailwind",
-	"version": "1.0.0",
-	"title": "Ska html2tailwind",
-	"category": "design",
-	"icon": "cloud-upload",
-	"description": "Dán mã HTML/Tailwind để chuyển đổi sang Ska Blocks.",
-	"supports": {
-		"html": false,
-		"anchor": true
-	},
-	"textdomain": "ska-bridge",
-	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css"
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "ska-builder/html2tailwind",
+    "version": "1.0.0",
+    "title": "Ska html2tailwind",
+    "category": "ska-atomic",
+    "icon": "cloud-upload",
+    "description": "Dán mã HTML/Tailwind để chuyển đổi sang Ska Blocks.",
+    "supports": {
+        "html": false,
+        "anchor": true
+    },
+    "textdomain": "ska-bridge",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css"
 }
-
