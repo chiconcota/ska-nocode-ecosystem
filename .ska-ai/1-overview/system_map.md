@@ -54,6 +54,11 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-05 - 🔵 [PHASE 3 INITIATION] Ska Form Engine & Tailwind Preflight Parity:**
+  - **Ska Form (Container):** Cấu trúc Flat DOM an toàn, sử dụng `InnerBlocks.Content` trong hành vi `save()` để mở khóa HTML cho Frontend JIT Compiler quét class. Không quy chụp wrapper mặc định bằng cách cho qua quyền tự do nhúng Layout Grid qua `Ska Container`.
+  - **Ska Input & Select (Atomic State):** Sửa soạn xong trạng thái Clean Slate. Từ chối cung cấp bất cứ Class Tailwind nào mặc định trong `block.json` để nhường toàn quyền "sinh sát" cho người thiết kế.
+  - **Form Preflight Parity (Kiện Toàn JIT):** Nâng cấp hàm `get_core_reset_css` của Tailwind Config. Giải quyết triệt để lỗi viền đen của WP Admin Editor bằng cách tái lập cấu trúc `appearance: none` và `border-color: #e5e7eb` của hệ sinh thái Tailwind vào Core Code. Đảm bảo giao diện Frontend/Backend hòa làm một. Bắt đầu Phase 3 an toàn.
+
 - **2026-04-04 - ✅ [DONE] The Great Refactor & Packaging Ska Data Pro:**
   - Hoàn tất đập đi xây lại cấu trúc Javascript Backend nguyên khối 1200 dòng của DataGrid thành mô hình ES6 Modules, kết hợp biên dịch tối tân qua **Vite**. Output file giảm thiểu còn `18.82 kB (gzip: 5.22 kB)`.
   - Áp dụng quy chuẩn **Strategy Pattern** cho DataGrid Cell Engine: Các thao tác Inline Edit cho ô (Media, Boolean, Dropdown Options, Nhập Văn bản) được tách lập thành từng Strategy Class riêng biệt để giải quyết hiện trạng If/Else nhằng nhịt, sẵn sàng tiếp nhận thêm 50 loại Data Type trong Phase tới.

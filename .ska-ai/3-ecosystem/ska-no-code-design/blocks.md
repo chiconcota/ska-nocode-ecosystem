@@ -49,6 +49,15 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
 - **Render:** Flat DOM, hỗ trợ đầy đủ `flex`/`grid` layout trên thẻ `<ul>`/`<li>`.
 - **Editor (2026-03-26):** Cả hai đều sử dụng `useInnerBlocksProps` để loại bỏ intermediate wrapper divs.
 
+#### 8. Ska Form (`ska-builder/form`)
+- **Attributes:** `formId`, `tailwindClasses`, `customStyle`, `actionType`...
+- **Render:** Flat DOM thẻ `<form>`, sử dụng `InnerBlocks.Content` trong `save()` để render khối con, đảm bảo giao diện Frontend/Editor đồng nhất (2026-04-05).
+- **Trạng thái:** Không bọc form mặc định, tuân thủ nguyên lý `ALLOW_BLOCKS` cho phép nhúng Container làm layout grid.
+
+#### 9. Ska Input (`ska-builder/input`) & Ska Select (`ska-builder/select`)
+- **Attributes:** `fieldName`, `inputType`, `placeholder`, `isRequired`, `tailwindClasses`, `customStyle`.
+- **Styling Architecture (2026-04-05):** Mọi viền, nền, outline của WP Admin bị gỡ bỏ ở Backend. Hệ thống áp dụng Global Tailwind Preflight Form Reset (`border-color: #e5e7eb;` và `appearance: none;`) trực tiếp thông qua JIT Code (Class `class-tailwind-config.php`), đảm bảo UI 100% tàng hình và giống hệt như Front-End nếu không có Tailwind classes nào.
+
 ## 3. Cấu trúc thư mục
 - `init.php`: Đăng ký các block.
 - `[block-name]/`: Thư mục chứa code của block.
