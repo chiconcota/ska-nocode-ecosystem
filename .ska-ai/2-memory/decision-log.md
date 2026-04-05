@@ -1,3 +1,10 @@
+## 2026-04-05 - Kiên Định Kiến Trúc Mâm Xôi (Clean Slate) & Tailwind Preflight Parity cho Form
+- **Decision (Architecture):** Chốt phương án quản lý Form Blocks (Input, Select) theo tiêu chuẩn Tailwind v3 Global Preflight. Nạp CSS Reset Rule `border-color: #e5e7eb` trực tiếp vào hàm `get_core_reset_css()` trong thiết kế lõi `class-tailwind-config.php` thay vì ném rải rác từng file `index.css`.
+- **Reason:** Đảm bảo "The Clean Slate Principle". Tiêu diệt triệt để sự can thiệp thô bạo (border black `#8c8f94`) của default WP Admin stylesheet. Mang lại tính đồng nhất tuyệt đối (Editor Parity) 100% giữa thiết kế Backend và Frontend mà không phá vỡ sức mạnh ghi đè của Tailwind JIT Compiler. Cập nhật này sẽ có hiệu lực Global (áp dụng cả trên Theme cũ và Headless).
+- **Decision (Refactor):** Gỡ sạch toàn bộ CSS mặc định như `py-2 border border-gray-300 w-full` bên trong `block.json` của Input và Select, trả về rỗng `""`. Loại bỏ hoàn toàn sự áp đặt thiết kế.
+- **Decision (Fix):** Nâng cấp hàm `save()` của Block `ska-builder/form` lên chuẩn `InnerBlocks.Content` để WP Editor có thể xả cấu trúc HTML ra cơ sở dữ liệu `post_content`, giúp JIT Compiler Frontend "nhìn thấy" các class để phục sinh mã CSS.
+- **Trạng thái Mở Đường (Phase 3):** Những viên gạch Atomic Form tiên phong đã chính thức đúc xong, cắm cờ chính thức mở màn cho vòng lặp **Ska Logic Engine** (The Flow) ở chặng tiếp theo.
+
 ## 2026-04-04 - Đại Tu Kiến Trúc Frontend JS (The Great Refactor) & Packaging Ska Data Pro
 - **Decision (Architecture):** Tách file `admin-datagrid.js` monolithic (>1200 dòng) thành kiến trúc ES6 Modules đặt tại `assets/js/src/`. Sử dụng `Vite` làm công cụ bundler (tạo ra `admin-datagrid.bundle.js`).
 - **Reason:** Cải thiện khả năng bảo trì. Gỡ khối lượng logic rác ra khỏi Global Window Interface. Tuân thủ nguyên tắc Modular hóa Enterprise-Level. Dung lượng build mới cực kỳ tối ưu: 18.82 kB (gzip: 5.22 kB).

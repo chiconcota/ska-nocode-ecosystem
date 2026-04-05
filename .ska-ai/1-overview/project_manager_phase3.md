@@ -52,9 +52,9 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - Việc: Tạo cái nút Lấp lánh (Sparkle Icon) trên trình soạn thảo Gutenberg của Ska Builder.
 - Tác dụng: Cho phép người dùng chọn thẳng Fields (Cột: Giá, Tên) từ một cái Dropdown thay vì phải học thuộc lòng cú pháp `{{tag}}`.
 
-### 3.2. Phase 3: Ska Logic Engine & Khối Form (The Flow) - 🟡 [Sắp Khởi Chạy]
-- Đúc các khối nhập liệu: `<Input>`, `<Select>`, `<Form Wrapper>`. (Các khối này nằm trong `ska-builder-core`).
-- Đúc Cỗ máy bắt Sự Kiện (Trigger/Action): Trả lời câu hỏi "Submit xong thì làm gì?". (Ví dụ: `Insert Row` vào Ska Data Pro, Gửi Email báo cáo...).
+### 3.2. Phase 3: Ska Logic Engine & Khối Form (The Flow) - 🟡 [IN PROGRESS]
+- 🟢 **Khối Nhập Liệu [HOÀN TẤT]**: Đúc xong các khối `<Input>`, `<Select>`, `<Form Wrapper>` vào lõi `ska-no-code-design`. Sẵn sàng "Sạch bóng Frontend" qua thiết kế Clean Slate Form Preflight Tailwind JIT.
+- 🔴 **Cỗ Máy Bắt Sự Kiện (Trigger/Action)**: Trả lời câu hỏi "Submit xong thì làm gì?". (Ví dụ: `Insert Row` vào Ska Data Pro, Gửi Email báo cáo...).
 - Xử lý hệ thống Role-Based Access Control (RBAC) và vòng lặp danh sách (Foreach/Map).
 
 ### 3.3. Tính Năng Độc Lập Mọi Thời Điểm (UI Features & Canvas App)
