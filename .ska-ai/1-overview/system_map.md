@@ -58,6 +58,7 @@ ska-ecosystem/ (mapped to app/public/)
   - **Ska Form (Container):** Cấu trúc Flat DOM an toàn, sử dụng `InnerBlocks.Content` trong hành vi `save()` để mở khóa HTML cho Frontend JIT Compiler quét class. Không quy chụp wrapper mặc định bằng cách cho qua quyền tự do nhúng Layout Grid qua `Ska Container`.
   - **Ska Input & Select (Atomic State):** Sửa soạn xong trạng thái Clean Slate. Từ chối cung cấp bất cứ Class Tailwind nào mặc định trong `block.json` để nhường toàn quyền "sinh sát" cho người thiết kế.
   - **Form Preflight Parity (Kiện Toàn JIT):** Nâng cấp hàm `get_core_reset_css` của Tailwind Config. Giải quyết triệt để lỗi viền đen của WP Admin Editor bằng cách tái lập cấu trúc `appearance: none` và `border-color: #e5e7eb` của hệ sinh thái Tailwind vào Core Code. Đảm bảo giao diện Frontend/Backend hòa làm một. Bắt đầu Phase 3 an toàn.
+  - **Button Reset Specificity Fix (2026-04-06):** Giảm Specificity của bộ Clean CSS cho nút bấm bằng cách lồng pseudo-class `:where()` vào selector Reset (VD: `button:not(:where(.components-button))`). Qua đó trải thảm xanh cho các class JIT Tailwind utilities tự đo ghi đè style (Padding, BG) khi hiển thị khối Form Submit.
 
 - **2026-04-04 - ✅ [DONE] The Great Refactor & Packaging Ska Data Pro:**
   - Hoàn tất đập đi xây lại cấu trúc Javascript Backend nguyên khối 1200 dòng của DataGrid thành mô hình ES6 Modules, kết hợp biên dịch tối tân qua **Vite**. Output file giảm thiểu còn `18.82 kB (gzip: 5.22 kB)`.
