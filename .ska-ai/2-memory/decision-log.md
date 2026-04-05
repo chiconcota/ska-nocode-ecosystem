@@ -1,9 +1,10 @@
+## 2026-04-06 - Giải cứu CSS Specificity: Button Reset Bug (Frontend)
+- **Problem:** Khối Button (nút `<button>`) trên Frontend không nhận diện (hoặc bị ghi đè) các class Tailwind như Padding (`px-4`), Background (`bg-blue-500`), Margin... Mặc dù class CSS của tiện ích JIT Compiler sinh ra đầy đủ (`.bg-blue-500.bg-blue-500`) với điểm specificity là 32.
+- **Root Cause:** Ở bản cập nhật trước, việc tái kích hoạt Button Reset (Xóa viền đen, xóa xám) của WordPress đã dùng selector `button:not(.components-button)`. Bản thân selector `:not(.components-button)` gia tăng +10 điểm specificity, đẩy điểm của toàn bộ luật Reset Reset lên 33. Kết quả: Điểm 33 của thiết lập Reset "Mâm xôi" đánh bại khối JIT Tailwind (32), xóa sổ màu nền và đệm viền.
+- **Decision (Fix):** Bọc selector `.components-button` bên trong ngụy lớp kháng can thiệp `:where()`. Selector mới: `button:not(:where(.components-button))`. 
+- **Reason:** `:where()` có điểm specificity bằng 0. Điểm của bộ Button Reset rớt từ 33 xuống chỉ còn 23. Lập tức trả quyền trượng cho JIT Tailwind Utilities (32) ghi đè tuyệt đối mà không cần dùng vũ lực `!important`. Fix triệt để bug mất Front-end Button CSS.
+
 ## 2026-04-05 - Kiên Định Kiến Trúc Mâm Xôi (Clean Slate) & Tailwind Preflight Parity cho Form
-- **Decision (Architecture):** Chốt phương án quản lý Form Blocks (Input, Select) theo tiêu chuẩn Tailwind v3 Global Preflight. Nạp CSS Reset Rule `border-color: #e5e7eb` trực tiếp vào hàm `get_core_reset_css()` trong thiết kế lõi `class-tailwind-config.php` thay vì ném rải rác từng file `index.css`.
-- **Reason:** Đảm bảo "The Clean Slate Principle". Tiêu diệt triệt để sự can thiệp thô bạo (border black `#8c8f94`) của default WP Admin stylesheet. Mang lại tính đồng nhất tuyệt đối (Editor Parity) 100% giữa thiết kế Backend và Frontend mà không phá vỡ sức mạnh ghi đè của Tailwind JIT Compiler. Cập nhật này sẽ có hiệu lực Global (áp dụng cả trên Theme cũ và Headless).
-- **Decision (Refactor):** Gỡ sạch toàn bộ CSS mặc định như `py-2 border border-gray-300 w-full` bên trong `block.json` của Input và Select, trả về rỗng `""`. Loại bỏ hoàn toàn sự áp đặt thiết kế.
-- **Decision (Fix):** Nâng cấp hàm `save()` của Block `ska-builder/form` lên chuẩn `InnerBlocks.Content` để WP Editor có thể xả cấu trúc HTML ra cơ sở dữ liệu `post_content`, giúp JIT Compiler Frontend "nhìn thấy" các class để phục sinh mã CSS.
-- **Trạng thái Mở Đường (Phase 3):** Những viên gạch Atomic Form tiên phong đã chính thức đúc xong, cắm cờ chính thức mở màn cho vòng lặp **Ska Logic Engine** (The Flow) ở chặng tiếp theo.
 
 ## 2026-04-04 - Đại Tu Kiến Trúc Frontend JS (The Great Refactor) & Packaging Ska Data Pro
 - **Decision (Architecture):** Tách file `admin-datagrid.js` monolithic (>1200 dòng) thành kiến trúc ES6 Modules đặt tại `assets/js/src/`. Sử dụng `Vite` làm công cụ bundler (tạo ra `admin-datagrid.bundle.js`).
