@@ -58,7 +58,7 @@ class Tailwind_Compiler {
 			if ( strpos( $class, ':' ) !== false ) {
 				$parts = explode( ':', $class );
 				if ( count( $parts ) === 2 ) {
-					if ( in_array( $parts[0], array( 'hover', 'focus', 'active', 'disabled', 'group-hover' ) ) ) {
+					if ( in_array( $parts[0], array( 'hover', 'focus', 'focus-within', 'focus-visible', 'active', 'disabled', 'group-hover' ) ) ) {
 						$pseudo     = ':' . $parts[0];
 						$base_class = $parts[1];
 						if ( $parts[0] === 'group-hover' ) {
@@ -334,6 +334,28 @@ class Tailwind_Compiler {
 			return "--tw-ring-offset-color: " . Tailwind_Color_Registry::get_color_hex( $matches[1], $matches[2] ) . ";";
 		}
 		if ( isset( Tailwind_Config::$ring_offset_basic[ $class ] ) ) return Tailwind_Config::$ring_offset_basic[ $class ];
+
+		// 6.7 Outline (Use !important to survive Gutenberg's .is-selected overrides in Editor)
+		if ( $class === 'outline-none' ) return 'outline: 2px solid transparent !important; outline-offset: 2px !important;';
+		if ( $class === 'outline' ) return 'outline-style: solid !important;';
+		if ( preg_match( '/^outline-(dashed|dotted|double)$/', $class, $matches ) ) return "outline-style: {$matches[1]} !important;";
+		if ( preg_match( '/^outline-([0-9]+)$/', $class, $matches ) ) return "outline-width: {$matches[1]}px !important; outline-style: solid !important;";
+		if ( preg_match( '/^-?outline-offset-([0-9]+)$/', $class, $matches ) ) {
+			$val = strpos( $class, '-' ) === 0 ? '-' . $matches[1] : $matches[1];
+			return "outline-offset: {$val}px !important;";
+		}
+		if ( preg_match( '/^outline-([a-z]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
+			$hex = Tailwind_Color_Registry::get_color_hex( $matches[1], $matches[2] );
+			if ( isset( $matches[3] ) ) {
+				$rgb   = Tailwind_Color_Registry::hex_to_rgb( $hex );
+				$alpha = round( intval( $matches[3] ) / 100, 2 );
+				return "outline-color: rgba({$rgb}, {$alpha}) !important;";
+			}
+			return "outline-color: {$hex} !important;";
+		}
+		if ( $class === 'outline-white' ) return 'outline-color: #ffffff !important;';
+		if ( $class === 'outline-black' ) return 'outline-color: #000000 !important;';
+		if ( $class === 'outline-transparent' ) return 'outline-color: transparent !important;';
 
 		// 6.9 Background & Gradients
 		if ( isset( Tailwind_Config::$bg_util_map[ $class ] ) ) return Tailwind_Config::$bg_util_map[ $class ];

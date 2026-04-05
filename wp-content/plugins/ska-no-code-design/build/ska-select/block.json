@@ -20,6 +20,14 @@
             "type": "boolean",
             "default": false
         },
+        "isMultiple": {
+            "type": "boolean",
+            "default": false
+        },
+        "displayStyle": {
+            "type": "string",
+            "default": "dropdown"
+        },
         "tailwindClasses": {
             "type": "string",
             "default": ""

@@ -8,6 +8,7 @@ $className = isset($attributes['className']) ? $attributes['className'] : '';
 $customStyle = isset($attributes['customStyle']) ? $attributes['customStyle'] : '';
 $fieldName = isset($attributes['fieldName']) ? $attributes['fieldName'] : 'my_field';
 $inputType = isset($attributes['inputType']) ? $attributes['inputType'] : 'text';
+$fieldValue = isset($attributes['fieldValue']) ? $attributes['fieldValue'] : '';
 $placeholder = isset($attributes['placeholder']) ? $attributes['placeholder'] : '';
 $isRequired = isset($attributes['isRequired']) ? $attributes['isRequired'] : false;
 
@@ -19,8 +20,12 @@ $wrapper_attrs_args = [
     'name' => esc_attr($fieldName)
 ];
 
-if ($inputType !== 'hidden') {
+if (in_array($inputType, ['text', 'email', 'number', 'password']) && !empty($placeholder)) {
     $wrapper_attrs_args['placeholder'] = esc_attr($placeholder);
+}
+
+if (!empty($fieldValue)) {
+    $wrapper_attrs_args['value'] = esc_attr($fieldValue);
 }
 
 if (!empty($customStyle)) {

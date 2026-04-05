@@ -10,18 +10,33 @@ $fieldName = isset($attributes['fieldName']) ? $attributes['fieldName'] : 'my_se
 $optionsText = isset($attributes['optionsText']) ? $attributes['optionsText'] : '';
 $isRequired = isset($attributes['isRequired']) ? $attributes['isRequired'] : false;
 
+$displayStyle = isset($attributes['displayStyle']) ? $attributes['displayStyle'] : 'dropdown';
+$isMultiple = isset($attributes['isMultiple']) ? $attributes['isMultiple'] : false;
+
 $fullClasses = trim($tailwindClasses . ' ' . $className);
 
+// Ensure name has [] if multiple
+$outputName = $fieldName;
+if ($isMultiple && substr($outputName, -2) !== '[]') {
+    $outputName .= '[]';
+}
+
 $wrapper_attrs_args = [
-    'class' => "ska-select-block {$fullClasses}",
-    'name' => esc_attr($fieldName)
+    'class' => "ska-choice-group {$fullClasses}"
 ];
 
 if (!empty($customStyle)) {
     $wrapper_attrs_args['style'] = $customStyle;
 }
-if ($isRequired) {
-    $wrapper_attrs_args['required'] = 'required';
+
+if ($displayStyle === 'dropdown') {
+    $wrapper_attrs_args['name'] = esc_attr($outputName);
+    if ($isMultiple) {
+        $wrapper_attrs_args['multiple'] = 'multiple';
+    }
+    if ($isRequired) {
+        $wrapper_attrs_args['required'] = 'required';
+    }
 }
 
 $wrapper_attributes = get_block_wrapper_attributes($wrapper_attrs_args);
@@ -32,11 +47,11 @@ $optionsList = [];
 foreach ($lines as $line) {
     $parts = explode(':', $line, 2);
     $label = trim($parts[0]);
-    // If no colon, value is same as label
     $value = isset($parts[1]) ? trim($parts[1]) : $label;
     $optionsList[] = ['label' => $label, 'value' => $value];
 }
 ?>
+<?php if ($displayStyle === 'dropdown'): ?>
 <select <?php echo $wrapper_attributes; ?>>
     <?php foreach ($optionsList as $opt): ?>
         <option value="<?php echo esc_attr($opt['value']); ?>">
@@ -44,3 +59,16 @@ foreach ($lines as $line) {
         </option>
     <?php endforeach; ?>
 </select>
+<?php else: ?>
+<div <?php echo $wrapper_attributes; ?>>
+    <?php 
+    $inputType = ($displayStyle === 'radio') ? 'radio' : 'checkbox';
+    foreach ($optionsList as $opt): 
+    ?>
+    <label class="ska-choice-item flex items-center gap-2 cursor-pointer">
+        <input type="<?php echo $inputType; ?>" name="<?php echo esc_attr($outputName); ?>" value="<?php echo esc_attr($opt['value']); ?>" <?php echo $isRequired ? 'required' : ''; ?> />
+        <span><?php echo esc_html($opt['label']); ?></span>
+    </label>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>

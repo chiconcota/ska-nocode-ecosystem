@@ -289,10 +289,10 @@ class Tailwind_Config {
 			$parts = array();
 			foreach ( $prefixes as $prefix ) {
 				if ( $target === '' ) {
-					$parts[] = "$prefix [class*='wp-block-ska-builder']";
+					$parts[] = "$prefix :where([class*='wp-block-ska-builder'])";
 				} else {
-					$parts[] = "$prefix {$target}[class*='wp-block-ska-builder']";
-					$parts[] = "$prefix [class*='wp-block-ska-builder'] $target";
+					$parts[] = "$prefix :where({$target}[class*='wp-block-ska-builder'])";
+					$parts[] = "$prefix :where([class*='wp-block-ska-builder'] {$target})";
 				}
 			}
 			return implode( ', ', $parts );
@@ -316,9 +316,9 @@ class Tailwind_Config {
 		}
 
 		// Form Resets (Tailwind Preflight Parity)
-		$form_elements = array( 'input', 'select', 'textarea' );
+		$form_elements = array( 'input:not([type="checkbox"]):not([type="radio"])', 'select', 'textarea', 'option', 'optgroup' );
 		foreach ( $form_elements as $el ) {
-			$css .= $build_rule( $el ) . " { appearance: none; background-color: transparent; border-width: 0; border-radius: 0; padding: 0; border-color: #e5e7eb; outline: none; }\n";
+			$css .= $build_rule( $el ) . " { appearance: none; background-color: transparent; border-width: 0; border-radius: 0; padding: 0; border-color: #e5e7eb; outline: none; font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; }\n";
 		}
 
 		return $css;
