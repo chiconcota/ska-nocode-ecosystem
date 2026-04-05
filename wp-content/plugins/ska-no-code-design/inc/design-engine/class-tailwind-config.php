@@ -315,6 +315,12 @@ class Tailwind_Config {
 			$css .= $build_rule( $el ) . " { list-style: none; margin: 0; padding: 0; }\n";
 		}
 
+		// Form Resets (Tailwind Preflight Parity)
+		$form_elements = array( 'input', 'select', 'textarea' );
+		foreach ( $form_elements as $el ) {
+			$css .= $build_rule( $el ) . " { appearance: none; background-color: transparent; border-width: 0; border-radius: 0; padding: 0; border-color: #e5e7eb; outline: none; }\n";
+		}
+
 		return $css;
 	}
 }

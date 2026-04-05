@@ -13,6 +13,9 @@ module.exports = {
         'ska-list/index': path.resolve(process.cwd(), 'src/ska-list', 'index.js'),
         'ska-list-item/index': path.resolve(process.cwd(), 'src/ska-list-item', 'index.js'),
         'ska-bridge-import/index': path.resolve(process.cwd(), 'src/ska-bridge-import', 'index.js'),
+        'ska-form/index': path.resolve(process.cwd(), 'src/ska-form', 'index.js'),
+        'ska-input/index': path.resolve(process.cwd(), 'src/ska-input', 'index.js'),
+        'ska-select/index': path.resolve(process.cwd(), 'src/ska-select', 'index.js'),
     },
     output: {
         path: path.resolve(process.cwd(), 'build'),

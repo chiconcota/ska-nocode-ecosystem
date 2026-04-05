@@ -4,7 +4,7 @@
     "name": "ska-builder/container",
     "version": "1.0.0",
     "title": "Ska Container",
-    "category": "layout",
+    "category": "ska-atomic",
     "icon": "layout",
     "description": "A div/section wrapper that supports Tailwind classes and nested blocks.",
     "attributes": {
@@ -46,4 +46,3 @@
     "editorScript": "file:./index.js",
     "render": "file:./render.php"
 }
-

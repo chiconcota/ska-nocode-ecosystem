@@ -4,7 +4,7 @@
     "name": "ska-builder/image",
     "version": "1.0.0",
     "title": "Ska Image",
-    "category": "common",
+    "category": "ska-atomic",
     "icon": "format-image",
     "description": "A dynamic image block with JIT Tailwind support.",
     "attributes": {
@@ -52,4 +52,3 @@
     "editorScript": "file:./index.js",
     "render": "file:./render.php"
 }
-
