@@ -53,7 +53,8 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - Tác dụng: Cho phép người dùng chọn thẳng Fields (Cột: Giá, Tên) từ một cái Dropdown thay vì phải học thuộc lòng cú pháp `{{tag}}`.
 
 ### 3.2. Phase 3: Ska Logic Engine & Khối Form (The Flow) - 🟡 [IN PROGRESS]
-- 🟢 **Khối Nhập Liệu [HOÀN TẤT]**: Đúc xong các khối `<Input>`, `<Select>`, `<Form Wrapper>` vào lõi `ska-no-code-design`. Sẵn sàng "Sạch bóng Frontend" qua thiết kế Clean Slate Form Preflight Tailwind JIT.
+- 🟡 **Khối Nhập Liệu (Ska Form)**: Đúc xong các khối `<Input>`, `<Select>`, `<Form Wrapper>` vào lõi `ska-no-code-design`. Đã giải quyết thành công "Clean Slate Form Preflight" và "Tailwind V4 Editor Parity" (Polyfill & JIT Proxy Mutation). 
+  - **[TODO]**: Cần Debug triệt để lỗi "block form về chưa debug sau" theo report của user ở phiên làm việc kế tiếp.
 - 🔴 **Cỗ Máy Bắt Sự Kiện (Trigger/Action)**: Trả lời câu hỏi "Submit xong thì làm gì?". (Ví dụ: `Insert Row` vào Ska Data Pro, Gửi Email báo cáo...).
 - Xử lý hệ thống Role-Based Access Control (RBAC) và vòng lặp danh sách (Foreach/Map).
 

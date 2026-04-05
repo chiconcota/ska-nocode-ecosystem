@@ -12,6 +12,7 @@ registerBlockType(metadata.name, {
         const {
             fieldName,
             inputType,
+            fieldValue,
             placeholder,
             isRequired,
             tailwindClasses = '',
@@ -70,17 +71,27 @@ registerBlockType(metadata.name, {
                                 { label: 'Email', value: 'email' },
                                 { label: 'Number', value: 'number' },
                                 { label: 'Password', value: 'password' },
+                                { label: 'Checkbox', value: 'checkbox' },
+                                { label: 'Date', value: 'date' },
+                                { label: 'Time', value: 'time' },
+                                { label: 'File', value: 'file' },
                                 { label: 'Hidden', value: 'hidden' }
                             ]}
                             onChange={(val) => setAttributes({ inputType: val })}
                         />
-                        {inputType !== 'hidden' && (
+                        {['text', 'email', 'number', 'password'].includes(inputType) && (
                             <TextControl
                                 label={__('Placeholder', 'ska-builder-core')}
                                 value={placeholder}
                                 onChange={(val) => setAttributes({ placeholder: val })}
                             />
                         )}
+                        <TextControl
+                            label={__('Static Value (Optional)', 'ska-builder-core')}
+                            value={fieldValue}
+                            onChange={(val) => setAttributes({ fieldValue: val })}
+                            help="Giá trị gán sẵn cho Input hoặc Value cố định cho Checkbox/Radio"
+                        />
                         <ToggleControl
                             label={__('Required', 'ska-builder-core')}
                             checked={isRequired}
@@ -102,8 +113,9 @@ registerBlockType(metadata.name, {
                         type={inputType} 
                         name={fieldName} 
                         placeholder={placeholder} 
+                        value={fieldValue}
                         required={isRequired}
-                        disabled={true} 
+                        readOnly={true}
                     />
                 ) : (
                     <div {...blockProps} style={{ opacity: 0.5, border: '1px dashed #ccc', padding: '5px' }}>

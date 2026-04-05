@@ -31,6 +31,10 @@ window.ska.bridge = (function() {
         'LI': 'ska-builder/list-item',
         'BUTTON': 'ska-builder/button',
         'A': 'ska-builder/button',
+        'FORM': 'ska-builder/form',
+        'INPUT': 'ska-builder/input',
+        'SELECT': 'ska-builder/select',
+        'TEXTAREA': 'ska-builder/input',
     };
 
     /**
@@ -90,6 +94,13 @@ window.ska.bridge = (function() {
         if (node.nodeType !== Node.ELEMENT_NODE) return null;
 
         const tagName = node.tagName.toUpperCase();
+
+        if (tagName === 'SVG') {
+            return wp.blocks.createBlock('core/html', {
+                content: node.outerHTML
+            });
+        }
+
         const desiredBlock = TAG_MAP[tagName] || 'ska-builder/container';
         let blockName = wp.blocks.getBlockType(desiredBlock) ? desiredBlock : 'core/group';
         const rawClasses = node.getAttribute('class') || '';
@@ -145,6 +156,40 @@ window.ska.bridge = (function() {
         if (blockName === 'ska-builder/image') {
             attributes.url = node.getAttribute('src') || '';
             attributes.alt = node.getAttribute('alt') || node.getAttribute('data-alt') || '';
+        }
+
+        if (blockName === 'ska-builder/input') {
+            attributes.fieldName = node.getAttribute('name') || '';
+            attributes.placeholder = node.getAttribute('placeholder') || '';
+            attributes.fieldValue = node.getAttribute('value') || '';
+            attributes.isRequired = node.hasAttribute('required');
+            const type = node.getAttribute('type') || 'text';
+            const supportedTypes = ['password', 'email', 'number', 'hidden', 'checkbox', 'radio', 'date', 'time', 'file'];
+            attributes.inputType = supportedTypes.includes(type) ? type : 'text';
+            if (tagName === 'TEXTAREA') {
+                attributes.inputType = 'text';
+            }
+        }
+
+        if (blockName === 'ska-builder/select') {
+            attributes.fieldName = node.getAttribute('name') || '';
+            attributes.isRequired = node.hasAttribute('required');
+            attributes.isMultiple = node.hasAttribute('multiple');
+            attributes.displayStyle = 'dropdown';
+            
+            const options = Array.from(node.querySelectorAll('option'));
+            if (options.length > 0) {
+                attributes.optionsText = options.map(opt => {
+                    const label = (opt.textContent || '').trim();
+                    const value = opt.getAttribute('value') || label;
+                    return `${label}:${value}`;
+                }).join('\n');
+            }
+            node.innerHTML = '';
+        }
+
+        if (blockName === 'ska-builder/form') {
+            attributes.formId = node.getAttribute('id') || '';
         }
 
         if (blockName === 'ska-builder/button') {
@@ -212,7 +257,7 @@ window.ska.bridge = (function() {
         }
 
         // Handle inner blocks for non-atomic tags
-        const atomicBlocks = ['ska-builder/image', 'ska-builder/icon', 'ska-builder/button'];
+        const atomicBlocks = ['ska-builder/image', 'ska-builder/icon', 'ska-builder/button', 'ska-builder/input', 'ska-builder/select'];
         
         if (atomicBlocks.includes(blockName)) {
             return wp.blocks.createBlock(blockName, attributes);

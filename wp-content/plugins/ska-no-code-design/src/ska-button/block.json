@@ -43,6 +43,14 @@
             "type": "string",
             "default": "link"
         },
+        "fieldName": {
+            "type": "string",
+            "default": ""
+        },
+        "fieldValue": {
+            "type": "string",
+            "default": ""
+        },
         "tailwindClasses": {
             "type": "string",
             "default": ""

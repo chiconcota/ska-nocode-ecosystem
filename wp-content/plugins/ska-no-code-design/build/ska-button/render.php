@@ -60,6 +60,14 @@ if ( $tagName === 'button' ) {
     $type_attr = '';
     if ( $actionType === 'submit' ) {
         $type_attr = ' type="submit"';
+        $fieldName = $attributes['fieldName'] ?? '';
+        $fieldValue = $attributes['fieldValue'] ?? '';
+        if ( ! empty( $fieldName ) ) {
+            $type_attr .= ' name="' . esc_attr( $fieldName ) . '"';
+        }
+        if ( ! empty( $fieldValue ) ) {
+            $type_attr .= ' value="' . esc_attr( $fieldValue ) . '"';
+        }
     }
     printf(
         '<button%1$s %2$s>%3$s</button>',

@@ -58,6 +58,7 @@ registerBlockType(metadata.name, {
             'ska-builder/container',
             'ska-builder/text',
             'ska-builder/image',
+            'ska-builder/html2tailwind',
             'core/paragraph',
             'core/heading'
         ];

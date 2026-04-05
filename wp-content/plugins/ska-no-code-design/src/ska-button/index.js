@@ -23,6 +23,8 @@ registerBlockType(metadata.name, {
             iconPosition = 'left',
             iconClasses = '',
             actionType = 'link',
+            fieldName = '',
+            fieldValue = '',
             tailwindClasses = '', 
             className = '',
             dynamic = { text_source: 'static', text_key: '', url_source: 'static', url_key: '' }, 
@@ -109,6 +111,22 @@ registerBlockType(metadata.name, {
                                         { label: 'New Window (_blank)', value: '_blank' }
                                     ]}
                                     onChange={(val) => setAttributes({ target: val })}
+                                />
+                            </>
+                        )}
+                        {actionType === 'submit' && (
+                            <>
+                                <TextControl
+                                    label={__('Field Name (Data Key)', 'ska-builder-core')}
+                                    value={fieldName}
+                                    onChange={(val) => setAttributes({ fieldName: val })}
+                                    help="Định danh của nút (Ví dụ: action_type)"
+                                />
+                                <TextControl
+                                    label={__('Field Value', 'ska-builder-core')}
+                                    value={fieldValue}
+                                    onChange={(val) => setAttributes({ fieldValue: val })}
+                                    help="Giá trị gửi lên Server (Ví dụ: publish, draft)"
                                 />
                             </>
                         )}
@@ -210,6 +228,8 @@ registerBlockType(metadata.name, {
                     href={Tag === 'a' ? url : undefined}
                     target={Tag === 'a' ? target : undefined}
                     type={actionType === 'submit' ? 'submit' : undefined}
+                    name={actionType === 'submit' && fieldName ? fieldName : undefined}
+                    value={actionType === 'submit' && fieldValue ? fieldValue : undefined}
                     onClick={(e) => e.preventDefault()}
                 >
                     {hasIcon && iconPosition === 'left' && (

@@ -16,6 +16,10 @@
             "type": "string",
             "default": "text"
         },
+        "fieldValue": {
+            "type": "string",
+            "default": ""
+        },
         "placeholder": {
             "type": "string",
             "default": "Enter text..."

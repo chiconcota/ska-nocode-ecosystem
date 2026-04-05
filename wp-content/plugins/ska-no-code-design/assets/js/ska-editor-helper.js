@@ -17,39 +17,57 @@
             console.log('Ska Builder: Brand Colors loaded from Plugin Source.');
         }
 
-        // 2. Inject Tailwind CDN Script FIRST, then set config AFTER load
-        // CRITICAL: CDN overwrites window.tailwind on init. Config MUST be set AFTER CDN loads.
-        // Per official docs: tailwind.config = {...} AFTER CDN script.
+        // 2. Load script first, then mutate config to trigger CDN Proxy rebuild
+        const customBrandColors = (window.skaEditorConfig && window.skaEditorConfig.brandColorsJson) ? window.skaEditorConfig.brandColorsJson : {};
+        
         const script = doc.createElement('script');
         script.id = 'ska-tailwind-cdn';
         script.src = 'https://cdn.tailwindcss.com';
-        script.onload = function() {
-            // Set config AFTER CDN has initialized (official Tailwind CDN API)
-            if (doc.defaultView && doc.defaultView.tailwind) {
-                const customBrandColors = (window.skaEditorConfig && window.skaEditorConfig.brandColorsJson) ? window.skaEditorConfig.brandColorsJson : {};
-
-                doc.defaultView.tailwind.config = {
-                    important: true,
-                    corePlugins: {
-                        preflight: false,
-                    },
-                    theme: {
-                        extend: {
-                            colors: customBrandColors
-                        }
-                    }
-                };
-                console.log('Ska Builder: Tailwind CDN config applied with Custom Brand Colors.');
+        
+        script.onload = () => {
+            const tw = doc.defaultView.tailwind;
+            if (tw && tw.config) {
+                tw.config.important = true;
+                tw.config.corePlugins = { preflight: false };
+                tw.config.theme = { extend: { colors: customBrandColors } };
+                console.log("Ska Builder: Forcing Tailwind CDN Rebuild via Config Mutation");
             }
         };
         doc.head.appendChild(script);
 
-        // 3. Fix Gutenberg Layout Issues
+        // 4. Fix Gutenberg Layout Issues
         const style = doc.createElement('style');
         style.id = 'ska-editor-fixes';
         style.innerHTML = `
             @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 
+            /* Nuke Gutenberg Input Overrides with structural specificity (no !important) so Tailwind's !important wins */
+            .editor-styles-wrapper .block-editor-block-list__block.wp-block-ska-builder-input,
+            .editor-styles-wrapper .block-editor-block-list__block.wp-block-ska-builder-select select {
+                appearance: none;
+                background-color: transparent;
+                border-width: 0;
+                border-style: solid;
+                border-color: transparent;
+                border-radius: 0;
+                padding: 0;
+                outline-width: 0;
+                outline-style: solid;
+                outline-color: transparent;
+                margin: 0;
+                box-shadow: none;
+            }
+
+            /* Tailwind V4 Layout Parity Shims for Editor */
+            .\-outline-offset-1 { outline-offset: -1px !important; }
+            .\-outline-offset-2 { outline-offset: -2px !important; }
+            .focus\:\-outline-offset-1:focus, .focus\:\-outline-offset-1:focus-within { outline-offset: -1px !important; }
+            .focus\:\-outline-offset-2:focus, .focus\:\-outline-offset-2:focus-within { outline-offset: -2px !important; }
+
+            /* Ensure outline width utilities force solid style if Preflight is disabled */
+            [class*="outline-1"], [class*="outline-2"], [class*="outline-4"], [class*="outline-8"] {
+                outline-style: solid !important;
+            }
 
             /* GLOBAL UI REFINEMENT: Remove all vertical lines from Sidebar panels */
             .components-panel__body {
@@ -99,8 +117,8 @@
              * Container children (.wp-block) need auto width unless user specifies max-w-*, .container, or size-*.
              * size-* excluded: Tailwind size utilities (size-10, size-12...) must keep their explicit dimensions.
              */
-            .wp-block-ska-builder-container:not(.flex) > .wp-block:not([class*="max-w-"]):not(.container):not([class*="size-"]),
-            .wp-block-ska-builder-container.flex-col > .wp-block:not([class*="max-w-"]):not(.container):not([class*="size-"]) {
+            .wp-block-ska-builder-container:not(.flex) > .wp-block:not([class*="max-w-"]):not(.container):not([class*="size-"]):not([class*="w-"]),
+            .wp-block-ska-builder-container.flex-col > .wp-block:not([class*="max-w-"]):not(.container):not([class*="size-"]):not([class*="w-"]) {
                 width: auto !important;
                 max-width: none !important;
             }

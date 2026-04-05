@@ -1,3 +1,63 @@
+## 2026-04-06 - Giải cứu Tailwind V4 Editor Parity với Proxy Mutation & Polyfills
+- **Problem:** (1) Thư viện `Tailwind CDN v3` khi chạy bên trong Iframe của Gutenberg Editor luôn bỏ qua lệnh cấu hình `important: true` nếu script khởi tạo bị dính Race Condition. Kết quả là mọi class liên quan đến Form Reset (border, outline) bị Gutenberg đè chết; (2) Frontend đang dùng cú pháp layout Form chuẩn Tailwind v4 (VD: `-outline-offset-1`, `focus:-outline-offset-2`), nhưng Editor rỗng CDN v3 hoàn toàn mù tịt về các class âm này, khiến hiệu ứng thụt viền chớp sáng không hiện lên.
+- **Decision:** Thay vì tạo đuôi nhúng config dễ crash, áp dụng mô hình **Proxy Mutation**: Đợi CDN load xong (`script.onload`), sau đó nhảy trực tiếp vào bắt con Proxy `doc.defaultView.tailwind.config` ép biến `important = true`. Tiếp theo, cài đặt (Polyfill) cứng mã CSS cho 4 class Layout âm của V4 trực tiếp vào lớp Reset `#ska-editor-fixes`.
+- **Reason:** Ép cấu hình Runtime Mutation sẽ kích hoạt chức năng theo dõi Object Proxy bên trong bộ Core CDN của Tailwind, buộc nó tự Re-build toàn bộ AST và xuất mã CSS kèm cờ `!important` chuẩn xác, kết thúc vĩnh viễn cuộc chiến Specificity Editor/Frontend. Việc Polyfill thủ công class Layout thay vì viết Tailwind Plugin JS JS giúp ngăn chặn hiện tượng treo (crash) Editor của CDN.
+
+## 2026-04-06 - Sửa lỗi hiệu ứng Viền (Outline) tàng hình trong Gutenberg Editor
+## 2026-04-06 - Nâng cấp Ska Bridge Import giữ nguyên vẹn mã thẻ SVG
+- **Problem:** Công cụ `html2tailwind` tự động ánh xạ mọi thẻ HTML không xác định thành `Ska Container`. Điều này dẫn đến sự cố nghiêm trọng khi Import các Form xịn chứa thẻ Icon `<svg>` và `<path>`, biến chúng thành Container gây rách nát giao diện vì Gutenberg không hiểu thẻ `<path>`.
+- **Decision:** Bổ sung ngoại lệ trực tiếp vào `html-to-blocks.js` chặn Parser không được mổ bụng thẻ `SVG` mà phải ném nguyên cả chuỗi `outerHTML` vào khối `core/html` (Custom HTML của Gutenberg).
+- **Reason:** Đảm bảo SVG được hiển thị và Render an toàn tuyệt đối mà không bị các cơ chế Atomic Blocks của Ska can thiệp làm hỏng đồ hoạ bên trong.
+
+## 2026-04-06 - Nâng cấp JIT Compiler hỗ trợ Outline Utilities và Focus-within
+- **Problem:** Khi Import Template tĩnh từ Tailwind UI (Ví dụ Form inputs), Tailwind sử dụng các class như `outline-1`, `-outline-offset-1`, `focus-within:outline-2` để vẽ khung viền (thay vì dùng `ring`). Tuy nhiên JIT Compiler của Ska chưa được dạy bộ từ vựng Outline và cũng mất luôn mảng Pseudo-class `focus-within`, `focus-visible` nên viền không thể hiển thị.
+- **Decision:** Cập nhật `class-tailwind-compiler.php`, bổ sung Regex parsing cho toàn bộ hệ sinh thái Outline (`outline-none`, `outline-width`, `outline-offset`, `-outline-offset`, `outline-color`) và thêm `focus-within`, `focus-visible` vào danh sách móc nối Pseudo-class.
+- **Reason:** Đảm bảo khả năng tương thích 100% với các component form đời mới nhất của Tailwind UI (Tailwind v3+ sử dụng Outline thay vì Ring cho Form Elements mặc định).
+
+## 2026-04-06 - Sửa lỗi thẻ Import HTML bị đánh chặn trong Ska Form
+- **Problem:** Công cụ `html2tailwind` (Ska Bridge Import) không thể kéo thả vào bên trong thẻ `Ska Form`. Nguyên nhân do khối Ska Form giới hạn `allowedBlocks` nhằm ngăn rác, nhưng lại quên mất việc cho phép thẻ Import chạy. Điều này cản trở Use-case: Người dùng dán toàn bộ mã HTML tĩnh của một Form chà bá vào trong Container để Converter chạy thẳng một lần.
+- **Decision:** Bổ sung `ska-builder/html2tailwind` vào danh sách `ALLOWED_BLOCKS` của file `src/ska-form/index.js`.
+- **Reason:** Bridge Import là thẻ trung gian (bùng nổ rồi tự sát nhường chổ cho Atomic Blocks), việc đứng hợp pháp trong Form Container là bắt buộc để hỗ trợ luồng No-Code Builder dán HTML nguyên khối.
+
+## 2026-04-06 - Nâng cấp Ska Button hỗ trợ Multi-action Form
+- **Problem:** Khối Button cũ có mục "Action Type: Submit Form" nhưng lại bị sót 2 phần tử sống còn cho form là thuộc tính `name` và `value`. Điều này cản trở việc tạo Form nhiều luồng action (Ví dụ: Nút "Save Draft" và "Publish" cùng đăng một nội dung, Backend không định vị được hành vi).
+- **Decision:** Bổ sung 2 tham số `fieldName` và `fieldValue` vào thẻ Ska Button. Viết code Editor Logic (`index.js`) để 2 dòng cấu hình này chỉ xuất hiện khi Action Type là `Submit Form`. Cập nhật `render.php` đẩy thẳng ra HTML Output.
+- **Reason:** Đảm bảo khả năng scale logic cho giai đoạn kết nối Ska Logic Engine (Phase 3). Chuẩn hóa HTML Semantic Validation của w3c.
+
+## 2026-04-06 - Giải quyết triệt để Xung đột Specificity (Tailwind vs Reset)
+- **Problem:** Khi người dùng thêm class bg-gray, border-blue vào các block Input, màu sắc không hiển thị ở Frontend. Nguyên nhân là các luật Reset Form của Ska (như `background-color: transparent`, `border-width: 0`) có Specificity quá cao (4 class, 3 thẻ = 0,0,4,3) đè chết Specificity của Tailwind Utility Class (3 class, 2 thẻ = 0,0,3,2).
+- **Decision:** Nâng cấp hàm `$build_rule` trong file `class-tailwind-config.php`, bọc toàn bộ thẻ đích HTML vào selector CSS `:where()`.
+- **Reason:** `:where()` có độ ưu tiên Specificity luôn bằng 0. Khi bọc toàn bộ lõi Reset vào `:where()`, Specificity của Reset rơi thẳng đứng xuống còn `0,0,1,2`. Nhờ vậy, mọi Class Tailwind do người dùng định nghĩa ở Editor (`0,0,3,2`) sẽ luôn luôn thắng thế tuyệt đối và đè được Form Reset một cách mượt mà.
+
+## 2026-04-06 - Đại tu Card Option 2: Ska Choice Component (Thay vì Ska Select)
+- **Decision:** Đổi định hướng thiết kế Block `ska-builder/select`. Biến nó từ 1 khối Dropdown tĩnh thành 1 khối xử lý "Danh sách Tùy chọn" tĩnh đa giao diện (Dropdown, Multi-select, Radio Group, Checkbox Group).
+- **Architecture:** 
+  - Bổ sung `isMultiple` (boolean) và `displayStyle` (dropdown | radio | checkbox).
+  - Tự động gán mảng `[]` vào thuộc tính Form Name (name) nếu bật tính năng Chọn Multiple.
+  - Phân nhánh Frontend PHP (`render.php`) xuất HTML dạng `<select multiple>` hoặc bộ `<label><input/></label>` tương ứng mà không làm vỡ các thiết kế trước đó.
+- **Reason:** Việc nặn một cụm Checkbox hay Radio dọc dài bằng Atomic Blocks khiến UX của người dùng Build-Form bị quá tải. Thiết kế mới đem lại cả sự tự do Atomic (với thẻ `ska-builder/input`) và sự tiện lợi tuyệt đối (chỉ cần chép Text List) với thẻ `ska-builder/select` cải tiến. Phù hợp trọn vẹn với Model Checkbox/Multi-select của *Ska Data Pro*.
+
+## 2026-04-06 - Nâng cấp Kiến trúc Atomic cho Form Items (Ska Input)
+- **Decision:** Mở rộng quyền lực cho khối `ska-builder/input` thành thẻ gốc đa năng thay vì tạo block `ska-checkbox` mới. Bổ sung các chuẩn: `checkbox`, `radio`, `date`, `time`, `file`.
+- **Feature:** Thêm thuộc tính `fieldValue` (Static Value) vào Inspector Controls (dùng làm default value cho Checkbox / Radio).
+- **Reason:** Đảm bảo triết lý Atomic Design và Clean Slate. Tránh hardcode cấu trúc `<label><input/></label>` làm mất tự do dàn layout của người dùng (như Grid / Flex). Thay vào đó, người dùng tự kết hợp `Ska Input` và `Ska Text` thành nhóm bằng cách bỏ vào trong `Ska Container`.
+- **Bridge:** Cập nhật công cụ `html-to-blocks.js` để tự động parse đủ 9 loại input type và sao chép luôn giá trị `value="..."` từ mã HTML dán vào.
+
+## 2026-04-06 - Hoàn thiện Clean Slate: Form Elements Font Override
+- **Problem:** Tùy chọn thả xuống (`<option>`) và bản thân thẻ `<select>` hay `<input>` vẫn bị hiển thị font mặc định của trình duyệt (thường là Arial hoặc Times New Roman) thay vì font chuẩn của Tailwind do thiếu thuộc tính kế thừa.
+- **Decision:** Bổ sung các luật reset font (`font-family: inherit`, `font-size: 100%`, `color: inherit`, `line-height: inherit`) vào nhóm Form Resets (`input`, `select`, `textarea`, `option`, `optgroup`) trong hàm phân giải CSS `get_core_reset_css` (file `class-tailwind-config.php`).
+- **Reason:** Đảm bảo Tailwind Preflight Parity tuyệt đối, ép mọi thuộc tính chữ của Form Element phải chảy theo quy luật Font mẹ (thường là Tailwind `ui-sans-serif, system-ui`).
+
+## 2026-04-06 - Nâng cấp UI/UX Options List (Ska Select Block)
+- **Decision:** Thay thế ô nhập liệu `TextareaControl` dạng thô bằng một Custom Component trực quan (`OptionsBuilderControl`) cho phép người dùng Thêm/Sửa/Xóa từng tùy chọn dạng Cặp `Label - Value` cho thẻ `<select>` ngay bên trong mục Inspector. 
+- **Reason:** Tăng trải nghiệm kéo thả chuyên nghiệp (No-code Ux) lên ngang tầm Elementor/Webflow. Lưu ý vẫn duy trì cơ chế "Single Source of Truth" là biến chuỗi String tĩnh `optionsText` ở Database để đảm bảo tương thích ngược 100% với form cũ, component chỉ làm cầu nối giao diện.
+
+## 2026-04-06 - Giải cứu CSS Specificity: Ska Select Width & HTML2Tailwind Form Mappings
+- **Decision (Editor Helper Fix):** Bổ sung loại trừ nhóm class quy định chiều rộng (`:not([class*="w-"])`) vào đoạn hack CSS của `ska-editor-helper.js` đối với thẻ `.wp-block`.
+- **Reason:** Trước đây, Editor tiêm lệnh `width: auto !important` vào mọi khối con, đè bẹp hoàn toàn class `w-full` của Ska Select. Cập nhật này sẽ tha cho các class nhóm `w-*` (như `w-full`, `w-1/2`), giúp thẻ `<select>` khôi phục khả năng full-width 100% trong Block Editor.
+- **Decision (HTML2Tailwind Fix):** Tích hợp thêm các Thẻ HTML `<form>`, `<input>`, `<select>`, và `<textarea>` vào cỗ máy Parser `html-to-blocks.js` của Conversion Bridge.
+- **Reason:** Khắc phục tình trạng khi người dùng paste code HTML chứa Form (Login / Register...) thì Form bị xóa sổ hoàn toàn. Từ nay `HTML2Tailwind` đã ánh xạ chuẩn xác sang các atomic blocks `ska-builder/form`, `ska-builder/input` và `ska-builder/select`. Hỗ trợ bóc tách luôn Option List `Value:Label` cho Select.
+
 ## 2026-04-06 - Giải cứu CSS Specificity: Button Reset Bug (Frontend)
 - **Problem:** Khối Button (nút `<button>`) trên Frontend không nhận diện (hoặc bị ghi đè) các class Tailwind như Padding (`px-4`), Background (`bg-blue-500`), Margin... Mặc dù class CSS của tiện ích JIT Compiler sinh ra đầy đủ (`.bg-blue-500.bg-blue-500`) với điểm specificity là 32.
 - **Root Cause:** Ở bản cập nhật trước, việc tái kích hoạt Button Reset (Xóa viền đen, xóa xám) của WordPress đã dùng selector `button:not(.components-button)`. Bản thân selector `:not(.components-button)` gia tăng +10 điểm specificity, đẩy điểm của toàn bộ luật Reset Reset lên 33. Kết quả: Điểm 33 của thiết lập Reset "Mâm xôi" đánh bại khối JIT Tailwind (32), xóa sổ màu nền và đệm viền.
