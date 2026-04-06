@@ -54,6 +54,7 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-06 - Vá lỗ hổng Modifier Validation (JIT Compiler Leak):** Vá khẩn cấp lỗi vòng lặp parser của JIT Compiler. Xây dựng chốt lọc `$is_valid_modifiers` để hủy bỏ và tống xuất mọi lớp Tailwind có chứa tiền tố lạ phân loại (như `dark:text-white` hoặc `sida:bg-red`) vào mảng thẻ chưa giải quyết. Ngăn chặn tuyệt đối tình trạng compiler dại dột bóc tách phần đuôi class và tiêm Global CSS phá nát hệ sinh thái (tôn trọng triệt để quyết định Hoãn Dark Mode trước đó).
 - **2026-04-05 - 🔵 [PHASE 3 INITIATION] Ska Form Engine & Tailwind Preflight Parity:**
   - **Ska Form (Container):** Cấu trúc Flat DOM an toàn, sử dụng `InnerBlocks.Content` trong hành vi `save()` để mở khóa HTML cho Frontend JIT Compiler quét class. Không quy chụp wrapper mặc định bằng cách cho qua quyền tự do nhúng Layout Grid qua `Ska Container`.
   - **Ska Input & Select (Atomic State):** Sửa soạn xong trạng thái Clean Slate. Từ chối cung cấp bất cứ Class Tailwind nào mặc định trong `block.json` để nhường toàn quyền "sinh sát" cho người thiết kế.
