@@ -7,9 +7,11 @@ $tailwindClasses = isset($attributes['tailwindClasses']) ? $attributes['tailwind
 $className = isset($attributes['className']) ? $attributes['className'] : '';
 $customStyle = isset($attributes['customStyle']) ? $attributes['customStyle'] : '';
 $fieldName = isset($attributes['fieldName']) ? $attributes['fieldName'] : 'my_field';
+$fieldId = isset($attributes['fieldId']) ? $attributes['fieldId'] : '';
 $inputType = isset($attributes['inputType']) ? $attributes['inputType'] : 'text';
 $fieldValue = isset($attributes['fieldValue']) ? $attributes['fieldValue'] : '';
 $placeholder = isset($attributes['placeholder']) ? $attributes['placeholder'] : '';
+$isChecked = isset($attributes['isChecked']) ? $attributes['isChecked'] : false;
 $isRequired = isset($attributes['isRequired']) ? $attributes['isRequired'] : false;
 
 $fullClasses = trim($tailwindClasses . ' ' . $className);
@@ -30,6 +32,14 @@ if (!empty($fieldValue)) {
 
 if (!empty($customStyle)) {
     $wrapper_attrs_args['style'] = $customStyle;
+}
+
+if (!empty($fieldId)) {
+    $wrapper_attrs_args['id'] = esc_attr($fieldId);
+}
+
+if ($isChecked && in_array($inputType, ['checkbox', 'radio'])) {
+    $wrapper_attrs_args['checked'] = 'checked';
 }
 
 if ($isRequired) {

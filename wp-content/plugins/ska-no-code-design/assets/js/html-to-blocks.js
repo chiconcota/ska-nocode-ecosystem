@@ -160,9 +160,11 @@ window.ska.bridge = (function() {
 
         if (blockName === 'ska-builder/input') {
             attributes.fieldName = node.getAttribute('name') || '';
+            attributes.fieldId = node.getAttribute('id') || '';
             attributes.placeholder = node.getAttribute('placeholder') || '';
             attributes.fieldValue = node.getAttribute('value') || '';
             attributes.isRequired = node.hasAttribute('required');
+            attributes.isChecked = node.hasAttribute('checked');
             const type = node.getAttribute('type') || 'text';
             const supportedTypes = ['password', 'email', 'number', 'hidden', 'checkbox', 'radio', 'date', 'time', 'file'];
             attributes.inputType = supportedTypes.includes(type) ? type : 'text';

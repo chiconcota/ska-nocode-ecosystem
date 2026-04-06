@@ -11,9 +11,11 @@ registerBlockType(metadata.name, {
         const { attributes, setAttributes } = props;
         const {
             fieldName,
+            fieldId,
             inputType,
             fieldValue,
             placeholder,
+            isChecked,
             isRequired,
             tailwindClasses = '',
             className = '',
@@ -63,6 +65,12 @@ registerBlockType(metadata.name, {
                             onChange={(val) => setAttributes({ fieldName: val })}
                             help="Tên biến chứa dữ liệu (Vd: first_name, email)."
                         />
+                        <TextControl
+                            label={__('Field ID (Optional)', 'ska-builder-core')}
+                            value={fieldId}
+                            onChange={(val) => setAttributes({ fieldId: val })}
+                            help="Cần thiết cho Radio/Checkbox để nối với thẻ Label gốc (for=id)."
+                        />
                         <SelectControl
                             label={__('Input Type', 'ska-builder-core')}
                             value={inputType}
@@ -72,6 +80,7 @@ registerBlockType(metadata.name, {
                                 { label: 'Number', value: 'number' },
                                 { label: 'Password', value: 'password' },
                                 { label: 'Checkbox', value: 'checkbox' },
+                                { label: 'Radio', value: 'radio' },
                                 { label: 'Date', value: 'date' },
                                 { label: 'Time', value: 'time' },
                                 { label: 'File', value: 'file' },
@@ -92,6 +101,13 @@ registerBlockType(metadata.name, {
                             onChange={(val) => setAttributes({ fieldValue: val })}
                             help="Giá trị gán sẵn cho Input hoặc Value cố định cho Checkbox/Radio"
                         />
+                        {['checkbox', 'radio'].includes(inputType) && (
+                            <ToggleControl
+                                label={__('Checked Default', 'ska-builder-core')}
+                                checked={isChecked}
+                                onChange={(val) => setAttributes({ isChecked: val })}
+                            />
+                        )}
                         <ToggleControl
                             label={__('Required', 'ska-builder-core')}
                             checked={isRequired}
@@ -112,8 +128,10 @@ registerBlockType(metadata.name, {
                         {...blockProps} 
                         type={inputType} 
                         name={fieldName} 
+                        id={fieldId || undefined}
                         placeholder={placeholder} 
                         value={fieldValue}
+                        checked={['checkbox', 'radio'].includes(inputType) ? isChecked : undefined}
                         required={isRequired}
                         readOnly={true}
                     />

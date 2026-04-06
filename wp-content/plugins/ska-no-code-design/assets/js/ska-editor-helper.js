@@ -42,13 +42,13 @@
             @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 
             /* Nuke Gutenberg Input Overrides with structural specificity (no !important) so Tailwind's !important wins */
-            .editor-styles-wrapper .block-editor-block-list__block.wp-block-ska-builder-input,
+            .editor-styles-wrapper .block-editor-block-list__block.wp-block-ska-builder-input:not([type="checkbox"]):not([type="radio"]),
             .editor-styles-wrapper .block-editor-block-list__block.wp-block-ska-builder-select select {
                 appearance: none;
                 background-color: transparent;
                 border-width: 0;
                 border-style: solid;
-                border-color: transparent;
+                border-color: #e5e7eb; /* Parity with frontend base reset */
                 border-radius: 0;
                 padding: 0;
                 outline-width: 0;
@@ -63,6 +63,13 @@
             .\-outline-offset-2 { outline-offset: -2px !important; }
             .focus\:\-outline-offset-1:focus, .focus\:\-outline-offset-1:focus-within { outline-offset: -1px !important; }
             .focus\:\-outline-offset-2:focus, .focus\:\-outline-offset-2:focus-within { outline-offset: -2px !important; }
+
+            /* V4 Polyfill: Indeterminate & Group-Has State for SVG Checkboxes (CDN v3 doesn't support) */
+            .group:has(:checked) .group-has-checked\:opacity-100 { opacity: 1 !important; }
+            .group:has(:disabled) .group-has-disabled\:stroke-gray-950\/25 { stroke: rgba(3, 7, 18, 0.25) !important; }
+            :indeterminate.indeterminate\:bg-indigo-600 { background-color: #4f46e5 !important; }
+            :indeterminate.indeterminate\:border-indigo-600 { border-color: #4f46e5 !important; }
+            :disabled:checked.disabled\:checked\:bg-gray-100 { background-color: #f3f4f6 !important; }
 
             /* Ensure outline width utilities force solid style if Preflight is disabled */
             [class*="outline-1"], [class*="outline-2"], [class*="outline-4"], [class*="outline-8"] {
@@ -99,6 +106,15 @@
              */
             .wp-block-ska-builder-video .block-editor-inner-blocks,
             .wp-block-ska-builder-video .block-editor-block-list__layout {
+                display: contents !important;
+            }
+
+            /* 
+             * CORE/HTML SVG WRAPPER FIX:
+             * When SVG code is mapped to core/html, the .wp-block-html wrapper breaks Flex/Grid positioning 
+             * (like overlapping checkbox inside a size-4 grid group). This removes the wrapper constraint.
+             */
+            [class*='wp-block-ska-builder'] > .wp-block-html {
                 display: contents !important;
             }
 
