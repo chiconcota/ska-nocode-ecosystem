@@ -12,6 +12,14 @@
             "type": "string",
             "default": "my_field"
         },
+        "fieldId": {
+            "type": "string",
+            "default": ""
+        },
+        "isChecked": {
+            "type": "boolean",
+            "default": false
+        },
         "inputType": {
             "type": "string",
             "default": "text"

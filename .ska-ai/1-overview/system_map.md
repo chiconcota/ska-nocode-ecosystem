@@ -231,3 +231,4 @@ ska-ecosystem/ (mapped to app/public/)
 - **Ska Data Pro (Flat Tables):** Khởi tạo hệ thống Database tự trị với bảng phẳng `ska_data_*`. Thoát ly hoàn toàn khỏi bảng `wp_postmeta`. Xây dựng Schema Manager và Query Builder trực quan.
 - **Ska Attributes (Key-Value Dynamic Panel):** Trong plugin Design Engine, thay thế `customStyle` bằng mảng `htmlAttributes` để rải thuộc tính HTML (`data-*`, `aria-*`, `style`...) vào thẻ wrapper Frontend.
 - **Tailwind CSS v4:** Nâng cấp cỗ máy Local JIT từ v3 lên cấu trúc của v4 để hỗ trợ mở rộng động.
+- **🔴 REST JIT Compiler (Editor Refactor):** Đại tu lõi `ska-no-code-design` sau khi MVP hoàn tất. Bãi bỏ Tailwind CDN khỏi môi trường Gutenberg Editor. Áp dụng cơ chế **AJAX Polling / wp.data.subscribe** để gọi thẳng sức mạnh biên dịch của hàm PHP `Tailwind_Compiler` từ local server nhằm kết nối 100% Logic biên dịch thành một cục (Single Source of Truth), gia tăng hiệu năng và chấm dứt các lỗi sai biệt render class của CSS Editor.

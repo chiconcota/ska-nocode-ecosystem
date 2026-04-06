@@ -51,29 +51,42 @@ class Tailwind_Compiler {
 
 		foreach ( $class_list as $class ) {
 			// Extract responsive prefix or pseudo-class if any
-			$prefix     = '';
-			$pseudo     = '';
-			$base_class = $class;
+			$prefix       = '';
+			$pseudo       = '';
+			$group_prefix = '';
+			$custom_media = '';
+			$base_class   = $class;
 
 			if ( strpos( $class, ':' ) !== false ) {
-				$parts = explode( ':', $class );
-				if ( count( $parts ) === 2 ) {
-					if ( in_array( $parts[0], array( 'hover', 'focus', 'focus-within', 'focus-visible', 'active', 'disabled', 'group-hover' ) ) ) {
-						$pseudo     = ':' . $parts[0];
-						$base_class = $parts[1];
-						if ( $parts[0] === 'group-hover' ) {
-							$pseudo = '';
-						}
-					} else {
-						$prefix     = $parts[0];
-						$base_class = $parts[1];
-					}
-				} elseif ( count( $parts ) === 3 ) {
-					$prefix     = $parts[0];
-					$pseudo     = ':' . $parts[1];
-					$base_class = $parts[2];
-					if ( $parts[1] === 'group-hover' ) {
-						$pseudo = '';
+				$modifiers = explode( ':', $class );
+				$base_class = array_pop( $modifiers );
+				
+				foreach ( $modifiers as $mod ) {
+					if ( isset( $media_queries[ $mod ] ) ) {
+						$prefix = $mod;
+					} elseif ( in_array( $mod, array( 'hover', 'focus', 'focus-within', 'focus-visible', 'active', 'disabled', 'checked', 'target', 'indeterminate', 'required', 'valid', 'invalid', 'read-only', 'empty', 'default', 'in-range', 'out-of-range', 'placeholder-shown', 'autofill' ) ) ) {
+						$pseudo .= ':' . $mod;
+					} elseif ( in_array( $mod, array( 'before', 'after', 'placeholder', 'first-letter', 'first-line', 'marker', 'selection', 'file', 'backdrop' ) ) ) {
+						$pseudo .= '::' . $mod;
+					} elseif ( $mod === 'not-checked' ) {
+						$pseudo .= ':not(:checked)';
+					} elseif ( strpos( $mod, 'group-has-' ) === 0 ) {
+						$state = str_replace( 'group-has-', '', $mod );
+						$group_prefix .= ".group:has(:{$state}) ";
+					} elseif ( strpos( $mod, 'group-' ) === 0 ) {
+						$state = str_replace( 'group-', '', $mod );
+						$group_prefix .= ".group:{$state} ";
+					} elseif ( strpos( $mod, 'peer-has-' ) === 0 ) {
+						$state = str_replace( 'peer-has-', '', $mod );
+						$group_prefix .= ".peer:has(:{$state}) ~ ";
+					} elseif ( strpos( $mod, 'peer-' ) === 0 ) {
+						$state = str_replace( 'peer-', '', $mod );
+						$group_prefix .= ".peer:{$state} ~ ";
+					} elseif ( strpos( $mod, 'has-' ) === 0 ) {
+						$state = str_replace( 'has-', '', $mod );
+						$pseudo .= ":has(:{$state})";
+					} elseif ( $mod === 'forced-colors' ) {
+						$custom_media = '@media (forced-colors: active) { ';
 					}
 				}
 			}
@@ -97,9 +110,10 @@ class Tailwind_Compiler {
 				$escaped_class = str_replace( array( ':', '[', ']', '/', '.' ), array( '\:', '\[', '\]', '\/', '\.' ), $class );
 
 				$selector_suffix = $pseudo;
-				$group_prefix    = '';
-				if ( strpos( $class, 'group-hover:' ) !== false ) {
-					$group_prefix = '.group:hover ';
+				
+				// Handle before/after pseudo-elements inserting empty content if missing
+				if ( ( strpos( $pseudo, '::before' ) !== false || strpos( $pseudo, '::after' ) !== false ) && strpos( $css_rule, 'content:' ) === false ) {
+					$css_rule = 'content: ""; ' . $css_rule;
 				}
 
 				if ( strpos( $css_rule, '&' ) === 0 ) {
@@ -109,7 +123,9 @@ class Tailwind_Compiler {
 					$full_rule = "html body.ska-builder {$group_prefix}.{$escaped_class}.{$escaped_class}{$selector_suffix} { {$css_rule} }\n.editor-styles-wrapper {$group_prefix}.{$escaped_class}.{$escaped_class}{$selector_suffix} { {$css_rule} }";
 				}
 
-				if ( $prefix ) {
+				if ( $custom_media ) {
+					$compiled_css .= "\n" . $custom_media . "\n" . "/* Source: {$class} */\n" . $full_rule . "\n}\n";
+				} elseif ( $prefix ) {
 					if ( isset( $media_queries[ $prefix ] ) ) {
 						if ( ! isset( $responsive_css[ $prefix ] ) ) {
 							$responsive_css[ $prefix ] = "";
@@ -181,10 +197,10 @@ class Tailwind_Compiler {
 		}
 
 		// 3. Spacing
-		if ( preg_match( '/^([pm][trblxy]?)-([0-9\.]+)$/', $class, $matches ) ) {
+		if ( preg_match( '/^([pm][trblxyse]?)-([0-9\.]+)$/', $class, $matches ) ) {
 			return $this->resolve_spacing( $matches[1], $matches[2] );
 		}
-		if ( preg_match( '/^([pm][trblxy]?)-\[(.+)\]$/', $class, $matches ) ) {
+		if ( preg_match( '/^([pm][trblxyse]?)-\[(.+)\]$/', $class, $matches ) ) {
 			$type = $matches[1][0] === 'p' ? 'padding' : 'margin';
 			$val  = str_replace( '_', ' ', $matches[2] );
 			$dir  = substr( $matches[1], 1 );
@@ -196,6 +212,8 @@ class Tailwind_Compiler {
 				'b' => "{$type}-bottom: {$val};",
 				'l' => "{$type}-left: {$val};",
 				'r' => "{$type}-right: {$val};",
+				's' => "{$type}-inline-start: {$val};",
+				'e' => "{$type}-inline-end: {$val};",
 			);
 			return $dir_map[ $dir ] ?? null;
 		}
@@ -403,7 +421,7 @@ class Tailwind_Compiler {
 		}
 		if ( in_array( $class, array( 'relative', 'absolute', 'fixed', 'sticky', 'static' ) ) ) return "position: {$class};";
 		
-		if ( preg_match( '/^(inset|inset-x|inset-y|top|right|bottom|left)-(\d+\.?\d*|full|auto|px)$/', $class, $matches ) ) {
+		if ( preg_match( '/^(inset|inset-x|inset-y|top|right|bottom|left|start|end)-(\d+\.?\d*|full|auto|px)$/', $class, $matches ) ) {
 			if ( $matches[2] === 'full' ) $css_val = '100%';
 			elseif ( $matches[2] === 'auto' ) $css_val = 'auto';
 			elseif ( $matches[2] === 'px' ) $css_val = '1px';
@@ -418,10 +436,12 @@ class Tailwind_Compiler {
 				'right'   => "right: {$css_val};",
 				'bottom'  => "bottom: {$css_val};",
 				'left'    => "left: {$css_val};",
+				'start'   => "inset-inline-start: {$css_val};",
+				'end'     => "inset-inline-end: {$css_val};",
 			);
 			return $prop_map[ $matches[1] ] ?? null;
 		}
-		if ( preg_match( '/^(inset|inset-x|inset-y|top|right|bottom|left)-\[(.+)\]$/', $class, $matches ) ) {
+		if ( preg_match( '/^(inset|inset-x|inset-y|top|right|bottom|left|start|end)-\[(.+)\]$/', $class, $matches ) ) {
 			$val = $matches[2];
 			$prop_map = array(
 				'inset'   => "inset: {$val};",
@@ -431,6 +451,8 @@ class Tailwind_Compiler {
 				'right'   => "right: {$val};",
 				'bottom'  => "bottom: {$val};",
 				'left'    => "left: {$val};",
+				'start'   => "inset-inline-start: {$val};",
+				'end'     => "inset-inline-end: {$val};",
 			);
 			return $prop_map[ $matches[1] ] ?? null;
 		}
@@ -478,13 +500,22 @@ class Tailwind_Compiler {
 		if ( preg_match( '/^opacity-([0-9]+)$/', $class, $matches ) ) return "opacity: " . ( intval( $matches[1] ) / 100 ) . ";";
 		if ( $class === 'isolate' ) return 'isolation: isolate;';
 
-		// 10. Flex extras
+		// 10. Extras & Accessibility
 		if ( isset( Tailwind_Config::$flex_extra[ $class ] ) ) return Tailwind_Config::$flex_extra[ $class ];
 		if ( preg_match( '/^order-([0-9]+)$/', $class, $matches ) ) return "order: {$matches[1]};";
 		if ( preg_match( '/^cursor-(pointer|default|wait|text|move|not-allowed|grab|grabbing|auto)$/', $class, $matches ) ) return "cursor: {$matches[1]};";
 		if ( $class === 'pointer-events-none' ) return 'pointer-events: none;';
 		if ( $class === 'pointer-events-auto' ) return 'pointer-events: auto;';
 		if ( preg_match( '/^select-(none|text|all|auto)$/', $class, $matches ) ) return "user-select: {$matches[1]}; -webkit-user-select: {$matches[1]};";
+		
+		if ( $class === 'sr-only' ) return 'position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;';
+		if ( $class === 'not-sr-only' ) return 'position: static; width: auto; height: auto; padding: 0; margin: 0; overflow: visible; clip: auto; white-space: normal;';
+		
+		if ( preg_match( '/^content-\[(.+)\]$/', $class, $matches ) ) {
+			$val = str_replace( '_', ' ', $matches[1] );
+			return "content: {$val};";
+		}
+		if ( $class === 'content-none' ) return "content: none;";
 
 		return null;
 	}
@@ -505,6 +536,8 @@ class Tailwind_Compiler {
 			'b' => "{$type}-bottom: {$rem_str}rem;",
 			'l' => "{$type}-left: {$rem_str}rem;",
 			'r' => "{$type}-right: {$rem_str}rem;",
+			's' => "{$type}-inline-start: {$rem_str}rem;",
+			'e' => "{$type}-inline-end: {$rem_str}rem;",
 		);
 
 		return $map[ $dir ] ?? '';
