@@ -61,6 +61,8 @@ class Tailwind_Compiler {
 				$modifiers = explode( ':', $class );
 				$base_class = array_pop( $modifiers );
 				
+				$is_valid_modifiers = true;
+
 				foreach ( $modifiers as $mod ) {
 					if ( isset( $media_queries[ $mod ] ) ) {
 						$prefix = $mod;
@@ -87,7 +89,15 @@ class Tailwind_Compiler {
 						$pseudo .= ":has(:{$state})";
 					} elseif ( $mod === 'forced-colors' ) {
 						$custom_media = '@media (forced-colors: active) { ';
+					} else {
+						$is_valid_modifiers = false;
+						break;
 					}
+				}
+
+				if ( ! $is_valid_modifiers ) {
+					$unresolved[] = $class;
+					continue;
 				}
 			}
 

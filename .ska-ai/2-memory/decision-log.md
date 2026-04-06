@@ -1,3 +1,8 @@
+## 2026-04-06 - Vá lỗ hổng Modifier Validation (JIT Compiler Leak)
+- **Problem:** Các lớp Tailwind chứa tiền tố lạ phân loại (như `dark:text-white` nhưng hệ thống đang cấm Dark Mode) khiến vòng lặp regex của JIT Compiler tách đôi chuỗi ra nhưng lại **bỏ qua** bước kiểm tra lỗi, dẫn đến việc lấy phần gốc (`text-white`) compile và áp dụng vô điều kiện cho toàn hệ thống (`html body.ska-builder .dark\:text-white.dark\:text-white`). Hậu quả làm chết các CSS mặc định ở Backend/Frontend.
+- **Decision:** Tiến hành "dán băng keo" vòng lặp parsing trong `class-tailwind-compiler.php`. Gắn cờ `$is_valid_modifiers = true;`. Khi phát hiện bất kì modifier lạ nào không có trong whitelist (VD: `dark:`, `sida:`), lập tức đổi cờ thành `false`, quăng block đó vào mảng `$unresolved` và từ chối xuất CSS.
+- **Reason:** Ngăn chặn triệt để các mã rác sinh ra từ lỗi typing (hoặc từ các bản sao copy trên mạng) vô tình tiêm Global CSS phá nát giao diện. Đảm bảo quyết định "Hoãn Dark Mode" được bảo vệ an toàn.
+
 ## 2026-04-06 (Post-MVP): Chuyển đổi Kiến trúc JIT Compiler (REST JIT)
 - **Problem:** Môi trường Editor đang phụ thuộc vào `Tailwind CDN (V3)` lạc hậu, gây ra các khó khăn lớn khi phải thủ công cấu hình Polyfill (CSS gốc) cho các tính năng của `Tailwind V4` (như `:has`, `indeterminate`). Hơn nữa việc chạy song song 2 hệ thống dịch CSS riêng biệt (CDN cho Backend, PHP cho Frontend) rủi ro sai lệch Parity rất cao.
 - **Decision:** Đưa phương án sử dụng `REST JIT / AJAX Compiler` vào lộ trình đại tu sau khi dự án thoát khỏi giai đoạn MVP. Phương án này sẽ: Định kỳ quét các block properties qua `wp.data.subscribe`, truyền list Tailwind Class lên Server qua REST API, đưa vào `Tailwind_Compiler` (PHP) và tiêm trực tiếp CSS trả về ngược lại Iframe Editor. 
