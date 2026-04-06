@@ -54,8 +54,11 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 
 ### 3.2. Phase 3: Ska Logic Engine & Khối Form (The Flow) - 🟡 [IN PROGRESS]
 - 🟢 **Khối Nhập Liệu (Ska Form)**: Đúc xong các khối `<Input>`, `<Select>`, `<Form Wrapper>` vào lõi `ska-no-code-design`. Đã giải quyết triệt để vấn đề "Clean Slate Form Preflight" và "Tailwind V4 Editor Parity" (Polyfill & JIT Proxy Mutation). PHP JIT Engine rà soát thành công các UI phức tạp nhất (Logical Spacing RTL/LTR, Pseudo Objects Arbitrary cho Toggle/Checkbox Component). Mảng UI Form coi như đã **Hoàn tất MVP**.
-- 🔴 **Cỗ Máy Bắt Sự Kiện (Trigger/Action)**: Trả lời câu hỏi "Submit xong thì làm gì?". (Ví dụ: `Insert Row` vào Ska Data Pro, Gửi Email báo cáo...). Đang chờ kiến trúc.
-- Xử lý hệ thống Role-Based Access Control (RBAC) và vòng lặp danh sách (Foreach/Map).
+- 🟢 **Ska-xi măng (Logic Engine / The Trinity)**: Hoàn tất Lớp Nhân Đứng Giữa (Controller/Router/Băng Chuyền) với các tính năng:
+  - **Mapping:** Giao diện Linear Builder (Băng chuyền nối dọc bằng Vanilla JS) mô phỏng UI kiểu n8n/Zapier. Tự động xuất chuỗi sự kiện thành mảng `JSON Graph`. (Future-proof với React Flow ở Phase 4).
+  - **Processing:** Module siêu nhỏ (Strategy Pattern) rèn Data trước khi cất kho: Tạo Slug (`Ska_Slug_Processor`), Format Date (`Ska_Date_Processor`).
+  - **Action:** Gửi thông báo Email (`Ska_Email_Action`), Đẩy lệnh `INSERT` dữ liệu đa bảng qua Hook cho `Ska Data Pro` (`Ska_Insert_Data_Action`).
+- 🟡 Xử lý hệ thống Role-Based Access Control (RBAC) và vòng lặp danh sách (Foreach/Map). (Dời sang Milestone Update).
 
 ### 3.3. Tính Năng Độc Lập Mọi Thời Điểm (UI Features & Canvas App)
 - **Theme Builder** (Lắp Header, Footer từ CPT `ska_template`).

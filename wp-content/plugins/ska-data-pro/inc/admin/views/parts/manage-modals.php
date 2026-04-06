@@ -257,9 +257,9 @@ defined( 'ABSPATH' ) || exit;
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Thuộc Hệ Sinh Thái (Nhóm)</label>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Thuộc App (Nhóm Ngữ Cảnh)</label>
                 <select id="ska-new-table-group" class="w-full border-gray-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 bg-white text-gray-700">
-                    <option value="custom">Bảng Tùy Chỉnh (Độc lập)</option>
+                    <option value="custom">Smart-Object Cục bộ (Độc lập)</option>
                     <?php 
                     $modal_app_names = array(
                         'ecommerce' => 'E-Commerce App (Bán hàng)',
@@ -313,9 +313,9 @@ defined( 'ABSPATH' ) || exit;
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Thuộc Hệ Sinh Thái (Nhóm)</label>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Thuộc App (Nhóm Ngữ Cảnh)</label>
                 <select id="ska-rename-table-group" class="w-full border-gray-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 bg-white text-gray-700">
-                    <option value="custom">Bảng Tùy Chỉnh (Độc lập)</option>
+                    <option value="custom">Smart-Object Cục bộ (Độc lập)</option>
                     <?php 
                     foreach ( $active_groups as $g_key ) {
                         if ( isset( $modal_app_names[ $g_key ] ) ) {

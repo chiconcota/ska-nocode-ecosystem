@@ -1,3 +1,12 @@
+## 2026-04-07 - Khởi Sinh "Ska-xi măng" (Ska Logic Engine) & Kiến Trúc The Trinity
+- **Linear Builder & API Tương Thích Ngược:** Quyết định nâng cấp giao diện thiết lập Logic Engine ở admin thành dạng Băng Chuyền Dạng Danh Sách (Linear Builder) bằng Vanilla JS (Mô phỏng n8n/Zapier) thay vì đợi Hệ Thống Node Kéo Thả ở Phase 4. Mảng Data xuất ra từ Linear Builder là chuẩn `JSON Graph nhiều tầng` tương thích 100% với Node-based Component sau này. Đảm bảo Core Process (Workflow Runner) không cần đập đi xây lại khi nâng cấp giao diện UI.
+- **Decision:** Khai sinh khái niệm "Ska-xi măng" đóng vai trò là Lớp Nhân (Logic Engine) đứng giữa Lớp Vỏ (Ska Design / Form Frontend) và Lớp Kho (Ska Data Pro / Flat Tables). Thiết lập mô hình MVC phi tập trung được gọi là "The Trinity".
+- **Architecture (Event-Driven):** 
+  - Giao tiếp giữa Vỏ, Nhân, và Kho bắt buộc phải truyền qua các đường ống WP Hook (`do_action`, `apply_filters`). Tuyệt đối không gọi Class phương thức tĩnh với nhau để bảo vệ ranh giới Decoupling.
+  - Form Submit -> Bắn Ajax -> Ska-xi măng bắt tín hiệu -> Xử lý (Processing: Tạo Slug, Format Date bằng Strategy Pattern), Logic (If-Then) -> Emit Data cho Ska Data Pro đúc thành hàng thật dưới Database MySQL -> Trả về Action (Gửi Mail, Redirect).
+- **UI Automation (Visual Node Engine):** Định hướng xây dựng giao diện cấu hình Logic Engine dưới dạng Node-based (Kéo thả nối dây giống Blender / n8n / Zapier) ở giai đoạn Phase 4. Sợi dây nối sẽ tạo ra bộ JSON Graph chuẩn để Backend đọc. Mọi Node Data hiện tại đều tuân thủ `interface Ska_Logic_Node`.
+- **Reason:** Đập tan thiết kế rối rắm (Spaghetti) của Page Builder cổ điển. Chuyển mình thành App Builder chuyên nghiệp với luồng Data Flow chuẩn mực như Water-flow.
+
 ## 2026-04-06 - Vá lỗ hổng Modifier Validation (JIT Compiler Leak)
 - **Problem:** Các lớp Tailwind chứa tiền tố lạ phân loại (như `dark:text-white` nhưng hệ thống đang cấm Dark Mode) khiến vòng lặp regex của JIT Compiler tách đôi chuỗi ra nhưng lại **bỏ qua** bước kiểm tra lỗi, dẫn đến việc lấy phần gốc (`text-white`) compile và áp dụng vô điều kiện cho toàn hệ thống (`html body.ska-builder .dark\:text-white.dark\:text-white`). Hậu quả làm chết các CSS mặc định ở Backend/Frontend.
 - **Decision:** Tiến hành "dán băng keo" vòng lặp parsing trong `class-tailwind-compiler.php`. Gắn cờ `$is_valid_modifiers = true;`. Khi phát hiện bất kì modifier lạ nào không có trong whitelist (VD: `dark:`, `sida:`), lập tức đổi cờ thành `false`, quăng block đó vào mảng `$unresolved` và từ chối xuất CSS.

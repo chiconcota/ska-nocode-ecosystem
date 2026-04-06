@@ -46,6 +46,44 @@ function init() {
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
 
+// --- HỌNG ĐÓN DỮ LIỆU TỪ LỚP NHÂN (SKA-XI MĂNG) ---
+// Action Node từ Ska Logic Engine sẽ xả vào đây, Ska Data Pro sẽ đúc bê tông xuống MySQL
+add_filter('ska_data_insert_record', function( $result, $payload, $table_name ) {
+    global $wpdb;
+    
+    if ( empty( $table_name ) || empty( $payload ) ) {
+        return false;
+    }
+
+    // Tự động bọc prefix bảo mật (Vd: truyền "ska_data_leads" -> "wp_ska_data_leads")
+    $table_name_with_prefix = strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
+    
+    // Bộ lọc Vô trùng: Loại bỏ thông tin rác (Ví Dụ Input người dùng chế bậy không có thật trong Schema)
+    $columns = \Ska\Data\Core\Data_Fetcher::get_table_columns( $table_name_with_prefix );
+    $valid_columns = array();
+    if ( is_array( $columns ) ) {
+        foreach ( $columns as $col ) {
+            $valid_columns[] = $col->Field;
+        }
+    }
+    
+    $clean_insert_data = array();
+    foreach ( $payload as $key => $val ) {
+        if ( in_array( $key, $valid_columns ) ) {
+            $clean_insert_data[ $key ] = $val;
+        }
+    }
+
+    if ( empty( $clean_insert_data ) ) {
+        return false; // Payload rỗng tuếch không có trường nào khớp
+    }
+
+    // Lệnh Đúc Bê Tông của WordPress
+    $wpdb->insert( $table_name_with_prefix, $clean_insert_data );
+
+    return $wpdb->insert_id ? $wpdb->insert_id : false;
+}, 10, 3);
+
 // --- ĐOẠN CODE TEST NHANH (MÁY BƠM DỮ LIỆU THỬ NGHIỆM) ---
 add_shortcode('ska_test_data', function($atts) {
     if (!class_exists('\Ska\Data\Core\Database_Engine')) return 'Thiếu DB Engine';
