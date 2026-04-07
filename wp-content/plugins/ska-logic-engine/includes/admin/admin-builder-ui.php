@@ -16,23 +16,22 @@ foreach($data_dictionary as $table_name => $meta) {
 // Danh sách các Cục Node khả dụng (Nhất quán với các Class đã tạo)
 $available_nodes = [
     [
-        'class' => 'Ska_Slug_Processor',
-        'name' => '🐌 Tạo Slug (Rửa Data)',
+        'class' => 'Ska_Format_Processor',
+        'name' => '🧰 Định Dạng Dữ Liệu (Chuẩn hóa Rác)',
         'type' => 'processor',
         'color' => '#f59e0b',
         'fields' => [
-            ['key' => 'source_field', 'label' => 'Trường Nguồn', 'placeholder' => 'vd: full_name'],
-            ['key' => 'target_field', 'label' => 'Lưu vào Trường này', 'placeholder' => 'vd: user_slug']
-        ]
-    ],
-    [
-        'class' => 'Ska_Date_Processor',
-        'name' => '📅 Chuẩn hóa Định dạng Ngày',
-        'type' => 'processor',
-        'color' => '#f59e0b',
-        'fields' => [
-            ['key' => 'source_field', 'label' => 'Trường Nguồn (Date)', 'placeholder' => 'vd: birthday'],
-            ['key' => 'format', 'label' => 'Đóng Format PHP', 'placeholder' => 'vd: Y-m-d H:i:s']
+            ['key' => 'source_key', 'label' => 'Biến Đầu Vào (Nguồn)', 'placeholder' => 'vd: tieu_de_bai_viet'],
+            ['key' => 'action', 'label' => 'Phép Biến Đổi Data', 'type' => 'select', 'options' => [
+                ['id' => 'to_slug', 'name' => 'Biến thành Slug URL an toàn'],
+                ['id' => 'to_date_ymd', 'name' => 'Mã hóa lịch chuẩn System (Y-m-d)'],
+                ['id' => 'to_date_dmY', 'name' => 'Mã hóa lịch Ngoại Giao (d/m/Y)'],
+                ['id' => 'trim', 'name' => 'Rửa khoảng trắng 2 đầu'],
+                ['id' => 'uppercase', 'name' => 'VIẾT HOA IN ĐẬM'],
+                ['id' => 'lowercase', 'name' => 'thu mình bé nhỏ (viết thường)'],
+                ['id' => 'copy', 'name' => 'Nhân Bản nguyên vẹn (Copy)']
+            ]],
+            ['key' => 'target_key', 'label' => 'Đổi Tên Thành Biến Mới (Tùy chọn)', 'placeholder' => 'Nếu bỏ trống, hệ thống sẽ tự diệt biến Nguồn và lấy biến Mới']
         ]
     ],
     [
@@ -41,7 +40,8 @@ $available_nodes = [
         'type' => 'action',
         'color' => '#10b981',
         'fields' => [
-            ['key' => 'table_name', 'label' => 'Điền Tên Bảng Đích (Hoặc Chọn)', 'type' => 'datalist', 'options' => $available_tables, 'placeholder' => 'vd: wp_ska_data_leads, wp_posts...']
+            ['key' => 'table_name', 'label' => 'Điền Tên Bảng Đích (Hoặc Chọn)', 'type' => 'datalist', 'options' => $available_tables, 'placeholder' => 'vd: wp_ska_data_leads, wp_posts...'],
+            ['key' => 'mappings', 'label' => 'Explicit Mapping (Gắn Cấu Hình Rõ Ràng)', 'type' => 'mapping_db']
         ]
     ],
     [
@@ -149,6 +149,7 @@ $saved_graph = empty($current_wf['graph']) ? '[]' : wp_json_encode($current_wf['
 </div>
 
 <script>
+const DATA_NONCE = "<?php echo esc_js(wp_create_nonce('ska_data_nonce')); ?>";
 const AVAILABLE_NODES = <?php echo json_encode($available_nodes); ?>;
 let CURRENT_GRAPH = <?php echo $saved_graph; ?>;
 
@@ -194,6 +195,21 @@ function renderNodes() {
                         <input type="text" list="${listId}" placeholder="${f.placeholder || ''}" value="${val}" onkeyup="updateConfig(${index}, '${f.key}', this.value)" onchange="updateConfig(${index}, '${f.key}', this.value)">
                         <datalist id="${listId}">${opts}</datalist>
                     </div>`;
+                } else if (f.type === 'mapping_db') {
+                    // MAPPING FIELD (Tự động tải Schema từ Ska Data Pro)
+                    const targetTable = node.config['table_name'] || '';
+                    const myId = `ska_map_node_${index}`;
+                    
+                    fieldsHtml += `
+                    <div class="ska-field-group" style="background:#f1f5f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-top: 10px;">
+                        <div style="display:flex; justify-content: space-between; align-items:center;">
+                            <label style="margin:0;"><span class="dashicons dashicons-networking" style="font-size:14px;width:14px;height:14px;"></span> ${f.label}</label>
+                            ${targetTable ? `<button type="button" class="button button-small" onclick="loadTableSchema(${index}, '${f.key}', '${targetTable}')">Tải cấu trúc Database</button>` : `<em style="color:#ef4444; font-weight:normal; font-size:11px;">Hãy chọn Bảng Đích ở trên trước</em>`}
+                        </div>
+                        <div id="${myId}" style="margin-top:10px;">
+                            ${renderMappingTable(index, f.key, node.config[f.key] || {})}
+                        </div>
+                    </div>`;
                 } else {
                     fieldsHtml += `
                     <div class="ska-field-group">
@@ -208,7 +224,13 @@ function renderNodes() {
         card.className = 'ska-linear-card';
         card.innerHTML = `
             <div class="card-header">
-                <div>Bước ${index + 1}: <span style="color:${template.color}">${template.name}</span></div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        ${index > 0 ? `<button type="button" title="Di chuyển lên" onclick="moveNode(${index}, -1)" style="border:none; background:none; cursor:pointer; height:auto; padding:0; line-height:1;"><span class="dashicons dashicons-arrow-up-alt2" style="font-size:16px; width:16px; height:16px; color:#475569;"></span></button>` : `<div style="height:16px; width:16px;"></div>`}
+                        ${index < CURRENT_GRAPH.length - 1 ? `<button type="button" title="Di chuyển xuống" onclick="moveNode(${index}, 1)" style="border:none; background:none; cursor:pointer; height:auto; padding:0; line-height:1;"><span class="dashicons dashicons-arrow-down-alt2" style="font-size:16px; width:16px; height:16px; color:#475569;"></span></button>` : `<div style="height:16px; width:16px;"></div>`}
+                    </div>
+                    <div>Bước ${index + 1}: <span style="color:${template.color}">${template.name}</span></div>
+                </div>
                 <button type="button" class="ska-remove-node" onclick="removeNode(${index})"><span class="dashicons dashicons-trash" style="font-size:14px;width:14px;height:14px;margin-right:2px;"></span> Xóa</button>
             </div>
             <div class="card-body">
@@ -232,6 +254,20 @@ function addNode(classId) {
     });
     
     document.getElementById('skaNodeMenu').classList.remove('active');
+    syncInput();
+    renderNodes();
+}
+
+function moveNode(idx, direction) {
+    const targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= CURRENT_GRAPH.length) return;
+    
+    // Swap 2 vị trí
+    const temp = CURRENT_GRAPH[idx];
+    CURRENT_GRAPH[idx] = CURRENT_GRAPH[targetIdx];
+    CURRENT_GRAPH[targetIdx] = temp;
+    
+    syncInput();
     renderNodes();
 }
 
@@ -250,6 +286,92 @@ function updateConfig(idx, key, val) {
 
 function syncInput() {
     graphInput.value = JSON.stringify(CURRENT_GRAPH);
+}
+
+function loadTableSchema(idx, key, tableName) {
+    const box = document.getElementById(`ska_map_node_${idx}`);
+    box.innerHTML = '<em style="font-size:12px;">Đang tải cấu trúc rễ...</em>';
+    
+    // Gọi AJAX lôi Schema từ Data Pro
+    const fd = new FormData();
+    fd.append('action', 'ska_data_get_table_columns');
+    fd.append('security', DATA_NONCE); // Sử dụng mượn Nonce hợp lệ của Data Pro
+    fd.append('target_table', tableName);
+    
+    fetch(ajaxurl, { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            renderMappingTableWithSchema(idx, key, res.data.columns, box);
+        } else {
+            box.innerHTML = `<em style="color:red; font-size:12px;">Lỗi: ${res.data.message}</em>`;
+        }
+    })
+    .catch(err => {
+        box.innerHTML = `<em style="color:red; font-size:12px;">Lỗi mạng! Kiểm tra kết nối WP.</em>`;
+    });
+}
+
+function renderMappingTableWithSchema(idx, key, columns, container) {
+    if(!CURRENT_GRAPH[idx].config[key]) CURRENT_GRAPH[idx].config[key] = {};
+    const mappings = CURRENT_GRAPH[idx].config[key];
+    
+    let html = `
+    <table style="width:100%; border-collapse: collapse; font-size:12px; background:white; border: 1px solid #e2e8f0; margin-top:8px;">
+        <thead style="background:#f8fafc; border-bottom: 2px solid #e2e8f0;">
+            <tr>
+                <th style="padding:6px; text-align:left; width: 50%;"># Cột dưới Database</th>
+                <th style="padding:6px; text-align:left;">Biến kéo từ Form</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
+    
+    columns.forEach(col => {
+        const val = mappings[col.slug] || '';
+        html += `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding:6px;"><strong>${col.label}</strong><br><code style="color:#64748b;font-size:10px;">${col.slug}</code></td>
+            <td style="padding:6px;">
+                <input type="text" placeholder="vd: tieu_de" value="${val}" style="width: 100%; font-size: 11px; padding: 4px 6px;" onchange="updateMappingConfig(${idx}, '${key}', '${col.slug}', this.value)" onkeyup="updateMappingConfig(${idx}, '${key}', '${col.slug}', this.value)">
+            </td>
+        </tr>`;
+    });
+    
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+}
+
+function renderMappingTable(idx, key, mappingsObj) {
+    const keys = Object.keys(mappingsObj || {});
+    if (keys.length === 0) return `<em style="font-size:11px; color:#64748b;">Chưa cấu trúc map nào được lưu. Bấm Cập nhật để lấy DB về.</em>`;
+    
+    let html = `
+    <div style="font-size:11px; background:#eff6ff; padding:6px; border-radius:4px; margin-bottom:4px; border-left:3px solid #3b82f6;">
+        Hệ thống đang ghi nhớ ${keys.length} điểm kết nối. Bấm Tải Database để map thêm.
+    </div>
+    <table style="width:100%; border-collapse: collapse; font-size:12px; background:white; border: 1px solid #e2e8f0;">
+        <tbody>
+    `;
+    for(let k in mappingsObj) {
+        if (!mappingsObj[k]) continue; 
+        html += `<tr>
+            <td style="padding:6px; border-bottom:1px solid #f1f5f9; width: 50%;"><code style="color:#0f172a;">${k}</code></td>
+            <td style="padding:6px; border-bottom:1px solid #f1f5f9; color:#059669; font-weight:bold;">&larr; ${mappingsObj[k]}</td>
+        </tr>`;
+    }
+    html += `</tbody></table>`;
+    return html;
+}
+
+function updateMappingConfig(idx, key, colSlug, sourceKey) {
+    if(!CURRENT_GRAPH[idx].config[key]) CURRENT_GRAPH[idx].config[key] = {};
+    if(sourceKey === '') {
+        delete CURRENT_GRAPH[idx].config[key][colSlug];
+    } else {
+        CURRENT_GRAPH[idx].config[key][colSlug] = sourceKey;
+    }
+    syncInput();
 }
 
 // Khởi chạy

@@ -67,10 +67,41 @@ add_filter('ska_data_insert_record', function( $result, $payload, $table_name ) 
         }
     }
     
+    // Đọc Dictionary để hỗ trợ phân giải Label/Alias (Tên Người Dùng Đặt) về Tên Cột Vật lý
+    $clean_table_name = str_replace( $wpdb->prefix, '', $table_name_with_prefix );
+    $all_dict         = get_option('ska_data_dictionary', array());
+    $table_dict       = isset($all_dict[$clean_table_name]) ? $all_dict[$clean_table_name] : array();
+    
     $clean_insert_data = array();
     foreach ( $payload as $key => $val ) {
+        // Trường hợp 1: Key khớp chính xác với Cột Vật lý MySQL (Ví dụ: title, name, text_1)
         if ( in_array( $key, $valid_columns ) ) {
             $clean_insert_data[ $key ] = $val;
+            continue;
+        }
+        
+        // Trường hợp 2: Key là Label Tiếng Việt hoặc Alias từ Form (Ví dụ: "Họ và tên", "name")
+        $matched_col = false;
+        // Chuẩn hóa Key đầu vào để so sánh linh hoạt (xóa phân biệt hoa/thường, dấu cách/gạch)
+        $normalized_key = sanitize_title( str_replace( '_', '-', $key ) );
+        
+        foreach ( $table_dict as $col_slug => $col_meta ) {
+            if ( $col_slug === '__table_info' ) continue;
+            
+            if ( ! empty( $col_meta['label'] ) ) {
+                $normalized_label = sanitize_title( str_replace( '_', '-', $col_meta['label'] ) );
+                
+                // Khớp tĩnh bằng chữ gốc HOẶC khớp động qua Slug
+                if ( $col_meta['label'] === $key || $normalized_label === $normalized_key ) {
+                    $matched_col = $col_slug;
+                    break;
+                }
+            }
+        }
+        
+        // Cắm dữ liệu vào mảng đích theo Mật Danh vật lý đã được phiên dịch
+        if ( $matched_col && in_array( $matched_col, $valid_columns ) ) {
+            $clean_insert_data[ $matched_col ] = $val;
         }
     }
 
