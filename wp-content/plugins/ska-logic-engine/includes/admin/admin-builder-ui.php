@@ -99,15 +99,10 @@ $saved_graph = empty($current_wf['graph']) ? '[]' : wp_json_encode($current_wf['
 
 <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); max-width: 600px;">
     <div style="display:flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6; padding-bottom: 12px; margin-bottom: 16px;">
-        <h3 style="margin:0; font-size: 16px;"><span class="dashicons dashicons-networking text-gray-500"></span> Linear Workflow Builder</h3>
-        <?php if(!empty($all_workflows)): ?>
-        <select onchange="if(this.value !== '') window.location.href='?page=ska-logic-engine&workflow_id=' + this.value" style="font-size:12px; border-radius:4px; max-width:200px;">
-            <option value="">-- Chuyển Băng Chuyền Khác --</option>
-            <?php foreach($all_workflows as $wid => $wdata): ?>
-                <option value="<?php echo esc_attr($wid); ?>" <?php selected($wid, $current_wf_id); ?>><?php echo esc_html($wid); ?></option>
-            <?php endforeach; ?>
-        </select>
-        <?php endif; ?>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <a href="?page=ska-logic-engine&view=list" class="button" style="text-decoration:none;"><span class="dashicons dashicons-arrow-left-alt2" style="margin-top:4px;"></span> Trở ra</a>
+            <h3 style="margin:0; font-size: 16px;"><span class="dashicons dashicons-networking text-gray-500"></span> Linear Workflow Builder <span style="color:#2563eb;">(ID: <?php echo esc_html($current_wf_id); ?>)</span></h3>
+        </div>
     </div>
     
     <form method="POST" id="skaWorkflowForm">
@@ -123,8 +118,8 @@ $saved_graph = empty($current_wf['graph']) ? '[]' : wp_json_encode($current_wf['
             <div class="card-body">
                 <div class="ska-field-group">
                     <label>Form Action ID (Mã định danh duy nhất của Khối Form)</label>
-                    <input type="text" name="ska_form_id" value="<?php echo esc_attr($current_wf_id); ?>" required style="background:#fff; border-color:#fca5a5;">
-                    <p style="margin:4px 0 0 0; font-size:11px; color:#ef4444;">* Đổi tên ID này thành text khác (vd: <b>form_contact_01</b>) rồi bấm Lưu. Hành động này sẽ TẠO MỚI một băng chuyền chạy độc lập!</p>
+                    <input type="text" name="ska_form_id" value="<?php echo esc_attr($current_wf_id); ?>" required readonly style="background:#f8fafc; border-color:#cbd5e1; cursor:not-allowed; color:#475569;">
+                    <p style="margin:4px 0 0 0; font-size:11px; color:#64748b;">* Đây là mã chỉ đọc. Để Đổi Tên ID cho mạch này, hãy trở ra màn hình <b>Danh sách Băng Chuyền Logic</b>.</p>
                 </div>
             </div>
         </div>
@@ -226,15 +221,18 @@ function renderNodes() {
             <div class="card-header">
                 <div style="display:flex; align-items:center; gap:8px;">
                     <div style="display:flex; flex-direction:column; gap:2px;">
-                        ${index > 0 ? `<button type="button" title="Di chuyển lên" onclick="moveNode(${index}, -1)" style="border:none; background:none; cursor:pointer; height:auto; padding:0; line-height:1;"><span class="dashicons dashicons-arrow-up-alt2" style="font-size:16px; width:16px; height:16px; color:#475569;"></span></button>` : `<div style="height:16px; width:16px;"></div>`}
-                        ${index < CURRENT_GRAPH.length - 1 ? `<button type="button" title="Di chuyển xuống" onclick="moveNode(${index}, 1)" style="border:none; background:none; cursor:pointer; height:auto; padding:0; line-height:1;"><span class="dashicons dashicons-arrow-down-alt2" style="font-size:16px; width:16px; height:16px; color:#475569;"></span></button>` : `<div style="height:16px; width:16px;"></div>`}
+                        ${index > 0 ? `<button type="button" title="Di chuyển lên" onclick="event.stopPropagation(); moveNode(${index}, -1)" style="border:none; background:none; cursor:pointer; height:auto; padding:0; line-height:1;"><span class="dashicons dashicons-arrow-up-alt2" style="font-size:16px; width:16px; height:16px; color:#475569;"></span></button>` : `<div style="height:16px; width:16px;"></div>`}
+                        ${index < CURRENT_GRAPH.length - 1 ? `<button type="button" title="Di chuyển xuống" onclick="event.stopPropagation(); moveNode(${index}, 1)" style="border:none; background:none; cursor:pointer; height:auto; padding:0; line-height:1;"><span class="dashicons dashicons-arrow-down-alt2" style="font-size:16px; width:16px; height:16px; color:#475569;"></span></button>` : `<div style="height:16px; width:16px;"></div>`}
                     </div>
                     <div>Bước ${index + 1}: <span style="color:${template.color}">${template.name}</span></div>
                 </div>
-                <button type="button" class="ska-remove-node" onclick="removeNode(${index})"><span class="dashicons dashicons-trash" style="font-size:14px;width:14px;height:14px;margin-right:2px;"></span> Xóa</button>
+                <button type="button" class="ska-remove-node" onclick="event.stopPropagation(); removeNode(${index})"><span class="dashicons dashicons-trash" style="font-size:14px;width:14px;height:14px;margin-right:2px;"></span> Xóa</button>
             </div>
-            <div class="card-body">
+            <div class="card-body" id="node_body_${index}">
                 ${fieldsHtml || '<em style="color:#94a3b8;font-size:12px;">Hành động này không cần cấu hình.</em>'}
+                <div style="margin-top: 10px; padding-top: 12px; border-top: 1px dashed #e2e8f0; text-align: right;">
+                    <button type="button" class="button" style="color: #059669; border-color: #059669; background: #ecfdf5; font-weight: 500;" onclick="event.stopPropagation(); applyAndLoadNode(${index}, this)">✅ OK (Áp dụng Đầu Vào)</button>
+                </div>
             </div>
         `;
         nodeListEl.appendChild(card);
@@ -286,6 +284,42 @@ function updateConfig(idx, key, val) {
 
 function syncInput() {
     graphInput.value = JSON.stringify(CURRENT_GRAPH);
+}
+
+function applyAndLoadNode(idx, btnElement) {
+    // Hiệu ứng UX: Đổi chữ nút tạm thời để báo cáo đã Lưu (Bản chất JS syncInput() đã lưu realtime mỗi khi gõ phím)
+    const originalText = btnElement.innerHTML;
+    btnElement.innerHTML = '✨ Đã Cập Nhật!';
+    btnElement.style.opacity = '0.7';
+    setTimeout(() => {
+        if(btnElement) {
+            btnElement.innerHTML = originalText;
+            btnElement.style.opacity = '1';
+        }
+    }, 1200);
+    
+    // Tự động rà soát xem Node này có Mapping DB không, nếu có thì auto-trigger Load Database.
+    const node = CURRENT_GRAPH[idx];
+    if (node && node.config) {
+        const template = AVAILABLE_NODES.find(n => n.class === node.class);
+        if (template && template.fields) {
+            template.fields.forEach(f => {
+                if (f.type === 'mapping_db' && node.config['table_name']) {
+                    const targetTable = node.config['table_name'];
+                    
+                    // Gọi AJAX tải lược đồ trực tiếp
+                    loadTableSchema(idx, f.key, targetTable);
+                    
+                    // Rà soát lại giao diện thẻ Header Của riêng Mapping_DB để đổi cảnh báo thành Nút Tải
+                    const headerArea = document.getElementById(`ska_map_node_${idx}`).previousElementSibling;
+                    if(headerArea) {
+                        headerArea.innerHTML = `<label style="margin:0;"><span class="dashicons dashicons-networking" style="font-size:14px;width:14px;height:14px;"></span> ${f.label}</label>
+                        <button type="button" class="button button-small" onclick="loadTableSchema(${idx}, '${f.key}', '${targetTable}')">Tải cấu trúc Database</button>`;
+                    }
+                }
+            });
+        }
+    }
 }
 
 function loadTableSchema(idx, key, tableName) {
@@ -373,6 +407,17 @@ function updateMappingConfig(idx, key, colSlug, sourceKey) {
     }
     syncInput();
 }
+
+// Chặn hành vi Enter tự động submit Form (tránh ức chế cho Nocode User)
+document.getElementById('skaWorkflowForm').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        const targetType = e.target.tagName.toLowerCase();
+        // Cho phép enter nếu đang ở trong textarea (tuy nhiên logic engine hiện tại ít có textarea)
+        if (targetType !== 'textarea') {
+            e.preventDefault();
+        }
+    }
+});
 
 // Khởi chạy
 renderNodes();
