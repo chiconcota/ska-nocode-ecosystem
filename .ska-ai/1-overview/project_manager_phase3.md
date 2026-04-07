@@ -59,6 +59,8 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
   - **Processing:** Module siêu nhỏ (Strategy Pattern) rèn Data trước khi cất kho: Tạo Slug (`Ska_Slug_Processor`), Format Date (`Ska_Date_Processor`).
   - **Action:** Gửi thông báo Email (`Ska_Email_Action`), Đẩy lệnh `INSERT` dữ liệu đa bảng qua Hook cho `Ska Data Pro` (`Ska_Insert_Data_Action`).
 - 🟡 Xử lý hệ thống Role-Based Access Control (RBAC) và vòng lặp danh sách (Foreach/Map). (Dời sang Milestone Update).
+- 🟡 **Quản Lý Băng Chuyền (Logic Manager UI):** Xây dựng trang quản trị hiển thị Danh sách các Luồng Logic (List View). Cho phép người dùng trực quan Thêm Mới, Xóa, Đổi Tên các Luồng thay vì bị phụ thuộc vào 1 luồng ẩn như hiện tại.
+- 🟡 **Hoàn thiện UX Linear Builder:** Loại bỏ hành vi Enter tự reload form gây ức chế. Bổ sung nút [OK] thu gọn ở mỗi Node (Bước) giúp Nocode User an tâm đã lưu file cấu hình thành công mà không nhầm lẫn.
 
 ### 3.3. Tính Năng Độc Lập Mọi Thời Điểm (UI Features & Canvas App)
 - **Theme Builder** (Lắp Header, Footer từ CPT `ska_template`).

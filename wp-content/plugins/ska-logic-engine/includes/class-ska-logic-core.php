@@ -25,6 +25,7 @@ class Ska_Logic_Core {
         // 2. Các cục Cục Nút (Nodes)
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/processors/class-slug-processor.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/processors/class-date-processor.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/processors/class-format-processor.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/actions/class-insert-data-action.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/actions/class-email-action.php';
         
