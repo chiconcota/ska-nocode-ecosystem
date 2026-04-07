@@ -48,9 +48,9 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 
 ## 3. ROADMAP TƯƠNG LAI BẮT CẦU (BEYOND PHASE 2)
 
-### 3.1. Nâng cấp Phase 2.5: Dynamic Tag UI (Frontend Picker)
-- Việc: Tạo cái nút Lấp lánh (Sparkle Icon) trên trình soạn thảo Gutenberg của Ska Builder.
-- Tác dụng: Cho phép người dùng chọn thẳng Fields (Cột: Giá, Tên) từ một cái Dropdown thay vì phải học thuộc lòng cú pháp `{{tag}}`.
+### 3.1. Nâng cấp Phase 2.5: Dynamic Tag UI / Frontend Picker - 🟡 [IN PROGRESS]
+- Đã quy hoạch lại ranh giới, gộp vào dự án khổng lồ **"Universal Dynamic Binding"**. (Truy cập file `project_manager_universal_dynamic_binding.md` để xem tiến độ chi tiết).
+- **Trạng thái:** Đã xong Phase 1 (Động cơ móc Frontend), đang chuẩn bị thiết kế UI React.
 
 ### 3.2. Phase 3: Ska Logic Engine & Khối Form (The Flow) - 🟡 [IN PROGRESS]
 - 🟢 **Khối Nhập Liệu (Ska Form)**: Đúc xong các khối `<Input>`, `<Select>`, `<Form Wrapper>` vào lõi `ska-no-code-design`. Đã giải quyết triệt để vấn đề "Clean Slate Form Preflight" và "Tailwind V4 Editor Parity" (Polyfill & JIT Proxy Mutation). PHP JIT Engine rà soát thành công các UI phức tạp nhất (Logical Spacing RTL/LTR, Pseudo Objects Arbitrary cho Toggle/Checkbox Component). Mảng UI Form coi như đã **Hoàn tất MVP**.
@@ -59,8 +59,8 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
   - **Processing:** Module siêu nhỏ (Strategy Pattern) rèn Data trước khi cất kho: Tạo Slug (`Ska_Slug_Processor`), Format Date (`Ska_Date_Processor`).
   - **Action:** Gửi thông báo Email (`Ska_Email_Action`), Đẩy lệnh `INSERT` dữ liệu đa bảng qua Hook cho `Ska Data Pro` (`Ska_Insert_Data_Action`).
 - 🟡 Xử lý hệ thống Role-Based Access Control (RBAC) và vòng lặp danh sách (Foreach/Map). (Dời sang Milestone Update).
-- 🟡 **Quản Lý Băng Chuyền (Logic Manager UI):** Xây dựng trang quản trị hiển thị Danh sách các Luồng Logic (List View). Cho phép người dùng trực quan Thêm Mới, Xóa, Đổi Tên các Luồng thay vì bị phụ thuộc vào 1 luồng ẩn như hiện tại.
-- 🟡 **Hoàn thiện UX Linear Builder:** Loại bỏ hành vi Enter tự reload form gây ức chế. Bổ sung nút [OK] thu gọn ở mỗi Node (Bước) giúp Nocode User an tâm đã lưu file cấu hình thành công mà không nhầm lẫn.
+- 🟢 **Quản Lý Băng Chuyền (Logic Manager UI): [HOÀN TẤT]** Xây dựng trang quản trị hiển thị Danh sách các Luồng Logic (List View). Cho phép người dùng trực quan Thêm Mới, Xóa, Đổi Tên các Luồng an toàn theo phong cách Dual-View.
+- 🟢 **Hoàn thiện UX Linear Builder: [HOÀN TẤT]** Loại bỏ hành vi Enter tự reload form gây gãy Chrome Extensions. Dịch chuyển luồng bằng DOM Swap 100%.
 
 ### 3.3. Tính Năng Độc Lập Mọi Thời Điểm (UI Features & Canvas App)
 - **Theme Builder** (Lắp Header, Footer từ CPT `ska_template`).
