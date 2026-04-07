@@ -34,11 +34,17 @@ class Ska_Logic_Core {
         
         // 4. Họng Đón Dữ liệu (API)
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/api/class-form-receiver.php';
+        
+        // 5. Đánh chặn Giao diện (Frontend Hydration)
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/class-dynamic-content.php';
     }
 
     private function init_hooks() {
         // Khởi động REST API Receiver
         add_action( 'rest_api_init', [ 'Ska_Form_Receiver', 'register_routes' ] );
+        
+        // Khởi động Frontend Data Hydration Pipeline
+        Ska_Dynamic_Content::instance();
         
         // Đón nhận Lệnh "Chạy Workflow" và Trả Pipeline Data về
         add_filter( 'ska_logic_run_pipeline', [ 'Ska_Workflow_Runner', 'execute' ], 10, 2 );

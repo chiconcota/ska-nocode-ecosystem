@@ -1,3 +1,21 @@
+## 2026-04-08 - Chốt Kiến trúc: Smart Object (App Blueprint) & Frontend Admin Paradigm
+- **Decision (Architecture):** Thay vì dùng Custom Post Type (CPT) mang thuộc tính `wp_postmeta` để lưu trữ dữ liệu rác, chúng ta định nghĩa lại "Smart Object" thành một **Cụm Ứng dụng (Application Blueprint)** được bọc (wrap) giữa Flat Tables, Workflow, và App Portals.
+- **Decision (Frontend Admin UI):** Tất cả các trang quản trị (Nhập liệu Admin, Danh sách) và trang hiển thị (Frontend) của một Smart Object đều dùng công cụ **Unified Canvas** (Bảng vẽ kéo thả chung). Yêu cầu bổ sung CPT nội bộ `App Portals` (ska_portal) để quản lý riêng không gian đặt các Template Admin (cài đặt No-Index SEO, giới hạn RBAC Role).
+- **Decision (Dual-State Upsert):** Chốt quy trình dùng "Form Trạng Thái Kép". Chức năng Thêm Mới & Chỉnh Sửa trên cùng 1 trang. Workflow nhận diện Parameter URL Header (`?id=x`). Nếu có, chạy Lệnh **Update Record** (Kèm Data Hydration); nếu không, chạy **Insert Record**.
+- **Decision (Universal Dynamic Binding):** Hợp nhất 2 khái niệm "Data Hydration" và "Conditional Display" thành một module giao diện chung mang tên **Universal Dynamic Binding (Liên kết động vạn năng)**. Khởi tạo một nút Toggle (Công tắc Bật/Tắt) hiện diện ở Sidebar của mọi Khối thiết kế. 
+- **UX Workflow (Sự tách bạch rõ rệt):** 
+  - **1. Nguồn Nội Dung (Luôn khả dụng):** Việc móc nối chữ từ Database (`{{doctors.name}}`) hay nhập tay là một Dropdown độc lập. Nghĩa là nội dung động (Data Hydration) luôn sẵn sàng cho dù trạng thái hiển thị của block là gì.
+  - **2. Tính trạng Hiển Thị (Nơi chứa Toggle Tĩnh/Động):** Toggle Công Tắc nằm ở khâu Kiểm soát Hiển Thị (Conditional Visibility).
+    - *Toggle TẮT (Hiển thị Tĩnh):* Khối thiết kế (bất kể chứa Text gõ tay hay Data DB) đều LUÔN LUÔN hiện diện trên Web. Không có rào cản.
+    - *Toggle BẬT (Hiển thị Động):* Kích hoạt sức mạnh Logic. Nút mở `🪄 Blockly` xuất hiện để Lễ tân tạo các quy tắc phức tạp phán xét việc Khối này "được sống hay bốc hơi" (Ví dụ: ID có tồn tại không).
+- **Decision (Micro-Ecosystem Dependency):** Giao diện và thuật toán Universal Dynamic Binding này sẽ TUYỆT ĐỐI KHÔNG nằm trong mã nguồn của `ska-no-code-design` để tránh phình to Plugin UI Core. Nó được nạp vào thông qua **JS wp.hooks (`editor.BlockEdit`)** bởi plugin `ska-logic-engine` khi nhận diện `ska-data-pro` đang kích hoạt.
+
+## 2026-04-08 - Universal Dynamic Binding (Phase 1)
+- **Decision (Unified Architecture):** Bãi bỏ việc chia rẽ 2 khái niệm Data Fetch và Logic Rule riêng biệt (sẽ gây khó cho người dùng Nocode). Gộp chung vào Module **Universal Dynamic Binding**.
+  - Khu Vực 1 (Tĩnh): Khay Data Source cho phép nối trực tiếp dữ liệu từ Database mà không làm block biến mất.
+  - Khu Vực 2 (Động): Công tắc Toggle bật sẽ kích hoạt Blockly. Khối bị đưa vào trạng thái phán xử sinh rụng.
+- **Rollout Phase 1:** Hoàn thành kiến trúc `Ska_Dynamic_Content` (đánh chặn the_content) đục thẳng xuống Database (`Ska_Data_Fetcher`). Thiết kế bằng Cache RAM Singleton đảm bảo tốc độ Response 0ms dù trên trang có đến 100 biến nội suy. Hỗ trợ bỏ bớt tiền tố `ska_data_`.
+
 ## 2026-04-07 - Logic Manager UI V2 & Chrome Extension Bug Mitigation
 - **Problem:** Tồn tại hai vấn đề UX. (1) Người dùng phải liên tục gõ đè ID Form Action nếu muốn tạo luồng mới, gây mập mờ, mất trực quan toàn cảnh. (2) Phím Enter hoặc Nút Áp dụng của block Mapping gây ra việc Reload trang (do gọi hàm `renderNodes()` phá hủy toàn bộ NodeList Element và dựng lại), hệ quả khiến các Chrome Extensions thông báo lỗi `Uncaught in Promise` do mất listener.
 - **Decision:** Tiến hành đập đi xây lại cấu trúc View Management thay cho Single-View cũ. Tạo ra Controller điều phối 2 file xử lý giao diện màn hình gồm: Kho lưu trữ Băng Chuyền (`admin-manager-ui.php`) và Không gian Thiết Kế (`admin-builder-ui.php`). Đồng thời loại bỏ logic `renderNodes()` trong quá trình Update Value/Apply Setting của Node trong JS.
