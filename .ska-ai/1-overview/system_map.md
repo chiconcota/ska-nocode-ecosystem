@@ -43,7 +43,7 @@ ska-ecosystem/ (mapped to app/public/)
 | **Ska No-Code Home** | `plugins/ska-no-code-home/`| Master Ecosystem Manager, Settings | 🔴 Plan Phase |
 | **Ska No-Code Design** | `plugins/ska-no-code-design/`| Base Blocks, Tailwind JIT, Inspector UI | 🟢 Done (v1) |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, Schema, Templates | 🟢 Done (MVP & Packaged) |
-| **Ska Logic Engine** | `plugins/ska-logic-engine/`| (Ska-xi măng) Bắt Sự kiện (Workflows), Xử lý Data & Logic (If/Then) | 🟢 Done (Linear Builder MVP) |
+| **Ska Logic Engine** | `plugins/ska-logic-engine/`| (Ska-xi măng) Bắt Sự kiện (Workflows), Xử lý Data & Logic (If/Then) | 🟢 Done (Manager UI & Linear Builder MVP) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API (JSON Export) | 🟡 In Progress (html2tailwind Done) |
 
 ## 5. GLOBAL CONSTRAINTS (FOR AI)
@@ -54,6 +54,7 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-07 - Quản Lý Băng Chuyền Đa Không Gian (Logic Manager):** Triển khai mô hình Dual-View cho Logic Engine. Tách chế độ Danh Sách trực quan (Quản lý CRUD, Đổi tên) với chế độ Builder (Chuyên sâu logic) nhằm tránh người dùng NoCoder nhầm lẫn gây xóa dữ liệu (Đã khóa ID tại Mode Builder). Cập nhật Event Handler ở Backend chặn sự cố DOM Destruction gây nhiễu cho Chrome Extensions (Anti Promise-Break).
 - **2026-04-07 - Hệ Cứu Hộ "Data Healing" & Schema Mapping UI (Ska Logic Engine):** Nâng cấp module Form Insert với bảng Mapping trực quan giữa Database MySQL và Biến nội suy do user tạo. Tích hợp Native Swap Up/Down cho hệ thống Băng Chuyền, gia tăng UX Nocode kéo thả không mã. Tự động Data Healing cho Client POST variables chứa khoảng trắng. Bước ngoặt hoàn tất MVP Architecture cho Logic Engine "The Trinity".
 - **2026-04-07 - Hệ thống Băng Chuyền Linear Builder MVP (Logic Engine):** Hoàn tất giai đoạn MVP - Giao tiếp "The Trinity". Xây dựng "Linear Builder" bằng Vanilla JS thay thế NodeUI (Phase 4). Tái thiết lập mảng dữ liệu xuất bảng thành chuẩn `JsonGraph` đồng nhất dành cho core Pipeline Processor. Nâng cấp Linear Builder hỗ trợ Datalist tuỳ biến cho phép liên kết khối lượng Table khổng lồ trực tiếp (Kể cả Core Tables của WordPress).
 - **2026-04-06 - Vá lỗ hổng Modifier Validation (JIT Compiler Leak):** Vá khẩn cấp lỗi vòng lặp parser của JIT Compiler. Xây dựng chốt lọc `$is_valid_modifiers` để hủy bỏ và tống xuất mọi lớp Tailwind có chứa tiền tố lạ phân loại (như `dark:text-white` hoặc `sida:bg-red`) vào mảng thẻ chưa giải quyết. Ngăn chặn tuyệt đối tình trạng compiler dại dột bóc tách phần đuôi class và tiêm Global CSS phá nát hệ sinh thái (tôn trọng triệt để quyết định Hoãn Dark Mode trước đó).
