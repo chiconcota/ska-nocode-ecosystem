@@ -21,28 +21,25 @@ Dự án này phức tạp bởi nó bao hàm cả giao diện tương tác Reac
 
 - [ ] (Design & Logic) Viết React Component (Sidebar Panel) tên là `Universal Dynamic Binding`.
 - [ ] Dùng `wp.hooks.addFilter('editor.BlockEdit')` chỉ bơm Panel này vào các khối khi Plugin Data & Logic được kích hoạt.
-- [ ] Thiết kế tính năng **Dropdown Chọn Nguồn Dữ Liệu**:
+- [ ] Thiết kế tính năng **Dropdown Chọn Nguồn Dữ Liệu / Input Biểu Thức (SkaFX)**:
   - Tự động call API lấy danh sách các Bảng (`ska_data_*`) và Cột tương ứng.
-  - Khi user chọn (VD: Bảng Doctors -> Cột Tên), hệ thống âm thầm ghi đè biến attribute `dynamicContent` của block hoặc chèn mã JSON ẩn. (Cần thống nhất cách lưu trữ ẩn này để Không phá vỡ trải nghiệm văn bản phong phú - RichText của wp.editor).
+  - Hỗ trợ lưu trữ theo phương thức Attribute-Driven (Sử dụng object attribute `skaDynamicBinding` trên block) kết hợp với PHP Hook `render_block` để đảm bảo WYSIWYG và không đụng chạm tới lõi content RichText.
 
-## 🏁 PHASE 3: Kiến trúc Toggle & Động cơ Blockly (Visibility Logic)
-*Thực thi "Khu Vực 2" - Phần xương xẩu nhất của dự án (Lập trình kéo thả Blockly).*
+## 🏁 PHASE 3: Ngôn ngữ biểu thức Ska (SkaFX DSL) & Giao diện Input
+*Loại bỏ hoàn toàn thư viện Blockly JS nặng nề. Thay bằng ngôn ngữ SkaFX để xử lý cả Logic hiển thị lẫn Dynamic Content.*
 
-- [ ] Khởi tạo nút Toggle (Tĩnh/Động) trên Panel Sidebar. Mặc định là Tắt (Luôn luôn hiển thị).
-- [ ] Khi Bật Toggle, làm ẩn Dropdown Khu vực 1 (?) (Hoặc hiển thị nút Mở Trình Soạn Thảo kế bên).
-- [ ] Nhúng thư viện [Google Blockly](https://developers.google.com/blockly) vào Editor của Ska dưới dạng Modal (Z-index cao nhất).
-- [ ] **Data Dictionary (Kho Khối Lego):**
-  - Code định nghĩa các Khối Lego `[Parameter URL: __]`, `[User Info: __]`.
-  - Code định nghĩa Khối So Sánh `[Bằng]`, `[Tồn tại]`.
-- [ ] Viết hàm Compiler (Trình biên dịch JS): Chuyển đổi các khối Lego đang ghép thành chuỗi JSON rules lưu vào thuộc tính `visibilityLogic` của block.
+- [x] (Logic Engine) Thiết kế kiến trúc `SkaFX_Evaluator` (AST Parser) bằng PHP. Bao gồm Trình phân mảnh (Lexer) và Trình Tính toán (Parser).
+- [x] Định nghĩa cú pháp chuẩn: Biến `[table.col]`, Toán tử (`=`, `>`, `<`), Hàm `IF(...)`, `CONCAT(...)`.
+- [ ] (Design & Logic) Cập nhật Panel React: Thay vì Toggle Modal Blockly, cung cấp một **Ô Input "Điều kiện Hiển Thị" (Visibility Expression)**. Mặc định là rỗng (luôn hiển thị).
+- [ ] Thêm thư viện Autocomplete/IntelliSense siêu nhẹ trên Editor để tự động gợi ý biến (Ví dụ gõ `[doc...` ra `[doctors.name]`).
 
 ## 🏁 PHASE 4: Bộ máy Trảm Quyết (Backend Conditional Render)
-*Mảnh ghép cuối cùng - Kết nối JSON Rule sinh ra từ Blockly và bộ máy The Content.*
+*Mảnh ghép cuối cùng - Kết nối Chuỗi SkaFX Rule sinh ra từ Editor và bộ máy render PHP.*
 
-- [ ] Nâng cấp class `Ska_Dynamic_Content` ở Phase 1.
-- [ ] Trước khi nội suy chữ, hệ thống đọc attribute `visibilityLogic` của khối.
-- [ ] Chạy Parser (Đánh giá luật True/False) dựa trên ngữ cảnh (Ví dụ `$_GET['id']` có tồn tại không).
-- [ ] Nếu vi phạm luật (False), kích hoạt "Máy Chém": Cắt đứt thẻ HTML đó khỏi Response gửi về cho Trình duyệt. Không dùng CSS `display:none`.
+- [ ] Gỡ bỏ việc dùng Filter lỏng lẻo `the_content` ở Phase 1. Thay thế bằng việc móc vào filter uy lực `render_block` của WordPress.
+- [ ] Trước khi in thẻ HTML của block, hệ thống đọc attribute logic hiển thị (ví dụ: `skaDynamicBinding.visibilityRule`) của khối.
+- [ ] Bơm chuỗi Rule xuống `SkaFX_Evaluator`. Cỗ máy dựa trên Context (`$_GET['id']`) để giải mã chuỗi AST.
+- [ ] Nếu hàm AST trả về False -> Kích hoạt "Máy Chém": Hủy xuất chuỗi (Return rỗng) để Cắt đứt thẻ HTML đó khỏi trình duyệt. KHÔNG dùng CSS `display:none`.
 
 ---
 *Ghi chú: Bản đồ này là kim chỉ nam cho các Agents tham gia vào chu trình Code, bất kỳ thay đổi nào cần cập nhật lại tiến độ tại đây.*
