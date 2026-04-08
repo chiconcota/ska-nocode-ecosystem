@@ -37,6 +37,12 @@ class Ska_Logic_Core {
         
         // 5. Đánh chặn Giao diện (Frontend Hydration)
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/class-dynamic-content.php';
+        
+        // 6. SkaFX Engine (Parser/Evaluator)
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/skafx/class-skafx-exceptions.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/skafx/class-skafx-lexer.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/skafx/class-skafx-parser.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/skafx/class-skafx-evaluator.php';
     }
 
     private function init_hooks() {

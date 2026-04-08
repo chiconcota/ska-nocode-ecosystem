@@ -1,3 +1,8 @@
+## 2026-04-09 - Chốt Kiến trúc Lõi: Ngôn Ngữ Biểu Thức Ska (SkaFX DSL)
+- **Decision (Architecture Pivot):** Bác bỏ phương án nhúng `Google Blockly` cho tính năng Conditional Display. Nhận thấy nếu sau này mở rộng thêm tính năng Formula Column cho Ska Data Pro, hệ thống sẽ rơi vào rác UI. Quyết định chuyển sang tạo ngôn ngữ Custom Domain Specific Language (DSL) mệnh danh **SkaFX (Ska Expression Language)**.
+- **Decision (Unified Engine):** Sử dụng 1 bộ khung PHP Phân giải cú pháp (AST Evaluator) cho cả 3 tác vụ khổng lồ: Data Hydration (Chuỗi động), Conditional Display (Logic True/False) và Formula Column. Cú pháp lai Airtable (VD: `[doctors.rating] >= 4`).
+- **Decision (UI Simplification):** Dọn dẹp Inspector Sidebar, loại bỏ Modal và Nút Toggle dài dòng. Chỉ trang bị thanh Text Input (hỗ trợ gợi ý IntelliSense) để Lễ Tân tự do gõ biểu thức Logic/Điều kiện Hiển Thị. Nếu Regex Input rỗng, hệ thống luôn Render khối. 
+
 ## 2026-04-08 - Chốt Kiến trúc: Smart Object (App Blueprint) & Frontend Admin Paradigm
 - **Decision (Architecture):** Thay vì dùng Custom Post Type (CPT) mang thuộc tính `wp_postmeta` để lưu trữ dữ liệu rác, chúng ta định nghĩa lại "Smart Object" thành một **Cụm Ứng dụng (Application Blueprint)** được bọc (wrap) giữa Flat Tables, Workflow, và App Portals.
 - **Decision (Frontend Admin UI):** Tất cả các trang quản trị (Nhập liệu Admin, Danh sách) và trang hiển thị (Frontend) của một Smart Object đều dùng công cụ **Unified Canvas** (Bảng vẽ kéo thả chung). Yêu cầu bổ sung CPT nội bộ `App Portals` (ska_portal) để quản lý riêng không gian đặt các Template Admin (cài đặt No-Index SEO, giới hạn RBAC Role).
