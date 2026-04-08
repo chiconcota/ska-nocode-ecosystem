@@ -217,7 +217,7 @@ $table_dict  = isset($all_dict[$current_table]) ? $all_dict[$current_table] : ar
                                 
                                 <!-- NÚT [+] THÊM CỘT ẢO DIỆU -->
                                 <th class="w-16 px-1 py-2.5 bg-slate-100 border-b border-gray-300 text-center sticky right-0 z-40 bg-slate-100 group shadow-[-1px_0_0_#cbd5e1] border-l border-gray-300">
-                                    <button class="w-full h-full text-gray-400 hover:text-emerald-500 hover:bg-slate-200 transition-colors rounded" title="Thêm Trường Mới" onclick="document.getElementById('ska-add-col-modal').classList.remove('hidden'); document.getElementById('ska-col-label').focus();">
+                                    <button class="w-full h-full text-gray-400 hover:text-emerald-500 hover:bg-slate-200 transition-colors rounded focus-visible:ring-2" title="Thêm Trường Mới" aria-label="Thêm Trường Mới" onclick="document.getElementById('ska-add-col-modal').classList.remove('hidden'); document.getElementById('ska-col-label').focus();">
                                         <span class="dashicons dashicons-plus-alt2 mt-1"></span>
                                     </button>
                                 </th>

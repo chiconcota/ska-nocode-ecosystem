@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 
     <div class="px-4 py-3 uppercase text-xs font-bold text-gray-400 tracking-wider flex items-center justify-between shrink-0">
         <span>Bảng Dữ Liệu</span>
-        <span class="dashicons dashicons-plus hover:text-emerald-500 cursor-pointer transition text-gray-400" title="Khởi tạo bảng mới" onclick="document.getElementById('ska-create-table-modal').classList.remove('hidden'); document.getElementById('ska-new-table-name').focus();"></span>
+        <button type="button" aria-label="Khởi tạo bảng mới" class="dashicons dashicons-plus hover:text-emerald-500 cursor-pointer transition text-gray-400 focus-visible:ring-2" style="background: none; border: none; padding: 0;" title="Khởi tạo bảng mới" onclick="document.getElementById('ska-create-table-modal').classList.remove('hidden'); document.getElementById('ska-new-table-name').focus();"></button>
     </div>
 
     <ul class="flex-1 overflow-y-auto w-full px-2 py-2">
@@ -92,7 +92,7 @@ defined( 'ABSPATH' ) || exit;
                         </a>
                         
                         <!-- Kebab Menu (Table Actions) -->
-                        <span class="dashicons dashicons-ellipsis opacity-0 group-hover:opacity-100 absolute right-2 top-1.5 text-gray-400 hover:text-gray-700 cursor-pointer z-10 pl-1 rounded pointer-events-auto" style="font-size: 16px; margin-top: 2px;" onclick="document.getElementById('dd-tbl-<?php echo esc_attr($table); ?>').classList.toggle('hidden')"></span>
+                        <button type="button" aria-label="Tùy chọn bảng" aria-haspopup="true" class="dashicons dashicons-ellipsis opacity-0 group-hover:opacity-100 absolute right-2 top-1.5 text-gray-400 hover:text-gray-700 cursor-pointer z-10 pl-1 rounded pointer-events-auto focus:opacity-100 focus-visible:ring-2" style="font-size: 16px; margin-top: 2px; background: none; border: none; padding: 0;" onclick="document.getElementById('dd-tbl-<?php echo esc_attr($table); ?>').classList.toggle('hidden')"></button>
                         <div id="dd-tbl-<?php echo esc_attr($table); ?>" class="hidden absolute top-7 left-10 w-48 bg-white rounded-md shadow-[0_10px_25px_rgba(0,0,0,0.1)] border border-gray-100 z-[60] text-gray-700 py-1 font-normal overflow-hidden animate-[pulse_0.1s_ease-out]">
                             <button onclick="skaOpenRenameTable('<?php echo esc_js($table); ?>', '<?php echo esc_js($display_name); ?>', '<?php echo esc_js($custom_icon); ?>', '<?php echo esc_js($group); ?>'); document.getElementById('dd-tbl-<?php echo esc_attr($table); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2 transition-colors">
                                 <span class="dashicons dashicons-edit text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Đổi Ký Danh Bảng
