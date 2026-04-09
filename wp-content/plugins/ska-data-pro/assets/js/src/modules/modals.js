@@ -180,4 +180,17 @@ export function attachModalHandlers() {
 
     bindRollupCascading('ska-col-options-rollup-rel', 'ska-col-options-rollup-target');
     bindRollupCascading('ska-edit-col-options-rollup-rel', 'ska-edit-col-options-rollup-target');
+
+    // Global listener to close Sidebar Kebab dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        const dropdowns = document.querySelectorAll('[id^="dd-tbl-"], [id^="dd-app-"]');
+        dropdowns.forEach(dd => {
+            if (!dd.classList.contains('hidden')) {
+                const toggleIcon = dd.previousElementSibling;
+                if (!dd.contains(e.target) && (!toggleIcon || !toggleIcon.contains(e.target))) {
+                    dd.classList.add('hidden');
+                }
+            }
+        });
+    });
 }

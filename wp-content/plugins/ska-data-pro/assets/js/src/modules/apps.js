@@ -77,4 +77,80 @@ export function attachAppEvents() {
             }
         });
     }
+
+    // 4. IMPORT APP
+    const importFileInput = document.getElementById('ska-import-app-file');
+    const importFileName = document.getElementById('ska-import-file-name');
+    const importBtn = document.getElementById('ska-execute-import-app-btn');
+    const importLoading = document.getElementById('ska-import-loading-state');
+    
+    if ( importFileInput && importBtn ) {
+        importFileInput.addEventListener('change', function(e) {
+            if (this.files && this.files.length > 0) {
+                const file = this.files[0];
+                if (file.name.endsWith('.json')) {
+                    importFileName.innerText = file.name;
+                    importFileName.classList.add('text-emerald-600');
+                    importBtn.disabled = false;
+                    importBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    importFileName.innerText = 'File không hợp lệ (Phải là .json)';
+                    importFileName.classList.remove('text-emerald-600');
+                    importFileName.classList.add('text-red-500');
+                    importBtn.disabled = true;
+                    importBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            } else {
+                importFileName.innerText = 'Kéo thả hoặc Chọn File (.json)';
+                importFileName.classList.remove('text-emerald-600', 'text-red-500');
+                importBtn.disabled = true;
+                importBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
+        importBtn.addEventListener('click', async () => {
+            if (!importFileInput.files || importFileInput.files.length === 0) return;
+            
+            const file = importFileInput.files[0];
+            const config = window.skaDataConfig || {};
+            
+            const formData = new FormData();
+            formData.append('action', 'ska_data_import_app');
+            formData.append('security', config.nonce);
+            formData.append('blueprint_file', file);
+            
+            importBtn.disabled = true;
+            importBtn.classList.add('hidden'); // Ẩn nút đi cho đỡ rối
+            importLoading.classList.remove('hidden');
+            importLoading.classList.add('flex');
+            importFileInput.disabled = true;
+
+            try {
+                const response = await fetch(config.ajaxurl, {
+                    method: 'POST',
+                    body: formData
+                });
+                const resJson = await response.json();
+                
+                if ( resJson.success ) {
+                    window.location.reload();
+                } else {
+                    alert(resJson.data?.message || 'Lỗi đúc cấu trúc.');
+                    importBtn.disabled = false;
+                    importBtn.classList.remove('hidden');
+                    importLoading.classList.add('hidden');
+                    importLoading.classList.remove('flex');
+                    importFileInput.disabled = false;
+                }
+            } catch (e) {
+                console.error('API Error:', e);
+                alert('Lỗi mạng hoặc server không phản hồi.');
+                importBtn.disabled = false;
+                importBtn.classList.remove('hidden');
+                importLoading.classList.add('hidden');
+                importLoading.classList.remove('flex');
+                importFileInput.disabled = false;
+            }
+        });
+    }
 }

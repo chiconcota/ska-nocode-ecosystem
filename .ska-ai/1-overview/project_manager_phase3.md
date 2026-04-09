@@ -66,6 +66,7 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - **Theme Builder** (Lắp Header, Footer từ CPT `ska_template`).
 - **Milestone 2 (Design Engine): Dark Mode Thượng tầng:** (🔴 Pending) Lập kế hoạch mang lại chức năng Dark Mode hoàn chỉnh (`darkMode: 'class'`). Cần nghiên cứu cơ chế bọc selector `:is(html.dark, .dark)` an toàn mà không phá vỡ logic specificity hiện hành, đồng thời xây dựng UI Toggle trên Frontend/Editor.
 - **App Dashboards / Sub-Admin Portals (🔴 Pending):** Tạo Custom Post Type (`ska_portal`) trong `ska-builder-core`. Giúp User dùng luôn quyền trượng Editor để tự do kéo thả bộ khung giao diện trang quản lý Khóa Học, Thành Viên ra Frontend Portal thay vì ép phải xài trang cấu hình xám xịt của WordPress Admin.
+- **Auto-Generated CRUD Portal (🔴 Pending):** Nâng cấp cho khối "App Portal". Tích hợp với `Theme Builder`, xây dựng một Component/Smart Block cho phép người dùng chỉ định Nguồn (App Workspace) để hệ thống tự động bung ra toàn bộ Danh sách (List View) và Form thao tác (Create/Edit), tuân thủ hoàn toàn quy chuẩn giao diện của `ska-nocode-design`. Giao cho Builder Core đảm nhiệm để giữ vững ranh giới Decoupled với Data Pro.
 - **Custom Block / UI Symbols** (Khối tái sử dụng thiết kế).
 - *Lưu ý:* Mấy tính năng này bản chất là Hệ Giao diện Canvas UI/Design (Lưu cục HTML), không cần đợi Phase 3, có thể tranh thủ làm luôn ngay trong Phase 2 bất cứ khi nào rảnh rỗi.
 
