@@ -45,4 +45,9 @@ Nằm tại `assets/js/src`:
 - `/modules/schema.js`: Chịu trách nhiệm Cấu hình Cột, Bảng (Create, Edit, Drop).
 - `/modules/rows.js`: Thêm và Xoá dòng logic.
 - `/modules/modals.js`: Quản lý các Dropdown/Popup Option Cascading. Export các hàm xử lý global `window.ska*` để hỗ trợ Inline-binding từ Backend `.php` Views cũ, đóng vai trò như Bridge Pattern.
+- `/modules/apps.js`: Bắt sự kiện Ajax CRUD (Create, Update, Drop) đối với App Workspace Blueprint.
 - `/utils/api.js`: Tổng hợp Ajax URL và Nonce Header.
+
+## 5. SMART OBJECT (APP BLUEPRINT) ARCHITECTURE
+- **App Workspace**: Từ bỏ mô hình Table Categories (`group` string cứng). Áp dụng kiến trúc Smart Object phân cấp Workspace, định nghĩa bởi `App_Manager` và quản lý thông qua cấu trúc Option (`ska_data_apps`).
+- **Data Flow Bảo Phân Phối**: Khi tạo Bảng, thông tin `app_id` được nạp thẳng xuống Từ Điển Cấu Hình Bảng. Đặc quyền bảo vệ Data: Xóa App Blueprint không kích hoạt xóa SQL Bảng, mà dịch chuyển Bảng về trạng thái Môi Trường Mặc Định (`uncategorized`) để ngăn mất dữ liệu vô ý. Tầng Admin UI Load động danh sách qua thẻ `<select>` thay vì Input tay.
