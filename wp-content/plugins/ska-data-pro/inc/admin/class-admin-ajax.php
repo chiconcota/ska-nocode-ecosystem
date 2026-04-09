@@ -49,6 +49,8 @@ class Admin_Ajax {
 		add_action( 'wp_ajax_ska_data_create_app', array( $this, 'data_create_app' ) );
 		add_action( 'wp_ajax_ska_data_update_app', array( $this, 'data_update_app' ) );
 		add_action( 'wp_ajax_ska_data_drop_app', array( $this, 'data_drop_app' ) );
+		add_action( 'wp_ajax_ska_data_export_app', array( $this, 'data_export_app' ) );
+		add_action( 'wp_ajax_ska_data_import_app', array( $this, 'data_import_app' ) );
 
 		// Hook xử lý UI & Data Relation
 		add_action( 'wp_ajax_ska_data_search_relation', array( $this, 'data_search_relation' ) );
@@ -368,7 +370,7 @@ class Admin_Ajax {
 	}
 
 	/**
-	 * AJAX: Cập nhật App Blueprint
+	 * AJAX: Sửa App Blueprint
 	 */
 	public function data_update_app() {
 		$this->verify_crud_request();
@@ -399,6 +401,242 @@ class Admin_Ajax {
 		}
 
 		wp_send_json_success( array( 'message' => 'Xoá Workspace thành công.' ) );
+	}
+
+	/**
+	 * AJAX: Xuất App Blueprint thành file JSON
+	 */
+	public function data_export_app() {
+		$this->verify_crud_request();
+
+		$app_id = isset( $_GET['app_id'] ) ? sanitize_text_field( wp_unslash( $_GET['app_id'] ) ) : '';
+		if ( empty( $app_id ) ) {
+			wp_die( 'Thiếu ID Workspace.' );
+		}
+
+		$apps = \Ska\Data\Core\App_Manager::get_apps();
+		if ( ! isset( $apps[ $app_id ] ) ) {
+			wp_die( 'Workspace không tồn tại.' );
+		}
+
+		$app_info = $apps[ $app_id ];
+		
+		$blueprint = array(
+			'app_name'    => $app_info['name'],
+			'app_icon'    => isset( $app_info['icon'] ) ? $app_info['icon'] : 'dashicons-portfolio',
+			'version'     => '1.0.0', // Phục vụ check Version tương thích
+			'description' => 'Exported manually from Ska Data Pro',
+			'objects'     => array()
+		);
+
+		$dictionary = get_option( 'ska_data_dictionary', array() );
+		global $wpdb;
+
+		// 1. Kéo các Table thuộc App_ID này
+		foreach ( $dictionary as $table_name => $schema ) {
+			if ( ! isset( $schema['__table_info'] ) ) continue;
+			
+			$info = $schema['__table_info'];
+			if ( isset( $info['app_id'] ) && $info['app_id'] === $app_id ) {
+				
+				// Lọc tiền tố để lấy slug (Vd: ska_data_teachers -> teachers)
+				$prefix = $wpdb->prefix . 'ska_data_';
+				$slug   = str_replace( $prefix, '', $table_name );
+
+				$object = array(
+					'slug'   => $slug,
+					'label'  => isset( $info['name'] ) ? $info['name'] : $slug,
+					'icon'   => isset( $info['icon'] ) ? $info['icon'] : 'dashicons-admin-page',
+					'fields' => array()
+				);
+
+				// 2. Kéo các Column thuộc Table
+				foreach ( $schema as $col_name => $col_data ) {
+					if ( $col_name === '__table_info' || $col_name === 'id' || $col_name === 'created_at' ) {
+						continue; // Bỏ qua system columns
+					}
+
+					$field = array(
+						'name'  => $col_name,
+						'label' => isset( $col_data['label'] ) ? $col_data['label'] : $col_name,
+						'type'  => isset( $col_data['type'] ) ? $col_data['type'] : 'short_text',
+					);
+
+					// Tuỳ chọn phụ cho từng Field Type
+					if ( isset( $col_data['options'] ) && ! empty( $col_data['options'] ) ) {
+						$field['options'] = $col_data['options'];
+					}
+
+					// Export Relation & Rollup
+					if ( $field['type'] === 'relation' ) {
+						$assoc = isset( $col_data['assoc_table'] ) ? $col_data['assoc_table'] : '';
+						
+						// WP Core Provider
+						if ( $assoc === $wpdb->posts ) {
+							$field['provider'] = 'wp_posts';
+						} elseif ( $assoc === $wpdb->users ) {
+							$field['provider'] = 'wp_users';
+						} else {
+							// Internal Ska Table
+							$field['provider'] = 'ska_table';
+							$field['target']   = str_replace( $prefix, '', $assoc );
+						}
+					}
+
+					if ( $field['type'] === 'rollup' ) {
+						$field['relation_field'] = isset( $col_data['relation_field'] ) ? $col_data['relation_field'] : '';
+						$field['lookup_column']  = isset( $col_data['lookup_column'] ) ? $col_data['lookup_column'] : '';
+					}
+
+					$object['fields'][] = $field;
+				}
+
+				$blueprint['objects'][] = $object;
+			}
+		}
+
+		// Cho phép các hệ sinh thái khác nhét Data vào Blueprint
+		$blueprint = apply_filters( 'ska_export_smart_object', $blueprint, $app_id );
+
+		// Trả về JSON để trình duyệt download
+		$json_str = wp_json_encode( $blueprint, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
+		$filename = sanitize_title( $app_info['name'] ) . '-blueprint.json';
+		
+		header( 'Content-Type: application/json; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+		echo $json_str;
+		exit;
+	}
+
+	/**
+	 * AJAX: Nhập App Blueprint từ file JSON
+	 */
+	public function data_import_app() {
+		$this->verify_crud_request();
+
+		// Handle file upload
+		if ( empty( $_FILES['blueprint_file']['tmp_name'] ) ) {
+			wp_send_json_error( array( 'message' => 'Lỗi: Không tìm thấy file JSON upload.' ) );
+		}
+
+		$json_data = file_get_contents( $_FILES['blueprint_file']['tmp_name'] );
+		$blueprint = json_decode( $json_data, true );
+
+		if ( ! is_array( $blueprint ) || ! isset( $blueprint['objects'] ) ) {
+			wp_send_json_error( array( 'message' => 'Lỗi: File JSON cấu trúc không hợp lệ.' ) );
+		}
+
+		// 0. Version Check
+		$version = isset( $blueprint['version'] ) ? $blueprint['version'] : '0.0.0';
+		// Ở đây đang là Ska Data Pro v1.0.0
+		// Thực tế nên so sánh với SKA_DATA_VERSION constant nếu có. Tạm thời pass qua.
+		// if ( version_compare( $version, '1.0.0', '>' ) ) {
+		//	 wp_send_json_error( array( 'message' => 'Bản Blueprint (v' . $version . ') yêu cầu Ska Data nâng cấp mới nhất.' ) );
+		// }
+
+		// 1. Tạo App Mới
+		$name   = isset( $blueprint['app_name'] ) ? sanitize_text_field( $blueprint['app_name'] ) : 'App Imported';
+		$icon   = isset( $blueprint['app_icon'] ) ? sanitize_text_field( $blueprint['app_icon'] ) : 'dashicons-portfolio';
+		$app_id = \Ska\Data\Core\App_Manager::create_app( $name, $icon );
+		
+		if ( is_wp_error( $app_id ) ) {
+			wp_send_json_error( array( 'message' => 'Lỗi tạo Workspace: ' . $app_id->get_error_message() ) );
+		}
+
+		$engine   = Database_Engine::get_instance();
+		$slug_map = array(); // Từ điển Re-wiring
+
+		global $wpdb;
+		$prefix = $wpdb->prefix . 'ska_data_';
+
+		// Lặp 1: Phân mảnh & Tạo Physical Tables để lấy Tên thật 
+		foreach ( $blueprint['objects'] as $object ) {
+			$raw_slug   = isset( $object['slug'] ) ? sanitize_title( $object['slug'] ) : '';
+			$table_name = isset( $object['label'] ) ? sanitize_text_field( $object['label'] ) : $raw_slug;
+			$table_icon = isset( $object['icon'] ) ? sanitize_text_field( $object['icon'] ) : 'dashicons-admin-page';
+			
+			if ( empty( $raw_slug ) ) continue;
+
+			// Vượt Đụng Độ (Collision Solving)
+			$test_slug = $raw_slug;
+			$idx       = 1;
+			$final_real_table = '';
+			
+			while ( true ) {
+				$try_create = $engine->create_custom_table( $test_slug, $table_icon, $app_id );
+				if ( ! is_wp_error( $try_create ) ) {
+					// Thành công
+					$final_real_table = $try_create; // Trả về dạng $wpdb->prefix . ska_data_...
+					
+					// Update lại Display Name của Bảng vừa tạo
+					// Do create_custom_table lấy "tên hiển thị" bằng slug lúc tạo nên ta cần update lại Name thật
+					$engine->rename_custom_table( $final_real_table, $table_name, $table_icon, $app_id );
+					break; 
+				} else {
+					if ( $try_create->get_error_code() === 'table_exists' ) {
+						// Tạo Hậu tố
+						$test_slug = $raw_slug . '_' . $idx;
+						$idx++;
+					} else {
+						// Các lỗi nghiêm trọng khác (Invalid name)
+						wp_send_json_error( array( 'message' => 'Fatal Error tạo Bảng: ' . $try_create->get_error_message() ) );
+					}
+				}
+			}
+
+			// Nạp vào Từ điển dịch (Mapping Dictionary)
+			// Vd: teachers -> ska_data_teachers_1
+			$slug_map[ $raw_slug ] = $final_real_table; 
+		}
+
+		// Lặp 2: Gắn Cột và Map lùi Target/Rollup
+		foreach ( $blueprint['objects'] as $object ) {
+			$raw_slug = isset( $object['slug'] ) ? sanitize_title( $object['slug'] ) : '';
+			if ( empty( $raw_slug ) || empty( $object['fields'] ) ) continue;
+
+			$real_table = $slug_map[ $raw_slug ];
+
+			foreach ( $object['fields'] as $field ) {
+				$col_name = $field['name'];
+				$col_type = $field['type'];
+				$config   = ''; // Lưu Data mở rộng dạng JSON options
+
+				if ( $col_type === 'relation' ) {
+					$rel_provider = isset( $field['provider'] ) ? $field['provider'] : 'ska_table';
+					$rel_target   = isset( $field['target'] ) ? $field['target'] : '';
+
+					if ( $rel_provider === 'ska_table' && isset( $slug_map[ $rel_target ] ) ) {
+						// Nối (Rewire) lại đường dẫn
+						$config = wp_json_encode( array( 'target_table' => $slug_map[ $rel_target ] ) );
+					} elseif ( $rel_provider === 'wp_users' ) {
+						$config = wp_json_encode( array( 'target_table' => $wpdb->users ) );
+					} elseif ( $rel_provider === 'wp_posts' ) {
+						$config = wp_json_encode( array( 'target_table' => $wpdb->posts ) );
+					}
+				} elseif ( $col_type === 'select' || $col_type === 'multi_select' ) {
+					$config = isset( $field['options'] ) ? $field['options'] : '';
+				} elseif ( $col_type === 'rollup' ) {
+					$config = wp_json_encode( array(
+						'relation_column' => isset( $field['relation_field'] ) ? sanitize_title( $field['relation_field'] ) : '',
+						'target_column'   => isset( $field['lookup_column'] ) ? sanitize_text_field( $field['lookup_column'] ) : '',
+					) );
+				}
+
+				// Tạo cột
+				$engine->add_column( $real_table, $field['label'], $col_type, $config );
+				
+				// Fix Name (Vì add_column nó tự sanitzer Name column và tự append uniqid nếu trùng, ta nên đè lại Name cho khớp JSON)
+				// Tương lai có thể Update add_column để nhận Force Name.
+			}
+		}
+
+		// Hook cho các Plugin khác ăn theo
+		do_action( 'ska_import_smart_object', $blueprint, $app_id );
+
+		wp_send_json_success( array( 
+			'message' => 'Import Blueprint thành công!',
+			'app_id'  => $app_id
+		) );
 	}
 
 	/**

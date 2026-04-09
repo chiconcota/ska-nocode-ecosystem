@@ -453,6 +453,39 @@ defined( 'ABSPATH' ) || exit;
     </div>
 </div>
 
+<!-- MÀN HÌNH NHẬP (IMPORT) APP BLUEPRINT -->
+<div id="ska-import-app-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-emerald-50 text-emerald-700">
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-upload text-emerald-500"></span> Nhập (Import) Blueprint</h3>
+            <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-import-app-modal').classList.add('hidden');"></span>
+        </div>
+        
+        <div class="p-5 flex flex-col gap-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Tải tệp JSON lên</label>
+                <div class="w-full flex items-center justify-center border-2 border-dashed border-gray-300 rounded-md bg-gray-50 hover:bg-gray-100 transition py-6 relative">
+                    <input type="file" id="ska-import-app-file" accept=".json" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    <div class="text-center pointer-events-none">
+                        <span class="dashicons dashicons-media-document text-gray-400 mb-1" style="font-size:32px;width:32px;height:32px;"></span>
+                        <p class="text-sm font-medium text-gray-600 m-0" id="ska-import-file-name">Kéo thả hoặc Chọn File (.json)</p>
+                        <p class="text-[11px] text-gray-400 mt-1">Cấu trúc Flat Table sẽ tự động giải nén</p>
+                    </div>
+                </div>
+            </div>
+            <div id="ska-import-loading-state" class="hidden flex items-center justify-center gap-2 py-2">
+                <span class="dashicons dashicons-update animate-spin text-emerald-500"></span>
+                <span class="text-sm text-gray-600 font-medium">Đang đúc dữ liệu, vui lòng đợi...</span>
+            </div>
+        </div>
+
+        <div class="px-5 py-3 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
+            <button onclick="document.getElementById('ska-import-app-modal').classList.add('hidden');" class="px-4 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 text-sm transition">Đóng</button>
+            <button id="ska-execute-import-app-btn" class="px-4 py-2 rounded font-medium text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm text-sm transition flex items-center gap-1 opacity-50 cursor-not-allowed" disabled>Bắt đầu Import</button>
+        </div>
+    </div>
+</div>
+
 <!-- ======================= MẢNG QUẢN TRỊ VIEW (VIEW TOOLS) ======================= -->
 
 <!-- MÀN HÌNH POPUP QUICK FILTER (LỌC DỮ LIỆU) -->

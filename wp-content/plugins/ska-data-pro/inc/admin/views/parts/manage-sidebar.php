@@ -13,6 +13,7 @@ defined( 'ABSPATH' ) || exit;
     <div class="px-3 py-3 uppercase text-[11px] font-bold text-gray-400 tracking-wider flex items-center justify-between shrink-0 bg-gray-100/50">
         <span>Không gian CSDL</span>
         <div class="flex gap-2">
+            <span class="dashicons dashicons-upload hover:text-indigo-500 cursor-pointer transition text-gray-400" title="Nhập (Import) Workspace từ file JSON" onclick="document.getElementById('ska-import-app-modal').classList.remove('hidden');" style="font-size: 16px; width: 16px; height: 16px;"></span>
             <span class="dashicons dashicons-portfolio hover:text-indigo-500 cursor-pointer transition text-gray-400" title="Tạo Workspace mới" onclick="document.getElementById('ska-create-app-modal').classList.remove('hidden'); document.getElementById('ska-new-app-name').focus();" style="font-size: 16px; width: 16px; height: 16px;"></span>
             <span class="dashicons dashicons-plus hover:text-emerald-500 cursor-pointer transition text-gray-400" title="Khởi tạo bảng mẫu" onclick="document.getElementById('ska-create-table-modal').classList.remove('hidden'); document.getElementById('ska-new-table-name').focus();" style="font-size: 16px; width: 16px; height: 16px;"></span>
         </div>
@@ -102,6 +103,10 @@ defined( 'ABSPATH' ) || exit;
                         <!-- Icon setting App -->
                         <span class="dashicons dashicons-admin-generic opacity-0 group-hover:opacity-100 cursor-pointer text-gray-400 hover:text-indigo-500 transition ml-auto" style="font-size: 14px; width: 14px; height: 14px; margin-top:-2px" title="Thiết lập Không gian" onclick="document.getElementById('dd-app-<?php echo esc_attr($app_key); ?>').classList.toggle('hidden')"></span>
                         <div id="dd-app-<?php echo esc_attr($app_key); ?>" class="hidden absolute top-8 right-2 w-48 bg-white rounded-md shadow-[0_10px_25px_rgba(0,0,0,0.1)] border border-gray-100 z-[60] text-gray-700 py-1 font-normal overflow-hidden animate-[pulse_0.1s_ease-out] lowercase normal-case">
+                            <a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=ska_data_export_app&app_id=' . $app_key . '&security=' . wp_create_nonce( 'ska_data_nonce' ) ) ); ?>" class="w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2 transition-colors">
+                                <span class="dashicons dashicons-download text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Xuất Blueprint (JSON)
+                            </a>
+                            <div class="h-px bg-gray-100 my-0.5"></div>
                             <button onclick="skaOpenRenameApp('<?php echo esc_js($app_key); ?>', '<?php echo esc_js($app_name); ?>', '<?php echo esc_js($app_icon); ?>'); document.getElementById('dd-app-<?php echo esc_attr($app_key); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-indigo-50 hover:text-indigo-600 flex items-center gap-2 transition-colors">
                                 <span class="dashicons dashicons-edit text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Đổi Tên Không Gian
                             </button>
