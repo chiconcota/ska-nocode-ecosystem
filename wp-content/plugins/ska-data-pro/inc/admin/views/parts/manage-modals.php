@@ -259,18 +259,10 @@ defined( 'ABSPATH' ) || exit;
             <div>
                 <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Thuộc App (Nhóm Ngữ Cảnh)</label>
                 <select id="ska-new-table-group" class="w-full border-gray-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 bg-white text-gray-700">
-                    <option value="custom">Smart-Object Cục bộ (Độc lập)</option>
                     <?php 
-                    $modal_app_names = array(
-                        'ecommerce' => 'E-Commerce App (Bán hàng)',
-                        'lms'       => 'Hệ Thống LMS (Khóa học)',
-                        'booking'   => 'App Đặt Lịch (Booking)'
-                    );
-                    $active_groups = isset($grouped_tables) && is_array($grouped_tables) ? array_keys($grouped_tables) : array();
-                    foreach ( $active_groups as $g_key ) {
-                        if ( isset( $modal_app_names[ $g_key ] ) ) {
-                            echo '<option value="' . esc_attr($g_key) . '">' . esc_html($modal_app_names[$g_key]) . '</option>';
-                        }
+                    $apps = \Ska\Data\Core\App_Manager::get_apps();
+                    foreach ( $apps as $app_key => $app_data ) {
+                        echo '<option value="' . esc_attr($app_key) . '">' . esc_html($app_data['name']) . '</option>';
                     }
                     ?>
                 </select>
@@ -315,12 +307,9 @@ defined( 'ABSPATH' ) || exit;
             <div>
                 <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Thuộc App (Nhóm Ngữ Cảnh)</label>
                 <select id="ska-rename-table-group" class="w-full border-gray-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 bg-white text-gray-700">
-                    <option value="custom">Smart-Object Cục bộ (Độc lập)</option>
                     <?php 
-                    foreach ( $active_groups as $g_key ) {
-                        if ( isset( $modal_app_names[ $g_key ] ) ) {
-                            echo '<option value="' . esc_attr($g_key) . '">' . esc_html($modal_app_names[$g_key]) . '</option>';
-                        }
+                    foreach ( $apps as $app_key => $app_data ) {
+                        echo '<option value="' . esc_attr($app_key) . '">' . esc_html($app_data['name']) . '</option>';
                     }
                     ?>
                 </select>
@@ -357,6 +346,108 @@ defined( 'ABSPATH' ) || exit;
             <button onclick="document.getElementById('ska-delete-table-modal').classList.add('hidden'); document.getElementById('ska-delete-confirm-input').value='';" class="px-6 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 transition">Đóng lại</button>
             <button id="ska-execute-del-table-btn" class="px-6 py-2 rounded font-medium text-white bg-red-600 hover:bg-red-700 shadow-sm transition flex items-center gap-2 opacity-50 cursor-not-allowed" disabled>
                 <span class="dashicons dashicons-trash mt-0.5" style="font-size: 16px;"></span> Chấp nhận Rủi ro & Xóa
+            </button>
+        </div>
+    </div>
+</div>
+<!-- ======================= MẢNG QUẢN TRỊ APP BLUEPRINT (WORKSPACE) ======================= -->
+
+<!-- MÀN HÌNH TẠO ỨNG DỤNG (CREATE APP) -->
+<div id="ska-create-app-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-indigo-50 text-indigo-700">
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-portfolio text-indigo-500"></span> Khởi Tạo Không Gian App</h3>
+            <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-create-app-modal').classList.add('hidden');"></span>
+        </div>
+        
+        <div class="p-5 flex flex-col gap-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Tên Không Gian (App Name)</label>
+                <input type="text" id="ska-new-app-name" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 bg-white" placeholder="vd: App Đặt Lịch, App Kế Toán..." autocomplete="off">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Biểu Tượng (Icon)</label>
+                <select id="ska-new-app-icon" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 bg-white text-gray-700 font-mono">
+                    <option value="dashicons-portfolio">Portfolio / Vali</option>
+                    <option value="dashicons-cart">Giỏ hàng / Đơn hàng</option>
+                    <option value="dashicons-groups">Nhóm / Đội ngũ</option>
+                    <option value="dashicons-calendar-alt">Lịch / Sự kiện</option>
+                    <option value="dashicons-welcome-learn-more">Giáo dục / Khóa học</option>
+                    <option value="dashicons-networking">Mạng lưới / Network</option>
+                </select>
+            </div>
+            
+            <p class="text-xs text-indigo-600 m-0 bg-indigo-50 p-2 rounded">
+                Smart Object sẽ nhóm nhiều Table dưới cùng 1 App Blueprint.
+            </p>
+        </div>
+
+        <div class="px-5 py-3 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
+            <button onclick="document.getElementById('ska-create-app-modal').classList.add('hidden');" class="px-4 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 text-sm transition">Hủy</button>
+            <button id="ska-execute-create-app-btn" class="px-4 py-2 rounded font-medium text-white bg-indigo-500 hover:bg-indigo-600 shadow-sm text-sm transition flex items-center gap-1"><span class="dashicons dashicons-plus-alt2 mt-0.5" style="font-size:16px;"></span> Tạo Workspace</button>
+        </div>
+    </div>
+</div>
+
+<!-- MÀN HÌNH ĐỔI TÊN ỨNG DỤNG (RENAME APP) -->
+<div id="ska-rename-app-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-indigo-50 text-indigo-700">
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-edit text-indigo-500"></span> Đổi Tên Không Gian</h3>
+            <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-rename-app-modal').classList.add('hidden');"></span>
+        </div>
+        
+        <div class="p-5 flex flex-col gap-4">
+            <input type="hidden" id="ska-rename-app-slug">
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Tên Ký Danh Mới</label>
+                <input type="text" id="ska-rename-app-name" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 bg-white" autocomplete="off">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Biểu Tượng</label>
+                <select id="ska-rename-app-icon" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 bg-white text-gray-700 font-mono">
+                    <option value="dashicons-portfolio">Portfolio / Vali</option>
+                    <option value="dashicons-cart">Giỏ hàng / Đơn hàng</option>
+                    <option value="dashicons-groups">Nhóm / Đội ngũ</option>
+                    <option value="dashicons-calendar-alt">Lịch / Sự kiện</option>
+                    <option value="dashicons-welcome-learn-more">Giáo dục / Khóa học</option>
+                    <option value="dashicons-networking">Mạng lưới / Network</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="px-5 py-3 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
+            <button onclick="document.getElementById('ska-rename-app-modal').classList.add('hidden');" class="px-4 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 text-sm transition">Hủy</button>
+            <button id="ska-execute-rename-app-btn" class="px-4 py-2 rounded font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm text-sm transition flex items-center gap-1">Lưu Thông Tin</button>
+        </div>
+    </div>
+</div>
+
+<!-- MÀN HÌNH DELETE APP LỚN VỚI CHỮ KÝ BẢO MẬT (XACNHAN) -->
+<div id="ska-delete-app-modal" class="hidden fixed inset-0 bg-red-900/60 backdrop-blur-sm z-[99999] flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-[450px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-red-50 text-red-600">
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-warning" style="font-size:24px;width:24px;height:24px;margin-top:-2px"></span> GIẢI TÁN ỨNG DỤNG</h3>
+            <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-delete-app-modal').classList.add('hidden'); document.getElementById('ska-delete-app-confirm-input').value='';"></span>
+        </div>
+        
+        <div class="p-6">
+            <input type="hidden" id="ska-del-app-slug">
+            <p class="text-[15px] text-gray-700 mb-3">Hành động này sẽ Xóa Không gian <strong class="text-red-600">"<span id="ska-del-app-name"></span>"</strong>.</p>
+            <div class="bg-orange-50/70 p-4 rounded text-sm text-gray-700 leading-relaxed mb-4 border border-orange-100">
+                ⚠️ Lưu ý: Các Bảng nằm trong ứng dụng này SẼ KHÔNG BỊ XÓA. Toàn bộ bảng sẽ được dời về "Không gian Mặc định".
+            </div>
+            
+            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Nhập chữ <span class="bg-gray-200 text-red-600 px-1 py-0.5 rounded font-mono">XACNHAN</span> để hoàn thành</label>
+            <input type="text" id="ska-delete-app-confirm-input" class="w-full border-red-200 rounded-md shadow-inner focus:border-red-500 focus:ring-red-500 p-3 bg-red-50/30 text-red-700 font-mono tracking-widest text-center" autocomplete="off" placeholder="Gõ chữ XACNHAN vào đây">
+        </div>
+
+        <div class="px-5 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
+            <button onclick="document.getElementById('ska-delete-app-modal').classList.add('hidden'); document.getElementById('ska-delete-app-confirm-input').value='';" class="px-6 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 transition">Đóng lại</button>
+            <button id="ska-execute-del-app-btn" class="px-6 py-2 rounded font-medium text-white bg-red-600 hover:bg-red-700 shadow-sm transition flex items-center gap-2 opacity-50 cursor-not-allowed" disabled>
+                <span class="dashicons dashicons-trash mt-0.5" style="font-size: 16px;"></span> Chấp nhận Rủi ro & Giải Tán
             </button>
         </div>
     </div>

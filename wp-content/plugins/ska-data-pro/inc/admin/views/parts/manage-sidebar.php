@@ -10,9 +10,12 @@ defined( 'ABSPATH' ) || exit;
         <h2 class="font-bold text-lg text-gray-800 tracking-tight">Ska Data</h2>
     </div>
 
-    <div class="px-4 py-3 uppercase text-xs font-bold text-gray-400 tracking-wider flex items-center justify-between shrink-0">
-        <span>Bảng Dữ Liệu</span>
-        <span class="dashicons dashicons-plus hover:text-emerald-500 cursor-pointer transition text-gray-400" title="Khởi tạo bảng mới" onclick="document.getElementById('ska-create-table-modal').classList.remove('hidden'); document.getElementById('ska-new-table-name').focus();"></span>
+    <div class="px-3 py-3 uppercase text-[11px] font-bold text-gray-400 tracking-wider flex items-center justify-between shrink-0 bg-gray-100/50">
+        <span>Không gian CSDL</span>
+        <div class="flex gap-2">
+            <span class="dashicons dashicons-portfolio hover:text-indigo-500 cursor-pointer transition text-gray-400" title="Tạo Workspace mới" onclick="document.getElementById('ska-create-app-modal').classList.remove('hidden'); document.getElementById('ska-new-app-name').focus();" style="font-size: 16px; width: 16px; height: 16px;"></span>
+            <span class="dashicons dashicons-plus hover:text-emerald-500 cursor-pointer transition text-gray-400" title="Khởi tạo bảng mẫu" onclick="document.getElementById('ska-create-table-modal').classList.remove('hidden'); document.getElementById('ska-new-table-name').focus();" style="font-size: 16px; width: 16px; height: 16px;"></span>
+        </div>
     </div>
 
     <ul class="flex-1 overflow-y-auto w-full px-2 py-2">
@@ -20,47 +23,24 @@ defined( 'ABSPATH' ) || exit;
             <li class="p-4 text-sm text-gray-500 text-center">Chưa có bảng nào. Hãy cài Schema trước.</li>
         <?php else : 
             // Xử lý phân nhóm Group tables
-            $templates      = \Ska\Data\Core\Template_Registry::get_all_templates();
+            $apps = \Ska\Data\Core\App_Manager::get_apps();
             $grouped_tables = array();
-            $custom_tables  = array();
-            $table_to_app   = array();
             
-            $app_names = array(
-                'ecommerce' => 'E-Commerce App',
-                'lms'       => 'Hệ Thống LMS',
-                'booking'   => 'App Đặt Lịch',
-                'custom'    => 'Bảng Tùy Chỉnh'
-            );
-            $app_icons = array(
-                'ecommerce' => 'dashicons-cart',
-                'lms'       => 'dashicons-welcome-learn-more',
-                'booking'   => 'dashicons-calendar-alt',
-                'custom'    => 'dashicons-welcome-write-blog'
-            );
-
-            // Build lookup map
-            foreach ( $templates as $key => $tpl ) {
-                foreach ( $tpl['tables'] as $raw_name => $sql ) {
-                    $table_to_app[ $wpdb->prefix . $raw_name ] = $key;
-                }
+            foreach ( $apps as $app_key => $app_data ) {
+                $grouped_tables[ $app_key ] = array();
             }
 
             foreach ( $all_tables as $table ) {
-                $assigned_group = '';
-                if ( isset( $all_dict[$table]['__table_info']['group'] ) ) {
-                    $assigned_group = $all_dict[$table]['__table_info']['group'];
+                $assigned_app = \Ska\Data\Core\App_Manager::UNCATEGORIZED_APP;
+                if ( isset( $all_dict[$table]['__table_info']['app_id'] ) ) {
+                    $assigned_app = $all_dict[$table]['__table_info']['app_id'];
                 }
 
-                if ( ! empty( $assigned_group ) && $assigned_group !== 'custom' ) {
-                    // Ưu tiên gom bảng theo Group mới gán từ Schema
-                    $grouped_tables[ $assigned_group ][] = $table;
-                } elseif ( isset( $table_to_app[ $table ] ) ) {
-                    // Gom nhóm theo Template Hardcode truyền thống
-                    $app_key = $table_to_app[ $table ];
-                    $grouped_tables[ $app_key ][] = $table;
+                if ( ! isset( $grouped_tables[ $assigned_app ] ) ) {
+                    // Fallback an toàn nếu app bị xóa mồ côi
+                    $grouped_tables[ \Ska\Data\Core\App_Manager::UNCATEGORIZED_APP ][] = $table;
                 } else {
-                    // Unassigned Custom
-                    $custom_tables[] = $table;
+                    $grouped_tables[ $assigned_app ][] = $table;
                 }
             }
 
@@ -94,12 +74,12 @@ defined( 'ABSPATH' ) || exit;
                         <!-- Kebab Menu (Table Actions) -->
                         <span class="dashicons dashicons-ellipsis opacity-0 group-hover:opacity-100 absolute right-2 top-1.5 text-gray-400 hover:text-gray-700 cursor-pointer z-10 pl-1 rounded pointer-events-auto" style="font-size: 16px; margin-top: 2px;" onclick="document.getElementById('dd-tbl-<?php echo esc_attr($table); ?>').classList.toggle('hidden')"></span>
                         <div id="dd-tbl-<?php echo esc_attr($table); ?>" class="hidden absolute top-7 left-10 w-48 bg-white rounded-md shadow-[0_10px_25px_rgba(0,0,0,0.1)] border border-gray-100 z-[60] text-gray-700 py-1 font-normal overflow-hidden animate-[pulse_0.1s_ease-out]">
-                            <button onclick="skaOpenRenameTable('<?php echo esc_js($table); ?>', '<?php echo esc_js($display_name); ?>', '<?php echo esc_js($custom_icon); ?>', '<?php echo esc_js($group); ?>'); document.getElementById('dd-tbl-<?php echo esc_attr($table); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2 transition-colors">
-                                <span class="dashicons dashicons-edit text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Đổi Ký Danh Bảng
+                            <button onclick="skaOpenRenameTable('<?php echo esc_js($table); ?>', '<?php echo esc_js($display_name); ?>', '<?php echo esc_js($custom_icon); ?>', '<?php echo esc_js(isset($all_dict[$table]['__table_info']['app_id']) ? $all_dict[$table]['__table_info']['app_id'] : 'uncategorized'); ?>'); document.getElementById('dd-tbl-<?php echo esc_attr($table); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2 transition-colors">
+                                <span class="dashicons dashicons-edit text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Đổi Thuộc Tính Bảng
                             </button>
                             <div class="h-px bg-gray-100 my-0.5"></div>
                             <button onclick="skaOpenDeleteTable('<?php echo esc_js($table); ?>', '<?php echo esc_js($display_name); ?>'); document.getElementById('dd-tbl-<?php echo esc_attr($table); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 hover:text-red-700 flex items-center gap-2 transition-colors">
-                                <span class="dashicons dashicons-trash text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Xóa Vĩnh Viễn
+                                <span class="dashicons dashicons-trash text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Xóa Vĩnh Viễn Bảng
                             </button>
                         </div>
                     </li>
@@ -108,34 +88,39 @@ defined( 'ABSPATH' ) || exit;
             }
         ?>
             <!-- Khối bảng theo chuẩn Ứng Dụng Mẫu -->
-            <?php foreach ( $grouped_tables as $app_key => $tables_in_group ) : ?>
-                <li class="px-2 pt-2 pb-1 mt-2 mb-1 border-b border-gray-200">
-                    <div class="flex items-center gap-1.5 font-bold text-[10px] uppercase text-gray-400 tracking-wider">
-                        <span class="dashicons <?php echo esc_attr( $app_icons[ $app_key ] ); ?>" style="font-size: 14px; width: 14px; height: 14px; margin-top:-2px"></span>
-                        <?php echo esc_html( $app_names[ $app_key ] ); ?>
+            <?php foreach ( $grouped_tables as $app_key => $tables_in_group ) : 
+                if ( ! isset( $apps[ $app_key ] ) ) continue;
+                $app_name = $apps[ $app_key ]['name'];
+                $app_icon = $apps[ $app_key ]['icon'];
+            ?>
+                <li class="px-2 pt-3 pb-1 mt-2 mb-1 border-b border-gray-200 relative group">
+                    <div class="flex items-center gap-1.5 font-bold text-[10px] uppercase text-gray-500 tracking-wider">
+                        <span class="dashicons <?php echo esc_attr( $app_icon ); ?>" style="font-size: 14px; width: 14px; height: 14px; margin-top:-2px"></span>
+                        <span class="flex-1 truncate truncate" title="<?php echo esc_attr($app_name); ?>"><?php echo esc_html( $app_name ); ?></span>
+                        
+                        <?php if ( $app_key !== \Ska\Data\Core\App_Manager::UNCATEGORIZED_APP ) : ?>
+                        <!-- Icon setting App -->
+                        <span class="dashicons dashicons-admin-generic opacity-0 group-hover:opacity-100 cursor-pointer text-gray-400 hover:text-indigo-500 transition ml-auto" style="font-size: 14px; width: 14px; height: 14px; margin-top:-2px" title="Thiết lập Không gian" onclick="document.getElementById('dd-app-<?php echo esc_attr($app_key); ?>').classList.toggle('hidden')"></span>
+                        <div id="dd-app-<?php echo esc_attr($app_key); ?>" class="hidden absolute top-8 right-2 w-48 bg-white rounded-md shadow-[0_10px_25px_rgba(0,0,0,0.1)] border border-gray-100 z-[60] text-gray-700 py-1 font-normal overflow-hidden animate-[pulse_0.1s_ease-out] lowercase normal-case">
+                            <button onclick="skaOpenRenameApp('<?php echo esc_js($app_key); ?>', '<?php echo esc_js($app_name); ?>', '<?php echo esc_js($app_icon); ?>'); document.getElementById('dd-app-<?php echo esc_attr($app_key); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-indigo-50 hover:text-indigo-600 flex items-center gap-2 transition-colors">
+                                <span class="dashicons dashicons-edit text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Đổi Tên Không Gian
+                            </button>
+                            <div class="h-px bg-gray-100 my-0.5"></div>
+                            <button onclick="skaOpenDeleteApp('<?php echo esc_js($app_key); ?>', '<?php echo esc_js($app_name); ?>'); document.getElementById('dd-app-<?php echo esc_attr($app_key); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 hover:text-red-700 flex items-center gap-2 transition-colors">
+                                <span class="dashicons dashicons-trash text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Giải Tán (Xóa App)
+                            </button>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </li>
                 <?php foreach ( $tables_in_group as $table ) : 
                     $clean_name = str_replace( $wpdb->prefix . 'ska_data_', '', $table );
                     $display_name = ucfirst( $clean_name );
-                    if ( $clean_name === 'custom' ) $display_name = 'Bảng Trống 1';
 
                     ska_render_sidebar_li( $table, $current_table, $wpdb, $all_dict, $display_name );
                 endforeach; ?>
             <?php endforeach; ?>
 
-            <!-- Khối bảng Custom không thuộc App Nào -->
-            <?php if ( ! empty( $custom_tables ) ) : ?>
-                <li class="px-2 pt-2 pb-1 mt-3 mb-1 border-b border-gray-200">
-                    <div class="flex items-center gap-1.5 font-bold text-[10px] uppercase text-gray-400 tracking-wider">
-                        <span class="dashicons dashicons-category" style="font-size: 14px; width: 14px; height: 14px; margin-top:-2px"></span>
-                        Bảng Tùy Biến (Custom)
-                    </div>
-                </li>
-                <?php foreach ( $custom_tables as $table ) : 
-                    ska_render_sidebar_li( $table, $current_table, $wpdb, $all_dict, '' );
-                endforeach; ?>
-            <?php endif; ?>
 
         <?php endif; ?>
     </ul>

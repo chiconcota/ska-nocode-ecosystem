@@ -45,6 +45,11 @@ class Admin_Ajax {
 		add_action( 'wp_ajax_ska_data_rename_table', array( $this, 'data_rename_table' ) );
 		add_action( 'wp_ajax_ska_data_drop_table', array( $this, 'data_drop_table' ) );
 
+		// Hook xử lý App Blueprint
+		add_action( 'wp_ajax_ska_data_create_app', array( $this, 'data_create_app' ) );
+		add_action( 'wp_ajax_ska_data_update_app', array( $this, 'data_update_app' ) );
+		add_action( 'wp_ajax_ska_data_drop_app', array( $this, 'data_drop_app' ) );
+
 		// Hook xử lý UI & Data Relation
 		add_action( 'wp_ajax_ska_data_search_relation', array( $this, 'data_search_relation' ) );
 		add_action( 'wp_ajax_ska_data_get_table_columns', array( $this, 'data_get_table_columns' ) );
@@ -279,16 +284,16 @@ class Admin_Ajax {
 	public function data_create_table() {
 		$this->verify_crud_request();
 
-		$name  = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
-		$icon  = isset( $_POST['icon'] ) ? sanitize_text_field( wp_unslash( $_POST['icon'] ) ) : 'dashicons-admin-page';
-		$group = isset( $_POST['group'] ) ? sanitize_text_field( wp_unslash( $_POST['group'] ) ) : 'custom';
+		$name   = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
+		$icon   = isset( $_POST['icon'] ) ? sanitize_text_field( wp_unslash( $_POST['icon'] ) ) : 'dashicons-admin-page';
+		$app_id = isset( $_POST['app_id'] ) ? sanitize_text_field( wp_unslash( $_POST['app_id'] ) ) : 'uncategorized';
 
 		if ( empty( $name ) ) {
 			wp_send_json_error( array( 'message' => 'Lỗi: Tên bảng không được để trống.' ) );
 		}
 
 		$engine = Database_Engine::get_instance();
-		$result = $engine->create_custom_table( $name, $icon, $group );
+		$result = $engine->create_custom_table( $name, $icon, $app_id );
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
@@ -304,17 +309,17 @@ class Admin_Ajax {
 	public function data_rename_table() {
 		$this->verify_crud_request();
 
-		$table = isset( $_POST['table'] ) ? sanitize_text_field( wp_unslash( $_POST['table'] ) ) : '';
-		$name  = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
-		$icon  = isset( $_POST['icon'] ) ? sanitize_text_field( wp_unslash( $_POST['icon'] ) ) : 'dashicons-admin-page';
-		$group = isset( $_POST['group'] ) ? sanitize_text_field( wp_unslash( $_POST['group'] ) ) : 'custom';
+		$table  = isset( $_POST['table'] ) ? sanitize_text_field( wp_unslash( $_POST['table'] ) ) : '';
+		$name   = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
+		$icon   = isset( $_POST['icon'] ) ? sanitize_text_field( wp_unslash( $_POST['icon'] ) ) : 'dashicons-admin-page';
+		$app_id = isset( $_POST['app_id'] ) ? sanitize_text_field( wp_unslash( $_POST['app_id'] ) ) : 'uncategorized';
 
 		if ( empty( $table ) || empty( $name ) ) {
 			wp_send_json_error( array( 'message' => 'Lỗi: Thông tin bảng không hợp lệ.' ) );
 		}
 
 		$engine = Database_Engine::get_instance();
-		$result = $engine->rename_custom_table( $table, $name, $icon, $group );
+		$result = $engine->rename_custom_table( $table, $name, $icon, $app_id );
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
@@ -343,6 +348,57 @@ class Admin_Ajax {
 		}
 
 		wp_send_json_success( array( 'message' => 'Đã tan biến.' ) );
+	}
+
+	/**
+	 * AJAX: Tạo App Blueprint
+	 */
+	public function data_create_app() {
+		$this->verify_crud_request();
+
+		$name = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
+		$icon = isset( $_POST['icon'] ) ? sanitize_text_field( wp_unslash( $_POST['icon'] ) ) : 'dashicons-portfolio';
+
+		$result = \Ska\Data\Core\App_Manager::create_app( $name, $icon );
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+
+		wp_send_json_success( array( 'message' => 'Tạo Workspace thành công.' ) );
+	}
+
+	/**
+	 * AJAX: Cập nhật App Blueprint
+	 */
+	public function data_update_app() {
+		$this->verify_crud_request();
+
+		$app_id = isset( $_POST['app_id'] ) ? sanitize_text_field( wp_unslash( $_POST['app_id'] ) ) : '';
+		$name   = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
+		$icon   = isset( $_POST['icon'] ) ? sanitize_text_field( wp_unslash( $_POST['icon'] ) ) : 'dashicons-portfolio';
+
+		$result = \Ska\Data\Core\App_Manager::update_app( $app_id, $name, $icon );
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+
+		wp_send_json_success( array( 'message' => 'Cập nhật Workspace thành công.' ) );
+	}
+
+	/**
+	 * AJAX: Xóa App Blueprint
+	 */
+	public function data_drop_app() {
+		$this->verify_crud_request();
+
+		$app_id = isset( $_POST['app_id'] ) ? sanitize_text_field( wp_unslash( $_POST['app_id'] ) ) : '';
+
+		$result = \Ska\Data\Core\App_Manager::drop_app( $app_id );
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+
+		wp_send_json_success( array( 'message' => 'Xoá Workspace thành công.' ) );
 	}
 
 	/**

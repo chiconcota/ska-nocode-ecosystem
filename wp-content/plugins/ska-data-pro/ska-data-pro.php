@@ -22,6 +22,7 @@ define( 'SKA_DATA_PRO_URL', plugin_dir_url( __FILE__ ) );
 // Load Core Classes
 require_once SKA_DATA_PRO_PATH . 'inc/admin/class-admin-menu.php';
 require_once SKA_DATA_PRO_PATH . 'inc/admin/class-admin-ajax.php';
+require_once SKA_DATA_PRO_PATH . 'inc/core/class-app-manager.php';
 require_once SKA_DATA_PRO_PATH . 'inc/core/class-template-registry.php';
 require_once SKA_DATA_PRO_PATH . 'inc/core/class-data-fetcher.php';
 require_once SKA_DATA_PRO_PATH . 'inc/core/class-database-engine.php';
@@ -31,6 +32,7 @@ function init() {
 	Admin\Admin_Menu::get_instance();
 	$ajax = new Admin\Admin_Ajax(); // Khởi tạo xử lý Request (AJAX)
 	Core\Query_Builder::get_instance(); // Đánh thức cỗ máy xử lý Truy Xuất Dữ Liệu SQL
+	Core\App_Manager::maybe_run_migration(); // Đồng bộ App Blueprint Migration
 
 	// Require file chứa Provider lúc hệ thống Hook Plugins_loaded (tránh bị return early)
 	require_once SKA_DATA_PRO_PATH . 'inc/core/class-ska-provider.php';

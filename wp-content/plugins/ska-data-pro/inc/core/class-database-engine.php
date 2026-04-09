@@ -457,7 +457,7 @@ class Database_Engine {
 	 * @param string $group
 	 * @return string|\WP_Error Tên Table Slug hoàn chỉnh
 	 */
-	public function create_custom_table( $friendly_name, $icon = 'dashicons-admin-page', $group = 'custom' ) {
+	public function create_custom_table( $friendly_name, $icon = 'dashicons-admin-page', $app_id = 'uncategorized' ) {
 		global $wpdb;
 
 		// 1. Tạo Slug chuẩn
@@ -493,9 +493,9 @@ class Database_Engine {
 		}
 		$dictionary[ $table_name ] = array(
 			'__table_info' => array(
-				'name'  => sanitize_text_field( $friendly_name ),
-				'icon'  => sanitize_text_field( $icon ),
-				'group' => sanitize_text_field( $group )
+				'name'   => sanitize_text_field( $friendly_name ),
+				'icon'   => sanitize_text_field( $icon ),
+				'app_id' => sanitize_text_field( $app_id )
 			)
 		);
 		update_option( 'ska_data_dictionary', $dictionary );
@@ -530,16 +530,7 @@ class Database_Engine {
 		return true;
 	}
 
-	/**
-	 * Đổi Label (Tiếng Việt) và Icon của Bảng.
-	 *
-	 * @param string $table_name
-	 * @param string $new_name
-	 * @param string $new_icon
-	 * @param string $group
-	 * @return true|\WP_Error
-	 */
-	public function rename_custom_table( $table_name, $new_name, $new_icon, $group = 'custom' ) {
+	public function rename_custom_table( $table_name, $new_name, $new_icon, $app_id = 'uncategorized' ) {
 		global $wpdb;
 
 		if ( strpos( $table_name, $wpdb->prefix . 'ska_data_' ) !== 0 ) {
@@ -552,9 +543,9 @@ class Database_Engine {
 		}
 
 		$dictionary[ $table_name ]['__table_info'] = array(
-			'name'  => sanitize_text_field( $new_name ),
-			'icon'  => sanitize_text_field( $new_icon ),
-			'group' => sanitize_text_field( $group )
+			'name'   => sanitize_text_field( $new_name ),
+			'icon'   => sanitize_text_field( $new_icon ),
+			'app_id' => sanitize_text_field( $app_id )
 		);
 
 		update_option( 'ska_data_dictionary', $dictionary );
