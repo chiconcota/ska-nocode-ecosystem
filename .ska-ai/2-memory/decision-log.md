@@ -3,7 +3,11 @@
 - **Decision (Auto Slug Re-wiring):** Giải quyết triệt để rủi ro đệm bảng (Table Collision) khi Import Blueprint ở Website mới (giả sử bảng `teachers` đã tồn tại). Chốt phương án quy ước `"target": "teachers"` trong JSON chỉ là Ký Danh Nội Bộ (Relative Slugs). Công cụ Import sẽ dịch các ký danh nội bộ thành Tên Bảng MySQL vật lý không trùng lặp (ví dụ `ska_data_teachers_1`), sau đó tự động nối lại Toàn Bộ các cột Relaion & Rollup (Re-wiring) dựa trên một Cuốn Từ Điển Tạm (Slug Map Dictionary) ngay trong thời gian chạy. 
 - **Decision (External Providers Relation):** Bác bỏ việc lưu trữ CPT (Custom Post Type) nguyên bản vào bên trong Blueprint để tôn trọng điều luật `Flat Tables First`. Mọi gắn kết với thực thể WordPress có sẵn (WP Users, ACF) sẽ được JSON lưu qua trường `provider` định tuyến ngoại lai (VD: `"provider": "wp_users"`).
 
-## 2026-04-09 - Triển Khai Smart Object Phase 1 (Ska Data Pro)
+## 2026-04-10 - Triển Khai Hoàn Tất: Export/Import Blueprint & Bug Fix
+- **Decision (File Upload Strategy):** Sử dụng `FormData` qua `fetch` API thay cho module `apiFetch` (chạy trên `URLSearchParams`) để gửi JSON file từ modal Import lên Backend PHP một cách sạch sẽ và xử lý lỗi Validation tức thì.
+- **Decision (Admin Navigation Bugfix):** Sửa lỗi các Kebab Menu (Dropdown options) trên Sidebar bị kẹt (không tự ẩn khi click ra ngoài). Áp dụng cỗ máy `document.addEventListener('click')` toàn cục trong file `modals.js`, kết hợp xác nhận bằng hàm `contains()` để bảo toàn nguyên lý Event Bubbling của CSS framework.
+
+## 2026-04-10 - Brainstorm: Export/Import Smart Object Blueprint (Ska Data Pro)
 - **Decision (Architecture Pivot):** Khai tử hệ thống nhóm Table bằng ký tự Tĩnh (Text Group Input), thay bằng Kiến trúc Application Workspace. Cấp phát Option API riêng biệt (`ska_data_apps`) để lưu trữ Model Blueprint cho App (chứa ID, Name, Icon).
 - **Decision (Data Protection Scheme):** Áp dụng quy trình Giải Tán An Toàn (Safe Drop). Khi một App bị xoá, 100% các Bảng Flat Tables nằm bên trong sẽ được rút kết nối khóa ngoại (`app_id`) và tự động dời về App "Uncategorized", tuyệt đối không chạy lệnh `DROP TABLE`. Lỗ hổng hù dọa/mất dữ liệu vì lỡ click được hoàn toàn khắc phục.
 - **Decision (Micro-frontend Admin):** Tách logic Tương tác Sự kiện giao diện App ra khỏi `schema.js`, tạo file `apps.js` (Architecture Component Modulaziation) rồi đưa bộ biên dịch Vite Build.
