@@ -73,6 +73,25 @@ export function attachModalHandlers() {
         }
         document.getElementById('ska-delete-table-modal').classList.remove('hidden');
     };
+
+    window.skaOpenRenameApp = (slug, name, icon) => {
+        document.getElementById('ska-rename-app-slug').value = slug;
+        document.getElementById('ska-rename-app-name').value = name;
+        document.getElementById('ska-rename-app-icon').value = icon;
+        document.getElementById('ska-rename-app-modal').classList.remove('hidden');
+    };
+
+    window.skaOpenDeleteApp = (slug, name) => {
+        document.getElementById('ska-del-app-slug').value = slug;
+        document.getElementById('ska-del-app-name').innerText = name;
+        document.getElementById('ska-delete-app-confirm-input').value = '';
+        const btn = document.getElementById('ska-execute-del-app-btn');
+        if (btn) {
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        document.getElementById('ska-delete-app-modal').classList.remove('hidden');
+    };
     
     // Add event listeners for type changes in modals
     const bindTypeSelect = (idPrefix) => {

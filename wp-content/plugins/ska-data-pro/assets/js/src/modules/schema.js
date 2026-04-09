@@ -123,9 +123,9 @@ export function attachSchemaEvents() {
     const exCreateTblBtn = document.getElementById('ska-execute-create-table-btn');
     if ( exCreateTblBtn ) {
         exCreateTblBtn.addEventListener('click', async () => {
-            const name  = document.getElementById('ska-new-table-name').value.trim();
-            const icon  = document.getElementById('ska-new-table-icon').value;
-            const group = document.getElementById('ska-new-table-group').value;
+            const name   = document.getElementById('ska-new-table-name').value.trim();
+            const icon   = document.getElementById('ska-new-table-icon').value;
+            const app_id = document.getElementById('ska-new-table-group').value;
 
             if(!name) { alert('Vui lòng điền tên bảng (vd: Khách Hàng).'); return; }
             exCreateTblBtn.disabled = true;
@@ -134,7 +134,7 @@ export function attachSchemaEvents() {
             const res = await apiFetch('ska_data_create_table', {
                 name: name,
                 icon: icon,
-                group: group
+                app_id: app_id
             });
 
             if (res.success) {
@@ -152,10 +152,10 @@ export function attachSchemaEvents() {
     const exRenameTblBtn = document.getElementById('ska-execute-rename-table-btn');
     if ( exRenameTblBtn ) {
         exRenameTblBtn.addEventListener('click', async () => {
-            const slug  = document.getElementById('ska-rename-table-slug').value;
-            const name  = document.getElementById('ska-rename-table-name').value.trim();
-            const icon  = document.getElementById('ska-rename-table-icon').value;
-            const group = document.getElementById('ska-rename-table-group').value;
+            const slug   = document.getElementById('ska-rename-table-slug').value;
+            const name   = document.getElementById('ska-rename-table-name').value.trim();
+            const icon   = document.getElementById('ska-rename-table-icon').value;
+            const app_id = document.getElementById('ska-rename-table-group').value;
 
             if(!name) { alert('Vui lòng điền tên bảng.'); return; }
             exRenameTblBtn.disabled = true;
@@ -165,7 +165,7 @@ export function attachSchemaEvents() {
                 table: slug, // Rename action usually requires table override if it operates on different table, apiFetch auto appends config.tableId, so we pass explicit 'table' var here.
                 name: name,
                 icon: icon,
-                group: group
+                app_id: app_id
             });
 
             if (res.success) window.location.reload();
