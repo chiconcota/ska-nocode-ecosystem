@@ -1,3 +1,8 @@
+## 2026-04-09 - Triển Khai Smart Object Phase 1 (Ska Data Pro)
+- **Decision (Architecture Pivot):** Khai tử hệ thống nhóm Table bằng ký tự Tĩnh (Text Group Input), thay bằng Kiến trúc Application Workspace. Cấp phát Option API riêng biệt (`ska_data_apps`) để lưu trữ Model Blueprint cho App (chứa ID, Name, Icon).
+- **Decision (Data Protection Scheme):** Áp dụng quy trình Giải Tán An Toàn (Safe Drop). Khi một App bị xoá, 100% các Bảng Flat Tables nằm bên trong sẽ được rút kết nối khóa ngoại (`app_id`) và tự động dời về App "Uncategorized", tuyệt đối không chạy lệnh `DROP TABLE`. Lỗ hổng hù dọa/mất dữ liệu vì lỡ click được hoàn toàn khắc phục.
+- **Decision (Micro-frontend Admin):** Tách logic Tương tác Sự kiện giao diện App ra khỏi `schema.js`, tạo file `apps.js` (Architecture Component Modulaziation) rồi đưa bộ biên dịch Vite Build.
+
 ## 2026-04-09 - Chốt Kiến trúc Lõi: Ngôn Ngữ Biểu Thức Ska (SkaFX DSL)
 - **Decision (Architecture Pivot):** Bác bỏ phương án nhúng `Google Blockly` cho tính năng Conditional Display. Nhận thấy nếu sau này mở rộng thêm tính năng Formula Column cho Ska Data Pro, hệ thống sẽ rơi vào rác UI. Quyết định chuyển sang tạo ngôn ngữ Custom Domain Specific Language (DSL) mệnh danh **SkaFX (Ska Expression Language)**.
 - **Decision (Unified Engine):** Sử dụng 1 bộ khung PHP Phân giải cú pháp (AST Evaluator) cho cả 3 tác vụ khổng lồ: Data Hydration (Chuỗi động), Conditional Display (Logic True/False) và Formula Column. Cú pháp lai Airtable (VD: `[doctors.rating] >= 4`).
