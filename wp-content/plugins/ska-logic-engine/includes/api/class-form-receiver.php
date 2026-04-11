@@ -10,6 +10,15 @@ class Ska_Form_Receiver {
             // @todo: Tạm mở cửa cho Khách tham quan Form nhập liệu. Cần Nonce-auth ở Phase sau!
             'permission_callback' => '__return_true', 
         ]);
+
+        // Cung cấp Lược đồ Database cho hệ sinh thái Editor (TributeJS)
+        register_rest_route( 'ska-logic/v1', '/schema', [
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => [ __CLASS__, 'handle_schema' ],
+            'permission_callback' => function() {
+                return current_user_can( 'edit_posts' ); // Phân quyền Editor
+            }
+        ]);
     }
 
     public static function handle_submit( WP_REST_Request $request ) {
@@ -36,5 +45,47 @@ class Ska_Form_Receiver {
             'message' => 'Nhiệm màu! Data đã lướt an toàn qua các bộ Node vào trúng Lớp Kho!',
             'data'    => $completed_payload
         ]);
+    }
+
+    public static function handle_schema( WP_REST_Request $request ) {
+        $dictionary = get_option( 'ska_data_dictionary', [] );
+        $tribute_data = [];
+        global $wpdb;
+        $global_prefix = $wpdb->prefix . 'ska_data_';
+
+        foreach ( $dictionary as $table_id => $table_config ) {
+            // Lấy App Slug từ __table_info
+            $table_info = isset($table_config['__table_info']) ? $table_config['__table_info'] : [];
+            $app_slug = isset($table_info['app_id']) && !empty($table_info['app_id']) ? $table_info['app_id'] : 'uncategorized';
+            $table_label = isset($table_info['name']) ? $table_info['name'] : $table_id;
+            
+            // Xử lý tên bảng vật lý: bóc bỏ `wp_ska_data_` và bóc bỏ luôn `app_id` để được model_slug thuần túy
+            $table_slug = str_replace( $global_prefix, '', $table_id );
+            
+            // Lọc luôn cả app_id prefix ra khỏi tên bảng (nếu app_id chèn vào theo chuẩn mới)
+            if ( $app_slug !== 'uncategorized' ) {
+                $app_slug_clean = sanitize_key( $app_slug ) . '_';
+                if ( strpos( $table_slug, $app_slug_clean ) === 0 ) {
+                    $table_slug = substr( $table_slug, strlen( $app_slug_clean ) );
+                }
+            }
+
+            // Duyệt từng Cột (Mọi key không phải __table_info đều là cột)
+            foreach ( $table_config as $col_slug => $col_data ) {
+                if ( $col_slug === '__table_info' || $col_slug === 'id' || $col_slug === 'created_at' ) {
+                    continue;
+                }
+
+                $full_notation = "{$app_slug}.{$table_slug}.{$col_slug}";
+                $label = isset($col_data['label']) ? $col_data['label'] : $col_slug;
+
+                $tribute_data[] = [
+                    'key'   => "{$full_notation} - {$label} ({$table_label})", // Cho user tìm bằng cả tiếng Việt
+                    'value' => "[{$full_notation}]" // Giá trị thực dán vào ô Text
+                ];
+            }
+        }
+
+        return rest_ensure_response( $tribute_data );
     }
 }

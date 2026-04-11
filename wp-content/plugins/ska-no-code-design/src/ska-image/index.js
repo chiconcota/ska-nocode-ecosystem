@@ -102,26 +102,6 @@ registerBlockType(metadata.name, {
                         />
                     </PanelBody>
 
-                    <PanelBody title={__('Dynamic Data', 'ska-builder-core')} initialOpen={false}>
-                        <SelectControl
-                            label={__('Source', 'ska-builder-core')}
-                            value={dynamic.source}
-                            options={[
-                                { label: 'Static (Upload)', value: 'static' },
-                                { label: 'Featured Image', value: 'featured_image' },
-                                { label: 'SCF Image Field', value: 'scf_image' }
-                            ]}
-                            onChange={(val) => updateDynamic('source', val)}
-                        />
-                        {dynamic.source === 'scf_image' && (
-                            <TextControl
-                                label={__('Field Name', 'ska-builder-core')}
-                                value={dynamic.key}
-                                onChange={(val) => updateDynamic('key', val)}
-                            />
-                        )}
-                    </PanelBody>
-
                     <TailwindPanel
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
@@ -129,14 +109,7 @@ registerBlockType(metadata.name, {
                         setCustomStyle={(val) => setAttributes({ customStyle: val })}
                     />
 
-                    <PanelBody title={__('Logic (Visibility)', 'ska-builder-core')} initialOpen={false}>
-                        <ToggleControl
-                            label={__('Enable Logic', 'ska-builder-core')}
-                            checked={logic.enabled}
-                            onChange={(val) => updateLogic('enabled', val)}
-                        />
-                    </PanelBody>
-                </InspectorControls>
+                    </InspectorControls>
 
                 <div {...blockProps}>
                     {dynamic.source === 'static' ? (

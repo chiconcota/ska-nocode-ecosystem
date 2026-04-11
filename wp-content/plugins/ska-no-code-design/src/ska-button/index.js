@@ -165,48 +165,6 @@ registerBlockType(metadata.name, {
                         )}
                     </PanelBody>
 
-                    <PanelBody title={__('Dynamic Data', 'ska-builder-core')} initialOpen={false}>
-                        <h4 style={{ margin: '0 0 8px 0', fontSize: '13px' }}>{__('Text Source', 'ska-builder-core')}</h4>
-                        <SelectControl
-                            value={dynamic.text_source}
-                            options={[
-                                { label: 'Static Text', value: 'static' },
-                                { label: 'Post Title', value: 'post_title' },
-                                { label: 'Post Meta', value: 'meta' },
-                                { label: 'SCF Field', value: 'scf' }
-                            ]}
-                            onChange={(val) => updateDynamic('text_source', val)}
-                        />
-                        {(dynamic.text_source === 'meta' || dynamic.text_source === 'scf') && (
-                            <TextControl
-                                label={__('Field Key', 'ska-builder-core')}
-                                value={dynamic.text_key}
-                                onChange={(val) => updateDynamic('text_key', val)}
-                            />
-                        )}
-
-                        <hr style={{ margin: '16px 0' }} />
-                        
-                        <h4 style={{ margin: '0 0 8px 0', fontSize: '13px' }}>{__('URL Source', 'ska-builder-core')}</h4>
-                        <SelectControl
-                            value={dynamic.url_source}
-                            options={[
-                                { label: 'Static URL', value: 'static' },
-                                { label: 'Post Permalink', value: 'post_url' },
-                                { label: 'Post Meta', value: 'meta' },
-                                { label: 'SCF Field', value: 'scf' }
-                            ]}
-                            onChange={(val) => updateDynamic('url_source', val)}
-                        />
-                        {(dynamic.url_source === 'meta' || dynamic.url_source === 'scf') && (
-                            <TextControl
-                                label={__('Field Key', 'ska-builder-core')}
-                                value={dynamic.url_key}
-                                onChange={(val) => updateDynamic('url_key', val)}
-                            />
-                        )}
-                    </PanelBody>
-
                     <TailwindPanel
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
@@ -214,14 +172,7 @@ registerBlockType(metadata.name, {
                         setCustomStyle={(val) => setAttributes({ customStyle: val })}
                     />
 
-                    <PanelBody title={__('Logic (Visibility)', 'ska-builder-core')} initialOpen={false}>
-                        <ToggleControl
-                            label={__('Enable Logic', 'ska-builder-core')}
-                            checked={logic.enabled}
-                            onChange={(val) => updateLogic('enabled', val)}
-                        />
-                    </PanelBody>
-                </InspectorControls>
+                    </InspectorControls>
 
                 <Tag 
                     {...blockProps}

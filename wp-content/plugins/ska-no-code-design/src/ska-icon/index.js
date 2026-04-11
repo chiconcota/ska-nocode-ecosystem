@@ -113,14 +113,7 @@ registerBlockType(metadata.name, {
                         setCustomStyle={(val) => setAttributes({ customStyle: val })}
                     />
 
-                    <PanelBody title={__('Logic (Visibility)', 'ska-builder-core')} initialOpen={false}>
-                        <ToggleControl
-                            label={__('Enable Logic', 'ska-builder-core')}
-                            checked={logic.enabled}
-                            onChange={(val) => updateLogic('enabled', val)}
-                        />
-                    </PanelBody>
-                </InspectorControls>
+                    </InspectorControls>
 
                 {/* Icon Picker Modal */}
                 {isModalOpen && (

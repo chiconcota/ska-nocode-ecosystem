@@ -193,6 +193,7 @@ class SkaFX_Parser {
         if ( $token['type'] === SkaFX_Lexer::T_OP ) {
             switch ( $token['value'] ) {
                 case '=':
+                case '==':
                 case '!=':
                     return 20;
                 case '>':
