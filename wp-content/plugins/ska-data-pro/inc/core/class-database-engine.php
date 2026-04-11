@@ -466,7 +466,14 @@ class Database_Engine {
 			return new \WP_Error( 'invalid_name', 'Tên bảng không hợp lệ.' );
 		}
 		
-		$base_slug = 'ska_data_' . str_replace( '-', '_', $slug );
+		// 1A. Nhúng App ID vào để ngăn chặn dẫm đạp Schema (Collision Resolving)
+		$clean_app_id = sanitize_key( $app_id );
+		if ( empty( $clean_app_id ) || $clean_app_id === 'uncategorized' ) {
+			$base_slug = 'ska_data_' . str_replace( '-', '_', $slug );
+		} else {
+			$base_slug = 'ska_data_' . $clean_app_id . '_' . str_replace( '-', '_', $slug );
+		}
+		
 		$table_name = $wpdb->prefix . $base_slug;
 
 		// Kiểm tra Trùng

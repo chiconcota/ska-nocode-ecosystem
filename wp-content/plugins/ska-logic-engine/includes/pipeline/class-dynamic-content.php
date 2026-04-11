@@ -26,9 +26,80 @@ class Ska_Dynamic_Content {
     }
 
     private function init_hooks() {
-        // Quét chữ trong hàm in nội dung chuẩn của WordPress. 
+        // [Legacy] Quét chữ Mustache {{...}} trong hàm in nội dung chuẩn của WordPress. 
         // Trọng số 90 để chạy sau khi Gutenberg render khối.
         add_filter( 'the_content', [ $this, 'parse_dynamic_tags' ], 90 );
+
+        // [Ska V2] Đánh chặn luồng Render Block chuẩn của Universal Dynamic Binding 
+        add_filter( 'render_block', [ $this, 'parse_ska_blocks' ], 10, 2 );
+    }
+
+    /**
+     * Máy Nghiền & Gắn Dữ Liệu NoCode SkaFX V2
+     */
+    public function parse_ska_blocks( $block_content, $block ) {
+        // Chỉ xử lý ngoài Frontend 
+        if ( is_admin() && ! wp_doing_ajax() ) {
+            return $block_content;
+        }
+
+        // Bỏ qua nếu không phải Block của nhà Ska
+        if ( strpos( $block['blockName'], 'ska-builder/' ) !== 0 ) {
+            return $block_content;
+        }
+
+        // Hút Sinh lực từ Universal Dynamic Binding
+        if ( isset( $block['attrs']['skaDynamicBinding']['script'] ) && ! empty( $block['attrs']['skaDynamicBinding']['script'] ) ) {
+            $script = $block['attrs']['skaDynamicBinding']['script'];
+
+            // Lấy con trỏ ngữ cảnh: Phỏ biến nhất là $_GET['id'] cho các trang Chi tiết (Detail Portal)
+            $record_id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
+            
+            // Cung cấp GLOBAL_ID cho Phân giải AST
+            $context = [ 'GLOBAL_ID' => $record_id ]; 
+
+            if ( class_exists( '\Ska\Logic\SkaFX\SkaFX_Engine' ) ) {
+                $result = \Ska\Logic\SkaFX\SkaFX_Engine::execute( $script, $context );
+                $symbols = $result['symbols'];
+
+                // --- 1. Sát thủ Ẩn Hiện (Visibility Check) ---
+                // Chấp nhận biến `visible = true` HOẶC nếu User chỉ gõ điều kiện cụt lủn `[tuoi] > 18` (trả về Boolean thuần túy)
+                $is_visible = true;
+                if ( isset( $symbols['visible'] ) ) {
+                    $is_visible = (bool) $symbols['visible'];
+                } elseif ( isset( $result['last_val'] ) && is_bool( $result['last_val'] ) ) {
+                    $is_visible = $result['last_val'];
+                }
+
+                if ( ! $is_visible ) {
+                    // Máy chém cắt đứt hoàn toàn Block ra khỏi giao diện HTML mà không cần CSS Display None!
+                    return ''; 
+                }
+
+                // --- 2. Bơm Máu Giao Diện (Data Hydration) ---
+                // Ưu tiên đọc biến `var data = ...` trước. Nếu User lười chỉ gõ cụt lủn `[app.model.col]` thì ta lấy kết quả tính toán cuối cùng (last_val).
+                $new_data = null;
+                if ( isset( $symbols['data'] ) ) {
+                    $new_data = $symbols['data'];
+                } elseif ( isset( $result['last_val'] ) && $result['last_val'] !== true && $result['last_val'] !== false && $result['last_val'] !== null ) {
+                    $new_data = $result['last_val'];
+                }
+
+                if ( $new_data !== null ) {
+                    
+                    if ( $block['blockName'] === 'ska-builder/text' ) {
+                        // Regex cực mạnh thay thế nội dung TEXT nằm giữa 2 thẻ Wrapper rỗng lõi của Gutenberg (Tạm thời không hỗ trợ Nested bên trong)
+                        $block_content = preg_replace( '/(<[a-zA-Z0-9]+[^>]*>)(.*?)(<\/[a-zA-Z0-9]+>\s*)$/s', '${1}' . esc_html( $new_data ) . '${3}', $block_content );
+                    }
+                    else if ( $block['blockName'] === 'ska-builder/image' ) {
+                         // Dự báo Logic tương lai: Thúc thẳng vảo thẻ <img src="...">
+                         // Tạm thời chưa build vì hệ thống SkaFX cần trả object cho Ảnh.
+                    }
+                }
+            }
+        }
+        
+        return $block_content;
     }
 
     /**

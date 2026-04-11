@@ -162,26 +162,6 @@ registerBlockType(metadata.name, {
                         </div>
                     </PanelBody>
 
-                    <PanelBody title={__('Dynamic Data', 'ska-builder-core')} initialOpen={false}>
-                        <SelectControl
-                            label={__('URL Source', 'ska-builder-core')}
-                            value={dynamic.url_source}
-                            options={[
-                                { label: 'Static URL', value: 'static' },
-                                { label: 'Post Meta', value: 'meta' },
-                                { label: 'SCF Field', value: 'scf' }
-                            ]}
-                            onChange={(val) => updateDynamic('url_source', val)}
-                        />
-                        {dynamic.url_source !== 'static' && (
-                            <TextControl
-                                label={__('Field Key', 'ska-builder-core')}
-                                value={dynamic.url_key}
-                                onChange={(val) => updateDynamic('url_key', val)}
-                            />
-                        )}
-                    </PanelBody>
-
                     <TailwindPanel
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
@@ -189,14 +169,7 @@ registerBlockType(metadata.name, {
                         setCustomStyle={(val) => setAttributes({ customStyle: val })}
                     />
 
-                    <PanelBody title={__('Logic (Visibility)', 'ska-builder-core')} initialOpen={false}>
-                        <ToggleControl
-                            label={__('Enable Logic', 'ska-builder-core')}
-                            checked={logic.enabled}
-                            onChange={(val) => updateLogic('enabled', val)}
-                        />
-                    </PanelBody>
-                </InspectorControls>
+                    </InspectorControls>
 
                 <div {...blockProps}>
                     <div className="w-full h-full bg-gray-100 flex items-center justify-center">

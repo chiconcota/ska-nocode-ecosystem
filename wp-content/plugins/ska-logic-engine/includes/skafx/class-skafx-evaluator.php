@@ -57,6 +57,12 @@ class SkaFX_Evaluator {
         if ( $node instanceof Node_Variable ) {
             $var_name = $node->name;
 
+            // Bắt Literals (Hằng số Boolean/Null)
+            $lower_name = strtolower( $var_name );
+            if ( $lower_name === 'true' ) return true;
+            if ( $lower_name === 'false' ) return false;
+            if ( $lower_name === 'null' ) return null;
+
             // Ưu tiên 1: Quét biến ảo trong RAM (VD: Lễ tân vừa gán `var tuoi = 18`)
             if ( array_key_exists( $var_name, $this->symbol_table ) ) {
                 return $this->symbol_table[ $var_name ];
@@ -68,8 +74,56 @@ class SkaFX_Evaluator {
             }
 
             // Ưu tiên 3: Quét chéo Object (Smart Object / App Context)
-            // Ví dụ gõ `[clinic.doctors.age]`. Tính năng này sẽ được kích hoat ở Update sau khi Database Schema có bảng App Entities.
-            // ... (Context Manager External LooKup)
+            // Ví dụ gõ `[core.doctors.age]`. Nó sẽ gọi đến bảng `wp_ska_data_core_doctors` lấy cột `age` tương ứng với GLOBAL_ID
+            if ( strpos( $var_name, '.' ) !== false ) {
+                $parts = explode( '.', $var_name );
+                // Khớp chính xác Format: app_id.model_slug.column
+                if ( count( $parts ) === 3 && isset( $this->row_context['GLOBAL_ID'] ) ) {
+                    $app_id = $parts[0];
+                    $model  = $parts[1];
+                    $col    = $parts[2];
+                    $record_id = intval( $this->row_context['GLOBAL_ID'] );
+
+                    if ( $record_id > 0 ) {
+                        global $wpdb;
+                        
+                        // Auto-correct: Nếu user gõ thiếu tiền tố `app_` (Vd: gõ `[Do5p1uxz]` thay vì `[app_do5p1uxz]`)
+                        $clean_app = sanitize_key($app_id);
+                        if ( $clean_app !== 'uncategorized' && strpos( $clean_app, 'app_' ) !== 0 ) {
+                            $clean_app = 'app_' . $clean_app;
+                        }
+
+                        $table_name = $wpdb->prefix . 'ska_data_' . $clean_app . '_' . sanitize_key($model);
+                        
+                        // Static Cache dùng chun cho cả vòng đời Render 1 trang
+                        static $smart_object_cache = [];
+                        $cache_key = $table_name . '_' . $record_id;
+
+                        if ( ! isset( $smart_object_cache[ $cache_key ] ) ) {
+                            if ( class_exists( '\Ska\Data\Core\Data_Fetcher' ) ) {
+                                $rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $table_name, [
+                                    'filter_field' => 'id',
+                                    'filter_val'   => $record_id,
+                                    'filter_op'    => 'eq'
+                                ], 1 );
+                                
+                                if ( ! empty( $rows ) && is_array( $rows ) ) {
+                                    $smart_object_cache[ $cache_key ] = $rows[0];
+                                } else {
+                                    $smart_object_cache[ $cache_key ] = false;
+                                }
+                            } else {
+                                $smart_object_cache[ $cache_key ] = false;
+                            }
+                        }
+
+                        $record_data = $smart_object_cache[ $cache_key ];
+                        if ( $record_data !== false && isset( $record_data[ $col ] ) ) {
+                            return $record_data[ $col ];
+                        }
+                    }
+                }
+            }
 
             // Nuốt lỗi an toàn: Trả NULL thay vì ném Lỗi để tránh Error 500 nếu cột bay màu.
             return null; 
@@ -87,7 +141,8 @@ class SkaFX_Evaluator {
                 // Chặn lỗi chia cho số 0
                 case '/':  return $right != 0 ? $left / $right : 0; 
                 // Cú pháp gõ 1 dấu = vẫn coi là phép so sánh theo chuẩn Nocode
-                case '=':  return $left == $right; 
+                case '=':  
+                case '==': return $left == $right; 
                 case '!=': return $left != $right;
                 case '>':  return $left > $right;
                 case '<':  return $left < $right;
@@ -138,6 +193,12 @@ class SkaFX_Evaluator {
 
         throw new SkaFX_Runtime_Error("Cỗ máy không nhận diện được loại Node: Phá kiến trúc AST.");
     }
+    /**
+     * Lấy toàn bộ biến bộ nhớ ra ngoài (Ví dụ: `data`, `visible`)
+     */
+    public function get_symbols() {
+        return $this->symbol_table;
+    }
 }
 
 /**
@@ -149,12 +210,12 @@ class SkaFX_Engine {
      * API Phóng tên lửa tính toán
      * @param string $script_string Chuỗi SkaFX người dùng gõ
      * @param array $context Mảng dữ liệu bơm vào vòng lặp
-     * @return mixed Kết quả biểu thức hoặc False nếu lỗi
+     * @return mixed Kết quả biểu thức hoặc Mảng Trạng Thái
      */
     public static function execute( $script_string, $context = [] ) {
         // Tắt early return khi chuỗi rỗng
         if ( trim( $script_string ) === '' ) {
-            return true; // Mặc định chuỗi rỗng mang ý nghĩa True (Để Render hiển thị Block)
+            return [ 'last_val' => true, 'symbols' => [] ]; // Mặc định chuỗi rỗng mang ý nghĩa True
         }
 
         try {
@@ -166,12 +227,18 @@ class SkaFX_Engine {
             $statements = $parser->parse();
             
             $evaluator = new SkaFX_Evaluator( $context );
-            return $evaluator->evaluate_script( $statements );
+            $last_val = $evaluator->evaluate_script( $statements );
+            
+            // Trả về Nguyên bộ Mảng Mạch (Scripting Mode)
+            return [
+                'last_val' => $last_val,
+                'symbols'  => $evaluator->get_symbols()
+            ];
             
         } catch ( SkaFX_Syntax_Error | SkaFX_Runtime_Error $e ) {
              // Đạt tiêu chuẩn Nuốt Lỗi: Ghi log, Không là sập web frontend.
              error_log("[SkaFX Engine Failure]: " . $e->getMessage());
-             return false;
+             return [ 'last_val' => false, 'symbols' => [] ];
         }
     }
 }

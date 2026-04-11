@@ -87,28 +87,6 @@ registerBlockType(metadata.name, {
                         />
                     </PanelBody>
 
-                    <PanelBody title={__('Dynamic Data', 'ska-builder-core')} initialOpen={false}>
-                        <SelectControl
-                            label={__('Source', 'ska-builder-core')}
-                            value={dynamic.source}
-                            options={[
-                                { label: 'Static Text', value: 'text' },
-                                { label: 'Post Title', value: 'post_title' },
-                                { label: 'Post Content', value: 'post_content' },
-                                { label: 'Post Meta (Custom Field)', value: 'meta' },
-                                { label: 'URL Parameter', value: 'url_param' }
-                            ]}
-                            onChange={(val) => updateDynamic('source', val)}
-                        />
-                        {(dynamic.source === 'meta' || dynamic.source === 'url_param') && (
-                            <TextControl
-                                label={__('Key / Param Name', 'ska-builder-core')}
-                                value={dynamic.key}
-                                onChange={(val) => updateDynamic('key', val)}
-                            />
-                        )}
-                    </PanelBody>
-
                     <TailwindPanel
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
@@ -116,14 +94,7 @@ registerBlockType(metadata.name, {
                         setCustomStyle={(val) => setAttributes({ customStyle: val })}
                     />
 
-                    <PanelBody title={__('Logic (Visibility)', 'ska-builder-core')} initialOpen={false}>
-                        <ToggleControl
-                            label={__('Enable Logic', 'ska-builder-core')}
-                            checked={logic.enabled}
-                            onChange={(val) => updateLogic('enabled', val)}
-                        />
-                    </PanelBody>
-                </InspectorControls>
+                    </InspectorControls>
 
                 <Tag {...blockProps}>
                     {dynamic.source === 'text' ? (

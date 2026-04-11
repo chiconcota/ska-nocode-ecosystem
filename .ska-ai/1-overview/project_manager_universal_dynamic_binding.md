@@ -19,9 +19,9 @@ Dự án này phức tạp bởi nó bao hàm cả giao diện tương tác Reac
 ## 🏁 PHASE 2: Giao diện React Siêu Dữ Liệu (Static Data Provider)
 *Xây dựng "Khu Vực 1" trên Editor để Lễ Tân không phải gõ tay mã {{...}} nữa.*
 
-- [ ] (Design & Logic) Viết React Component (Sidebar Panel) tên là `Universal Dynamic Binding`.
-- [ ] Dùng `wp.hooks.addFilter('editor.BlockEdit')` chỉ bơm Panel này vào các khối khi Plugin Data & Logic được kích hoạt.
-- [ ] Thiết kế tính năng **Dropdown Chọn Nguồn Dữ Liệu / Input Biểu Thức (SkaFX)**:
+- [x] (Design & Logic) Viết React Component (Sidebar Panel) tên là `Universal Dynamic Binding`.
+- [x] Dùng `wp.hooks.addFilter('editor.BlockEdit')` chỉ bơm Panel này vào các khối khi Plugin Data & Logic được kích hoạt.
+- [x] Thiết kế tính năng **Dropdown Chọn Nguồn Dữ Liệu / Input Biểu Thức (SkaFX)**:
   - Tự động call API lấy danh sách các Bảng (`ska_data_*`) và Cột tương ứng.
   - Hỗ trợ lưu trữ theo phương thức Attribute-Driven (Sử dụng object attribute `skaDynamicBinding` trên block) kết hợp với PHP Hook `render_block` để đảm bảo WYSIWYG và không đụng chạm tới lõi content RichText.
 
@@ -30,16 +30,16 @@ Dự án này phức tạp bởi nó bao hàm cả giao diện tương tác Reac
 
 - [x] (Logic Engine) Thiết kế kiến trúc `SkaFX_Evaluator` (AST Parser) bằng PHP. Bao gồm Trình phân mảnh (Lexer) và Trình Tính toán (Parser).
 - [x] Định nghĩa cú pháp chuẩn: Biến `[table.col]`, Toán tử (`=`, `>`, `<`), Hàm `IF(...)`, `CONCAT(...)`.
-- [ ] (Design & Logic) Cập nhật Panel React: Thay vì Toggle Modal Blockly, cung cấp một **Ô Input "Điều kiện Hiển Thị" (Visibility Expression)**. Mặc định là rỗng (luôn hiển thị).
-- [ ] Thêm thư viện Autocomplete/IntelliSense siêu nhẹ trên Editor để tự động gợi ý biến (Ví dụ gõ `[doc...` ra `[doctors.name]`).
+- [x] (Design & Logic) Cập nhật Panel React: Thay vì Toggle Modal Blockly, cung cấp một **Ô Input "Điều kiện Hiển Thị" (Visibility Expression)**. CodeMirror Editor.
+- [x] Thêm thư viện Autocomplete/IntelliSense siêu nhẹ trên Editor để tự động gợi ý biến (Ví dụ gõ `[doc...` ra `[doctors.name]`).
 
 ## 🏁 PHASE 4: Bộ máy Trảm Quyết (Backend Conditional Render)
 *Mảnh ghép cuối cùng - Kết nối Chuỗi SkaFX Rule sinh ra từ Editor và bộ máy render PHP.*
 
-- [ ] Gỡ bỏ việc dùng Filter lỏng lẻo `the_content` ở Phase 1. Thay thế bằng việc móc vào filter uy lực `render_block` của WordPress.
-- [ ] Trước khi in thẻ HTML của block, hệ thống đọc attribute logic hiển thị (ví dụ: `skaDynamicBinding.visibilityRule`) của khối.
-- [ ] Bơm chuỗi Rule xuống `SkaFX_Evaluator`. Cỗ máy dựa trên Context (`$_GET['id']`) để giải mã chuỗi AST.
-- [ ] Nếu hàm AST trả về False -> Kích hoạt "Máy Chém": Hủy xuất chuỗi (Return rỗng) để Cắt đứt thẻ HTML đó khỏi trình duyệt. KHÔNG dùng CSS `display:none`.
+- [x] Gỡ bỏ việc dùng Filter lỏng lẻo `the_content` ở Phase 1. Thay thế bằng việc móc vào filter uy lực `render_block` của WordPress. (Đã kích hoạt chạy song song).
+- [x] Trước khi in thẻ HTML của block, hệ thống đọc attribute logic hiển thị.
+- [x] Bơm chuỗi Rule xuống `SkaFX_Evaluator`. Cỗ máy dựa trên Context (`$_GET['id']`) để giải mã chuỗi AST.
+- [x] Nếu hàm AST trả về False -> Kích hoạt "Máy Chém": Hủy xuất chuỗi (Return rỗng) để Cắt đứt thẻ HTML đó khỏi trình duyệt. KHÔNG dùng CSS `display:none`. Vượt thêm tính năng Data Hydration nếu trả về chuỗi/số.
 
 ---
 *Ghi chú: Bản đồ này là kim chỉ nam cho các Agents tham gia vào chu trình Code, bất kỳ thay đổi nào cần cập nhật lại tiến độ tại đây.*

@@ -60,6 +60,36 @@ class Ska_Logic_Core {
 
         // Bơm ống Cáp JS cho Lớp Vỏ ở Frontend kết nối với Endpoint
         add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_scripts']);
+
+        // Nạp UI Component Universal Dynamic Binding vào Editor Gutenberg
+        add_action('enqueue_block_editor_assets', [$this, 'enqueue_editor_scripts']);
+    }
+
+    public function enqueue_editor_scripts() {
+        // Sử dụng asset.php từ wp-scripts để tự động lấy đúng Version và Dependencies (React, Components, v.v.)
+        $asset_path = SKA_LOGIC_ENGINE_DIR . 'assets/js/dist/index.jsx.asset.php';
+        
+        if ( file_exists( $asset_path ) ) {
+            $asset = require $asset_path;
+
+            // Bổ sung wp-api-fetch vì Schema API dùng nó
+            if (!in_array('wp-api-fetch', $asset['dependencies'])) {
+                $asset['dependencies'][] = 'wp-api-fetch';
+            }
+
+            wp_enqueue_script(
+                'ska-editor-logic-js',
+                SKA_LOGIC_ENGINE_URL . 'assets/js/dist/index.jsx.js',
+                $asset['dependencies'],
+                $asset['version'],
+                true
+            );
+        }
+
+        // Truyền đường dẫn API Schema (Fallback cho trường hợp không dùng wp.apiFetch)
+        wp_localize_script('ska-editor-logic-js', 'skaLogicEditorEnv', [
+            'schema_api_url' => esc_url_raw( rest_url( 'ska-logic/v1/schema' ) )
+        ]);
     }
 
     public function enqueue_frontend_scripts() {

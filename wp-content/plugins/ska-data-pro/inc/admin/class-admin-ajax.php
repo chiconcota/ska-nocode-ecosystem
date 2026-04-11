@@ -439,9 +439,12 @@ class Admin_Ajax {
 			$info = $schema['__table_info'];
 			if ( isset( $info['app_id'] ) && $info['app_id'] === $app_id ) {
 				
-				// Lọc tiền tố để lấy slug (Vd: ska_data_teachers -> teachers)
+				// Lọc tiền tố để lấy slug sạch (Vd: ska_data_ecommerce_teachers -> teachers)
 				$prefix = $wpdb->prefix . 'ska_data_';
-				$slug   = str_replace( $prefix, '', $table_name );
+				if ( ! empty( $app_id ) && $app_id !== 'uncategorized' ) {
+					$prefix .= sanitize_key( $app_id ) . '_';
+				}
+				$slug = str_replace( $prefix, '', $table_name );
 
 				$object = array(
 					'slug'   => $slug,

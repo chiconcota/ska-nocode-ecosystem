@@ -114,7 +114,16 @@ class App_Manager {
 		}
 
 		$apps   = self::get_apps();
-		$app_id = 'app_' . wp_generate_password( 8, false, false ); // UUID random
+		
+		// Semantic Slug Generator (Human-readable logic)
+		$base_slug = sanitize_title( $name );
+		$base_slug = str_replace( '-', '_', $base_slug ); // Đưa về chuẩn MySQL
+		$app_id    = 'app_' . $base_slug;
+
+		// Bức tường thép: Chặn đụng độ App name
+		if ( isset( $apps[ $app_id ] ) ) {
+			return new \WP_Error( 'app_exists', 'Tên Ứng dụng này đã được sử dụng (Ký danh đụng độ). Vui lòng chọn một tên Tôn sùng sự Độc nhất!' );
+		}
 		
 		$apps[ $app_id ] = array(
 			'id'         => $app_id,

@@ -246,7 +246,7 @@ class SkaFX_Lexer {
 
     private function consume_operator() {
         $char2 = substr( $this->input, $this->position, 2 );
-        if ( in_array( $char2, ['>=', '<=', '!='] ) ) {
+        if ( in_array( $char2, ['>=', '<=', '!=', '=='] ) ) {
             $this->position += 2;
             return $this->make_token( self::T_OP, $char2 );
         }
