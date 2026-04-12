@@ -26,11 +26,11 @@ Dự án **Smart Object (App Blueprint)** là cuộc đại phẫu cấu trúc m
 - [x] Tái thiết Database (Dynamic Resolver): Phát triển cục Import có thuật toán tự dò Tên Bảng Trùng trên Website B (Ví dụ `teachers` đã tồn tại -> `ska_data_teachers_1`). 
 - [x] Nối Mạng (Re-wiring Relation): Tự dò các Target Slug (`campaigns`) có trong File Blueprint để nạp lại Target Column (Slug Mapping) tránh gãy liên kết (Database Corrupted). Mở Hook ống xả `do_action('ska_import_smart_object')`.
 
-## 🏁 PHASE 3: Kết Nối Liên Thông (Logic Engine & Theme Builder) - 🔴 [PENDING]
+## 🏁 PHASE 3: Kết Nối Liên Thông (Logic Engine & Theme Builder) - 🟡 [IN PROGRESS]
 *Nhiệm vụ: Dùng App Blueprint làm đòn bẩy ngữ cảnh cho các Plugin khác.*
 
-- [ ] **Data Hydration (SkaFX):** Bổ sung bộ giải mã `Context_Resolver`. Cho phép Lễ tân gõ cú pháp `[nam_sinh]`, hệ thống tự động chui vào Bảng Nội Khu của chính App đó để lùng dữ liệu.
-- [ ] **Cross-App Communication:** Cho phép gọi chéo dữ liệu bằng cú pháp `[app.table.field]` nếu user muốn lôi Data của App khác.
+- [x] **Data Hydration (SkaFX):** Bổ sung bộ giải mã `Context_Resolver`. Cho phép Lễ tân gõ cú pháp `[nam_sinh]` (hoặc `{{nam_sinh}}`), hệ thống tự động chui vào Bảng Nội Khu của chính App đó (thông qua Smart Guessing URL) để lùng dữ liệu. Đặc biệt có hỗ trợ Cảnh báo đỏ (Collision Warning).
+- [x] **Cross-App Communication:** Cho phép gọi chéo dữ liệu bằng cú pháp `{{app.table.field}}` nếu user muốn lôi Data của App khác mà không sợ xung đột.
 - [ ] **Theme Builder Readiness & Auto-Generated Portal:** Chắp cánh cho Phase sau (Ska Portal). Khi Lễ tân tạo 1 trang Admin, họ chọn `App` làm Mẹ. Tự động các tính năng trên trang đó (Bảng biểu, Nút Thêm, Xóa, Sửa) đều mặc định mồi Data của App đó. Không cần phải kéo thả lại List View từ đầu.
 
 ---

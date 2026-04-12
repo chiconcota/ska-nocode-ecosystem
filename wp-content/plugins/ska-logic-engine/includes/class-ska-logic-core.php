@@ -27,6 +27,7 @@ class Ska_Logic_Core {
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/processors/class-date-processor.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/processors/class-format-processor.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/actions/class-insert-data-action.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/actions/class-update-data-action.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/actions/class-email-action.php';
         
         // 3. Đường ray Tàu Hỏa (Pipeline Runner)
@@ -42,6 +43,7 @@ class Ska_Logic_Core {
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/skafx/class-skafx-exceptions.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/skafx/class-skafx-lexer.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/skafx/class-skafx-parser.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/skafx/class-skafx-context-resolver.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/skafx/class-skafx-evaluator.php';
     }
 

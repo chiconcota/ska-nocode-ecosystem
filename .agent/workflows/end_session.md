@@ -19,10 +19,12 @@ Bước 3. **Ghi sổ quyết định (Decision Log , System Map & Update):**
      - **Tình trạng Plugin/Theme:** Chuyển trạng thái từ 🔴 Pending -> 🟡 In Progress -> 🟢 Done trong bảng Module Registry.
      - **Change Log:** Thêm dòng gạch đầu dòng ngắn ngọn cho ngày cập nhật.
    -  Tìm, Đọc và cập nhật file module tương ứng trong folder '.ska-ai\3-ecosystem' đã sửa trong phiên làm việc.
+   - Mở và GHI ĐÈ dữ liệu vào file `.ska-ai/2-memory/checkpoint.md` để lưu lại tiến độ đang code dở, danh sách file, hoặc note các bug để bàn giao cho Agent phiên sau.
    - Cập nhật git và push lên github cho dự án sau mỗi phiên làm việc.
  
 Bước 4. **Xác nhận kết thúc:**
    - Thông báo rõ ràng: "Sổ bộ nhớ App Builder đã được niêm phong. 
+     - File bàn giao (Checkpoint) đã được lưu mốc an toàn.
      - Docs lưu tại: `.ska-ai/3-ecosystem/`
      - Lịch sử thiết kế được dán vào Decision Log.
      Phiên làm việc kết thúc an toàn, hệ sinh thái sẵn sàng cho phiên kế tiếp không mất ngữ cảnh."

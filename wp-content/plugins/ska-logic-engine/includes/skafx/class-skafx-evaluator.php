@@ -73,55 +73,45 @@ class SkaFX_Evaluator {
                 return $this->row_context[ $var_name ];
             }
 
-            // Ưu tiên 3: Quét chéo Object (Smart Object / App Context)
-            // Ví dụ gõ `[core.doctors.age]`. Nó sẽ gọi đến bảng `wp_ska_data_core_doctors` lấy cột `age` tương ứng với GLOBAL_ID
-            if ( strpos( $var_name, '.' ) !== false ) {
-                $parts = explode( '.', $var_name );
-                // Khớp chính xác Format: app_id.model_slug.column
-                if ( count( $parts ) === 3 && isset( $this->row_context['GLOBAL_ID'] ) ) {
-                    $app_id = $parts[0];
-                    $model  = $parts[1];
-                    $col    = $parts[2];
-                    $record_id = intval( $this->row_context['GLOBAL_ID'] );
+            // Ưu tiên 3: Quét chéo Object (Smart Object / App Context) bằng Context_Resolver
+            // Hỗ trợ cả 3 dạng: [app.model.col], [model.col], và [col]
+            $resolved_context = null;
+            try {
+                $resolved_context = SkaFX_Context_Resolver::resolve( $var_name, $this->row_context );
+            } catch ( \Exception $e ) {
+                throw new SkaFX_Runtime_Error( $e->getMessage() );
+            }
 
-                    if ( $record_id > 0 ) {
-                        global $wpdb;
+            if ( $resolved_context ) {
+                $table_name = $resolved_context['table_name'];
+                $col        = $resolved_context['column'];
+                $record_id  = $resolved_context['record_id'];
+
+                // Static Cache dùng chung cho cả vòng đời Render 1 trang
+                static $smart_object_cache = [];
+                $cache_key = $table_name . '_' . $record_id;
+
+                if ( ! isset( $smart_object_cache[ $cache_key ] ) ) {
+                    if ( class_exists( '\Ska\Data\Core\Data_Fetcher' ) ) {
+                        $rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $table_name, [
+                            'filter_field' => 'id',
+                            'filter_val'   => $record_id,
+                            'filter_op'    => 'eq'
+                        ], 1 );
                         
-                        // Auto-correct: Nếu user gõ thiếu tiền tố `app_` (Vd: gõ `[Do5p1uxz]` thay vì `[app_do5p1uxz]`)
-                        $clean_app = sanitize_key($app_id);
-                        if ( $clean_app !== 'uncategorized' && strpos( $clean_app, 'app_' ) !== 0 ) {
-                            $clean_app = 'app_' . $clean_app;
+                        if ( ! empty( $rows ) && is_array( $rows ) ) {
+                            $smart_object_cache[ $cache_key ] = $rows[0];
+                        } else {
+                            $smart_object_cache[ $cache_key ] = false;
                         }
-
-                        $table_name = $wpdb->prefix . 'ska_data_' . $clean_app . '_' . sanitize_key($model);
-                        
-                        // Static Cache dùng chun cho cả vòng đời Render 1 trang
-                        static $smart_object_cache = [];
-                        $cache_key = $table_name . '_' . $record_id;
-
-                        if ( ! isset( $smart_object_cache[ $cache_key ] ) ) {
-                            if ( class_exists( '\Ska\Data\Core\Data_Fetcher' ) ) {
-                                $rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $table_name, [
-                                    'filter_field' => 'id',
-                                    'filter_val'   => $record_id,
-                                    'filter_op'    => 'eq'
-                                ], 1 );
-                                
-                                if ( ! empty( $rows ) && is_array( $rows ) ) {
-                                    $smart_object_cache[ $cache_key ] = $rows[0];
-                                } else {
-                                    $smart_object_cache[ $cache_key ] = false;
-                                }
-                            } else {
-                                $smart_object_cache[ $cache_key ] = false;
-                            }
-                        }
-
-                        $record_data = $smart_object_cache[ $cache_key ];
-                        if ( $record_data !== false && isset( $record_data[ $col ] ) ) {
-                            return $record_data[ $col ];
-                        }
+                    } else {
+                        $smart_object_cache[ $cache_key ] = false;
                     }
+                }
+
+                $record_data = $smart_object_cache[ $cache_key ];
+                if ( $record_data !== false && isset( $record_data[ $col ] ) ) {
+                    return $record_data[ $col ];
                 }
             }
 

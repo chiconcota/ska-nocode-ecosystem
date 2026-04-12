@@ -45,6 +45,17 @@ $available_nodes = [
         ]
     ],
     [
+        'class' => 'Ska_Update_Data_Action',
+        'name' => '📝 Cập Nhật Record (Update)',
+        'type' => 'action',
+        'color' => '#8b5cf6',
+        'fields' => [
+            ['key' => 'table_name', 'label' => 'Điền Tên Bảng Đích (Hoặc Chọn)', 'type' => 'datalist', 'options' => $available_tables, 'placeholder' => 'vd: wp_ska_data_leads...'],
+            ['key' => 'condition_column', 'label' => 'Cột Điều Kiện (WHERE)', 'placeholder' => 'Mặc định là id'],
+            ['key' => 'mappings', 'label' => 'Explicit Mapping (Gắn Cấu Hình Rõ Ràng)', 'type' => 'mapping_db']
+        ]
+    ],
+    [
         'class' => 'Ska_Email_Action',
         'name' => '✉️ Gửi Email (Có {{biến_động}})',
         'type' => 'action',

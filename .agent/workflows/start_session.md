@@ -3,6 +3,7 @@ description: Bắt đầu phiên làm việc chuẩn chuẩn Vibecoding App Buil
 ---
 
 1. **Khởi động bộ nhớ (Context Loading - Mới):**
+   - Đọc file `.ska-ai/2-memory/checkpoint.md` LÀ BƯỚC ĐẦU TIÊN để nhận bàn giao trạng thái công việc và bug đang làm dở từ phiên trước.
    - Đọc file `.ska-ai/1-overview/system_map.md`. Đây là bước BẮT BUỘC để nắm cấu trúc App Builder.
    - Đọc file `.ska-ai/1-overview/Ska-no-code-overview.md` để hiểu ranh giới của 4 Plugins và 1 Theme mới (Ska Core, Data Pro, Logic Engine, Design Engine).
    - Đọc file `.ska-ai/2-memory/decision-log.md` để biết những quyết định thiết kế gần nhất.
