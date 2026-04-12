@@ -298,7 +298,7 @@ class Tailwind_Config {
 			return implode( ', ', $parts );
 		};
 
-		$css .= $build_rule( '' ) . " { --wp--style--block-gap: 0px; box-sizing: border-box; border-width: 0; border-style: solid; border-color: currentColor; margin: 0; }\n";
+		$css .= $build_rule( '' ) . " { --wp--style--block-gap: 0px; box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; margin: 0; }\n";
 		$css .= $build_rule( 'button:not(:where(.components-button))' ) . " { border: 0; background: none; padding: 0; margin: 0; cursor: pointer; font-family: inherit; }\n";
 		$css .= $build_rule( 'a' ) . " { text-decoration: none; color: inherit; }\n";
 		$css .= $build_rule( 'a.underline' ) . " { text-decoration: underline; }\n";

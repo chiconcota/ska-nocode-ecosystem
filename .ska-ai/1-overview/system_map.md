@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v1.0.0)
-@status: MVP DONE | @last_update: 2026-03-28
+@status: MVP DONE | @last_update: 2026-04-12
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core (Host) + PHP 8.2+
@@ -98,6 +98,9 @@ ska-ecosystem/ (mapped to app/public/)
   - Cập nhật Bypass bảo mật ở Backend Data Fetcher và AJAX Search để hỗ trợ tích hợp trực tiếp bảng truyền thống lõi của WordPress (`$wpdb->posts`, `$wpdb->users`) vào thẳng tính năng Cột Tham Chiếu (Relation) mà không cần cấu trúc Table mới. Mảng `json` phân giải sẽ tự động ánh xạ cấu trúc (Title, Name) thông minh.
   - Hoàn tất UI Popover Relation Search (Debounce) cho Grid Dashboard. 
   - Đóng gói Update sửa lỗi Cache Click Outsite Dropdown UI DataGrid và bổ sung đổi Label Icon `dashicons-edit` (Bút chì) cho Cột Editable.
+- **2026-04-12 - Logic UI DB Picker & App Auto-Grouping (Logic Engine):**
+  - Loại bỏ `datalist` dropdown truyền thống của WP, triển khai Glassmorphism Modal UI Picker hỗ trợ Real-time Search rành mạch. Tránh thảm họa user Nocode nhập Typo Table Name.
+  - Tích hợp thuật toán nội suy `app_id` tự động khai thác từ RAM Option `ska_data_apps` của hệ thống Ska Data Pro để chia nhóm Database (Group). Bảo vệ hệ thống khỏi những rủi ro sai sót chia nhóm do Regex Parsing yếu kém trước đây.
 - **2026-04-01 - Extensibility POC (Data Providers) & Logic Engine Hooking:**
   - Sửa lỗi nghiêm trọng (Plugin Load Order Bubble): Các Data Provider hiện tại bị WordPress Alphabetical Load Order bóp chế chết từ trong nôi do gọi quá sớm. Cập nhật dời luồng Load Adapter vào `init()` (`plugins_loaded`) để tương thích với Ska Builder Core.
   - Sửa lỗi Frontend không render biến: Bật Filter `the_content` (độ ưu tiên 90) cho Logic Engine để tự động biên dịch `{{...}}` ngoài Frontend.
