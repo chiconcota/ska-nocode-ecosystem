@@ -59,12 +59,13 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
   - **Mapping:** Giao diện Linear Builder (Băng chuyền nối dọc bằng Vanilla JS) mô phỏng UI kiểu n8n/Zapier. Tự động xuất chuỗi sự kiện thành mảng `JSON Graph`. (Future-proof với React Flow ở Phase 4).
   - **Processing:** Module siêu nhỏ (Strategy Pattern) rèn Data trước khi cất kho: Tạo Slug (`Ska_Slug_Processor`), Format Date (`Ska_Date_Processor`).
   - **Action:** Gửi thông báo Email (`Ska_Email_Action`), Đẩy lệnh `INSERT` dữ liệu đa bảng qua Hook cho `Ska Data Pro` (`Ska_Insert_Data_Action`).
-- 🟡 Xử lý hệ thống Role-Based Access Control (RBAC) và vòng lặp danh sách (Foreach/Map). (Dời sang Milestone Update).
+- 🟡 Xử lý hệ thống Role-Based Access Control (RBAC) cho điều kiện hiển thị (Dời sang Milestone Update).
 - 🟢 **Quản Lý Băng Chuyền (Logic Manager UI): [HOÀN TẤT]** Xây dựng trang quản trị hiển thị Danh sách các Luồng Logic (List View). Cho phép người dùng trực quan Thêm Mới, Xóa, Đổi Tên các Luồng an toàn theo phong cách Dual-View.
 - 🟢 **Hoàn thiện UX Linear Builder: [HOÀN TẤT]** Loại bỏ hành vi Enter tự reload form gây gãy Chrome Extensions. Dịch chuyển luồng bằng DOM Swap 100%.
 
-### 3.3. Tính Năng Độc Lập Mọi Thời Điểm (UI Features & Canvas App)
+### 3.3. Tính Năng Độc Lập Mọi Thời Điểm (UI Features & Canvas App / Theme Builder)
 - **Theme Builder** (Lắp Header, Footer từ CPT `ska_template`).
+  - 🔵 **Tính Năng Chìa Khóa: Khối Query Loop (Foreach / Map):** Tập trung xây dựng 1 Component/Block vòng lặp ở Frontend. Khối này sẽ nhận dữ liệu mảng (Array) từ SQL, từ đó lặp ra thẻ giao diện (List/Grid) để dựng Trang Danh sách (Archive, Blog, List view). Đây sẽ là mảnh ghép sức mạnh sống còn của Theme Builder.
 - **Milestone 2 (Design Engine): Dark Mode Thượng tầng:** (🔴 Pending) Lập kế hoạch mang lại chức năng Dark Mode hoàn chỉnh (`darkMode: 'class'`). Cần nghiên cứu cơ chế bọc selector `:is(html.dark, .dark)` an toàn mà không phá vỡ logic specificity hiện hành, đồng thời xây dựng UI Toggle trên Frontend/Editor.
 - **App Dashboards / Sub-Admin Portals (🔴 Pending):** Tạo Custom Post Type (`ska_portal`) trong `ska-builder-core`. Giúp User dùng luôn quyền trượng Editor để tự do kéo thả bộ khung giao diện trang quản lý Khóa Học, Thành Viên ra Frontend Portal thay vì ép phải xài trang cấu hình xám xịt của WordPress Admin.
 - **Auto-Generated CRUD Portal (🔴 Pending):** Nâng cấp cho khối "App Portal". Tích hợp với `Theme Builder`, xây dựng một Component/Smart Block cho phép người dùng chỉ định Nguồn (App Workspace) để hệ thống tự động bung ra toàn bộ Danh sách (List View) và Form thao tác (Create/Edit), tuân thủ hoàn toàn quy chuẩn giao diện của `ska-nocode-design`. Giao cho Builder Core đảm nhiệm để giữ vững ranh giới Decoupled với Data Pro.

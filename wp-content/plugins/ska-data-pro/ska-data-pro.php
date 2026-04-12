@@ -117,6 +117,63 @@ add_filter('ska_data_insert_record', function( $result, $payload, $table_name ) 
     return $wpdb->insert_id ? $wpdb->insert_id : false;
 }, 10, 3);
 
+// --- CẬP NHẬT DỮ LIỆU TỪ SKA-XI MĂNG ---
+add_filter('ska_data_update_record', function( $result, $payload, $table_name, $where_conditions ) {
+    global $wpdb;
+    
+    if ( empty( $table_name ) || empty( $payload ) || empty( $where_conditions ) ) {
+        return false;
+    }
+
+    $table_name_with_prefix = strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
+    
+    $columns = \Ska\Data\Core\Data_Fetcher::get_table_columns( $table_name_with_prefix );
+    $valid_columns = array();
+    if ( is_array( $columns ) ) {
+        foreach ( $columns as $col ) {
+            $valid_columns[] = $col->Field;
+        }
+    }
+    
+    $clean_table_name = str_replace( $wpdb->prefix, '', $table_name_with_prefix );
+    $all_dict         = get_option('ska_data_dictionary', array());
+    $table_dict       = isset($all_dict[$clean_table_name]) ? $all_dict[$clean_table_name] : array();
+    
+    $clean_update_data = array();
+    foreach ( $payload as $key => $val ) {
+        if ( in_array( $key, $valid_columns ) ) {
+            $clean_update_data[ $key ] = $val;
+            continue;
+        }
+        
+        $matched_col = false;
+        $normalized_key = sanitize_title( str_replace( '_', '-', $key ) );
+        
+        foreach ( $table_dict as $col_slug => $col_meta ) {
+            if ( $col_slug === '__table_info' ) continue;
+            
+            if ( ! empty( $col_meta['label'] ) ) {
+                $normalized_label = sanitize_title( str_replace( '_', '-', $col_meta['label'] ) );
+                if ( $col_meta['label'] === $key || $normalized_label === $normalized_key ) {
+                    $matched_col = $col_slug;
+                    break;
+                }
+            }
+        }
+        
+        if ( $matched_col && in_array( $matched_col, $valid_columns ) ) {
+            $clean_update_data[ $matched_col ] = $val;
+        }
+    }
+
+    if ( empty( $clean_update_data ) ) {
+        return false; // Payload rỗng tuếch không có trường nào khớp
+    }
+
+    // Lệnh Cập Nhật Data của WordPress
+    return $wpdb->update( $table_name_with_prefix, $clean_update_data, $where_conditions );
+}, 10, 4);
+
 // --- ĐOẠN CODE TEST NHANH (MÁY BƠM DỮ LIỆU THỬ NGHIỆM) ---
 add_shortcode('ska_test_data', function($atts) {
     if (!class_exists('\Ska\Data\Core\Database_Engine')) return 'Thiếu DB Engine';

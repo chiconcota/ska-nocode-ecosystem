@@ -12,7 +12,7 @@ trigger: always_on
 .ska-ai/
 ├── 1-overview/
 │   ├── system_map.md (Bản đồ kiến trúc tổng thể, Trạng thái Dự án, Nhật ký ngắn)
-│   └── project_manager_*.md (Roadmap, Kế hoạch cho từng Phase)
+│   └── project-managers/ (Thư mục chứa các Roadmap, Kế hoạch cho từng Phase)
 ├── 2-memory/
 │   └── decision-log.md (Nơi ghi chép các Quy định Kiến trúc lớn, Lịch sử thay đổi cốt lõi)
 ├── 3-ecosystem/

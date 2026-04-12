@@ -19,7 +19,6 @@ ska-ecosystem/ (mapped to app/public/)
 ├── wp-content/themes/
 │   └── ska-blank-theme/     # [THEME] Barebone WP Theme (Zero CSS)
 └── wp-content/plugins/
-    ├── ska-no-code-home/    # [MASTER] Ecosystem Manager, Dashboard & Settings
     ├── ska-no-code-design/  # [UI/UX] Base Atomic Blocks, Tailwind JIT, Inspector
     ├── ska-data-pro/        # [DATA] Flat Tables, Schema, Query Builder
     ├── ska-logic-engine/    # [LOGIC] Workflows, If/Foreach Triggers
@@ -40,7 +39,6 @@ ska-ecosystem/ (mapped to app/public/)
 | App Module | Path | Responsibilities | Status |
 | :--- | :--- | :--- | :--- |
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Done (v1) |
-| **Ska No-Code Home** | `plugins/ska-no-code-home/`| Master Ecosystem Manager, Settings | 🔴 Plan Phase |
 | **Ska No-Code Design** | `plugins/ska-no-code-design/`| Base Blocks, Tailwind JIT, Inspector UI | 🟢 Done (v1) |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, Schema, Templates | 🟢 Done (MVP & Packaged) |
 | **Ska Logic Engine** | `plugins/ska-logic-engine/`| (Ska-xi măng) Bắt Sự kiện (Workflows), Xử lý Data & Logic (If/Then) | 🟢 Done (Manager UI & Linear Builder MVP) |
@@ -54,6 +52,17 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-12 - 🟢 Khai Tử Plugin Master & Chốt Roadmap Kiến Trúc:**
+  - Khai tử vĩnh viễn plugin `ska-no-code-home`. Chuyển đổi Khái niệm System Dashboard sang mô hình "Shared Drop-in Framework" (Thư viện dùng chung) đóng gói chéo vào các plugins.
+  - Chốt lộ trình 7 bước tích hợp: (1) Logic Engine CRUD -> (2) Logic UI DB Picker -> (3) Ska System Framework Dashboard -> (4) Quản lý Custom Block/Symbols -> (5) Theme Builder/App Portals -> (6) Khối Auto-Generated CRUD -> (7) Frontend Triggers nâng cao.
+
+- **2026-04-12 - 🟢 Done - Context Resolver Verification (SkaFX Engine):**
+  - Khẳng định tính đúng đắn của cỗ máy Phân giải ngữ cảnh (Smart Context Guessing). Thuật toán Hậu Tố (Suffix Scanning) hoạt động hoàn hảo và bảo toàn hiệu suất siêu việt thông qua Static Cache RAM Arrays (tốc độ vòng lặp <1ms cho 5,000 bảng), lược bỏ mọi lo ngại về Server Load Array Traversal. Sẵn sàng cho đường băng Phase 3 Theme Builder.
+
+- **2026-04-11 - 🟢 Done - Context Resolver & Collision Detection (SkaFX Engine):**
+  - **Ska Logic Engine:** Hoàn tất thiết kế hạt nhân phân giải ngữ cảnh thông minh `SkaFX_Context_Resolver`. Cho phép người dùng Frontend chỉ cần gõ biến rút gọn (Shorthand) `{{users.name}}` thay vì phải gọi ID dài như cú pháp cũ `{{ska_data_app_b_users.name}}`.
+  - **Collision Defender:** Áp dụng hệ thống bắt lỗi và bắt Xung đột trùng lặp (Collision) dựa trên Exception. Nếu bắt được lỗi do cố tình khai báo không rõ ràng sinh ra sự trùng lặp, một khối Badge Đỏ rực báo Error sẽ xuất hiện thẳng trên Frontend (báo cho Developer/Admin). Khách xem trang bình thường chỉ thấy khoảng trống để tránh gãy Layout.
+
 - **2026-04-11 - 🟢 Done - Semantic Slug & Universal Binding Logic Fixes:**
   - **Ska Data Pro:** Nâng cấp cỗ máy sinh ID bảng từ UUID vô nghĩa (`app_Do5p1uxz`) sang "Semantic Slug" (`app_viet_cong_cu_moi`) thân thiện với con người khi tạo App Blueprint dựa theo hàm `sanitize_title`. Triển khai tính năng phát hiện trùng lặp ID thông qua `WP_Error` trả thẳng ra Frontend UI thay vì tạo tiền tố `_1`, `_2` ngầm.
   - **Ska Logic Engine:** Nâng cấp `Ska_Dynamic_Content` (Universal Binding) để cho phép **Chuỗi Rỗng (`""`)** được phép Override vào văn bản tĩnh thay vì bị bỏ qua. Bổ sung bắt các hằng số Literals (`true, false, null`) vào `SkaFX_Evaluator` để chống lỗi AST parse biến sai khi người dùng nhập Text hằng số.

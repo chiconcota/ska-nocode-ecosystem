@@ -52,11 +52,16 @@ class Ska_Dynamic_Content {
         if ( isset( $block['attrs']['skaDynamicBinding']['script'] ) && ! empty( $block['attrs']['skaDynamicBinding']['script'] ) ) {
             $script = $block['attrs']['skaDynamicBinding']['script'];
 
-            // Lấy con trỏ ngữ cảnh: Phỏ biến nhất là $_GET['id'] cho các trang Chi tiết (Detail Portal)
+            // Lấy con trỏ ngữ cảnh: Phổ biến nhất là $_GET['id'] cho các trang Chi tiết (Detail Portal)
             $record_id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
+            // Cho phép Frontend hiểu ngữ cảnh bảng hiện tại
+            $table_alias = isset( $_GET['table'] ) ? sanitize_text_field( $_GET['table'] ) : '';
             
             // Cung cấp GLOBAL_ID cho Phân giải AST
-            $context = [ 'GLOBAL_ID' => $record_id ]; 
+            $context = [ 
+                'GLOBAL_ID' => $record_id,
+                'GLOBAL_TABLE' => $table_alias 
+            ]; 
 
             if ( class_exists( '\Ska\Logic\SkaFX\SkaFX_Engine' ) ) {
                 $result = \Ska\Logic\SkaFX\SkaFX_Engine::execute( $script, $context );
@@ -116,8 +121,9 @@ class Ska_Dynamic_Content {
             return $content;
         }
 
-        // Định dạng Bắt buộc: {{bang_du_lieu.cot_du_lieu}} (Ví dụ: {{ska_data_doctors.name}})
-        $pattern = '/\{\{\s*([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\s*\}\}/';
+        // Nâng cấp Regex để hỗ trợ linh hoạt 1 phần, 2 phần, hoặc 3 phần
+        // Chấp nhận: {{name}}, {{doctors.name}}, {{app.doctors.name}}
+        $pattern = '/\{\{\s*([a-zA-Z0-9_\.]+)\s*\}\}/';
         
         // Gọi callback để tráo dòng
         $content = preg_replace_callback( $pattern, [ $this, 'hydration_callback' ], $content );
@@ -129,29 +135,44 @@ class Ska_Dynamic_Content {
      * Dịch từng thẻ Template Tag thành giá trị thực
      */
     private function hydration_callback( $matches ) {
-        $full_tag     = $matches[0]; // Ký tự đầy đủ {{table.column}}
-        $table_name   = trim( $matches[1] );
-        $column_name  = trim( $matches[2] );
+        $full_tag     = $matches[0]; // Ký tự đầy đủ {{...}}
+        $var_name     = trim( $matches[1] );
 
-        // Lấy con trỏ ngữ cảnh: Phỏ biến nhất là $_GET['id'] cho các trang Chi tiết (Detail Portal)
+        // Lấy con trỏ ngữ cảnh
         $record_id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
+        $table_alias = isset( $_GET['table'] ) ? sanitize_text_field( $_GET['table'] ) : '';
 
         // Nếu không có mốc tham lượng, trả về chữ gốc chứ không báo lỗi làm gãy font của frontend
         if ( empty( $record_id ) ) {
             return $full_tag; 
         }
 
-        // Tự động bồi đắp tiền tố bảo mật nếu bảng gõ tắt (Vd: gõ `doctors` thành `wp_ska_data_doctors`)
-        global $wpdb;
-        $prefix = $wpdb->prefix;
-        if ( strpos( $table_name, $prefix . 'ska_data_' ) !== 0 ) {
-            // Xem có chữ 'ska_data_' chưa
-            if ( strpos( $table_name, 'ska_data_' ) !== 0 ) {
-                $table_name = $prefix . 'ska_data_' . $table_name;
-            } else {
-                $table_name = $prefix . $table_name;
-            }
+        if ( ! class_exists( '\Ska\Logic\SkaFX\SkaFX_Context_Resolver' ) ) {
+            return $full_tag; // Chưa nạp file hoặc hệ thống chưa sẵn sàng
         }
+
+        $context = [
+            'GLOBAL_ID'    => $record_id,
+            'GLOBAL_TABLE' => $table_alias
+        ];
+
+        try {
+            // Mượn Cỗ máy Resolver mới để phân giải
+            $resolved_context = \Ska\Logic\SkaFX\SkaFX_Context_Resolver::resolve( $var_name, $context );
+        } catch ( \Exception $e ) {
+            // NẾU CÓ XUNG ĐỘT (Collision), VÀ LÀ ADMIN ĐANG XEM THÌ BÁO CHỮ ĐỎ
+            if ( current_user_can('manage_options') ) {
+                return '<span style="color:red; font-weight:bold; background:#fee2e2; padding:2px 4px; border-radius:4px; font-size:12px;">[' . esc_html($e->getMessage()) . ']</span>';
+            }
+            return ''; // Khách ngoài xem thì nuốt lỗi giấu đi
+        }
+
+        if ( ! $resolved_context ) {
+            return $full_tag; // Không giải mã được (ví dụ do thiếu _GET['table'] cho biến Mức 1)
+        }
+
+        $table_name  = $resolved_context['table_name'];
+        $column_name = $resolved_context['column'];
 
         // Kiểm tra RAM
         $cache_key = $table_name . '_' . $record_id;
