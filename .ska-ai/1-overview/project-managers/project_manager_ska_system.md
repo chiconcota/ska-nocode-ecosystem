@@ -1,5 +1,5 @@
 # PROJECT MANAGER: SKA SYSTEM FRAMEWORK
-@status: 🔴 Pending | @last_update: 2026-04-12 | @context: Khung quản trị tĩnh cho hệ sinh thái Ska
+@status: 🟡 In Progress | @last_update: 2026-04-13 | @context: Khung quản trị tĩnh cho hệ sinh thái Ska
 
 ---
 
