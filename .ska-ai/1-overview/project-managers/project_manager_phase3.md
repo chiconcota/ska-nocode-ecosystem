@@ -1,5 +1,5 @@
 # PROJECT MANAGER: PHASE 3 (SKA LOGIC ENGINE) & TẦM NHÌN HỆ SINH THÁI
-@status: 🟡 In Progress / MVP Done | @last_update: 2026-04-11 | @context: Logic Engine Architecture & Roadmap
+@status: 🟢 In Progress / MVP Done | @last_update: 2026-04-13 | @context: Logic Engine Architecture & Roadmap
 
 ---
 
@@ -58,7 +58,8 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - 🟢 **Ska-xi măng (Logic Engine Processor)**: Hoàn tất Lớp Nhân Đứng Giữa (Controller/Router/Băng Chuyền) với các tính năng:
   - **Mapping:** Giao diện Linear Builder (Băng chuyền nối dọc bằng Vanilla JS) mô phỏng UI kiểu n8n/Zapier. Tự động xuất chuỗi sự kiện thành mảng `JSON Graph`. (Future-proof với React Flow ở Phase 4).
   - **Processing:** Module siêu nhỏ (Strategy Pattern) rèn Data trước khi cất kho: Tạo Slug (`Ska_Slug_Processor`), Format Date (`Ska_Date_Processor`).
-  - **Action:** Gửi thông báo Email (`Ska_Email_Action`), Đẩy lệnh `INSERT` dữ liệu đa bảng qua Hook cho `Ska Data Pro` (`Ska_Insert_Data_Action`).
+  - **Action:** Gửi Email (`Ska_Email_Action`), Đẩy lệnh `INSERT` và `UPDATE` dữ liệu xuống `Ska Data Pro` hoàn hảo qua Hook tách biệt ranh giới.
+- 🟢 **Logic UI DB Picker: [HOÀN TẤT]** Chuyển đổi thành công giao diện TextBox/Datalist cổ điển thành một hệ thống Glassmorphism Modal UI cao cấp với khả năng Real-time Search. Tích hợp thuật toán tự động lấy mảng dữ liệu `ska_data_apps` để gom nhóm chính xác (Grouping) các bảng theo đúng App ID (Tránh thảm họa chia nhóm lệch bằng Regex). Mở đường kết nối Mapping tức thì.
 - 🟡 Xử lý hệ thống Role-Based Access Control (RBAC) cho điều kiện hiển thị (Dời sang Milestone Update).
 - 🟢 **Quản Lý Băng Chuyền (Logic Manager UI): [HOÀN TẤT]** Xây dựng trang quản trị hiển thị Danh sách các Luồng Logic (List View). Cho phép người dùng trực quan Thêm Mới, Xóa, Đổi Tên các Luồng an toàn theo phong cách Dual-View.
 - 🟢 **Hoàn thiện UX Linear Builder: [HOÀN TẤT]** Loại bỏ hành vi Enter tự reload form gây gãy Chrome Extensions. Dịch chuyển luồng bằng DOM Swap 100%.
