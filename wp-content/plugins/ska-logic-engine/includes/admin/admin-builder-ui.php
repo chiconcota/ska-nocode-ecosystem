@@ -3,12 +3,27 @@ defined( 'ABSPATH' ) || exit;
 
 // Lấy danh sách bảng từ Ska Data Pro
 $data_dictionary = get_option('ska_data_dictionary', []);
+$ska_apps = get_option('ska_data_apps', []);
 $available_tables = [];
 foreach($data_dictionary as $table_name => $meta) {
     if (isset($meta['__table_info'])) {
+        $app_group = 'Ska Smart Object Table';
+        $app_id = isset($meta['__table_info']['app_id']) ? $meta['__table_info']['app_id'] : '';
+        
+        if ($app_id && $app_id !== 'uncategorized') {
+            if (isset($ska_apps[$app_id])) {
+                $app_group = 'APP: ' . mb_strtoupper($ska_apps[$app_id]['name'], 'UTF-8');
+            } else {
+                $app_group = 'APP: ' . strtoupper(str_replace('app_', '', $app_id));
+            }
+        } elseif (preg_match('/ska_data_app_([^_]+)_/', $table_name, $m)) {
+            $app_group = 'APP: ' . strtoupper($m[1]);
+        }
+        
         $available_tables[] = [
             'id' => $table_name,
-            'name' => $meta['__table_info']['name']
+            'name' => $meta['__table_info']['name'],
+            'app_group' => $app_group
         ];
     }
 }
@@ -40,7 +55,7 @@ $available_nodes = [
         'type' => 'action',
         'color' => '#10b981',
         'fields' => [
-            ['key' => 'table_name', 'label' => 'Điền Tên Bảng Đích (Hoặc Chọn)', 'type' => 'datalist', 'options' => $available_tables, 'placeholder' => 'vd: wp_ska_data_leads, wp_posts...'],
+            ['key' => 'table_name', 'label' => 'Chọn Bảng Đích (Database)', 'type' => 'db_picker', 'placeholder' => 'Chưa chọn bảng đích...'],
             ['key' => 'mappings', 'label' => 'Explicit Mapping (Gắn Cấu Hình Rõ Ràng)', 'type' => 'mapping_db']
         ]
     ],
@@ -50,7 +65,7 @@ $available_nodes = [
         'type' => 'action',
         'color' => '#8b5cf6',
         'fields' => [
-            ['key' => 'table_name', 'label' => 'Điền Tên Bảng Đích (Hoặc Chọn)', 'type' => 'datalist', 'options' => $available_tables, 'placeholder' => 'vd: wp_ska_data_leads...'],
+            ['key' => 'table_name', 'label' => 'Chọn Bảng Đích (Database)', 'type' => 'db_picker', 'placeholder' => 'Chưa chọn bảng đích...'],
             ['key' => 'condition_column', 'label' => 'Cột Điều Kiện (WHERE)', 'placeholder' => 'Mặc định là id'],
             ['key' => 'mappings', 'label' => 'Explicit Mapping (Gắn Cấu Hình Rõ Ràng)', 'type' => 'mapping_db']
         ]
@@ -156,6 +171,7 @@ $saved_graph = empty($current_wf['graph']) ? '[]' : wp_json_encode($current_wf['
 
 <script>
 const DATA_NONCE = "<?php echo esc_js(wp_create_nonce('ska_data_nonce')); ?>";
+const AVAILABLE_TABLES = <?php echo wp_json_encode($available_tables); ?>;
 const AVAILABLE_NODES = <?php echo json_encode($available_nodes); ?>;
 let CURRENT_GRAPH = <?php echo $saved_graph; ?>;
 
@@ -200,6 +216,15 @@ function renderNodes() {
                         <label>${f.label}</label>
                         <input type="text" list="${listId}" placeholder="${f.placeholder || ''}" value="${val}" onkeyup="updateConfig(${index}, '${f.key}', this.value)" onchange="updateConfig(${index}, '${f.key}', this.value)">
                         <datalist id="${listId}">${opts}</datalist>
+                    </div>`;
+                } else if (f.type === 'db_picker') {
+                    fieldsHtml += `
+                    <div class="ska-field-group">
+                        <label>${f.label}</label>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <input type="text" value="${val}" readonly style="flex:1; background:#f8fafc; color:#0f172a; font-family:monospace; font-size:12px; cursor:not-allowed;" placeholder="${f.placeholder || 'Bấm nút chọn bảng...'}">
+                            <button type="button" class="button" style="display:flex; align-items:center; gap:4px; height: 32px;" onclick="openDbPickerModal(${index}, '${f.key}')"><span class="dashicons dashicons-database" style="font-size:16px; width:16px; height:16px; margin-top:2px;"></span> Đổi Bảng</button>
+                        </div>
                     </div>`;
                 } else if (f.type === 'mapping_db') {
                     // MAPPING FIELD (Tự động tải Schema từ Ska Data Pro)
@@ -430,6 +455,105 @@ document.getElementById('skaWorkflowForm').addEventListener('keydown', function(
     }
 });
 
+// DB Picker UI Logic
+let pickerCurrentNode = null;
+let pickerCurrentKey = null;
+
+function openDbPickerModal(idx, key) {
+    pickerCurrentNode = idx;
+    pickerCurrentKey = key;
+    renderDbTables('');
+    document.getElementById('skaDbPickerModal').style.display = 'flex';
+    document.getElementById('skaDbSearchInput').value = '';
+    setTimeout(() => document.getElementById('skaDbSearchInput').focus(), 100);
+}
+
+function closeDbPickerModal() {
+    document.getElementById('skaDbPickerModal').style.display = 'none';
+    pickerCurrentNode = null;
+    pickerCurrentKey = null;
+}
+
+function selectDbTable(tableName) {
+    if (pickerCurrentNode !== null && pickerCurrentKey !== null) {
+        updateConfig(pickerCurrentNode, pickerCurrentKey, tableName);
+        renderNodes(); // Vẽ lại nút (bao gồm ô thẻ readonly Table Name)
+        
+        // Auto-load target mapping schema
+        loadTableSchema(pickerCurrentNode, 'mappings', tableName);
+    }
+    closeDbPickerModal();
+}
+
+function filterDbTables(keyword) {
+    renderDbTables(keyword.toLowerCase());
+}
+
+function renderDbTables(keyword) {
+    const listBody = document.getElementById('skaDbPickerBody');
+    
+    // Core WP
+    const wpCore = [
+        { id: 'wp_posts', name: 'Core: Bài Viết', type: 'WP Core' },
+        { id: 'wp_users', name: 'Core: Thành Viên', type: 'WP Core' }
+    ];
+    
+    // Group Data Pro
+    let groups = {};
+    AVAILABLE_TABLES.forEach(t => {
+        const grp = t.app_group || 'Ska Smart Object Table';
+        if (!groups[grp]) groups[grp] = [];
+        groups[grp].push({ id: t.id, name: t.name, type: 'Ska Data Pro' });
+    });
+    
+    // Tổ hợp
+    const finalGroups = { 'WP Core': wpCore, ...groups };
+    
+    let html = '';
+    for(let gName in finalGroups) {
+        const items = finalGroups[gName].filter(item => {
+            return item.name.toLowerCase().includes(keyword) || item.id.toLowerCase().includes(keyword);
+        });
+        
+        if (items.length > 0) {
+            html += `<h4 style="margin:0 0 10px 0; color:#475569; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:6px;"><span class="dashicons ${gName === 'WP Core' ? 'dashicons-wordpress' : 'dashicons-media-document'}"></span> ${gName}</h4>`;
+            html += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom: 24px;">`;
+            
+            items.forEach(it => {
+                html += `
+                <div onclick="selectDbTable('${it.id}')" style="background:white; border:1px solid #e2e8f0; padding:12px; border-radius:8px; cursor:pointer; transition:all 0.2s; box-shadow:0 1px 2px rgba(0,0,0,0.05);" onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 4px 6px -1px rgba(59,130,246,0.3)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 1px 2px rgba(0,0,0,0.05)'">
+                    <div style="font-weight:600; color:#0f172a; font-size:14px; margin-bottom:4px;">${it.name}</div>
+                    <div style="font-family:monospace; font-size:11px; color:#64748b; background:#f1f5f9; padding:2px 6px; border-radius:4px; display:inline-block;">${it.id}</div>
+                </div>`;
+            });
+            
+            html += `</div>`;
+        }
+    }
+    
+    if (html === '') {
+        html = '<div style="text-align:center; padding:40px; color:#94a3b8;">Không tìm thấy bảng nào phù hợp.</div>';
+    }
+    
+    listBody.innerHTML = html;
+}
+
 // Khởi chạy
 renderNodes();
 </script>
+
+<!-- NẠP HTML CHO MODAL DB PICKER Ở ĐÂY VÌ WP KHÔNG HỖ TRỢ COMPONENT THUẬN TIỆN -->
+<div id="skaDbPickerModal" class="ska-modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.4); backdrop-filter:blur(2px); z-index:99999; justify-content:center; align-items:center;">
+    <div class="ska-modal-box" style="background:white; width: 720px; max-width:90%; border-radius:12px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); display:flex; flex-direction:column; max-height:85vh; overflow:hidden;">
+        <div style="padding:16px 20px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">
+            <h3 style="margin:0; font-size:16px; color:#0f172a; display:flex; align-items:center; gap:8px;"><span class="dashicons dashicons-database" style="color:#3b82f6;"></span> Logic Database Picker</h3>
+            <button type="button" onclick="closeDbPickerModal()" style="border:none; background:none; cursor:pointer; color:#64748b; line-height:1;"><span class="dashicons dashicons-no-alt" style="font-size:24px;width:24px;height:24px;"></span></button>
+        </div>
+        <div style="padding:16px 20px; border-bottom:1px solid #e2e8f0;">
+            <input type="text" id="skaDbSearchInput" placeholder="🔍 Tìm nhanh tên bảng hoặc Database ID..." style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #cbd5e1; font-size:14px; outline:none;" onkeyup="filterDbTables(this.value)">
+        </div>
+        <div id="skaDbPickerBody" style="padding:20px 24px; flex:1; overflow-y:auto; background:#f1f5f9;">
+            <!-- Group render here -->
+        </div>
+    </div>
+</div>
