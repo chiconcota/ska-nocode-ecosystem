@@ -1,0 +1,3 @@
+## 2024-04-13 - Icon-only Buttons with SVG in WordPress Components
+**Learning:** When using `@wordpress/components` with custom icon-only buttons (especially when manually inserting an `<svg>`), there's a strong pattern of missing accessible names. Adding `aria-label` directly to the `Button` component makes it readable to screen readers, but any nested `<svg>` element must explicitly have `aria-hidden="true"` and `focusable="false"` to prevent screen readers from announcing it redundantly or trapping focus inconsistently.
+**Action:** Always verify `aria-label` on icon-only `Button` elements from `@wordpress/components`, and append `aria-hidden="true"` and `focusable="false"` to their inner SVG icons across the app components.

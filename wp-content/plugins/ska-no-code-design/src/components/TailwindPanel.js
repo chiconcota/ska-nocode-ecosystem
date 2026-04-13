@@ -109,8 +109,9 @@ export const TailwindPanel = ({ className, setClassName, customStyle, setCustomS
                 isSmall
                 style={{ minWidth: 'auto', padding: '0', marginLeft: '4px', color: '#666' }}
                 onClick={() => removeClass(value)}
+                aria-label={__('Remove class', 'ska-builder-core')}
             >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                     <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
             </Button>
@@ -170,6 +171,8 @@ export const TailwindPanel = ({ className, setClassName, customStyle, setCustomS
                         onClick={() => addClasses(inputValue)}
                         disabled={!inputValue.trim()}
                         style={{ marginRight: '4px' }}
+                        aria-label={__('Add classes', 'ska-builder-core')}
+                        title={__('Add classes', 'ska-builder-core')}
                     >
                         +
                     </Button>
