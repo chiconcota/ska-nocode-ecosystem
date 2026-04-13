@@ -15,6 +15,9 @@ defined( 'ABSPATH' ) || exit;
 define( 'SKA_DESIGN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SKA_DESIGN_URL', plugin_dir_url( __FILE__ ) );
 
+// 4. Load System Framework (Drop-in, Must load early)
+require_once SKA_DESIGN_PATH . 'inc/ska-system-framework/init.php';
+
 /**
  * Load Modules
  */
@@ -30,12 +33,15 @@ function ska_no_code_design_init() {
 
 	// 3. Design Engine
 	require_once SKA_DESIGN_PATH . 'inc/design-engine/design-engine.php';
+    
+    // Dashboard Integration (Module Hooking)
+    require_once SKA_DESIGN_PATH . 'inc/design-engine/class-dashboard-integration.php';
+    if ( class_exists( 'Ska_Design_Dashboard_Integration' ) ) {
+        Ska_Design_Dashboard_Integration::init();
+    }
 
-	// 3. Blocks System
+	// 4. Blocks System
 	require_once SKA_DESIGN_PATH . 'blocks/init.php';
-
-	// 4. Admin Dashboard
-	require_once SKA_DESIGN_PATH . 'inc/admin-dashboard/admin-dashboard.php';
 
 	// 5. Demo Content (Dev only)
 	require_once SKA_DESIGN_PATH . 'inc/demo-content.php';

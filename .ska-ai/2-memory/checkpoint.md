@@ -1,21 +1,16 @@
-# 🏁 HANDOVER CHECKPOINT
-@date: 2026-04-12 22:45 | @status: [READY_FOR_NEXT]
+# SYSTEM CHECKPOINT
+@last_update: 2026-04-13 | @milestone: Ska System Framework Dashboard
 
-## 1. TRẠNG THÁI HIỆN TẠI (Where we left off)
-- **Mục tiêu hoàn thành:** Triển khai thành công Modal UI Picker (Glassmorphism) để chọn Database cho bảng Logic Engine, tích hợp thuật toán phân rã App ID siêu chính xác.
-- **Tiến độ đạt được:** Bước 2 trong lộ trình 7 bước (Logic UI DB Picker) đã hoàn thành xuất sắc 100%. User Nocode giờ có thể search, filter và chọn đúng bảng chuẩn xác thay vì thẻ datalist cũ.
+## Trạng Thái Hệ Thống (System State)
+- Đã hoàn tất móc nối Frontend và Backend cho trang `?page=ska-system-dashboard`.
+- Plugin Mẹ `ska-no-code-home` đã bị xóa bỏ hoàn toàn.
+- Kiến trúc Shared Drop-in Framework (Load Balancer) đang vận hành trơn tru trong `ska-no-code-design/inc/ska-system-framework`.
+- **Ska Dev Mode** hoạt động thành công, ẩn Red Badges khỏi Frontend khách thường.
 
-## 2. FILE ĐANG LÀM VIỆC (Active Context)
-- `[MODIFIED]` c:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-logic-engine\includes\admin\admin-builder-ui.php
-- `[MODIFIED]` c:\Users\ADMIN\Local Sites\ska-core-builder\app\public\.ska-ai\3-ecosystem\ska-logic-engine\logic-engine.md
-- `[MODIFIED]` c:\Users\ADMIN\Local Sites\ska-core-builder\app\public\.ska-ai\1-overview\system_map.md
-- `[MODIFIED]` c:\Users\ADMIN\Local Sites\ska-core-builder\app\public\.ska-ai\2-memory\decision-log.md
+## Trọng Tâm Phiên Tiếp Theo (Next Session Target)
+- Chuyển sang Phase: **Quản lý Custom Block/Symbols**.
+- Xem lộ trình tại `.ska-ai/1-overview/project-managers/project_manager_custom_blocks.md`.
+- Vấn đề lõi cần giải quyết ở phiên sau: Thiết kế bảng Flat Table cho kho Symbols và mở API lưu từ trình soạn thảo Gutenberg xuống Database tĩnh mà không qua CPT `wp_block`.
 
-## 3. NHIỆM VỤ DÀNH CHO AGENT TIẾP THEO (Next Steps)
-- [ ] Tuân thủ triệt để Zero-Trash Directive (`ska-docs-management.md`).
-- [ ] Tiến hành Bước 3 trong Roadmap: Triển khai Dashboard cho **Ska System Framework** (Drop-in Framework). Đây là điểm gom hệ sinh thái duy nhất thay thế cho Master Plugin đã bị loại bỏ.
-- [ ] Check và thiết lập Menu Tự Động Load-Balancer cho wp-admin.
-
-## 4. RÀO CẢN & LƯU Ý (Warnings & Gotchas)
-- ⚠️ Cấu trúc Logic Node Builder giờ đã không còn lỗi Typing sai nhầm tên `table_name`. 
-- ⚠️ Hết sức cẩn thận không vi phạm triết lý Decoupled Microservices, bất kỳ module Framework mới nào cũng phải hoạt động độc lập hoặc tích hợp qua Hooks.
+## Lưu ý Bug/Refactor (Nếu có)
+- (None) Mã nguồn sạch. Cần cẩn trọng khi đăng ký Block React mới `<Ska_Symbol_Block>`.

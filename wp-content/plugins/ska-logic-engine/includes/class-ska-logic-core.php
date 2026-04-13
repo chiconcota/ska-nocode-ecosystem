@@ -59,6 +59,9 @@ class Ska_Logic_Core {
 
         // Đăng ký WP Admin Menu
         add_action( 'admin_menu', [ $this, 'register_admin_menu' ] );
+        
+        // Đăng ký Module Card vào System Dashboard
+        add_action( 'ska_system_dashboard_modules', [ $this, 'render_dashboard_card' ] );
 
         // Bơm ống Cáp JS cho Lớp Vỏ ở Frontend kết nối với Endpoint
         add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_scripts']);
@@ -110,15 +113,41 @@ class Ska_Logic_Core {
     }
 
     public function register_admin_menu() {
-        add_menu_page(
+        // Gắn vào under Ska System Framework thay vì tạo Menu Độc Lập
+        add_submenu_page(
+            'ska-system-framework',
             'Ska Logic Automation', 
             'Ska Logic Engine', 
             'manage_options', 
             'ska-logic-engine', 
-            [ $this, 'render_admin_page' ], 
-            'dashicons-networking', // Icon mạng lưới Grid/Node
-            32 // Nằm dưới Ska Data
+            [ $this, 'render_admin_page' ]
         );
+    }
+
+    public function render_dashboard_card() {
+        ?>
+        <!-- Module: Logic Engine -->
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col sm:flex-row gap-5 relative overflow-hidden mt-6">
+            <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+            <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center flex-shrink-0 border border-amber-100">
+                <span class="material-symbols-outlined text-[28px]">account_tree</span>
+            </div>
+            <div class="flex-1">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base">Ska Logic Engine</h3>
+                        <p class="text-sm text-slate-500 mt-1">Xi-măng kết dính hệ sinh thái. Xử lý sự kiện (Workflows), Phân giải ngữ cảnh (Smart Context), CodeMirror UI và SkaFX AST.</p>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        Đang hoạt động
+                    </span>
+                </div>
+                <div class="mt-4 flex gap-3 text-sm">
+                    <a href="?page=ska-logic-engine" class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline">Mở Băng chuyền (Workflows)</a>
+                </div>
+            </div>
+        </div>
+        <?php
     }
 
     public function render_admin_page() {

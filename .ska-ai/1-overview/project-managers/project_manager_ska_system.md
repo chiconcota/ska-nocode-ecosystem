@@ -18,9 +18,12 @@
 - [ ] Xây dựng 1 trang Dashboard Mẹ chung trong `wp-admin` menu với cấu trúc dạng Tab, ví dụ: `?page=ska-system&tab=general`.
 
 ### 2.2. Giao Diện System Dashboard (Quản Trị Tập Trung)
-- [ ] **Tab 1: Theme Options (Nhận Diện Thương Hiệu):** Chứa các Token Color (Primary, Secondary), Typography, Logo. Cấu hình này sẽ feed thẳng vào `Ska No-code Design` JIT Compiler, không cần hardcode CSS brand colors.
-- [ ] **Tab 2: Ecosystem Status:** Hiển thị danh sách các mảnh ghép (Data Pro, Logic Engine) đang kích hoạt trơn tru hay thiếu file.
-- [ ] **Tab 3: Tích hợp API Bên Thứ 3:** Cấu hình Keys cho SendGrid, Stripe/Paypal hoặc Zalo ZNS nếu có kích hoạt.
+- [x] **Giao diện Dashboard Mẹ:** Xây dựng framework với logic fallback thông minh, tích hợp các Module vào trang quản lý chung (`?page=ska-system-dashboard`).
+- [x] **Dev Mode Settings:** Hoàn thiện backend cho công tắc Dev Mode, móc nối vào `Ska_Dynamic_Content` để hiển thị Error Badges trực quan khi ở chế độ nhà phát triển.
+- [x] **Khu vực Extensions:** Tách tính năng Ska AI Architect ra khỏi Header và đặt làm thẻ cấu hình trong Extensions (Cắm API Key, Prompts).
+- [ ] **Tab Theme Options:** Cấu hình Token Color (Primary, Secondary), Typography... (Deferred to next phase).
 
-### 2.3. Quản Lý Symbol & Extension
-- [ ] Thêm kho quản lý các Custom Block (tái sử dụng) và hệ thống Template/Extension mua từ bên ngoài.
+### 2.3. Tính Năng Cao Cấp (Milestone 4 - Post MVP)
+- [ ] Tính năng Import JSON Blueprint (Import Design, Schema, Workflows).
+- [ ] Triển khai Code Hook thực tế cho 2 nút Danger Zone (Clear Context, Flush JIT).
+- [ ] Implement luồng gửi Request API thực tế của thẻ cấu hình Ska AI Architect.

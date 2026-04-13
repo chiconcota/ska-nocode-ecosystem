@@ -52,6 +52,11 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-13 - 🟢 Done - Ska System Framework Dashboard & Dev Mode:**
+  - Hoàn tất giao diện quản trị trung tâm của hệ sinh thái Ska thông qua mô hình Shared Drop-in. Tích hợp thanh điều hướng tab, Fallback báo lỗi nếu thiếu module (Plugin Dependency).
+  - Ra mắt **Ska Dev Mode** (Chế độ Nhà Phát Triển), hook thẳng vào lõi `Ska_Dynamic_Content`. Giờ đây, các mã lỗi Context Resolver (như Trùng lặp Data) hay Bug JIT Compiler sẽ bị giấu lẹm đi đối với khách phổ thông, nhưng hiển thị Badge Error cảnh báo đỏ chót trên Frontend nếu `Dev Mode = ON` (được bật/tắt trong System Dashboard).
+  - Tách Module tạo Blueprint bằng AI xuống mục **Extensions (Tiện Ích Mở Rộng)** để tạo tiền đề cho việc cấu hình Gemini API Key và chỉnh sửa System Prompts riêng tư ở Version tới.
+
 - **2026-04-12 - 🟢 Khai Tử Plugin Master & Chốt Roadmap Kiến Trúc:**
   - Khai tử vĩnh viễn plugin `ska-no-code-home`. Chuyển đổi Khái niệm System Dashboard sang mô hình "Shared Drop-in Framework" (Thư viện dùng chung) đóng gói chéo vào các plugins.
   - Chốt lộ trình 7 bước tích hợp: (1) Logic Engine CRUD -> (2) Logic UI DB Picker -> (3) Ska System Framework Dashboard -> (4) Quản lý Custom Block/Symbols -> (5) Theme Builder/App Portals -> (6) Khối Auto-Generated CRUD -> (7) Frontend Triggers nâng cao.

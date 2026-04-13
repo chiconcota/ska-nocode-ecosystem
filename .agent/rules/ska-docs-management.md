@@ -34,6 +34,7 @@ trigger: always_on
   1. `1-overview/system_map.md` (Sửa trạng thái Status & Recent Logs).
   2. `2-memory/decision-log.md` (Chèn Note lên đầu file).
   3. `3-ecosystem/tên-plugin/tên-file.md` (Chỉnh sửa Kiến trúc cục bộ vừa Code xong).
+  4. '1-overview\project-managers' Cập nhật tiến độ làm việc tương ứng với module đang làm vi
 
 ## 4. CLEANSING CHECK (BƯỚC CHUẨN BỊ COMMIT GIT)
 - Trước khi push code lên Git, AI phải tự phán xét: "Mình có bị lỡ tay đẻ ra cái file .md nào nằm ngoài hệ thống 4 folder không?". Nếu có thì tự động dùng Lệnh Xóa (Remove) hoặc hỏi ý kiến User ngay lập tức.
