@@ -19,6 +19,7 @@ class Admin_Menu {
 	private function __construct() {
 		add_action( 'admin_menu', [ $this, 'register_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+        add_action( 'ska_system_dashboard_modules', [ $this, 'render_dashboard_card' ] );
 	}
 
 	public function enqueue_assets( $hook ) {
@@ -32,29 +33,17 @@ class Admin_Menu {
 	 * Đăng ký Admin Menu.
 	 */
 	public function register_menu() {
-		add_menu_page(
-			__( 'Ska Data', 'ska-data-pro' ),
-			__( 'Ska Data', 'ska-data-pro' ),
-			'manage_options',
-			'ska-data-pro',
-			[ $this, 'render_dashboard' ],
-			'dashicons-database', // Icon csdl
-			31 // Vị trí bên dưới cài đặt
-		);
-
-		// Thay vì Menu ẩn, giờ ta cho hiện Menu con là Thư viện Mẫu (Dashboard)
 		add_submenu_page(
-			'ska-data-pro',
-			__( 'Template Library', 'ska-data-pro' ),
-			__( 'Template Library', 'ska-data-pro' ),
+			'ska-system-framework',
+			__( 'Ska Data', 'ska-data-pro' ),
+			__( 'Ska Data', 'ska-data-pro' ),
 			'manage_options',
 			'ska-data-pro',
 			[ $this, 'render_dashboard' ]
 		);
 
-		// Menu con Workspace (Quản lý dữ liệu cài đặt)
 		add_submenu_page(
-			'ska-data-pro',
+			'ska-system-framework',
 			__( 'Workspace', 'ska-data-pro' ),
 			__( 'Workspace', 'ska-data-pro' ),
 			'manage_options',
@@ -62,6 +51,34 @@ class Admin_Menu {
 			[ $this, 'render_manage_page' ]
 		);
 	}
+
+    public function render_dashboard_card() {
+        ?>
+        <!-- Module: Data Pro -->
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col sm:flex-row gap-5 relative overflow-hidden mt-6">
+            <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 border border-blue-100">
+                <span class="material-symbols-outlined text-[28px]">database</span>
+            </div>
+            <div class="flex-1">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base">Ska Data Pro</h3>
+                        <p class="text-sm text-slate-500 mt-1">Quản trị Flat Tables (ska_data_*), Schema Manager và Strategy Pattern DataGrid. Thay thế hoàn toàn wp_postmeta.</p>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        Đang hoạt động
+                    </span>
+                </div>
+                <div class="mt-4 flex gap-3 text-sm">
+                    <a href="?page=ska-data-pro" class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline">Truy cập Database</a>
+                    <span class="text-slate-300">|</span>
+                    <a href="?page=ska-data-pro-manage" class="text-slate-600 hover:text-slate-900">Quản lý Semantic IDs</a>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
 
 	/**
 	 * Render trang UI Dashboard gốc.

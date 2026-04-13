@@ -13,18 +13,20 @@ Bước 2. **Cập nhật Ecosystem Documentation (Đường sinh mệnh của A
      - WP Hooks được Expose để Plugin khác móc vào.
      - Luồng dữ liệu mới.
 
-Bước 3. **Ghi sổ quyết định (Decision Log , System Map & Update):**
+Bước 3. **Ghi sổ quyết định (Decision Log , System Map, roadmap & Update):**
    - Đọc và cập nhật file `.ska-ai/2-memory/decision-log.md` bằng cách thêm ngày hôm nay và các Quyết Định Kỹ Thuật Lõi (Core Technical Decisions) đã được chốt/triển khai.
    - Đọc và cập nhật file `.ska-ai/1-overview/system_map.md`:
      - **Tình trạng Plugin/Theme:** Chuyển trạng thái từ 🔴 Pending -> 🟡 In Progress -> 🟢 Done trong bảng Module Registry.
      - **Change Log:** Thêm dòng gạch đầu dòng ngắn ngọn cho ngày cập nhật.
    -  Tìm, Đọc và cập nhật file module tương ứng trong folder '.ska-ai\3-ecosystem' đã sửa trong phiên làm việc.
+   -  - Mở và GHI ĐÈ dữ liệu vào file tương ứng với module tương ứng `..ska-ai\1-overview\project-managers` để lưu lại tiến độ đang dự án.
    - Mở và GHI ĐÈ dữ liệu vào file `.ska-ai/2-memory/checkpoint.md` để lưu lại tiến độ đang code dở, danh sách file, hoặc note các bug để bàn giao cho Agent phiên sau.
    - Cập nhật git và push lên github cho dự án sau mỗi phiên làm việc.
  
 Bước 4. **Xác nhận kết thúc:**
    - Thông báo rõ ràng: "Sổ bộ nhớ App Builder đã được niêm phong. 
      - File bàn giao (Checkpoint) đã được lưu mốc an toàn.
+     - Danh sách công việc (project manager) đã được cập nhật.
      - Docs lưu tại: `.ska-ai/3-ecosystem/`
      - Lịch sử thiết kế được dán vào Decision Log.
      Phiên làm việc kết thúc an toàn, hệ sinh thái sẵn sàng cho phiên kế tiếp không mất ngữ cảnh."

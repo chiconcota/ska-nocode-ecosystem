@@ -161,10 +161,11 @@ class Ska_Dynamic_Content {
             $resolved_context = \Ska\Logic\SkaFX\SkaFX_Context_Resolver::resolve( $var_name, $context );
         } catch ( \Exception $e ) {
             // NẾU CÓ XUNG ĐỘT (Collision), VÀ LÀ ADMIN ĐANG XEM THÌ BÁO CHỮ ĐỎ
-            if ( current_user_can('manage_options') ) {
+            $dev_mode = get_option( 'ska_system_dev_mode', '1' );
+            if ( current_user_can('manage_options') && $dev_mode === '1' ) {
                 return '<span style="color:red; font-weight:bold; background:#fee2e2; padding:2px 4px; border-radius:4px; font-size:12px;">[' . esc_html($e->getMessage()) . ']</span>';
             }
-            return ''; // Khách ngoài xem thì nuốt lỗi giấu đi
+            return ''; // Khách ngoài hoặc đã tắt Dev Mode thì nuốt lỗi giấu đi
         }
 
         if ( ! $resolved_context ) {
