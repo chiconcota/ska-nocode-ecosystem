@@ -12,7 +12,6 @@ $user_tailwindClasses = ! empty( $attributes['tailwindClasses'] ) ? $attributes[
 
 $wrapper_attributes = get_block_wrapper_attributes( array(
     'class' => 'ska-container-block ' . esc_attr( $user_tailwindClasses ),
-    'style' => $attributes['customStyle'] ?? '',
 ) );
 
 if ( ! empty( $attributes['logic']['enabled'] ) ) {

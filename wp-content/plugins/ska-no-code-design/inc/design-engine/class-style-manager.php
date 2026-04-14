@@ -83,7 +83,7 @@ class Style_Manager {
                     } else {
                         $attr_values = explode( ' ', $value );
                         foreach ( $attr_values as $val ) {
-                            if ( preg_match( '/^[a-z0-9:\[\]\/\-\.]+$/', $val ) ) {
+                            if ( preg_match( '/^[a-zA-Z0-9:\[\]\/\-\._\(\),#%\\\]+$/', $val ) ) {
                                 $classes[] = $val;
                             }
                         }
@@ -103,6 +103,22 @@ class Style_Manager {
 			// Recursive for inner blocks
 			if ( ! empty( $block['innerBlocks'] ) ) {
 				$this->extract_block_classes( $block['innerBlocks'], $classes );
+			}
+
+			// Extract from HTML Attributes (Support for Alpine.js x-transition classes)
+			if ( ! empty( $block['attrs']['htmlAttributes'] ) && is_array( $block['attrs']['htmlAttributes'] ) ) {
+				foreach ( $block['attrs']['htmlAttributes'] as $attr ) {
+					if ( ! empty( $attr['value'] ) && is_string( $attr['value'] ) ) {
+						// Normalize whitespace to spaces to correctly handle newlines or tabs from TextareaControl
+						$clean_value = preg_replace( '/\s+/', ' ', $attr['value'] );
+						$attr_values = explode( ' ', trim( $clean_value ) );
+						foreach ( $attr_values as $val ) {
+							if ( preg_match( '/^[a-zA-Z0-9:\[\]\/\-\._\(\),#%\\\]+$/', $val ) ) {
+								$classes[] = $val;
+							}
+						}
+					}
+				}
 			}
 		}
 	}

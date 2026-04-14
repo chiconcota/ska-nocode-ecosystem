@@ -13,9 +13,9 @@
 ## 2. ROADMAP THEO KIẾN TRÚC FRAMEWORK
 
 ### 2.1. Kiến Trúc "Shared Drop-in Framework"
-- [ ] Không tạo plugin mới. Tạo folder thư viện `ska-system-framework` bên trong mỗi plugin hiện có hoặc nhúng qua composer.
-- [ ] Viết logic Load-Balancer: Kiểm tra plugin nào có Version Framework cao nhất thì sẽ dành quyền Khởi tạo (Boot) System Dashboard để tránh xung đột tải trùng class.
-- [ ] Xây dựng 1 trang Dashboard Mẹ chung trong `wp-admin` menu với cấu trúc dạng Tab, ví dụ: `?page=ska-system&tab=general`.
+- [x] Không tạo plugin mới. Tạo folder thư viện `ska-system-framework` bên trong mỗi plugin hiện có hoặc nhúng qua composer.
+- [x] Viết logic Load-Balancer: Kiểm tra plugin nào có Version Framework cao nhất thì sẽ dành quyền Khởi tạo (Boot) System Dashboard để tránh xung đột tải trùng class.
+- [x] Xây dựng 1 trang Dashboard Mẹ chung trong `wp-admin` menu với cấu trúc dạng Tab, ví dụ: `?page=ska-system-dashboard`.
 
 ### 2.2. Giao Diện System Dashboard (Quản Trị Tập Trung)
 - [x] **Giao diện Dashboard Mẹ:** Xây dựng framework với logic fallback thông minh, tích hợp các Module vào trang quản lý chung (`?page=ska-system-dashboard`).

@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
 import { splitTailwindClasses } from '../utils/tailwind-utils.js';
 
-export const TailwindPanel = ({ className, setClassName, customStyle, setCustomStyle }) => {
+export const TailwindPanel = ({ className, setClassName }) => {
     const [inputValue, setInputValue] = useState('');
     const [categories, setCategories] = useState({
         spacing: [],
@@ -203,17 +203,7 @@ export const TailwindPanel = ({ className, setClassName, customStyle, setCustomS
                 )}
             </div>
 
-            {setCustomStyle && (
-                <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e0e0e0' }}>
-                    <TextareaControl
-                        label={__('Custom Inline Style', 'ska-builder-core')}
-                        value={customStyle || ''}
-                        onChange={(val) => setCustomStyle(val)}
-                        help={__('Ví dụ: background-image: url(...);', 'ska-builder-core')}
-                        rows={3}
-                    />
-                </div>
-            )}
+
         </PanelBody>
     );
 };

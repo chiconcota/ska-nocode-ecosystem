@@ -13,7 +13,7 @@ import { splitTailwindClasses } from '../utils/tailwind-utils.js';
 registerBlockType(metadata.name, {
     edit: (props) => {
         const { attributes, setAttributes } = props;
-        const { tagName = 'div', tailwindClasses = '', className = '', logic = { enabled: false, key: '', operator: '==', value: '' }, customStyle } = attributes;
+        const { tagName = 'div', tailwindClasses = '', className = '', logic = { enabled: false, key: '', operator: '==', value: '' } } = attributes;
 
         const { useEffect } = wp.element;
         useEffect(() => {
@@ -26,26 +26,7 @@ registerBlockType(metadata.name, {
                 setAttributes({ tailwindClasses: merged, className: '' });
             }
             // NOTE: Do NOT set className here - TailwindPanel callback handles proper split
-        }, []);
-
-        // Helper to parse inline style string to React object
-        const parseStyle = (styleString) => {
-            if (!styleString) return {};
-            return styleString.split(';').reduce((acc, style) => {
-                const parts = style.split(/:(.+)/);
-                if (parts.length >= 2) {
-                    const prop = parts[0].trim();
-                    const value = parts[1].trim();
-                    if (prop && value) {
-                        const camelProp = prop.replace(/-([a-z])/g, g => g[1].toUpperCase());
-                        acc[camelProp] = value;
-                    }
-                }
-                return acc;
-            }, {});
-        };
-
-        // For structural blocks, we combine everything on the wrapper to avoid layout breaks
+        }, []);// For structural blocks, we combine everything on the wrapper to avoid layout breaks
         const fullClasses = (tailwindClasses + ' ' + className).trim();
 
         // Extract positioning from Tailwind classes and apply as inline styles
@@ -94,7 +75,6 @@ registerBlockType(metadata.name, {
         const blockProps = useBlockProps({
             className: `ska-container-block wp-block-ska-builder-container ${tailwindClasses}`.trim(),
             style: {
-                ...parseStyle(customStyle),
                 ...positionStyles,
                 minHeight: '30px'  // Preserve placeholder without wrapper div (Flat DOM)
             }
@@ -117,7 +97,9 @@ registerBlockType(metadata.name, {
             'core/image'
         ];
 
-        const CustomTag = tagName || 'div';
+        // If the tag is 'template', we must render it as a 'div' in the Gutenberg Editor
+        // because native <template> tags hide their child elements in the browser DOM.
+        const CustomTag = (tagName === 'template') ? 'div' : (tagName || 'div');
 
         // useInnerBlocksProps: merge inner blocks directly into wrapper
         // → eliminates block-editor-inner-blocks wrapper div
@@ -143,6 +125,8 @@ registerBlockType(metadata.name, {
                                 { label: 'main', value: 'main' },
                                 { label: 'article', value: 'article' },
                                 { label: 'aside', value: 'aside' },
+                                { label: 'form', value: 'form' },
+                                { label: 'template', value: 'template' },
                             ]}
                             onChange={(value) => setAttributes({ tagName: value })}
                         />
@@ -151,17 +135,18 @@ registerBlockType(metadata.name, {
                     <TailwindPanel
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
-                        customStyle={customStyle}
-                        setCustomStyle={(val) => setAttributes({ customStyle: val })}
                     />
 
                     </InspectorControls>
 
                 <CustomTag {...innerBlocksProps} />
+                {tagName === 'template' && (
+                    <div className="ska-template-badge" style={{ position: 'absolute', top: 0, right: 0, background: '#f59e0b', color: '#fff', fontSize: '10px', padding: '2px 6px', zIndex: 10 }}>TEMPLATE</div>
+                )}
             </>
         );
     },
     save: () => {
         return <InnerBlocks.Content />;
-    },
-});
+    }});
+

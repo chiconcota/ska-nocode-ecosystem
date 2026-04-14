@@ -39,10 +39,6 @@
         "operator": "==",
         "value": ""
       }
-    },
-    "customStyle": {
-      "type": "string",
-      "default": ""
     }
   },
   "supports": {

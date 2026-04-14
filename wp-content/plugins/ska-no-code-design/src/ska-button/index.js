@@ -28,8 +28,7 @@ registerBlockType(metadata.name, {
             tailwindClasses = '', 
             className = '',
             dynamic = { text_source: 'static', text_key: '', url_source: 'static', url_key: '' }, 
-            logic = { enabled: false, key: '', operator: '==', value: '' },
-            customStyle
+            logic = { enabled: false, key: '', operator: '==', value: '' }
         } = attributes;
 
         const { useEffect } = wp.element;
@@ -40,31 +39,10 @@ registerBlockType(metadata.name, {
             } else if (className) {
                 setAttributes({ className: '' });
             }
-        }, []);
-
-        // Helper to parse inline style string to React object
-        const parseStyle = (styleString) => {
-            if (!styleString) return {};
-            return styleString.split(';').reduce((acc, style) => {
-                const parts = style.split(/:(.+)/);
-                if (parts.length >= 2) {
-                    const prop = parts[0].trim();
-                    const value = parts[1].trim();
-                    if (prop && value) {
-                        const camelProp = prop.replace(/-([a-z])/g, g => g[1].toUpperCase());
-                        acc[camelProp] = value;
-                    }
-                }
-                return acc;
-            }, {});
-        };
-
-        const fullClasses = (tailwindClasses + ' ' + className).trim();
+        }, []);const fullClasses = (tailwindClasses + ' ' + className).trim();
 
         const blockProps = useBlockProps({
-            className: `ska-button-block wp-block-ska-builder-button ${fullClasses}`.trim(),
-            style: parseStyle(customStyle)
-        });
+            className: `ska-button-block wp-block-ska-builder-button ${fullClasses}`.trim()});
 
         // Helper to update nested attributes
         const updateDynamic = (key, val) => {
@@ -168,8 +146,6 @@ registerBlockType(metadata.name, {
                     <TailwindPanel
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
-                        customStyle={customStyle}
-                        setCustomStyle={(val) => setAttributes({ customStyle: val })}
                     />
 
                     </InspectorControls>
@@ -208,5 +184,5 @@ registerBlockType(metadata.name, {
     },
     save: () => {
         return null; // Dynamic block rendered in PHP
-    },
-});
+    }});
+

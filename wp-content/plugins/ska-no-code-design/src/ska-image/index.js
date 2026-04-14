@@ -10,7 +10,7 @@ import { splitTailwindClasses } from '../utils/tailwind-utils.js';
 registerBlockType(metadata.name, {
     edit: (props) => {
         const { attributes, setAttributes } = props;
-        const { url, alt, id, tailwindClasses = '', className = '', dynamic = { source: 'static', key: '' }, logic = { enabled: false, key: '', operator: '==', value: '' }, customStyle } = attributes;
+        const { url, alt, id, tailwindClasses = '', className = '', dynamic = { source: 'static', key: '' }, logic = { enabled: false, key: '', operator: '==', value: '' } } = attributes;
 
         const { useEffect } = wp.element;
         useEffect(() => {
@@ -21,27 +21,8 @@ registerBlockType(metadata.name, {
             }
         }, []);
 
-        // Helper to parse inline style string to React object
-        const parseStyle = (styleString) => {
-            if (!styleString) return {};
-            return styleString.split(';').reduce((acc, style) => {
-                const parts = style.split(/:(.+)/);
-                if (parts.length >= 2) {
-                    const prop = parts[0].trim();
-                    const value = parts[1].trim();
-                    if (prop && value) {
-                        const camelProp = prop.replace(/-([a-z])/g, g => g[1].toUpperCase());
-                        acc[camelProp] = value;
-                    }
-                }
-                return acc;
-            }, {});
-        };
-
         const blockProps = useBlockProps({
-            className: `ska-image-block ${tailwindClasses}`.trim(),
-            style: parseStyle(customStyle)
-        });
+            className: `ska-image-block ${tailwindClasses}`.trim()});
 
         const onSelectImage = (media) => {
             if (!media || !media.url) return;
@@ -105,8 +86,6 @@ registerBlockType(metadata.name, {
                     <TailwindPanel
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
-                        customStyle={customStyle}
-                        setCustomStyle={(val) => setAttributes({ customStyle: val })}
                     />
 
                     </InspectorControls>
@@ -148,5 +127,5 @@ registerBlockType(metadata.name, {
     },
     save: () => {
         return null; // Dynamic block
-    },
-});
+    }});
+

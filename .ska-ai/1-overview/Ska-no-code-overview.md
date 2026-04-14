@@ -5,10 +5,9 @@
 Chúng ta đang chuyển dịch từ một "Page Builder" thông thường sang một **No-code App Builder Framework**. Hệ thống được tách nhỏ tuyệt đối thành các Module độc lập để tối ưu hóa hiệu năng (Enterprise Scale) và khả năng mở rộng. WordPress từ nay chỉ mang vai trò "Vật chủ" (Host) cung cấp Admin UI và Authentication.
 
 **The Core Ecosystem (Bộ Quyền Lực):**
-1. **Ska No-Code Home (Plugin):** Hệ điều hành trung tâm, quản lý mọi thiết lập, giấy phép và định tuyến cho toàn bộ hệ sinh thái.
-2. **Ska No-Code Design (Plugin - trước đây là Core):** Xử lý bộ khung chuẩn (Base Atomic Blocks) và Design Engine (Tailwind CSS v4, Local JIT Compiler, React UI).
-3. **Ska Data Pro (Plugin):** Hệ thống Database tự trị. Tách biệt hoàn toàn khỏi `wp_posts` và `wp_postmeta` (Bỏ EAV). Sử dụng bảng phẳng (Flat Tables: `ska_data_*`). Hỗ trợ Schema Manager, Query Builder (Filter, Sort, Aggregate, JOIN).
-4. **Ska Logic Engine (Plugin):** "Bộ não" điều khiển các Workflow, Trigger-Action và kết nối mạch não UI với Data.
+1. **Ska No-Code Design (Plugin - trước đây là Core):** Xử lý bộ khung chuẩn (Base Atomic Blocks) và Design Engine (Tailwind CSS v4, Local JIT Compiler, React UI, Alpine.js - Ska Molecule).
+2. **Ska Data Pro (Plugin):** Hệ thống Database tự trị. Tách biệt hoàn toàn khỏi `wp_posts` và `wp_postmeta` (Bỏ EAV). Sử dụng bảng phẳng (Flat Tables: `ska_data_*`). Hỗ trợ Schema Manager, Query Builder (Filter, Sort, Aggregate, JOIN).
+3. **Ska Logic Engine (Plugin):** "Bộ não" điều khiển các Workflow, Trigger-Action và kết nối mạch não UI với Data.
 
 *(Extra)* **Ska Bridge:** Công cụ chuyển đổi HTML (html2tailwind) và trích xuất JSON cho kiến trúc Next.js (Headless).
 *(Extra)* **Ska Theme:** Cốt lõi siêu nhẹ (Barebone), zero CSS, chống mọi conflict từ WP Theme.
@@ -20,7 +19,6 @@ ska-ecosystem/
 ├── wp-content/themes/
 │   └── ska-blank-theme/    -> [THEME] Barebone WP Theme
 └── wp-content/plugins/
-    ├── ska-no-code-home/   -> [MASTER] Ecosystem Dashboard
     ├── ska-no-code-design/ -> [UI/UX] Base Blocks + Tailwind v4 Compiler
     ├── ska-data-pro/       -> [DATA] Flat Tables Schema + Query Builder
     ├── ska-logic-engine/   -> [LOGIC] Workflows + Events
@@ -35,7 +33,15 @@ ska-ecosystem/
 ## 4. DEVELOPMENT ROADMAP
 - **Phase 1 (COMPLETED):** Kiến trúc nền tảng (Base Blocks, Editor UI, Regex Tailwind v3).
 - **Phase 2 (Decoupling & Data Pro):** Phân tách ra 4 Plugins + 1 Theme. Xây dựng Ska Data Pro (Flat tables) và Nâng cấp Tailwind v4 cho Design Engine.
-- **Phase 3 (Logic Engine):** Event Triggers & Action Workflows.
+- **Phase 3 (Logic Engine & App Portals):**
+  - Bước 1: Logic Engine CRUD
+  - Bước 2: Logic UI DB Picker
+  - Bước 3: Ska System Framework Dashboard
+  - Bước 4: Ska Molecule & Alpine.js Integration (Universal Container & Key-Value Attributes)
+  - Bước 5: Custom Block & Sync Framework (Lưu Symbols)
+  - Bước 6: Theme Builder / App Portals
+  - Bước 7: Khối Auto-Generated CRUD
+  - Bước 8: Frontend Triggers Nâng Cao
 - **Phase 4 (Ecosystem):** JSON Bridge & Headless Next.js.
 
 ## 4. CONVERSION STRATEGY (MANUAL VS. AI)

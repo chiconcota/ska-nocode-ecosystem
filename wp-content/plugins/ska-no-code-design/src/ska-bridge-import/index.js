@@ -48,5 +48,5 @@ registerBlockType( metadata.name, {
 			</div>
 		);
 	},
-	save: () => null,
-} );
+	save: () => null} );
+

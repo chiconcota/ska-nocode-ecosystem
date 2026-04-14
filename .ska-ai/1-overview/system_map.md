@@ -4,7 +4,7 @@
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core (Host) + PHP 8.2+
 - **Data (Ska Data Pro):** Flat Tables (`ska_data_*`), Schema Manager, Custom Query Builder.
-- **Design (Ska Design Engine):** Tailwind CSS v4, Local JIT Compiler, React + Gutenberg API.
+- **Design (Ska Design Engine):** Tailwind CSS v4, Local JIT Compiler, React + Gutenberg API, Alpine.js (Ska Molecule).
 - **Logic (Ska Logic Engine):** Workflows, Trigger-Action events.
 - **Bridge:** JSON Schema mapping, html2tailwind, Next.js (Headless).
 - **Pattern:** Micro-Ecosystem (Decoupled Plugins), Interface-based, Event-driven (WP Hooks).
@@ -19,7 +19,7 @@ ska-ecosystem/ (mapped to app/public/)
 ├── wp-content/themes/
 │   └── ska-blank-theme/     # [THEME] Barebone WP Theme (Zero CSS)
 └── wp-content/plugins/
-    ├── ska-no-code-design/  # [UI/UX] Base Atomic Blocks, Tailwind JIT, Inspector
+    ├── ska-no-code-design/  # [UI/UX] Base Atomic Blocks, Tailwind JIT, Inspector, Alpine.js (Ska Molecule)
     ├── ska-data-pro/        # [DATA] Flat Tables, Schema, Query Builder
     ├── ska-logic-engine/    # [LOGIC] Workflows, If/Foreach Triggers
     └── ska-bridge/          # [ADAPTER] html2tailwind & JSON API
@@ -47,11 +47,17 @@ ska-ecosystem/ (mapped to app/public/)
 ## 5. GLOBAL CONSTRAINTS (FOR AI)
 1. **Micro-Ecosystem Boundary:** Plugins DO NOT call each other's classes directly. They communicate exclusively via WP `do_action` and `apply_filters`.
 2. **Flat Tables First:** All future data models must rely on Ska Data Pro's custom tables (`ska_data_*`), completely abandoning `wp_postmeta`.
-3. **Divide & Conquer:** File size < 500 lines. Exceed = Split.
+3. **Divide & Conquer:** File size < 700 lines. Exceed = Split.
 4. **Context Switching:** Always read the specific plugin's documentation inside `.ska-ai/3-ecosystem/` trước khi thao tác.
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-14 - 🟢 Roadmap Expansion: Ska Molecule & Alpine.js:**
+  - Hợp nhất Container/Form/Alpine thành **Ska Universal Container** với khả năng đổi thẻ Semantic (div/form/section).
+  - Khởi tạo hệ thống **Ska HTML Attributes (Key-Value Panel)** áp dụng toàn tuyến cho mọi Atomic Blocks, mở khóa siêu năng lực nhúng **Alpine.js** (x-data, x-show, x-bind) để xử lý logic Frontend gọn nhẹ mà không làm phình Gutenberg Editor.
+  - Cập nhật Lộ trình 8-bước: Bổ sung bước "Ska Molecule & Alpine Integration" trước Custom Block/Symbols.
+  - **Tailwind Compiler For HTML Attributes & JIT Animation Fix:** Cập nhật Backend Compiler hỗ trợ đầy đủ chu trình nhúng Thuộc tính HTML, tự động dịch các class ẩn giấu, tích cực vá lỗi cho các hiệu ứng `transform` (Scale, Rotate) và trang bị `prevent default` modifier cho Event click để gỡ rối UX nhảy trang cực độ. Giai đoạn AlpineJS hoàn tất.
+
 - **2026-04-13 - 🟢 Done - Ska System Framework Dashboard & Dev Mode:**
   - Hoàn tất giao diện quản trị trung tâm của hệ sinh thái Ska thông qua mô hình Shared Drop-in. Tích hợp thanh điều hướng tab, Fallback báo lỗi nếu thiếu module (Plugin Dependency).
   - Ra mắt **Ska Dev Mode** (Chế độ Nhà Phát Triển), hook thẳng vào lõi `Ska_Dynamic_Content`. Giờ đây, các mã lỗi Context Resolver (như Trùng lặp Data) hay Bug JIT Compiler sẽ bị giấu lẹm đi đối với khách phổ thông, nhưng hiển thị Badge Error cảnh báo đỏ chót trên Frontend nếu `Dev Mode = ON` (được bật/tắt trong System Dashboard).
@@ -59,7 +65,7 @@ ska-ecosystem/ (mapped to app/public/)
 
 - **2026-04-12 - 🟢 Khai Tử Plugin Master & Chốt Roadmap Kiến Trúc:**
   - Khai tử vĩnh viễn plugin `ska-no-code-home`. Chuyển đổi Khái niệm System Dashboard sang mô hình "Shared Drop-in Framework" (Thư viện dùng chung) đóng gói chéo vào các plugins.
-  - Chốt lộ trình 7 bước tích hợp: (1) Logic Engine CRUD -> (2) Logic UI DB Picker -> (3) Ska System Framework Dashboard -> (4) Quản lý Custom Block/Symbols -> (5) Theme Builder/App Portals -> (6) Khối Auto-Generated CRUD -> (7) Frontend Triggers nâng cao.
+  - Chốt lộ trình 8 bước tích hợp: (1) Logic Engine CRUD -> (2) Logic UI DB Picker -> (3) Ska System Framework Dashboard -> (4) Ska Molecule & Alpine.js Integration -> (5) Custom Block/Symbols -> (6) Theme Builder/App Portals -> (7) Khối Auto-Generated CRUD -> (8) Frontend Triggers nâng cao.
 
 - **2026-04-12 - 🟢 Done - Context Resolver Verification (SkaFX Engine):**
   - Khẳng định tính đúng đắn của cỗ máy Phân giải ngữ cảnh (Smart Context Guessing). Thuật toán Hậu Tố (Suffix Scanning) hoạt động hoàn hảo và bảo toàn hiệu suất siêu việt thông qua Static Cache RAM Arrays (tốc độ vòng lặp <1ms cho 5,000 bảng), lược bỏ mọi lo ngại về Server Load Array Traversal. Sẵn sàng cho đường băng Phase 3 Theme Builder.
