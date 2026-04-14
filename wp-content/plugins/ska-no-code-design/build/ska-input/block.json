@@ -43,10 +43,6 @@
     "className": {
       "type": "string",
       "default": ""
-    },
-    "customStyle": {
-      "type": "string",
-      "default": ""
     }
   },
   "supports": {

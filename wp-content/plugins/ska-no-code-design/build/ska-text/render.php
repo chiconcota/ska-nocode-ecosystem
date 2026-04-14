@@ -17,7 +17,6 @@ $user_tailwindClasses = ! empty( $attributes['tailwindClasses'] ) ? $attributes[
 
 $wrapper_attributes = get_block_wrapper_attributes( array(
     'class' => 'ska-text-block ' . esc_attr( $user_tailwindClasses ),
-    'style' => $attributes['customStyle'] ?? '',
 ) );
 
 // Handle Dynamic Content

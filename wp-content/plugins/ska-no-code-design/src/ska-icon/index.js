@@ -15,7 +15,7 @@ import { POPULAR_ICONS, ALL_ICONS } from '../utils/material-icons.js';
 registerBlockType(metadata.name, {
     edit: (props) => {
         const { attributes, setAttributes } = props;
-        const { iconName, tailwindClasses = '', className = '', logic, customStyle } = attributes;
+        const { iconName, tailwindClasses = '', className = '', logic } = attributes;
 
         const { useEffect } = wp.element;
         useEffect(() => {
@@ -48,7 +48,7 @@ registerBlockType(metadata.name, {
 
         const blockProps = useBlockProps({
             className: `ska-icon-block wp-block-ska-builder-icon material-symbols-outlined ${tailwindClasses}`.trim(),
-            style: { ...parseStyle(customStyle), fontSize: 'inherit' }
+            style: { fontSize: 'inherit' }
         });
 
         // Modal: filter ALL_ICONS, gioi han 200 ket qua de tranh lag
@@ -78,8 +78,7 @@ registerBlockType(metadata.name, {
                             padding: '12px',
                             marginBottom: '12px',
                             background: '#f0f0f0',
-                            borderRadius: '6px',
-                        }}>
+                            borderRadius: '6px'}}>
                             <span className="material-symbols-outlined" style={{ fontSize: '36px' }}>{iconName || 'star'}</span>
                             <div style={{ flex: 1 }}>
                                 <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{iconName || 'star'}</div>
@@ -109,8 +108,6 @@ registerBlockType(metadata.name, {
                     <TailwindPanel
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
-                        customStyle={customStyle}
-                        setCustomStyle={(val) => setAttributes({ customStyle: val })}
                     />
 
                     </InspectorControls>
@@ -143,8 +140,7 @@ registerBlockType(metadata.name, {
                             display: 'grid',
                             gridTemplateColumns: 'repeat(auto-fill, minmax(75px, 1fr))',
                             gap: '6px',
-                            padding: '4px',
-                        }}>
+                            padding: '4px'}}>
                             {modalFilteredIcons.map(icon => (
                                 <Button
                                     key={icon}
@@ -161,8 +157,7 @@ registerBlockType(metadata.name, {
                                         borderRadius: '6px',
                                         background: iconName === icon ? '#e6f2ff' : 'transparent',
                                         gap: '4px',
-                                        cursor: 'pointer',
-                                    }}
+                                        cursor: 'pointer'}}
                                     title={icon}
                                 >
                                     <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>{icon}</span>
@@ -173,8 +168,7 @@ registerBlockType(metadata.name, {
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',
                                         whiteSpace: 'nowrap',
-                                        lineHeight: '1.2',
-                                    }}>{icon}</span>
+                                        lineHeight: '1.2'}}>{icon}</span>
                                 </Button>
                             ))}
                         </div>
@@ -189,5 +183,5 @@ registerBlockType(metadata.name, {
     },
     save: () => {
         return null;
-    },
-});
+    }});
+

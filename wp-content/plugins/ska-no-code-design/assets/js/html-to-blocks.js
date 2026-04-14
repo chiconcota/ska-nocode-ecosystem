@@ -31,7 +31,9 @@ window.ska.bridge = (function() {
         'LI': 'ska-builder/list-item',
         'BUTTON': 'ska-builder/button',
         'A': 'ska-builder/button',
-        'FORM': 'ska-builder/form',
+        'FORM': 'ska-builder/container',
+        'TEMPLATE': 'ska-builder/container',
+
         'INPUT': 'ska-builder/input',
         'SELECT': 'ska-builder/select',
         'TEXTAREA': 'ska-builder/input',
@@ -110,10 +112,27 @@ window.ska.bridge = (function() {
         if (tagName === 'SPAN' && (classes.includes('material-symbols-outlined') || classes.includes('material-icons-outlined'))) {
             blockName = wp.blocks.getBlockType('ska-builder/icon') ? 'ska-builder/icon' : blockName;
         }
+
+        // SMART ATTRIBUTE EXTRACTION
+        const htmlAttributes = [];
+        if (node.attributes) {
+            const standardMapped = ['class', ];
+            if (blockName === 'ska-builder/image') standardMapped.push('src', 'alt', 'data-alt');
+            if (blockName === 'ska-builder/input') standardMapped.push('name', 'id', 'placeholder', 'value', 'type', 'required', 'checked');
+            if (blockName === 'ska-builder/select') standardMapped.push('name', 'id', 'required', 'multiple');
+            if (blockName === 'ska-builder/button') standardMapped.push('href', 'target', 'type', 'data-popup-target');
+            
+            for (let i = 0; i < node.attributes.length; i++) {
+                const attr = node.attributes[i];
+                if (!standardMapped.includes(attr.name.toLowerCase())) {
+                    htmlAttributes.push({ key: attr.name, value: attr.value });
+                }
+            }
+        }
         
         const attributes = {
             tailwindClasses: classes,
-            customStyle: node.getAttribute('style') || '',
+            htmlAttributes: htmlAttributes,
         };
 
         // Specific block logic
@@ -144,7 +163,6 @@ window.ska.bridge = (function() {
                 attributes.content = (node.innerHTML || '').replace(/\s+/g, ' ').trim();
                 attributes.tagName = tagName.toLowerCase();
                 attributes.tailwindClasses = classes; // Ensure tailwind classes are explicitly passed
-                attributes.customStyle = node.getAttribute('style') || '';
             }
         }
 
@@ -188,10 +206,6 @@ window.ska.bridge = (function() {
                 }).join('\n');
             }
             node.innerHTML = '';
-        }
-
-        if (blockName === 'ska-builder/form') {
-            attributes.formId = node.getAttribute('id') || '';
         }
 
         if (blockName === 'ska-builder/button') {
@@ -271,7 +285,12 @@ window.ska.bridge = (function() {
         }
 
         // Recursive traversal for children
-        const innerBlocks = Array.from(node.childNodes)
+        let childNodesToTraverse = node.childNodes;
+        if (tagName === 'TEMPLATE' && node.content) {
+            childNodesToTraverse = node.content.childNodes;
+        }
+
+        const innerBlocks = Array.from(childNodesToTraverse)
             .map(child => transformNode(child))
             .filter(block => block !== null);
 
@@ -317,3 +336,4 @@ window.ska.bridge = (function() {
     };
 
 })();
+

@@ -468,6 +468,7 @@ class Tailwind_Compiler {
 		}
 
 		// 8. Transitions & Transforms
+		if ( $class === 'transform' ) return '/* transform placeholder */';
 		if ( preg_match( '/^transition(-[a-z]+)?$/', $class, $matches ) ) {
 			$type = $matches[1] ?? '-all';
 			return Tailwind_Config::$transition_map[ $type ] ?? null;

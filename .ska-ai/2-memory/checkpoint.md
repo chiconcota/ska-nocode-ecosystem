@@ -1,11 +1,10 @@
 # SYSTEM CHECKPOINT
-@last_update: 2026-04-13 | @milestone: Ska System Framework Dashboard
+@last_update: 2026-04-14 | @milestone: Ska Molecule & Alpine.js Integration
 
 ## Trạng Thái Hệ Thống (System State)
-- Đã hoàn tất móc nối Frontend và Backend cho trang `?page=ska-system-dashboard`.
-- Plugin Mẹ `ska-no-code-home` đã bị xóa bỏ hoàn toàn.
-- Kiến trúc Shared Drop-in Framework (Load Balancer) đang vận hành trơn tru trong `ska-no-code-design/inc/ska-system-framework`.
-- **Ska Dev Mode** hoạt động thành công, ẩn Red Badges khỏi Frontend khách thường.
+- Đã hoàn tất sửa lỗi nhảy trang (Jump up) của AlpineJS bằng cách tích hợp modifier `@click.prevent`.
+- Đã sửa lỗi thiếu class `transform` trong Tailwind JIT Compiler, giúp khôi phục các hiệu ứng `scale`, `rotate` mượt mà khi kết hợp cùng `x-transition`.
+- Các nút bấm Ska Atoms giờ đã tương thích toàn diện với AlpineJS thông qua hệ thống cấu hình Thuộc tính mảng Key-Value.
 
 ## Trọng Tâm Phiên Tiếp Theo (Next Session Target)
 - Chuyển sang Phase: **Quản lý Custom Block/Symbols**.

@@ -131,8 +131,7 @@ registerBlockType(metadata.name, {
             isMultiple,
             displayStyle,
             tailwindClasses = '',
-            className = '',
-            customStyle
+            className = ''
         } = attributes;
 
         const { useEffect } = wp.element;
@@ -164,9 +163,7 @@ registerBlockType(metadata.name, {
         const fullClasses = (tailwindClasses + ' ' + className).trim();
 
         const blockProps = useBlockProps({
-            className: `ska-select-block wp-block-ska-builder-select base-transition ${fullClasses}`.trim(),
-            style: parseStyle(customStyle)
-        });
+            className: `ska-select-block wp-block-ska-builder-select base-transition ${fullClasses}`.trim()});
 
         const optionsList = optionsText.split('\n').filter(line => line.trim() !== '').map(line => {
             const parts = line.split(':');
@@ -220,8 +217,6 @@ registerBlockType(metadata.name, {
                     <TailwindPanel
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
-                        customStyle={customStyle}
-                        setCustomStyle={(val) => setAttributes({ customStyle: val })}
                     />
                 </InspectorControls>
 
@@ -249,5 +244,5 @@ registerBlockType(metadata.name, {
     },
     save: () => {
         return null;
-    },
-});
+    }});
+

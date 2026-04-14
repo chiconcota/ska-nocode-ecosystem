@@ -19,8 +19,7 @@ registerBlockType(metadata.name, {
             tailwindClasses = '', 
             className = '',
             dynamic = { source: 'text', key: '' }, 
-            logic = { enabled: false, key: '', operator: '==', value: '' }, 
-            customStyle 
+            logic = { enabled: false, key: '', operator: '==', value: '' } 
         } = attributes;
 
         const { useEffect } = wp.element;
@@ -34,27 +33,8 @@ registerBlockType(metadata.name, {
             }
         }, []);
 
-        // Helper to parse inline style string to React object
-        const parseStyle = (styleString) => {
-            if (!styleString) return {};
-            return styleString.split(';').reduce((acc, style) => {
-                const parts = style.split(/:(.+)/);
-                if (parts.length >= 2) {
-                    const prop = parts[0].trim();
-                    const value = parts[1].trim();
-                    if (prop && value) {
-                        const camelProp = prop.replace(/-([a-z])/g, g => g[1].toUpperCase());
-                        acc[camelProp] = value;
-                    }
-                }
-                return acc;
-            }, {});
-        };
-
         const blockProps = useBlockProps({
-            className: `ska-text-block wp-block-ska-builder-text ${tailwindClasses}`.trim(),
-            style: parseStyle(customStyle)
-        });
+            className: `ska-text-block wp-block-ska-builder-text ${tailwindClasses}`.trim()});
 
         // Helper to update nested attributes
         const updateDynamic = (key, val) => {
@@ -90,8 +70,6 @@ registerBlockType(metadata.name, {
                     <TailwindPanel
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
-                        customStyle={customStyle}
-                        setCustomStyle={(val) => setAttributes({ customStyle: val })}
                     />
 
                     </InspectorControls>
@@ -115,5 +93,4 @@ registerBlockType(metadata.name, {
     },
     save: () => {
         return null; // Dynamic block
-    },
-});
+    }});
