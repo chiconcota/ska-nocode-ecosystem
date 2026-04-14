@@ -1,15 +1,14 @@
 # SYSTEM CHECKPOINT
-@last_update: 2026-04-14 | @milestone: Ska Molecule & Alpine.js Integration
+@last_update: 2026-04-14 | @milestone: Ska Molecule & Alpine.js Integration (Pivot)
 
 ## Trạng Thái Hệ Thống (System State)
 - Đã hoàn tất sửa lỗi nhảy trang (Jump up) của AlpineJS bằng cách tích hợp modifier `@click.prevent`.
-- Đã sửa lỗi thiếu class `transform` trong Tailwind JIT Compiler, giúp khôi phục các hiệu ứng `scale`, `rotate` mượt mà khi kết hợp cùng `x-transition`.
-- Các nút bấm Ska Atoms giờ đã tương thích toàn diện với AlpineJS thông qua hệ thống cấu hình Thuộc tính mảng Key-Value.
+- JIT Compiler đã hỗ trợ class `transform` và HTML attributes (Alpine), phục vụ thiết kế các UI phức tạp (Tabs/Modals).
+- **Trạng thái Pivot:** Gỡ bỏ định vị Nocode user phải tự cấu hình sự kiện `submitForm` qua Alpine JS vì quá mức phức tạp.
 
 ## Trọng Tâm Phiên Tiếp Theo (Next Session Target)
-- Chuyển sang Phase: **Quản lý Custom Block/Symbols**.
-- Xem lộ trình tại `.ska-ai/1-overview/project-managers/project_manager_custom_blocks.md`.
-- Vấn đề lõi cần giải quyết ở phiên sau: Thiết kế bảng Flat Table cho kho Symbols và mở API lưu từ trình soạn thảo Gutenberg xuống Database tĩnh mà không qua CPT `wp_block`.
+- **Ưu tiên 1:** Xây dựng **Ska Form Builder Cải Tiến**. Áp dụng một cơ chế tự động hóa mới để hứng sự kiện Submit form, tự quét input `name` và tự gọi Ajax về Engine Server. (Ẩn logic fetch API khỏi mắt người dùng).
+- **Ưu tiên 2 (Tương lai):** Khi Form Builder được thử nghiệm ổn định, tiến vào Phase: **Quản lý Custom Block/Symbols**.
 
 ## Lưu ý Bug/Refactor (Nếu có)
-- (None) Mã nguồn sạch. Cần cẩn trọng khi đăng ký Block React mới `<Ska_Symbol_Block>`.
+- (None) Mã nguồn sẽ được refactor tập trung ở `ska-core-builder/src/` để tái cấu trúc form hành xử theo chuẩn mới.

@@ -99,16 +99,18 @@ class Ska_Logic_Core {
 
     public function enqueue_frontend_scripts() {
         wp_enqueue_script(
-            'ska-logic-frontend',
-            SKA_LOGIC_ENGINE_URL . 'assets/js/ska-logic-frontend.js',
+            'ska-core-js',
+            SKA_LOGIC_ENGINE_URL . 'assets/js/ska-core.js',
             [],
             SKA_LOGIC_ENGINE_VERSION,
             true
         );
 
-        // Trao quyền Bản đồ Đường Đi (Route API) cho Javascript
-        wp_localize_script('ska-logic-frontend', 'skaLogicEnv', [
-            'rest_url' => esc_url_raw( rest_url( 'ska-logic/v1/submit' ) )
+        // Trao quyền Bản đồ Đường Đi (Route API) & Thông tin cho thư viện $ska
+        wp_localize_script('ska-core-js', 'skaAppEnv', [
+            'ajaxUrl'  => esc_url_raw( admin_url( 'admin-ajax.php' ) ),
+            'restUrl'  => esc_url_raw( rest_url( 'ska-logic/v1/submit' ) ),
+            'nonce'    => wp_create_nonce('wp_rest') // BẮT BUỘC dùng 'wp_rest' cho WP REST API Header
         ]);
     }
 

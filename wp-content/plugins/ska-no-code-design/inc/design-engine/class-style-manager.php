@@ -88,6 +88,11 @@ class Style_Manager {
                             }
                         }
                     }
+
+                    // Auto-inject Alpine.js default transition classes if x-transition is found in content
+                    if ( $key === 'content' && strpos( $value, 'x-transition' ) !== false ) {
+                        $classes = array_merge( $classes, array( 'transition', 'ease-out', 'duration-100', 'opacity-0', 'scale-90', 'opacity-100', 'scale-100', 'ease-in', 'duration-75' ) );
+                    }
                 }
             }
 
@@ -117,6 +122,11 @@ class Style_Manager {
 								$classes[] = $val;
 							}
 						}
+					}
+					
+					// Auto-inject Alpine.js default transition classes if x-transition is used without specific tailwind classes
+					if ( isset( $attr['key'] ) && strpos( $attr['key'], 'x-transition' ) !== false ) {
+						$classes = array_merge( $classes, array( 'transition', 'ease-out', 'duration-100', 'opacity-0', 'scale-90', 'opacity-100', 'scale-100', 'ease-in', 'duration-75' ) );
 					}
 				}
 			}

@@ -39,6 +39,23 @@ class Ska_Form_Receiver {
         // Truyền Hook vào ko trung, ai hứng thì tính (Ở đây Logic Core đã đăng ký add_filter đón lõng r)
         $completed_payload = apply_filters( 'ska_logic_run_pipeline', $clean_data, $form_id );
 
+        // 2.1 CẢNH BÁO BẢO MẬT/DEV MODE: Check xem Workflow có tồn tại thật không? Tránh fake success
+        $workflows = get_option('ska_logic_simple_workflows', []);
+        if ( ! isset( $workflows[$form_id] ) ) {
+            return rest_ensure_response([
+                'success' => false,
+                'message' => "Sai Mật Mã: Không tìm thấy Logic id '{$form_id}'. Vui lòng check thuộc tính data-ska-action= trên chữ HTML."
+            ]);
+        }
+
+        // 2.2 CHECK DỮ LIỆU ĐỔ VỠ TỪ NODE DATA ACTION (Bên Ska Data chối từ nhận Data)
+        if ( isset( $completed_payload['_latest_insert'] ) && $completed_payload['_latest_insert']['result'] === false ) {
+            return rest_ensure_response([
+                'success' => false,
+                'message' => "Lỗi Chặn Ở Kho: Mapping Cột sai hoặc Dữ liệu rỗng, Bảng {$completed_payload['_latest_insert']['table_name']} từ chối tiếp nhận!"
+            ]);
+        }
+
         // 3. Phun Phản Hồi Về Cho Thẻ <Form> Ở Lớp Vỏ Giao Diện
         return rest_ensure_response([
             'success' => true,

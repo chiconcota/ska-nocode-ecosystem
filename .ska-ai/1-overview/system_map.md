@@ -52,11 +52,10 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
-- **2026-04-14 - 🟢 Roadmap Expansion: Ska Molecule & Alpine.js:**
-  - Hợp nhất Container/Form/Alpine thành **Ska Universal Container** với khả năng đổi thẻ Semantic (div/form/section).
-  - Khởi tạo hệ thống **Ska HTML Attributes (Key-Value Panel)** áp dụng toàn tuyến cho mọi Atomic Blocks, mở khóa siêu năng lực nhúng **Alpine.js** (x-data, x-show, x-bind) để xử lý logic Frontend gọn nhẹ mà không làm phình Gutenberg Editor.
-  - Cập nhật Lộ trình 8-bước: Bổ sung bước "Ska Molecule & Alpine Integration" trước Custom Block/Symbols.
-  - **Tailwind Compiler For HTML Attributes & JIT Animation Fix:** Cập nhật Backend Compiler hỗ trợ đầy đủ chu trình nhúng Thuộc tính HTML, tự động dịch các class ẩn giấu, tích cực vá lỗi cho các hiệu ứng `transform` (Scale, Rotate) và trang bị `prevent default` modifier cho Event click để gỡ rối UX nhảy trang cực độ. Giai đoạn AlpineJS hoàn tất.
+- **2026-04-14 - 🟢 Pivot: Ska Form Builder Cải Tiến (Hủy Code Injection):**
+  - **Hợp nhất Ska Universal Container** khả năng đổi thẻ Semantic (div/form/section) và hệ thống **Ska HTML Attributes (Key-Value Panel)** được bảo lưu.
+  - **Từ bỏ Code Injection:** Hủy định hướng nhúng mã Javascript (fetch API) vào Alpine `x-on:click` thông qua Inspector vì quá rối rắm và vi phạm nguyên lý Nocode. Các tính năng Alpine (như hiệu ứng Transition) chỉ dùng phục vụ UI (Tabs/Modal) thay vì gánh vác vòng lặp Data.
+  - **Trọng tâm tiếp theo:** Quay trở lại phát triển **Ska Form Builder Cải Tiến**. Tự động hóa quá trình hứng sự kiện form submit và thu thập payload dữ liệu bằng Javascript nội bộ ẩn đi, gửi lên cho Logic Engine giải quyết mà không đòi hỏi người dùng viết mã logic fetch.
 
 - **2026-04-13 - 🟢 Done - Ska System Framework Dashboard & Dev Mode:**
   - Hoàn tất giao diện quản trị trung tâm của hệ sinh thái Ska thông qua mô hình Shared Drop-in. Tích hợp thanh điều hướng tab, Fallback báo lỗi nếu thiếu module (Plugin Dependency).
