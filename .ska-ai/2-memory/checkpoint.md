@@ -1,14 +1,14 @@
 # SYSTEM CHECKPOINT
-@last_update: 2026-04-14 | @milestone: Ska Molecule & Alpine.js Integration (Pivot)
+@last_update: 2026-04-15 | @milestone: Ska Form Builder & Logic Engine Integration Fix
 
 ## Trạng Thái Hệ Thống (System State)
-- Đã hoàn tất sửa lỗi nhảy trang (Jump up) của AlpineJS bằng cách tích hợp modifier `@click.prevent`.
-- JIT Compiler đã hỗ trợ class `transform` và HTML attributes (Alpine), phục vụ thiết kế các UI phức tạp (Tabs/Modals).
-- **Trạng thái Pivot:** Gỡ bỏ định vị Nocode user phải tự cấu hình sự kiện `submitForm` qua Alpine JS vì quá mức phức tạp.
+- Phân tích lỗi gửi Form Multi Select (đẩy mảng `[]`) lên API làm 500 error.
+- Phát hiện biến `$form_id` trong `Ska_Form_Receiver` (ska-logic-engine) bị gửi lên dạng mảng gây PHP Backend TypeError. Đã dùng kỹ thuật defensive code (`reset()`) để ép về String bảo vệ luồng API Receiver.
+- Lỗi dữ liệu chưa thể tạo Record vẫn còn khi End-user test ở Frontend. Format Node `array_to_string` đã được định tuyến nhưng Insert Data Node vẫn dội ngược.
 
 ## Trọng Tâm Phiên Tiếp Theo (Next Session Target)
-- **Ưu tiên 1:** Xây dựng **Ska Form Builder Cải Tiến**. Áp dụng một cơ chế tự động hóa mới để hứng sự kiện Submit form, tự quét input `name` và tự gọi Ajax về Engine Server. (Ẩn logic fetch API khỏi mắt người dùng).
-- **Ưu tiên 2 (Tương lai):** Khi Form Builder được thử nghiệm ổn định, tiến vào Phase: **Quản lý Custom Block/Symbols**.
+- **Ưu tiên 1:** Mở Network Inspector và Log error để theo dấu bug: Vì sao Pipeline lại bỏ qua giá trị array_to_string chuẩn bị chèn vào Ska Data Flat?
+- **Ưu tiên 2:** Rà soát lại logic Extract Array của Component `ska-select` tại Frontend JS xem có bị ghi đè payload làm hỏng luồng không.
 
 ## Lưu ý Bug/Refactor (Nếu có)
-- (None) Mã nguồn sẽ được refactor tập trung ở `ska-core-builder/src/` để tái cấu trúc form hành xử theo chuẩn mới.
+- (None) Lỗi thiếu class Asset như `Ska\Builder\Utils\Assets` trong error.log wp-content báo đỏ, cần lưu tâm để fix song song.

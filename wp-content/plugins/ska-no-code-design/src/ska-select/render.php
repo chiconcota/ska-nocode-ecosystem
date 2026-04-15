@@ -50,25 +50,37 @@ foreach ($lines as $line) {
     $value = isset($parts[1]) ? trim($parts[1]) : $label;
     $optionsList[] = ['label' => $label, 'value' => $value];
 }
+// === AUTO-INJECT x-model cho Alpine skaForm ===
+$alpine_bind = sprintf(' x-model="fields.%s"', esc_attr($fieldName));
+$alpine_validation = '';
+if ($isRequired) {
+    $alpine_validation = sprintf(' @change="validate(\'%s\')"', esc_attr($fieldName));
+}
+$error_display = sprintf(
+    '<span x-show="errors.%1$s" x-text="errors.%1$s" class="ska-form-error" style="color:#ef4444;font-size:0.75rem;display:block;margin-top:0.25rem;"></span>',
+    esc_attr($fieldName)
+);
 ?>
 <?php if ($displayStyle === 'dropdown'): ?>
-<select <?php echo $wrapper_attributes; ?>>
-    <?php foreach ($optionsList as $opt): ?>
-        <option value="<?php echo esc_attr($opt['value']); ?>">
-            <?php echo esc_html($opt['label']); ?>
-        </option>
-    <?php endforeach; ?>
-</select>
+    <select <?php echo $wrapper_attributes . $alpine_bind . $alpine_validation; ?>>
+        <?php foreach ($optionsList as $opt): ?>
+            <option value="<?php echo esc_attr($opt['value']); ?>">
+                <?php echo esc_html($opt['label']); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
 <?php else: ?>
-<div <?php echo $wrapper_attributes; ?>>
-    <?php 
-    $inputType = ($displayStyle === 'radio') ? 'radio' : 'checkbox';
-    foreach ($optionsList as $opt): 
-    ?>
-    <label class="ska-choice-item flex items-center gap-2 cursor-pointer">
-        <input type="<?php echo $inputType; ?>" name="<?php echo esc_attr($outputName); ?>" value="<?php echo esc_attr($opt['value']); ?>" <?php echo $isRequired ? 'required' : ''; ?> />
-        <span><?php echo esc_html($opt['label']); ?></span>
-    </label>
-    <?php endforeach; ?>
-</div>
+    <div <?php echo $wrapper_attributes; ?>>
+        <?php
+        $inputType = ($displayStyle === 'radio') ? 'radio' : 'checkbox';
+        foreach ($optionsList as $opt):
+            ?>
+            <label class="ska-choice-item flex items-center gap-2 cursor-pointer">
+                <input type="<?php echo $inputType; ?>" name="<?php echo esc_attr($outputName); ?>"
+                    value="<?php echo esc_attr($opt['value']); ?>" <?php echo $isRequired ? 'required' : ''; ?>         <?php echo $alpine_bind . $alpine_validation; ?> />
+                <span><?php echo esc_html($opt['label']); ?></span>
+            </label>
+        <?php endforeach; ?>
+    </div>
 <?php endif; ?>
+<?php echo $error_display; ?>

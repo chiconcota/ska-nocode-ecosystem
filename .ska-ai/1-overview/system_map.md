@@ -52,6 +52,10 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-15 - 🟡 Bugfix Partial: Logic Engine API Receiver & Multi-Select array handling**:
+  - Sửa lỗi Fatal Error PHP ở API Pipeline `class-form-receiver.php` ngăn chặn thất thoát dữ liệu do truyền sai JS Array payload `$form_id`.
+  - Tích hợp Middleware Format `array_to_string` để xử lý mảng từ các Option/Checkbox Nocode qua Flat Tables (Nhưng lỗi Submit vẫn còn trong chuỗi Workflow thực tế, chờ Fix phiên tới).
+
 - **2026-04-14 - 🟢 Pivot: Ska Form Builder Cải Tiến (Hủy Code Injection):**
   - **Hợp nhất Ska Universal Container** khả năng đổi thẻ Semantic (div/form/section) và hệ thống **Ska HTML Attributes (Key-Value Panel)** được bảo lưu.
   - **Từ bỏ Code Injection:** Hủy định hướng nhúng mã Javascript (fetch API) vào Alpine `x-on:click` thông qua Inspector vì quá rối rắm và vi phạm nguyên lý Nocode. Các tính năng Alpine (như hiệu ứng Transition) chỉ dùng phục vụ UI (Tabs/Modal) thay vì gánh vác vòng lặp Data.

@@ -84,6 +84,33 @@ add_action( 'wp_enqueue_scripts', 'ska_builder_core_register_alpine' );
 add_action( 'admin_enqueue_scripts', 'ska_builder_core_register_alpine' );
 
 /**
+ * Register Ska Frontend Engine (Alpine Controller cho Form).
+ * QUAN TRỌNG: Script này load TRƯỚC Alpine.js (không có dependency).
+ * Lý do: Alpine tự auto-start khi load. Nếu ska-frontend load SAU Alpine,
+ * thì alpine:init event đã bắn xong → skaForm không được đăng ký.
+ * Thứ tự: ska-frontend.js → alpine.min.js → Alpine phát alpine:init → skaForm đăng ký.
+ */
+function ska_builder_core_register_frontend_engine() {
+    wp_register_script(
+        'ska-frontend',
+        SKA_DESIGN_URL . 'assets/js/ska-frontend.js',
+        array(),
+        '1.0.1',
+        true
+    );
+
+    // Truyền biến môi trường cho JS (REST URL)
+    wp_localize_script( 'ska-frontend', 'skaEnv', array(
+        'restUrl' => esc_url_raw( rest_url() ),
+    ) );
+
+    // Đảm bảo Alpine load SAU ska-frontend
+    // Bằng cách set ska-frontend là dependency của ska-alpine
+    // → Khi enqueue ska-alpine, nó sẽ kéo ska-frontend vào trước
+}
+add_action( 'wp_enqueue_scripts', 'ska_builder_core_register_frontend_engine' );
+
+/**
  * Render HTML Attributes & Alpine.js logic dynamically via PHP filter.
  * The zero-overhead Engine: only loads Alpine when x- attributes are used.
  */

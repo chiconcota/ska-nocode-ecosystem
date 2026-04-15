@@ -3,7 +3,7 @@
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { InnerBlocks, InspectorControls, useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
-import { PanelBody, SelectControl, ToggleControl } from '@wordpress/components';
+import { PanelBody, SelectControl, ToggleControl, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import metadata from './block.json';
@@ -13,7 +13,7 @@ import { splitTailwindClasses } from '../utils/tailwind-utils.js';
 registerBlockType(metadata.name, {
     edit: (props) => {
         const { attributes, setAttributes } = props;
-        const { tagName = 'div', tailwindClasses = '', className = '', logic = { enabled: false, key: '', operator: '==', value: '' } } = attributes;
+        const { tagName = 'div', tailwindClasses = '', className = '', logic = { enabled: false, key: '', operator: '==', value: '' }, isSkaForm = false, formActionId = '', usePersist = false } = attributes;
 
         const { useEffect } = wp.element;
         useEffect(() => {
@@ -136,6 +136,34 @@ registerBlockType(metadata.name, {
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
                     />
+
+
+                    {tagName === 'form' && (
+                        <PanelBody title={__('⚡ Ska Form Engine', 'ska-builder-core')} initialOpen={true}>
+                            <ToggleControl
+                                label={__('Kích hoạt Form Engine', 'ska-builder-core')}
+                                checked={isSkaForm}
+                                onChange={(val) => setAttributes({ isSkaForm: val })}
+                                help="Bật để tự động xử lý Submit, Validation, Loading State."
+                            />
+                            {isSkaForm && (
+                                <>
+                                    <TextControl
+                                        label={__('Logic Action ID', 'ska-builder-core')}
+                                        value={formActionId}
+                                        onChange={(val) => setAttributes({ formActionId: val })}
+                                        help="ID của Workflow trong Ska Logic Engine (VD: contact_form)."
+                                    />
+                                    <ToggleControl
+                                        label={__('Lưu nháp (Auto-Save)', 'ska-builder-core')}
+                                        checked={usePersist}
+                                        onChange={(val) => setAttributes({ usePersist: val })}
+                                        help="Lưu dữ liệu đang điền vào LocalStorage, tránh mất khi F5."
+                                    />
+                                </>
+                            )}
+                        </PanelBody>
+                    )}
 
                     </InspectorControls>
 

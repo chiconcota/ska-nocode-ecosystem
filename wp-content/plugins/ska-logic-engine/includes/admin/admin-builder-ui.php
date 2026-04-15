@@ -1,15 +1,15 @@
 <?php
-defined( 'ABSPATH' ) || exit;
+defined('ABSPATH') || exit;
 
 // Lấy danh sách bảng từ Ska Data Pro
 $data_dictionary = get_option('ska_data_dictionary', []);
 $ska_apps = get_option('ska_data_apps', []);
 $available_tables = [];
-foreach($data_dictionary as $table_name => $meta) {
+foreach ($data_dictionary as $table_name => $meta) {
     if (isset($meta['__table_info'])) {
         $app_group = 'Ska Smart Object Table';
         $app_id = isset($meta['__table_info']['app_id']) ? $meta['__table_info']['app_id'] : '';
-        
+
         if ($app_id && $app_id !== 'uncategorized') {
             if (isset($ska_apps[$app_id])) {
                 $app_group = 'APP: ' . mb_strtoupper($ska_apps[$app_id]['name'], 'UTF-8');
@@ -19,7 +19,7 @@ foreach($data_dictionary as $table_name => $meta) {
         } elseif (preg_match('/ska_data_app_([^_]+)_/', $table_name, $m)) {
             $app_group = 'APP: ' . strtoupper($m[1]);
         }
-        
+
         $available_tables[] = [
             'id' => $table_name,
             'name' => $meta['__table_info']['name'],
@@ -36,17 +36,21 @@ $available_nodes = [
         'type' => 'processor',
         'color' => '#f59e0b',
         'fields' => [
-            ['key' => 'source_key', 'label' => 'Biến Đầu Vào (Nguồn)', 'placeholder' => 'vd: tieu_de_bai_viet'],
-            ['key' => 'action', 'label' => 'Phép Biến Đổi Data', 'type' => 'select', 'options' => [
-                ['id' => 'to_slug', 'name' => 'Biến thành Slug URL an toàn'],
-                ['id' => 'to_date_ymd', 'name' => 'Mã hóa lịch chuẩn System (Y-m-d)'],
-                ['id' => 'to_date_dmY', 'name' => 'Mã hóa lịch Ngoại Giao (d/m/Y)'],
-                ['id' => 'trim', 'name' => 'Rửa khoảng trắng 2 đầu'],
-                ['id' => 'uppercase', 'name' => 'VIẾT HOA IN ĐẬM'],
-                ['id' => 'lowercase', 'name' => 'thu mình bé nhỏ (viết thường)'],
-                ['id' => 'copy', 'name' => 'Nhân Bản nguyên vẹn (Copy)']
-            ]],
-            ['key' => 'target_key', 'label' => 'Đổi Tên Thành Biến Mới (Tùy chọn)', 'placeholder' => 'Nếu bỏ trống, hệ thống sẽ tự diệt biến Nguồn và lấy biến Mới']
+            [
+                'key' => 'formats',
+                'label' => 'Quy tắc Chuẩn hóa',
+                'type' => 'multi_format',
+                'options' => [
+                    ['id' => 'to_slug', 'name' => 'Biến thành Slug URL an toàn'],
+                    ['id' => 'to_date_ymd', 'name' => 'Mã hóa lịch chuẩn System (Y-m-d)'],
+                    ['id' => 'to_date_dmY', 'name' => 'Mã hóa lịch Ngoại Giao (d/m/Y)'],
+                    ['id' => 'trim', 'name' => 'Rửa khoảng trắng 2 đầu'],
+                    ['id' => 'uppercase', 'name' => 'VIẾT HOA IN ĐẬM'],
+                    ['id' => 'lowercase', 'name' => 'thu mình bé nhỏ (viết thường)'],
+                    ['id' => 'array_to_string', 'name' => 'Nối mảng thành chuỗi văn bản'],
+                    ['id' => 'copy', 'name' => 'Nhân Bản nguyên vẹn (Copy)']
+                ]
+            ]
         ]
     ],
     [
@@ -95,47 +99,156 @@ $saved_graph = empty($current_wf['graph']) ? '[]' : wp_json_encode($current_wf['
 ?>
 
 <style>
-.ska-linear-card {
-    background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    position: relative;
-}
-.ska-linear-card::after {
-    content: ''; position: absolute; bottom: -25px; left: 50%; width: 2px; height: 24px; background: #cbd5e1;
-    margin-left: -1px; z-index: 1;
-}
-.ska-linear-card:last-child::after { display: none; }
-.ska-linear-card .card-header {
-    background: #f8fafc; padding: 12px 16px; border-bottom: 1px solid #e5e7eb; border-radius: 8px 8px 0 0;
-    display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 14px;
-}
-.ska-linear-card .card-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-.ska-field-group { display: flex; flex-direction: column; gap: 6px; }
-.ska-field-group label { font-size: 12px; font-weight: 600; color: #4b5563; }
-.ska-field-group input, .ska-field-group select { width: 100%; border-radius: 4px; border: 1px solid #d1d5db; padding: 6px 12px; }
-.ska-remove-node { color: #ef4444; cursor: pointer; display: flex; align-items: center; border:none; background:none; font-size:12px; }
-.ska-remove-node:hover { text-decoration: underline; }
+    .ska-linear-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        position: relative;
+    }
 
-.ska-add-btn { background: #fff; border: 2px dashed #94a3b8; color: #475569; padding: 12px; border-radius: 8px; cursor: pointer; text-align: center; display: block; width: 100%; font-weight: bold; transition: all 0.2s; }
-.ska-add-btn:hover { background: #f1f5f9; border-color: #64748b; }
-.ska-node-menu { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-top: 10px; display: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-.ska-node-menu.active { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.ska-node-item { border: 1px solid #e2e8f0; padding: 10px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: 0.1s; display: flex; align-items: center; gap: 8px;}
-.ska-node-item:hover { border-color: #3b82f6; background: #eff6ff; }
+    .ska-linear-card::after {
+        content: '';
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        width: 2px;
+        height: 24px;
+        background: #cbd5e1;
+        margin-left: -1px;
+        z-index: 1;
+    }
+
+    .ska-linear-card:last-child::after {
+        display: none;
+    }
+
+    .ska-linear-card .card-header {
+        background: #f8fafc;
+        padding: 12px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        border-radius: 8px 8px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .ska-linear-card .card-body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .ska-field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .ska-field-group label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #4b5563;
+    }
+
+    .ska-field-group input,
+    .ska-field-group select {
+        width: 100%;
+        border-radius: 4px;
+        border: 1px solid #d1d5db;
+        padding: 6px 12px;
+    }
+
+    .ska-remove-node {
+        color: #ef4444;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        border: none;
+        background: none;
+        font-size: 12px;
+    }
+
+    .ska-remove-node:hover {
+        text-decoration: underline;
+    }
+
+    .ska-add-btn {
+        background: #fff;
+        border: 2px dashed #94a3b8;
+        color: #475569;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: center;
+        display: block;
+        width: 100%;
+        font-weight: bold;
+        transition: all 0.2s;
+    }
+
+    .ska-add-btn:hover {
+        background: #f1f5f9;
+        border-color: #64748b;
+    }
+
+    .ska-node-menu {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px;
+        margin-top: 10px;
+        display: none;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .ska-node-menu.active {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .ska-node-item {
+        border: 1px solid #e2e8f0;
+        padding: 10px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: 0.1s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .ska-node-item:hover {
+        border-color: #3b82f6;
+        background: #eff6ff;
+    }
 </style>
 
-<div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); max-width: 600px;">
-    <div style="display:flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6; padding-bottom: 12px; margin-bottom: 16px;">
+<div
+    style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); max-width: 600px;">
+    <div
+        style="display:flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6; padding-bottom: 12px; margin-bottom: 16px;">
         <div style="display:flex; align-items:center; gap:12px;">
-            <a href="?page=ska-logic-engine&view=list" class="button" style="text-decoration:none;"><span class="dashicons dashicons-arrow-left-alt2" style="margin-top:4px;"></span> Trở ra</a>
-            <h3 style="margin:0; font-size: 16px;"><span class="dashicons dashicons-networking text-gray-500"></span> Linear Workflow Builder <span style="color:#2563eb;">(ID: <?php echo esc_html($current_wf_id); ?>)</span></h3>
+            <a href="?page=ska-logic-engine&view=list" class="button" style="text-decoration:none;"><span
+                    class="dashicons dashicons-arrow-left-alt2" style="margin-top:4px;"></span> Trở ra</a>
+            <h3 style="margin:0; font-size: 16px;"><span class="dashicons dashicons-networking text-gray-500"></span>
+                Linear Workflow Builder <span style="color:#2563eb;">(ID:
+                    <?php echo esc_html($current_wf_id); ?>)</span></h3>
         </div>
     </div>
-    
+
     <form method="POST" id="skaWorkflowForm">
         <?php wp_nonce_field('ska_logic_nonce'); ?>
         <input type="hidden" name="ska_logic_save" value="1">
         <input type="hidden" name="ska_linear_graph" id="skaLinearGraphInput" value="">
-        
+
         <!-- MODULE ĐẦU VÀO LUÔN CỐ ĐỊNH Ở ĐỈNH -->
         <div class="ska-linear-card" style="border-color: #fca5a5;">
             <div class="card-header" style="background: #fef2f2; color: #b91c1c;">
@@ -144,8 +257,10 @@ $saved_graph = empty($current_wf['graph']) ? '[]' : wp_json_encode($current_wf['
             <div class="card-body">
                 <div class="ska-field-group">
                     <label>Form Action ID (Mã định danh duy nhất của Khối Form)</label>
-                    <input type="text" name="ska_form_id" value="<?php echo esc_attr($current_wf_id); ?>" required readonly style="background:#f8fafc; border-color:#cbd5e1; cursor:not-allowed; color:#475569;">
-                    <p style="margin:4px 0 0 0; font-size:11px; color:#64748b;">* Đây là mã chỉ đọc. Để Đổi Tên ID cho mạch này, hãy trở ra màn hình <b>Danh sách Băng Chuyền Logic</b>.</p>
+                    <input type="text" name="ska_form_id" value="<?php echo esc_attr($current_wf_id); ?>" required
+                        readonly style="background:#f8fafc; border-color:#cbd5e1; cursor:not-allowed; color:#475569;">
+                    <p style="margin:4px 0 0 0; font-size:11px; color:#64748b;">* Đây là mã chỉ đọc. Để Đổi Tên ID cho
+                        mạch này, hãy trở ra màn hình <b>Danh sách Băng Chuyền Logic</b>.</p>
                 </div>
             </div>
         </div>
@@ -155,70 +270,89 @@ $saved_graph = empty($current_wf['graph']) ? '[]' : wp_json_encode($current_wf['
 
         <!-- NÚT ADD NODE -->
         <div style="margin-top:25px;">
-            <button type="button" class="ska-add-btn" onclick="document.getElementById('skaNodeMenu').classList.toggle('active')">+ Thêm Bước Tiếp Theo</button>
+            <button type="button" class="ska-add-btn"
+                onclick="document.getElementById('skaNodeMenu').classList.toggle('active')">+ Thêm Bước Tiếp
+                Theo</button>
             <div id="skaNodeMenu" class="ska-node-menu">
-                <?php foreach($available_nodes as $n): ?>
-                    <div class="ska-node-item" onclick="addNode('<?php echo esc_js($n['class']); ?>')" style="border-left: 4px solid <?php echo $n['color']; ?>">
+                <?php foreach ($available_nodes as $n): ?>
+                    <div class="ska-node-item" onclick="addNode('<?php echo esc_js($n['class']); ?>')"
+                        style="border-left: 4px solid <?php echo $n['color']; ?>">
                         <?php echo esc_html($n['name']); ?>
                     </div>
                 <?php endforeach; ?>
             </div>
         </div>
 
-        <button type="submit" class="button button-primary" style="background:#10b981; border-color:#10b981; width: 100%; padding: 6px 0; font-size: 15px; margin-top: 30px; border-radius: 6px;">💾 Kích Hoạt Luồng Máy</button>
+        <button type="submit" class="button button-primary"
+            style="background:#10b981; border-color:#10b981; width: 100%; padding: 6px 0; font-size: 15px; margin-top: 30px; border-radius: 6px;">💾
+            Kích Hoạt Luồng Máy</button>
     </form>
 </div>
 
 <script>
-const DATA_NONCE = "<?php echo esc_js(wp_create_nonce('ska_data_nonce')); ?>";
-const AVAILABLE_TABLES = <?php echo wp_json_encode($available_tables); ?>;
-const AVAILABLE_NODES = <?php echo json_encode($available_nodes); ?>;
-let CURRENT_GRAPH = <?php echo $saved_graph; ?>;
+    const DATA_NONCE = "<?php echo esc_js(wp_create_nonce('ska_data_nonce')); ?>";
+    const AVAILABLE_TABLES = <?php echo wp_json_encode($available_tables); ?>;
+    const AVAILABLE_NODES = <?php echo json_encode($available_nodes); ?>;
+    let CURRENT_GRAPH = <?php echo $saved_graph; ?>;
 
-const nodeListEl = document.getElementById('skaNodeList');
-const graphInput = document.getElementById('skaLinearGraphInput');
+    const nodeListEl = document.getElementById('skaNodeList');
+    const graphInput = document.getElementById('skaLinearGraphInput');
 
-function renderNodes() {
-    nodeListEl.innerHTML = '';
-    
-    CURRENT_GRAPH.forEach((node, index) => {
-        // Tìm gốc Template của Node
-        const template = AVAILABLE_NODES.find(n => n.class === node.class);
-        if(!template) return;
+    function renderNodes() {
+        nodeListEl.innerHTML = '';
 
-        let fieldsHtml = '';
-        if(template.fields) {
-            template.fields.forEach(f => {
-                const val = node.config[f.key] || '';
-                
-                if (f.type === 'select') {
-                    let opts = `<option value="">-- Chọn --</option>`;
-                    f.options.forEach(o => {
-                        const sel = (o.id === val) ? 'selected' : '';
-                        opts += `<option value="${o.id}" ${sel}>${o.name} (${o.id})</option>`;
-                    });
-                    
-                    fieldsHtml += `
+        CURRENT_GRAPH.forEach((node, index) => {
+            // Tìm gốc Template của Node
+            const template = AVAILABLE_NODES.find(n => n.class === node.class);
+            if (!template) return;
+
+            let fieldsHtml = '';
+            if (template.fields) {
+                template.fields.forEach(f => {
+                    const val = node.config[f.key] || '';
+
+                    if (f.type === 'select') {
+                        let opts = `<option value="">-- Chọn --</option>`;
+                        f.options.forEach(o => {
+                            const sel = (o.id === val) ? 'selected' : '';
+                            opts += `<option value="${o.id}" ${sel}>${o.name} (${o.id})</option>`;
+                        });
+
+                        fieldsHtml += `
                     <div class="ska-field-group">
                         <label>${f.label}</label>
                         <select onchange="updateConfig(${index}, '${f.key}', this.value)">${opts}</select>
                     </div>`;
-                } else if (f.type === 'datalist') {
-                    // Datalist cho phép vừa gõ vừa chọn
-                    let listId = 'datalist_' + index + '_' + f.key;
-                    let opts = `<option value="wp_posts">Core: Bài Viết (wp_posts)</option>`;
-                    opts += `<option value="wp_users">Core: Thành Viên (wp_users)</option>`;
-                    if(f.options){
-                        f.options.forEach(o => { opts += `<option value="${o.id}">${o.name} (${o.id})</option>`; });
-                    }
-                    fieldsHtml += `
+                    } else if (f.type === 'multi_format') {
+                        const rules = node.config[f.key] || [];
+                        const rulesId = `ska_format_rules_${index}`;
+
+                        fieldsHtml += `
+                    <div class="ska-field-group" style="background:#fffbeb; padding: 12px; border-radius: 6px; border: 1px solid #fcd34d; margin-top: 10px;">
+                        <div style="display:flex; justify-content: space-between; align-items:center;">
+                            <label style="margin:0; color:#b45309;"><span class="dashicons dashicons-editor-ul" style="font-size:14px;width:14px;height:14px;"></span> ${f.label}</label>
+                            <button type="button" class="button button-small" onclick="addFormatRule(${index}, '${f.key}')">+ Thêm quy tắc</button>
+                        </div>
+                        <div id="${rulesId}" style="margin-top:10px;">
+                            ${renderFormatRules(index, f.key, rules, f.options)}
+                        </div>
+                    </div>`;
+                    } else if (f.type === 'datalist') {
+                        // Datalist cho phép vừa gõ vừa chọn
+                        let listId = 'datalist_' + index + '_' + f.key;
+                        let opts = `<option value="wp_posts">Core: Bài Viết (wp_posts)</option>`;
+                        opts += `<option value="wp_users">Core: Thành Viên (wp_users)</option>`;
+                        if (f.options) {
+                            f.options.forEach(o => { opts += `<option value="${o.id}">${o.name} (${o.id})</option>`; });
+                        }
+                        fieldsHtml += `
                     <div class="ska-field-group">
                         <label>${f.label}</label>
                         <input type="text" list="${listId}" placeholder="${f.placeholder || ''}" value="${val}" onkeyup="updateConfig(${index}, '${f.key}', this.value)" onchange="updateConfig(${index}, '${f.key}', this.value)">
                         <datalist id="${listId}">${opts}</datalist>
                     </div>`;
-                } else if (f.type === 'db_picker') {
-                    fieldsHtml += `
+                    } else if (f.type === 'db_picker') {
+                        fieldsHtml += `
                     <div class="ska-field-group">
                         <label>${f.label}</label>
                         <div style="display:flex; gap:8px; align-items:center;">
@@ -226,12 +360,12 @@ function renderNodes() {
                             <button type="button" class="button" style="display:flex; align-items:center; gap:4px; height: 32px;" onclick="openDbPickerModal(${index}, '${f.key}')"><span class="dashicons dashicons-database" style="font-size:16px; width:16px; height:16px; margin-top:2px;"></span> Đổi Bảng</button>
                         </div>
                     </div>`;
-                } else if (f.type === 'mapping_db') {
-                    // MAPPING FIELD (Tự động tải Schema từ Ska Data Pro)
-                    const targetTable = node.config['table_name'] || '';
-                    const myId = `ska_map_node_${index}`;
-                    
-                    fieldsHtml += `
+                    } else if (f.type === 'mapping_db') {
+                        // MAPPING FIELD (Tự động tải Schema từ Ska Data Pro)
+                        const targetTable = node.config['table_name'] || '';
+                        const myId = `ska_map_node_${index}`;
+
+                        fieldsHtml += `
                     <div class="ska-field-group" style="background:#f1f5f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-top: 10px;">
                         <div style="display:flex; justify-content: space-between; align-items:center;">
                             <label style="margin:0;"><span class="dashicons dashicons-networking" style="font-size:14px;width:14px;height:14px;"></span> ${f.label}</label>
@@ -241,19 +375,19 @@ function renderNodes() {
                             ${renderMappingTable(index, f.key, node.config[f.key] || {})}
                         </div>
                     </div>`;
-                } else {
-                    fieldsHtml += `
+                    } else {
+                        fieldsHtml += `
                     <div class="ska-field-group">
                         <label>${f.label}</label>
                         <input type="text" placeholder="${f.placeholder || ''}" value="${val}" onkeyup="updateConfig(${index}, '${f.key}', this.value)" onchange="updateConfig(${index}, '${f.key}', this.value)">
                     </div>`;
-                }
-            });
-        }
+                    }
+                });
+            }
 
-        const card = document.createElement('div');
-        card.className = 'ska-linear-card';
-        card.innerHTML = `
+            const card = document.createElement('div');
+            card.className = 'ska-linear-card';
+            card.innerHTML = `
             <div class="card-header">
                 <div style="display:flex; align-items:center; gap:8px;">
                     <div style="display:flex; flex-direction:column; gap:2px;">
@@ -271,122 +405,122 @@ function renderNodes() {
                 </div>
             </div>
         `;
-        nodeListEl.appendChild(card);
-    });
+            nodeListEl.appendChild(card);
+        });
 
-    syncInput();
-}
+        syncInput();
+    }
 
-function addNode(classId) {
-    const template = AVAILABLE_NODES.find(n => n.class === classId);
-    if(!template) return;
+    function addNode(classId) {
+        const template = AVAILABLE_NODES.find(n => n.class === classId);
+        if (!template) return;
 
-    CURRENT_GRAPH.push({
-        type: template.type,
-        class: template.class,
-        config: {}
-    });
-    
-    document.getElementById('skaNodeMenu').classList.remove('active');
-    syncInput();
-    renderNodes();
-}
+        CURRENT_GRAPH.push({
+            type: template.type,
+            class: template.class,
+            config: {}
+        });
 
-function moveNode(idx, direction) {
-    const targetIdx = idx + direction;
-    if (targetIdx < 0 || targetIdx >= CURRENT_GRAPH.length) return;
-    
-    // Swap 2 vị trí
-    const temp = CURRENT_GRAPH[idx];
-    CURRENT_GRAPH[idx] = CURRENT_GRAPH[targetIdx];
-    CURRENT_GRAPH[targetIdx] = temp;
-    
-    syncInput();
-    renderNodes();
-}
-
-function removeNode(idx) {
-    if(confirm('Ông có chắc muốn chặt đứt nối dây này?')){
-        CURRENT_GRAPH.splice(idx, 1);
+        document.getElementById('skaNodeMenu').classList.remove('active');
+        syncInput();
         renderNodes();
     }
-}
 
-function updateConfig(idx, key, val) {
-    if(!CURRENT_GRAPH[idx].config) CURRENT_GRAPH[idx].config = {};
-    CURRENT_GRAPH[idx].config[key] = val;
-    syncInput();
-}
+    function moveNode(idx, direction) {
+        const targetIdx = idx + direction;
+        if (targetIdx < 0 || targetIdx >= CURRENT_GRAPH.length) return;
 
-function syncInput() {
-    graphInput.value = JSON.stringify(CURRENT_GRAPH);
-}
+        // Swap 2 vị trí
+        const temp = CURRENT_GRAPH[idx];
+        CURRENT_GRAPH[idx] = CURRENT_GRAPH[targetIdx];
+        CURRENT_GRAPH[targetIdx] = temp;
 
-function applyAndLoadNode(idx, btnElement) {
-    // Hiệu ứng UX: Đổi chữ nút tạm thời để báo cáo đã Lưu (Bản chất JS syncInput() đã lưu realtime mỗi khi gõ phím)
-    const originalText = btnElement.innerHTML;
-    btnElement.innerHTML = '✨ Đã Cập Nhật!';
-    btnElement.style.opacity = '0.7';
-    setTimeout(() => {
-        if(btnElement) {
-            btnElement.innerHTML = originalText;
-            btnElement.style.opacity = '1';
-        }
-    }, 1200);
-    
-    // Tự động rà soát xem Node này có Mapping DB không, nếu có thì auto-trigger Load Database.
-    const node = CURRENT_GRAPH[idx];
-    if (node && node.config) {
-        const template = AVAILABLE_NODES.find(n => n.class === node.class);
-        if (template && template.fields) {
-            template.fields.forEach(f => {
-                if (f.type === 'mapping_db' && node.config['table_name']) {
-                    const targetTable = node.config['table_name'];
-                    
-                    // Gọi AJAX tải lược đồ trực tiếp
-                    loadTableSchema(idx, f.key, targetTable);
-                    
-                    // Rà soát lại giao diện thẻ Header Của riêng Mapping_DB để đổi cảnh báo thành Nút Tải
-                    const headerArea = document.getElementById(`ska_map_node_${idx}`).previousElementSibling;
-                    if(headerArea) {
-                        headerArea.innerHTML = `<label style="margin:0;"><span class="dashicons dashicons-networking" style="font-size:14px;width:14px;height:14px;"></span> ${f.label}</label>
-                        <button type="button" class="button button-small" onclick="loadTableSchema(${idx}, '${f.key}', '${targetTable}')">Tải cấu trúc Database</button>`;
-                    }
-                }
-            });
+        syncInput();
+        renderNodes();
+    }
+
+    function removeNode(idx) {
+        if (confirm('Ông có chắc muốn chặt đứt nối dây này?')) {
+            CURRENT_GRAPH.splice(idx, 1);
+            renderNodes();
         }
     }
-}
 
-function loadTableSchema(idx, key, tableName) {
-    const box = document.getElementById(`ska_map_node_${idx}`);
-    box.innerHTML = '<em style="font-size:12px;">Đang tải cấu trúc rễ...</em>';
-    
-    // Gọi AJAX lôi Schema từ Data Pro
-    const fd = new FormData();
-    fd.append('action', 'ska_data_get_table_columns');
-    fd.append('security', DATA_NONCE); // Sử dụng mượn Nonce hợp lệ của Data Pro
-    fd.append('target_table', tableName);
-    
-    fetch(ajaxurl, { method: 'POST', body: fd })
-    .then(r => r.json())
-    .then(res => {
-        if (res.success) {
-            renderMappingTableWithSchema(idx, key, res.data.columns, box);
-        } else {
-            box.innerHTML = `<em style="color:red; font-size:12px;">Lỗi: ${res.data.message}</em>`;
+    function updateConfig(idx, key, val) {
+        if (!CURRENT_GRAPH[idx].config) CURRENT_GRAPH[idx].config = {};
+        CURRENT_GRAPH[idx].config[key] = val;
+        syncInput();
+    }
+
+    function syncInput() {
+        graphInput.value = JSON.stringify(CURRENT_GRAPH);
+    }
+
+    function applyAndLoadNode(idx, btnElement) {
+        // Hiệu ứng UX: Đổi chữ nút tạm thời để báo cáo đã Lưu (Bản chất JS syncInput() đã lưu realtime mỗi khi gõ phím)
+        const originalText = btnElement.innerHTML;
+        btnElement.innerHTML = '✨ Đã Cập Nhật!';
+        btnElement.style.opacity = '0.7';
+        setTimeout(() => {
+            if (btnElement) {
+                btnElement.innerHTML = originalText;
+                btnElement.style.opacity = '1';
+            }
+        }, 1200);
+
+        // Tự động rà soát xem Node này có Mapping DB không, nếu có thì auto-trigger Load Database.
+        const node = CURRENT_GRAPH[idx];
+        if (node && node.config) {
+            const template = AVAILABLE_NODES.find(n => n.class === node.class);
+            if (template && template.fields) {
+                template.fields.forEach(f => {
+                    if (f.type === 'mapping_db' && node.config['table_name']) {
+                        const targetTable = node.config['table_name'];
+
+                        // Gọi AJAX tải lược đồ trực tiếp
+                        loadTableSchema(idx, f.key, targetTable);
+
+                        // Rà soát lại giao diện thẻ Header Của riêng Mapping_DB để đổi cảnh báo thành Nút Tải
+                        const headerArea = document.getElementById(`ska_map_node_${idx}`).previousElementSibling;
+                        if (headerArea) {
+                            headerArea.innerHTML = `<label style="margin:0;"><span class="dashicons dashicons-networking" style="font-size:14px;width:14px;height:14px;"></span> ${f.label}</label>
+                        <button type="button" class="button button-small" onclick="loadTableSchema(${idx}, '${f.key}', '${targetTable}')">Tải cấu trúc Database</button>`;
+                        }
+                    }
+                });
+            }
         }
-    })
-    .catch(err => {
-        box.innerHTML = `<em style="color:red; font-size:12px;">Lỗi mạng! Kiểm tra kết nối WP.</em>`;
-    });
-}
+    }
 
-function renderMappingTableWithSchema(idx, key, columns, container) {
-    if(!CURRENT_GRAPH[idx].config[key]) CURRENT_GRAPH[idx].config[key] = {};
-    const mappings = CURRENT_GRAPH[idx].config[key];
-    
-    let html = `
+    function loadTableSchema(idx, key, tableName) {
+        const box = document.getElementById(`ska_map_node_${idx}`);
+        box.innerHTML = '<em style="font-size:12px;">Đang tải cấu trúc rễ...</em>';
+
+        // Gọi AJAX lôi Schema từ Data Pro
+        const fd = new FormData();
+        fd.append('action', 'ska_data_get_table_columns');
+        fd.append('security', DATA_NONCE); // Sử dụng mượn Nonce hợp lệ của Data Pro
+        fd.append('target_table', tableName);
+
+        fetch(ajaxurl, { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    renderMappingTableWithSchema(idx, key, res.data.columns, box);
+                } else {
+                    box.innerHTML = `<em style="color:red; font-size:12px;">Lỗi: ${res.data.message}</em>`;
+                }
+            })
+            .catch(err => {
+                box.innerHTML = `<em style="color:red; font-size:12px;">Lỗi mạng! Kiểm tra kết nối WP.</em>`;
+            });
+    }
+
+    function renderMappingTableWithSchema(idx, key, columns, container) {
+        if (!CURRENT_GRAPH[idx].config[key]) CURRENT_GRAPH[idx].config[key] = {};
+        const mappings = CURRENT_GRAPH[idx].config[key];
+
+        let html = `
     <table style="width:100%; border-collapse: collapse; font-size:12px; background:white; border: 1px solid #e2e8f0; margin-top:8px;">
         <thead style="background:#f8fafc; border-bottom: 2px solid #e2e8f0;">
             <tr>
@@ -396,161 +530,246 @@ function renderMappingTableWithSchema(idx, key, columns, container) {
         </thead>
         <tbody>
     `;
-    
-    columns.forEach(col => {
-        const val = mappings[col.slug] || '';
-        html += `
+
+        columns.forEach(col => {
+            const val = mappings[col.slug] || '';
+            html += `
         <tr style="border-bottom: 1px solid #f1f5f9;">
             <td style="padding:6px;"><strong>${col.label}</strong><br><code style="color:#64748b;font-size:10px;">${col.slug}</code></td>
             <td style="padding:6px;">
                 <input type="text" placeholder="vd: tieu_de" value="${val}" style="width: 100%; font-size: 11px; padding: 4px 6px;" onchange="updateMappingConfig(${idx}, '${key}', '${col.slug}', this.value)" onkeyup="updateMappingConfig(${idx}, '${key}', '${col.slug}', this.value)">
             </td>
         </tr>`;
-    });
-    
-    html += `</tbody></table>`;
-    container.innerHTML = html;
-}
+        });
 
-function renderMappingTable(idx, key, mappingsObj) {
-    const keys = Object.keys(mappingsObj || {});
-    if (keys.length === 0) return `<em style="font-size:11px; color:#64748b;">Chưa cấu trúc map nào được lưu. Bấm Cập nhật để lấy DB về.</em>`;
-    
-    let html = `
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    }
+
+    function renderMappingTable(idx, key, mappingsObj) {
+        const keys = Object.keys(mappingsObj || {});
+        if (keys.length === 0) return `<em style="font-size:11px; color:#64748b;">Chưa cấu trúc map nào được lưu. Bấm Cập nhật để lấy DB về.</em>`;
+
+        let html = `
     <div style="font-size:11px; background:#eff6ff; padding:6px; border-radius:4px; margin-bottom:4px; border-left:3px solid #3b82f6;">
         Hệ thống đang ghi nhớ ${keys.length} điểm kết nối. Bấm Tải Database để map thêm.
     </div>
     <table style="width:100%; border-collapse: collapse; font-size:12px; background:white; border: 1px solid #e2e8f0;">
         <tbody>
     `;
-    for(let k in mappingsObj) {
-        if (!mappingsObj[k]) continue; 
-        html += `<tr>
+        for (let k in mappingsObj) {
+            if (!mappingsObj[k]) continue;
+            html += `<tr>
             <td style="padding:6px; border-bottom:1px solid #f1f5f9; width: 50%;"><code style="color:#0f172a;">${k}</code></td>
             <td style="padding:6px; border-bottom:1px solid #f1f5f9; color:#059669; font-weight:bold;">&larr; ${mappingsObj[k]}</td>
         </tr>`;
-    }
-    html += `</tbody></table>`;
-    return html;
-}
-
-function updateMappingConfig(idx, key, colSlug, sourceKey) {
-    if(!CURRENT_GRAPH[idx].config[key]) CURRENT_GRAPH[idx].config[key] = {};
-    if(sourceKey === '') {
-        delete CURRENT_GRAPH[idx].config[key][colSlug];
-    } else {
-        CURRENT_GRAPH[idx].config[key][colSlug] = sourceKey;
-    }
-    syncInput();
-}
-
-// Chặn hành vi Enter tự động submit Form (tránh ức chế cho Nocode User)
-document.getElementById('skaWorkflowForm').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-        const targetType = e.target.tagName.toLowerCase();
-        // Cho phép enter nếu đang ở trong textarea (tuy nhiên logic engine hiện tại ít có textarea)
-        if (targetType !== 'textarea') {
-            e.preventDefault();
         }
+        html += `</tbody></table>`;
+        return html;
     }
-});
 
-// DB Picker UI Logic
-let pickerCurrentNode = null;
-let pickerCurrentKey = null;
-
-function openDbPickerModal(idx, key) {
-    pickerCurrentNode = idx;
-    pickerCurrentKey = key;
-    renderDbTables('');
-    document.getElementById('skaDbPickerModal').style.display = 'flex';
-    document.getElementById('skaDbSearchInput').value = '';
-    setTimeout(() => document.getElementById('skaDbSearchInput').focus(), 100);
-}
-
-function closeDbPickerModal() {
-    document.getElementById('skaDbPickerModal').style.display = 'none';
-    pickerCurrentNode = null;
-    pickerCurrentKey = null;
-}
-
-function selectDbTable(tableName) {
-    if (pickerCurrentNode !== null && pickerCurrentKey !== null) {
-        updateConfig(pickerCurrentNode, pickerCurrentKey, tableName);
-        renderNodes(); // Vẽ lại nút (bao gồm ô thẻ readonly Table Name)
-        
-        // Auto-load target mapping schema
-        loadTableSchema(pickerCurrentNode, 'mappings', tableName);
+    function updateMappingConfig(idx, key, colSlug, sourceKey) {
+        if (!CURRENT_GRAPH[idx].config[key]) CURRENT_GRAPH[idx].config[key] = {};
+        if (sourceKey === '') {
+            delete CURRENT_GRAPH[idx].config[key][colSlug];
+        } else {
+            CURRENT_GRAPH[idx].config[key][colSlug] = sourceKey;
+        }
+        syncInput();
     }
-    closeDbPickerModal();
-}
 
-function filterDbTables(keyword) {
-    renderDbTables(keyword.toLowerCase());
-}
+    // ========================== MULTI-FORMAT UI ENGINE ========================== //
+    function renderFormatRules(idx, key, rules, options) {
+        if (!Array.isArray(rules) || rules.length === 0) {
+            return `<em style="font-size:11px; color:#b45309;">Chưa có quy tắc nào. Bấm Thêm quy tắc để bắt đầu.</em>`;
+        }
 
-function renderDbTables(keyword) {
-    const listBody = document.getElementById('skaDbPickerBody');
-    
-    // Core WP
-    const wpCore = [
-        { id: 'wp_posts', name: 'Core: Bài Viết', type: 'WP Core' },
-        { id: 'wp_users', name: 'Core: Thành Viên', type: 'WP Core' }
-    ];
-    
-    // Group Data Pro
-    let groups = {};
-    AVAILABLE_TABLES.forEach(t => {
-        const grp = t.app_group || 'Ska Smart Object Table';
-        if (!groups[grp]) groups[grp] = [];
-        groups[grp].push({ id: t.id, name: t.name, type: 'Ska Data Pro' });
-    });
-    
-    // Tổ hợp
-    const finalGroups = { 'WP Core': wpCore, ...groups };
-    
-    let html = '';
-    for(let gName in finalGroups) {
-        const items = finalGroups[gName].filter(item => {
-            return item.name.toLowerCase().includes(keyword) || item.id.toLowerCase().includes(keyword);
+        let html = `
+    <table style="width:100%; border-collapse: collapse; font-size:12px; background:white; border: 1px solid #fcd34d; margin-top:8px;">
+        <thead style="background:#fef3c7; border-bottom: 2px solid #fcd34d; color:#92400e;">
+            <tr>
+                <th style="padding:6px; text-align:left; width: 30%;">Biến Nguồn <span style="color:#d97706;font-size:10px;font-weight:normal;">(Vd: ho_ten)</span></th>
+                <th style="padding:6px; text-align:left; width: 35%;">Phép Biến Đổi</th>
+                <th style="padding:6px; text-align:left; width: 30%;">Đổi sang tên mới (Bỏ trống=Ghi đè)</th>
+                <th style="padding:6px; text-align:center; width: 5%;"></th>
+            </tr>
+        </thead>
+        <tbody>`;
+
+        rules.forEach((rule, rIdx) => {
+            let optsHtml = `<select style="width:100%; font-size:11px; padding:2px; height:26px; border-radius:3px;" onchange="updateFormatRule(${idx}, '${key}', ${rIdx}, 'action', this.value)">`;
+            options.forEach(o => {
+                const sel = (o.id === rule.action) ? 'selected' : '';
+                optsHtml += `<option value="${o.id}" ${sel}>${o.name}</option>`;
+            });
+            optsHtml += `</select>`;
+
+            // Escape content avoiding quote breaking
+            let safeSourceKey = rule.source_key ? rule.source_key.replace(/'/g, "&apos;").replace(/"/g, "&quot;") : '';
+            let safeTargetKey = rule.target_key ? rule.target_key.replace(/'/g, "&apos;").replace(/"/g, "&quot;") : '';
+
+            html += `
+        <tr style="border-bottom: 1px solid #fef3c7;">
+            <td style="padding:6px;">
+                <input type="text" placeholder="vd: title" value="${safeSourceKey}" style="width:100%; font-size: 11px; padding: 4px;" onkeyup="updateFormatRule(${idx}, '${key}', ${rIdx}, 'source_key', this.value)" onchange="updateFormatRule(${idx}, '${key}', ${rIdx}, 'source_key', this.value)">
+            </td>
+            <td style="padding:6px;">${optsHtml}</td>
+            <td style="padding:6px;">
+                <input type="text" placeholder="Ghi đè" value="${safeTargetKey}" style="width:100%; font-size: 11px; padding: 4px;" onkeyup="updateFormatRule(${idx}, '${key}', ${rIdx}, 'target_key', this.value)" onchange="updateFormatRule(${idx}, '${key}', ${rIdx}, 'target_key', this.value)">
+            </td>
+            <td style="padding:6px; text-align:center;">
+                <button type="button" style="color:#ef4444; background:none; border:none; cursor:pointer; font-size:18px; line-height:1; transform: translateY(2px);" title="Xóa" onclick="removeFormatRule(${idx}, '${key}', ${rIdx})">&times;</button>
+            </td>
+        </tr>`;
         });
-        
-        if (items.length > 0) {
-            html += `<h4 style="margin:0 0 10px 0; color:#475569; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:6px;"><span class="dashicons ${gName === 'WP Core' ? 'dashicons-wordpress' : 'dashicons-media-document'}"></span> ${gName}</h4>`;
-            html += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom: 24px;">`;
-            
-            items.forEach(it => {
-                html += `
+
+        html += `</tbody></table>`;
+        return html;
+    }
+
+    function addFormatRule(idx, key) {
+        if (!CURRENT_GRAPH[idx].config[key] || !Array.isArray(CURRENT_GRAPH[idx].config[key])) {
+            CURRENT_GRAPH[idx].config[key] = [];
+        }
+        const template = AVAILABLE_NODES.find(n => n.class === CURRENT_GRAPH[idx].class);
+        const fieldDef = template.fields.find(f => f.key === key);
+
+        CURRENT_GRAPH[idx].config[key].push({
+            source_key: '',
+            action: fieldDef && fieldDef.options && fieldDef.options.length > 0 ? fieldDef.options[0].id : '',
+            target_key: ''
+        });
+        syncInput();
+        renderNodes();
+    }
+
+    function updateFormatRule(idx, key, rIdx, subKey, val) {
+        CURRENT_GRAPH[idx].config[key][rIdx][subKey] = val;
+        syncInput();
+    }
+
+    function removeFormatRule(idx, key, rIdx) {
+        CURRENT_GRAPH[idx].config[key].splice(rIdx, 1);
+        syncInput();
+        renderNodes();
+    }
+    // ============================================================================ //
+
+    // Chặn hành vi Enter tự động submit Form (tránh ức chế cho Nocode User)
+    document.getElementById('skaWorkflowForm').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            const targetType = e.target.tagName.toLowerCase();
+            // Cho phép enter nếu đang ở trong textarea (tuy nhiên logic engine hiện tại ít có textarea)
+            if (targetType !== 'textarea') {
+                e.preventDefault();
+            }
+        }
+    });
+
+    // DB Picker UI Logic
+    let pickerCurrentNode = null;
+    let pickerCurrentKey = null;
+
+    function openDbPickerModal(idx, key) {
+        pickerCurrentNode = idx;
+        pickerCurrentKey = key;
+        renderDbTables('');
+        document.getElementById('skaDbPickerModal').style.display = 'flex';
+        document.getElementById('skaDbSearchInput').value = '';
+        setTimeout(() => document.getElementById('skaDbSearchInput').focus(), 100);
+    }
+
+    function closeDbPickerModal() {
+        document.getElementById('skaDbPickerModal').style.display = 'none';
+        pickerCurrentNode = null;
+        pickerCurrentKey = null;
+    }
+
+    function selectDbTable(tableName) {
+        if (pickerCurrentNode !== null && pickerCurrentKey !== null) {
+            updateConfig(pickerCurrentNode, pickerCurrentKey, tableName);
+            renderNodes(); // Vẽ lại nút (bao gồm ô thẻ readonly Table Name)
+
+            // Auto-load target mapping schema
+            loadTableSchema(pickerCurrentNode, 'mappings', tableName);
+        }
+        closeDbPickerModal();
+    }
+
+    function filterDbTables(keyword) {
+        renderDbTables(keyword.toLowerCase());
+    }
+
+    function renderDbTables(keyword) {
+        const listBody = document.getElementById('skaDbPickerBody');
+
+        // Core WP
+        const wpCore = [
+            { id: 'wp_posts', name: 'Core: Bài Viết', type: 'WP Core' },
+            { id: 'wp_users', name: 'Core: Thành Viên', type: 'WP Core' }
+        ];
+
+        // Group Data Pro
+        let groups = {};
+        AVAILABLE_TABLES.forEach(t => {
+            const grp = t.app_group || 'Ska Smart Object Table';
+            if (!groups[grp]) groups[grp] = [];
+            groups[grp].push({ id: t.id, name: t.name, type: 'Ska Data Pro' });
+        });
+
+        // Tổ hợp
+        const finalGroups = { 'WP Core': wpCore, ...groups };
+
+        let html = '';
+        for (let gName in finalGroups) {
+            const items = finalGroups[gName].filter(item => {
+                return item.name.toLowerCase().includes(keyword) || item.id.toLowerCase().includes(keyword);
+            });
+
+            if (items.length > 0) {
+                html += `<h4 style="margin:0 0 10px 0; color:#475569; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:6px;"><span class="dashicons ${gName === 'WP Core' ? 'dashicons-wordpress' : 'dashicons-media-document'}"></span> ${gName}</h4>`;
+                html += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom: 24px;">`;
+
+                items.forEach(it => {
+                    html += `
                 <div onclick="selectDbTable('${it.id}')" style="background:white; border:1px solid #e2e8f0; padding:12px; border-radius:8px; cursor:pointer; transition:all 0.2s; box-shadow:0 1px 2px rgba(0,0,0,0.05);" onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 4px 6px -1px rgba(59,130,246,0.3)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 1px 2px rgba(0,0,0,0.05)'">
                     <div style="font-weight:600; color:#0f172a; font-size:14px; margin-bottom:4px;">${it.name}</div>
                     <div style="font-family:monospace; font-size:11px; color:#64748b; background:#f1f5f9; padding:2px 6px; border-radius:4px; display:inline-block;">${it.id}</div>
                 </div>`;
-            });
-            
-            html += `</div>`;
-        }
-    }
-    
-    if (html === '') {
-        html = '<div style="text-align:center; padding:40px; color:#94a3b8;">Không tìm thấy bảng nào phù hợp.</div>';
-    }
-    
-    listBody.innerHTML = html;
-}
+                });
 
-// Khởi chạy
-renderNodes();
+                html += `</div>`;
+            }
+        }
+
+        if (html === '') {
+            html = '<div style="text-align:center; padding:40px; color:#94a3b8;">Không tìm thấy bảng nào phù hợp.</div>';
+        }
+
+        listBody.innerHTML = html;
+    }
+
+    // Khởi chạy
+    renderNodes();
 </script>
 
 <!-- NẠP HTML CHO MODAL DB PICKER Ở ĐÂY VÌ WP KHÔNG HỖ TRỢ COMPONENT THUẬN TIỆN -->
-<div id="skaDbPickerModal" class="ska-modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.4); backdrop-filter:blur(2px); z-index:99999; justify-content:center; align-items:center;">
-    <div class="ska-modal-box" style="background:white; width: 720px; max-width:90%; border-radius:12px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); display:flex; flex-direction:column; max-height:85vh; overflow:hidden;">
-        <div style="padding:16px 20px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">
-            <h3 style="margin:0; font-size:16px; color:#0f172a; display:flex; align-items:center; gap:8px;"><span class="dashicons dashicons-database" style="color:#3b82f6;"></span> Logic Database Picker</h3>
-            <button type="button" onclick="closeDbPickerModal()" style="border:none; background:none; cursor:pointer; color:#64748b; line-height:1;"><span class="dashicons dashicons-no-alt" style="font-size:24px;width:24px;height:24px;"></span></button>
+<div id="skaDbPickerModal" class="ska-modal-overlay"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.4); backdrop-filter:blur(2px); z-index:99999; justify-content:center; align-items:center;">
+    <div class="ska-modal-box"
+        style="background:white; width: 720px; max-width:90%; border-radius:12px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); display:flex; flex-direction:column; max-height:85vh; overflow:hidden;">
+        <div
+            style="padding:16px 20px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">
+            <h3 style="margin:0; font-size:16px; color:#0f172a; display:flex; align-items:center; gap:8px;"><span
+                    class="dashicons dashicons-database" style="color:#3b82f6;"></span> Logic Database Picker</h3>
+            <button type="button" onclick="closeDbPickerModal()"
+                style="border:none; background:none; cursor:pointer; color:#64748b; line-height:1;"><span
+                    class="dashicons dashicons-no-alt" style="font-size:24px;width:24px;height:24px;"></span></button>
         </div>
         <div style="padding:16px 20px; border-bottom:1px solid #e2e8f0;">
-            <input type="text" id="skaDbSearchInput" placeholder="🔍 Tìm nhanh tên bảng hoặc Database ID..." style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #cbd5e1; font-size:14px; outline:none;" onkeyup="filterDbTables(this.value)">
+            <input type="text" id="skaDbSearchInput" placeholder="🔍 Tìm nhanh tên bảng hoặc Database ID..."
+                style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #cbd5e1; font-size:14px; outline:none;"
+                onkeyup="filterDbTables(this.value)">
         </div>
         <div id="skaDbPickerBody" style="padding:20px 24px; flex:1; overflow-y:auto; background:#f1f5f9;">
             <!-- Group render here -->

@@ -453,6 +453,33 @@ class Admin_Ajax {
 					'fields' => array()
 				);
 
+				// 1.5 Lấy Physical Schema bù trù cho lỗi rớt Dictionary (khi bảng được đúc bằng kiểu dbDelta native)
+				$physical_cols = $wpdb->get_results( "DESCRIBE `{$table_name}`" );
+				if ( ! empty( $physical_cols ) ) {
+					foreach ( $physical_cols as $p_col ) {
+						$col_name = $p_col->Field;
+						// Nếu cột vật lý chưa có trong Dictionary, ta tự bù vào (Mocking Schema)
+						if ( ! isset( $schema[ $col_name ] ) ) {
+							$type = 'short_text'; // Fallback
+							$p_type = strtolower( $p_col->Type );
+							if ( strpos( $p_type, 'int' ) !== false ) {
+								$type = 'number';
+							} elseif ( strpos( $p_type, 'decimal' ) !== false ) {
+								$type = 'currency';
+							} elseif ( strpos( $p_type, 'datetime' ) !== false || strpos( $p_type, 'date' ) !== false ) {
+								$type = 'date';
+							} elseif ( strpos( $p_type, 'text' ) !== false ) {
+								$type = 'long_text';
+							}
+							
+							$schema[ $col_name ] = array(
+								'label' => $col_name,
+								'type'  => $type,
+							);
+						}
+					}
+				}
+
 				// 2. Kéo các Column thuộc Table
 				foreach ( $schema as $col_name => $col_data ) {
 					if ( $col_name === '__table_info' || $col_name === 'id' || $col_name === 'created_at' ) {

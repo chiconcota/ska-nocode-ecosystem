@@ -99,12 +99,26 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                 </div>
 
                                 {(() => {
-                                    const COMMON_KEYS = [
+                                    const isFormContext = props.name === 'ska-builder/container' && attributes.tagName === 'form';
+                                    const isInputComponent = ['ska-builder/input', 'ska-builder/select'].includes(props.name);
+
+                                    let COMMON_KEYS = [
                                         { label: '-- Chọn một thuộc tính --', value: '' },
                                         { label: '🎨 Style (Inline CSS)', value: 'style' },
                                         { label: '🏷️ ID định danh', value: 'id' },
-                                        { label: '🔗 Form Action', value: 'action' },
-                                        { label: '📮 Form Method', value: 'method' },
+                                    ];
+
+                                    // Form-specific properties
+                                    if (isFormContext) {
+                                        COMMON_KEYS.push(
+                                            { label: '🔗 Form Action', value: 'action' },
+                                            { label: '📮 Form Method', value: 'method' },
+                                            { label: '📤 @submit.prevent (Alpine Form)', value: '@submit.prevent' }
+                                        );
+                                    }
+
+                                    // General Alpine & DOM attributes
+                                    COMMON_KEYS.push(
                                         { label: '⚡ x-data (AlpineJS State)', value: 'x-data' },
                                         { label: '👁️ x-show (Alpine Ẩn/Hiện)', value: 'x-show' },
                                         { label: '✨ x-transition:enter', value: 'x-transition:enter' },
@@ -114,12 +128,18 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                         { label: '✨ x-transition:leave-start', value: 'x-transition:leave-start' },
                                         { label: '✨ x-transition:leave-end', value: 'x-transition:leave-end' },
                                         { label: '🖱️ @click (Alpine Click)', value: '@click' },
-                                        { label: '🛑 @click.prevent (Chặn cuộn/load trang)', value: '@click.prevent' },
-                                        { label: '📤 @submit.prevent (Alpine Form)', value: '@submit.prevent' },
-                                        { label: '🔄 x-model (Alpine Data Bind)', value: 'x-model' },
-                                        { label: '📝 x-text (Alpine Text)', value: 'x-text' },
-                                        { label: '✏️ --- Tùy chỉnh (Gõ tay) ---', value: 'custom' },
-                                    ];
+                                        { label: '🛑 @click.prevent (Chặn cuộn/load trang)', value: '@click.prevent' }
+                                    );
+
+                                    // Data Binding (Hide on Input/Select as they have their own settings)
+                                    if (!isInputComponent) {
+                                        COMMON_KEYS.push(
+                                            { label: '🔄 x-model (Alpine Data Bind)', value: 'x-model' },
+                                            { label: '📝 x-text (Alpine Text)', value: 'x-text' }
+                                        );
+                                    }
+
+                                    COMMON_KEYS.push({ label: '✏️ --- Tùy chỉnh (Gõ tay) ---', value: 'custom' });
 
                                     const isStandard = COMMON_KEYS.some(k => k.value === (attr.key || '')) && (attr.key || '') !== 'custom';
                                     const selectValue = isStandard ? (attr.key || '') : 'custom';
@@ -153,14 +173,61 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                     );
                                 })()}
                                 
-                                <TextareaControl
-                                    placeholder="Giá trị (VD: { open: false, items: [] })"
-                                    value={attr.value || ''}
-                                    onChange={(val) => updateAttribute(index, 'value', val)}
-                                    autoComplete="off"
-                                    style={{ marginBottom: '0', fontSize: '13px', fontFamily: 'SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace' }}
-                                    rows={3}
-                                />
+                                {(() => {
+                                    // === SMART VALUE INPUT ===
+                                    // Khi key là x-show → hiện dropdown preset thay vì textarea
+                                    const XSHOW_PRESETS = [
+                                        { label: '-- Chọn điều kiện --', value: '' },
+                                        { label: '✅ Hiện khi Form gửi Thành công', value: "status === 'success'" },
+                                        { label: '❌ Hiện khi Form gửi Lỗi', value: "status === 'error'" },
+                                        { label: '⏳ Hiện khi Form đang Gửi', value: 'isSubmitting' },
+                                        { label: '👻 Ẩn khi Form đang Gửi', value: '!isSubmitting' },
+                                        { label: '✏️ Tùy chỉnh (Gõ tay)', value: '__custom__' },
+                                    ];
+
+                                    const isXShow = attr.key === 'x-show';
+                                    const isPresetValue = isXShow && XSHOW_PRESETS.some(p => p.value === (attr.value || '')) && attr.value !== 'custom_mode_on' && attr.value !== '__custom__';
+
+                                    if (isXShow) {
+                                        return (
+                                            <>
+                                                <SelectControl
+                                                    options={XSHOW_PRESETS}
+                                                    value={isPresetValue ? (attr.value || '') : '__custom__'}
+                                                    onChange={(val) => {
+                                                        if (val === '__custom__') {
+                                                            updateAttribute(index, 'value', 'custom_mode_on');
+                                                        } else {
+                                                            updateAttribute(index, 'value', val);
+                                                        }
+                                                    }}
+                                                    style={{ marginBottom: '0' }}
+                                                />
+                                                {!isPresetValue && attr.value !== undefined && (
+                                                    <TextareaControl
+                                                        placeholder="Nhập biểu thức Alpine (VD: open === true)"
+                                                        value={attr.value === 'custom_mode_on' ? '' : (attr.value || '')}
+                                                        onChange={(val) => updateAttribute(index, 'value', val)}
+                                                        autoComplete="off"
+                                                        style={{ marginBottom: '0', fontSize: '13px', fontFamily: 'SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace' }}
+                                                        rows={2}
+                                                    />
+                                                )}
+                                            </>
+                                        );
+                                    }
+
+                                    return (
+                                        <TextareaControl
+                                            placeholder="Giá trị (VD: { open: false, items: [] })"
+                                            value={attr.value || ''}
+                                            onChange={(val) => updateAttribute(index, 'value', val)}
+                                            autoComplete="off"
+                                            style={{ marginBottom: '0', fontSize: '13px', fontFamily: 'SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace' }}
+                                            rows={3}
+                                        />
+                                    );
+                                })()}
                             </div>
                         ))}
                         <Button isSecondary onClick={addAttribute} style={{ width: '100%', justifyContent: 'center', marginTop: '10px' }}>
