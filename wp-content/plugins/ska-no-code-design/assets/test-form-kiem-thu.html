@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Kiểm Thử - Ska Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+
+    <!-- FORM CONTAINER - tag=form, isSkaForm=true, formActionId=form_contact_01 -->
+    <form class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-lg space-y-6">
+
+        <!-- TIÊU ĐỀ -->
+        <div class="text-center space-y-2">
+            <h2 class="text-2xl font-bold text-gray-800">📋 Form Kiểm Thử</h2>
+            <p class="text-sm text-gray-500">Điền thông tin bên dưới để kiểm tra hệ thống</p>
+        </div>
+
+        <!-- THÔNG BÁO THÀNH CÔNG (x-show="status === 'success'") -->
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-3">
+            <span class="text-2xl">✅</span>
+            <div>
+                <p class="font-semibold text-emerald-700">Gửi dữ liệu thành công!</p>
+                <p class="text-sm text-emerald-600">Thông tin đã được lưu vào hệ thống.</p>
+            </div>
+        </div>
+
+        <!-- THÔNG BÁO LỖI (x-show="status === 'error'") -->
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+            <span class="text-2xl">❌</span>
+            <div>
+                <p class="font-semibold text-red-700">Có lỗi xảy ra!</p>
+                <p class="text-sm text-red-600">Vui lòng kiểm tra lại và thử lần nữa.</p>
+            </div>
+        </div>
+
+        <!-- FIELD: Tên (short_text) -->
+        <div class="space-y-1">
+            <label class="block text-sm font-medium text-gray-700">Tên</label>
+            <input type="text" name="ten" placeholder="Nhập họ và tên..." class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" required />
+        </div>
+
+        <!-- FIELD: Năm sinh (number) -->
+        <div class="space-y-1">
+            <label class="block text-sm font-medium text-gray-700">Năm sinh</label>
+            <input type="number" name="nam_sinh" placeholder="VD: 1995" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" required />
+        </div>
+
+        <!-- FIELD: Tình trạng hôn nhân (select) -->
+        <div class="space-y-1">
+            <label class="block text-sm font-medium text-gray-700">Tình trạng hôn nhân</label>
+            <select name="tinh_trang_hon_nhan" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white" required>
+                <option value="">-- Chọn --</option>
+                <option value="đã kết hôn">Đã kết hôn</option>
+                <option value="chưa kết hôn">Chưa kết hôn</option>
+            </select>
+        </div>
+
+        <!-- FIELD: Học vấn (select) -->
+        <div class="space-y-1">
+            <label class="block text-sm font-medium text-gray-700">Học vấn</label>
+            <select name="hoc_van" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white" required>
+                <option value="">-- Chọn --</option>
+                <option value="cấp 1">Cấp 1</option>
+                <option value="cấp 2">Cấp 2</option>
+                <option value="cấp 3">Cấp 3</option>
+                <option value="đại học">Đại học</option>
+            </select>
+        </div>
+
+        <!-- NÚT SUBMIT -->
+        <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition shadow-lg shadow-blue-200 cursor-pointer">
+            Gửi thông tin
+        </button>
+
+    </form>
+
+</body>
+</html>

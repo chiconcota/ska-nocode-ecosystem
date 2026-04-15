@@ -28,6 +28,18 @@
                 "operator": "==",
                 "value": ""
             }
+        },
+        "isSkaForm": {
+            "type": "boolean",
+            "default": false
+        },
+        "formActionId": {
+            "type": "string",
+            "default": ""
+        },
+        "usePersist": {
+            "type": "boolean",
+            "default": false
         }
     },
     "supports": {
