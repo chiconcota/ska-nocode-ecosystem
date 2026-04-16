@@ -53,3 +53,8 @@ require_once SKA_DESIGN_ENGINE_PATH . 'functions.php';
 if ( class_exists( 'Ska\\Builder\\Design\\Core' ) ) {
 	\Ska\Builder\Design\Core::instance();
 }
+
+// Initialize Pattern Registry (Molecules)
+if ( class_exists( 'Ska\\Builder\\Design\\Pattern_Registry' ) ) {
+	\Ska\Builder\Design\Pattern_Registry::init();
+}

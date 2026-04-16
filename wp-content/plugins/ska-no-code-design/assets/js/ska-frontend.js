@@ -47,7 +47,7 @@ function _registerSkaForm() {
                 inputs.forEach((input) => {
                     let name = input.getAttribute('name');
                     if (!name) return;
-                    
+
                     let isArray = false;
                     if (name.endsWith('[]')) {
                         name = name.slice(0, -2);
@@ -181,7 +181,7 @@ function _registerSkaForm() {
 
                     // Reset Form
                     Object.keys(this.fields).forEach((key) => {
-                        this.fields[key] = '';
+                        this.fields[key] = Array.isArray(this.fields[key]) ? [] : '';
                     });
                     this.errors = {};
                     this.step = 1;
@@ -227,7 +227,7 @@ function _registerSkaForm() {
         // === RESET THỦ CÔNG ===
         resetForm() {
             Object.keys(this.fields).forEach((key) => {
-                this.fields[key] = '';
+                this.fields[key] = Array.isArray(this.fields[key]) ? [] : '';
             });
             this.errors = {};
             this.status = '';
