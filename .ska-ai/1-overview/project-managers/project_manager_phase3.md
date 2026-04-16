@@ -53,7 +53,7 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - **Trạng thái:** Đã xong Phase 1 (Động cơ móc Frontend), đang chuẩn bị thiết kế UI React.
 
 ### 3.2. Phase 3: Ska Logic Engine & Khối Form (The Flow) - 🟢 [MVP HOÀN TẤT]
-- 🟢 **Khối Nhập Liệu (Ska Form)**: Đúc xong các khối `<Input>`, `<Select>`, `<Form Wrapper>` vào lõi `ska-no-code-design`. Đã giải quyết triệt để vấn đề "Clean Slate Form Preflight" và "Tailwind V4 Editor Parity" (Polyfill & JIT Proxy Mutation). PHP JIT Engine rà soát thành công các UI phức tạp nhất (Logical Spacing RTL/LTR, Pseudo Objects Arbitrary cho Toggle/Checkbox Component). Mảng UI Form coi như đã **Hoàn tất MVP**.
+- 🟢 **Khối Nhập Liệu (Ska Form)**: Đúc xong các khối `<Input>`, `<Select>`, `<Form Wrapper>` vào lõi `ska-no-code-design`. Đã giải quyết triệt để vấn đề "Clean Slate Form Preflight" và "Tailwind V4 Editor Parity" (Polyfill & JIT Proxy Mutation). PHP JIT Engine rà soát thành công các UI phức tạp nhất (Logical Spacing RTL/LTR, Pseudo Objects Arbitrary cho Toggle/Checkbox Component). Tích hợp thành công cấu trúc **Alpine.js** (`x-data`, `x-show`) thiết lập Multi-step Form & Tabs thông qua HTML Attributes panel mà không cần code injection. Mảng UI Form coi như đã **Hoàn tất MVP**.
 - 🟢 **SkaFX (Ska Expression Language) [HOÀN TẤT]:** Chốt hạ thiết kế và viết xong cỗ máy biên dịch AST (Abstract Syntax Tree) riêng biệt bằng PHP cho hệ sinh thái (Thay thế Blockly). Khớp nối hoàn hảo biến ngữ cảnh `[app.table.col]`, hàm xử lý `IF / CONCAT`, cơ chế "nuốt lỗi" (Syntax Escape) chống crash web, đục xuyên phá thành công bài toán Data Hydration (Điền data) & Conditional Render (Máy chém giao diện) ở tốc độ 0ms nhờ Universal Dynamic Binding.
 - 🟢 **Ska-xi măng (Logic Engine Processor)**: Hoàn tất Lớp Nhân Đứng Giữa (Controller/Router/Băng Chuyền) với các tính năng:
   - **Mapping:** Giao diện Linear Builder (Băng chuyền nối dọc bằng Vanilla JS) mô phỏng UI kiểu n8n/Zapier. Tự động xuất chuỗi sự kiện thành mảng `JSON Graph`. (Future-proof với React Flow ở Phase 4).
@@ -63,6 +63,7 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
 - 🟡 Xử lý hệ thống Role-Based Access Control (RBAC) cho điều kiện hiển thị (Dời sang Milestone Update).
 - 🟢 **Quản Lý Băng Chuyền (Logic Manager UI): [HOÀN TẤT]** Xây dựng trang quản trị hiển thị Danh sách các Luồng Logic (List View). Cho phép người dùng trực quan Thêm Mới, Xóa, Đổi Tên các Luồng an toàn theo phong cách Dual-View.
 - 🟢 **Hoàn thiện UX Linear Builder: [HOÀN TẤT]** Loại bỏ hành vi Enter tự reload form gây gãy Chrome Extensions. Dịch chuyển luồng bằng DOM Swap 100%.
+- 🟢 **Băng Chuyền Dữ Liệu Không Rác (Native JSON Format): [HOÀN TẤT]** Lập cấu trúc phòng thủ (Defensive Array Casting) kết hợp với màn "Pivot Architecture" chuyển đổi toàn diện cột dữ liệu Multiselect/Relation sang cấu trúc Native JSON thay vì CSV. Giải quyết rốt ráo bài toán Frontend đệ trình Payload Array xuống thẳng trái tim Flat Table mà không cần xử lý chuỗi trung gian.
 
 ### 3.3. Tính Năng Độc Lập Mọi Thời Điểm (UI Features & Canvas App / Theme Builder)
 - **Theme Builder** (Lắp Header, Footer từ CPT `ska_template`).
