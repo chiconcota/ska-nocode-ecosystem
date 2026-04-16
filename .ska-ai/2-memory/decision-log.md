@@ -1,3 +1,8 @@
+## 2026-04-16 - 🟢 Lập Kế Hoạch & Thiết Kế Kiến Trúc: Thư Viện Ska Molecules (Phase 4)
+- **Decision (Ska Multi-Step Form):** Quyết định chọn cấu trúc UI quản lý tuần tự bằng Alpine.js State (`x-data="{ step: 1 }"`) cho tính năng Form đa bước (Quiz/Wizard). Giữ vững nguyên tắc Không xử lý Logic Điểm Số (Scoring) tại Frontend để bảo mật, chỉ phân luồng UI hiển thị. Backend Logic Engine sẽ đóng vai trò chấm điểm sau khi Submit.
+- **Decision (Block Lock Feature):** Bổ sung tính năng Khóa cấu trúc Khối (Block Lock) đối với các variation phức tạp. Tính năng này sẽ cấm người dùng No-Code kéo lệch thẻ hoặc xóa nhầm thẻ bên trong component (như Modal, Tabs, hay Multi-Step Form), tăng độ bền (Resilience) cho giao diện Nocode Editor.
+- **Decision (Alpine.js Global Store):** Xác nhận chiến lược liên kết state (Trạng thái) xuyên Khối thông qua `Alpine.store()`. Mở cửa cho các UI component độc lập giao tiếp mượt mà như Single Page Application mà không cần Redux/React.
+
 ## 2026-04-16 - 🟢 Architecture Verification: Alpine.js Multi-step & Tabbed Interfaces
 - **Decision (Frontend UI State Decoupling):** Xác nhận thành công khả năng tích hợp của Alpine.js (`x-data`, `x-show`) cho các luồng giao diện phức tạp (Multi-step forms, Tab navigation) trong hệ sinh thái Ska Builder. UI State được quản lý hoàn toàn tại Client bằng Alpine.js, trong khi Data Validation & Persistence vẫn được bảo vệ nghiêm ngặt tại Backend.
 - **Decision (Native Element CSS Hack):** Chốt phương án sử dụng Tailwind Arbitrary Variants (`[&_option:checked]`) để xử lý highlight UI của thẻ `<select multiple>` Native thay vì sử dụng thư viện Select UI (JS bên thứ ba). Đảm bảo Clean Slate & No-Code.
