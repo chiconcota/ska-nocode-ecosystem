@@ -27,19 +27,18 @@
 - [x] **Ska Accordion (FAQ):** Mở rộng/Đóng nếp gấp nội dung. Trang bị mảng đóng mở và icon mũi tên xoay.
 
 ### 3.2. Overlay & Popup (Đang Brainstorm)
-- [ ] **Ska Modal / Popup:** Khung hội thoại hiển thị đè lên màn hình. Hỗ trợ bấm nút để bật, bấm ra ngoài để tắt (`@click.outside`).
+- [x] **Ska Modal / Popup:** (ĐÃ LOẠI BỎ) - Chuyển sang phương án sử dụng **Ska Smart Object (Global Template)** để tránh xung đột HTML2Tailwind.
 - [ ] **Ska Offcanvas / Mobile Menu:** Sidebar trượt ngang từ một phía màn hình.
 
 ### 3.3. Advanced Functional Blocks
-- [ ] **Ska Multi-Step Form (Quiz / Wizard):** 
-  - Khối tự động cấu hình `x-data="{ step: 1, max: 3 }"`. 
-  - Dùng `x-show="step === 1"` để bọc các phần nội dung của Form/Câu hỏi. 
-  - Tích hợp 2 nút Tiến/Lùi cài sẵn sự kiện `@click="step < max ? step++ : null"`.
+- [ ] **Ska Multi-Step Form:** 
+  - Sẽ thiết kế 1 mẫu form khác có tính ứng dụng thực tế cao hơn vào phiên làm việc sau (đã gỡ bỏ kế hoạch giao diện Quiz cũ).
+  - Vận hành bằng `x-data="{ step: 1 }"` và tích hợp nút Tiến/Lùi.
 - [ ] **Ska Dropdown Menu:** Menu sổ xuống dùng kiểu `x-data="{ dropOpen: false }"`.
 - [ ] **Ska Filter Gallery:** Bộ lọc hình ảnh/danh sách theo tab (ví dụ chọn All, UI, UX, Web sẽ filter ra các item tương ứng).
 - [ ] **Ska Countdown Timer:** Đồng hồ đếm ngược với JS tối giản định nghĩa trong `x-init`.
 
 ## 4. CHIẾN LƯỢC KỸ THUẬT TIẾP THEO
-1. Tập trung khởi tạo `Ska Multi-Step Form` để đáp ứng requirement "Quiz cho học sinh lớp 5".
-2. Bổ sung tính năng Khóa (Block Lock) đối với các variation có cấu trúc cố định để tránh Nocode Users kéo thả nhầm lẫn.
+1. Nghiên cứu và xây dựng cấu trúc `Ska Multi-Step Form` mới mang tính thực tiễn cao hơn.
+2. ~~Bổ sung tính năng Khóa (Block Lock)~~ -> **ĐÃ HOÀN TẤT** (Áp dụng API `templateLock: 'all'` thành công cho các block Variation như Accordion).
 3. Liên kết Alpine State (Nếu cần điều khiển xuyên Block, sử dụng `Alpine.store()`).
