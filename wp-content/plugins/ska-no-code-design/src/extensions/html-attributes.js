@@ -4,6 +4,9 @@ import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 
+// Import our molecule variations so they register in the Gutenberg inserter
+import './molecules-variations';
+
 /**
  * 1. Add `htmlAttributes` to all Ska blocks schema
  */

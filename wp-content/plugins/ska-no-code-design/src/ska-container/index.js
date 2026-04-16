@@ -13,7 +13,7 @@ import { splitTailwindClasses } from '../utils/tailwind-utils.js';
 registerBlockType(metadata.name, {
     edit: (props) => {
         const { attributes, setAttributes } = props;
-        const { tagName = 'div', tailwindClasses = '', className = '', logic = { enabled: false, key: '', operator: '==', value: '' }, isSkaForm = false, formActionId = '', usePersist = false } = attributes;
+        const { tagName = 'div', tailwindClasses = '', className = '', logic = { enabled: false, key: '', operator: '==', value: '' }, isSkaForm = false, formActionId = '', usePersist = false, templateLock = 'false' } = attributes;
 
         const { useEffect } = wp.element;
         useEffect(() => {
@@ -106,7 +106,8 @@ registerBlockType(metadata.name, {
         // → absolute positioning works correctly in editor
         const innerBlocksProps = useInnerBlocksProps(blockProps, {
             allowedBlocks: ALLOWED_BLOCKS,
-            renderAppender: InnerBlocks.ButtonBlockAppender
+            renderAppender: templateLock !== 'all' ? InnerBlocks.ButtonBlockAppender : false,
+            templateLock: templateLock !== 'false' ? templateLock : false
         });
 
         return (
