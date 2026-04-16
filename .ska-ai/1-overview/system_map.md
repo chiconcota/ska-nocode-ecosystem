@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v1.0.0)
-@status: MVP DONE | @last_update: 2026-04-12
+@status: MVP DONE | @last_update: 2026-04-16
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core (Host) + PHP 8.2+
@@ -52,6 +52,7 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-16 - 🟢 Brainstorm: Phát triển Thư viện Ska Molecules:** Định hình lộ trình Phase 4 (Ska Multi-Step Form, Block Lock, Store) nhằm xây dựng hệ sinh thái UI tương tác thông minh dựa trên Alpine.js nhưng vẫn đảm bảo "Clean Slate Framework".
 - **2026-04-16 - 🟢 Architecture Verification: Tích hợp thành công Alpine.js cho Multi-step Forms & Tabs.** Trạng thái giao diện phức tạp được quản lý hoàn toàn ở frontend, đảm bảo nguyên tắc Decoupling. Áp dụng Tailwind Arbitrary Variants cho Native Element Styling (chữa lỗi select multiple). Cột mốc hoàn thiện hệ tương tác UI/UX Ska Form Builder.
 - **2026-04-15 - 🟢 Pivot Architecture: Schema JSON Native Support cho Multi-Select & Relation**:
   - Định hình lại hoàn toàn tư tưởng kiến trúc lưu trữ: Chuyển đổi định dạng Data Type MySQL dưới Flat Tables (`ska_data_*`) đối với các trường `multi_select` và `relation` từ `TEXT` (viết dưới dạng list CSV) cực kỳ nặng nhọc sang sử dụng native column format là **`JSON`** của MySQL (5.7+ / MariaDB 10.2+).
