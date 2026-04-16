@@ -44,6 +44,11 @@ function ska_no_code_design_block_categories( $categories, $post ) {
 				'title' => __( 'Ska Atomic', 'ska-no-code-design' ),
 				'icon'  => 'admin-customizer',
 			),
+			array(
+				'slug'  => 'ska-molecules',
+				'title' => __( 'Ska Molecules', 'ska-no-code-design' ),
+				'icon'  => 'networking',
+			),
 		),
 		$categories
 	);

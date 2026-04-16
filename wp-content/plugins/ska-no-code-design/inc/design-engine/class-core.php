@@ -83,47 +83,11 @@ class Core {
         
         // Architecture Scope: Add .ska-builder to body to enable JIT Scoped CSS
         add_filter( 'body_class', array( $this, 'add_ska_builder_class' ) );
-
-        // Inject htmlAttributes (Alpine.js) into all Ska-builder blocks safely
-        add_filter( 'render_block', array( $this, 'inject_html_attributes' ), 10, 2 );
+        
+        // Note: HTML attribute injection (inject_html_attributes) was moved to blocks/init.php to avoid duplicates.
 	}
 
-    /**
-     * Inject custom HTML attributes (like Alpine x-data, @click) into block HTML output.
-     */
-    public function inject_html_attributes( $block_content, $block ) {
-        if ( empty( $block['blockName'] ) || strpos( $block['blockName'], 'ska-builder/' ) !== 0 ) {
-            return $block_content;
-        }
 
-        if ( empty( $block['attrs']['htmlAttributes'] ) || ! is_array( $block['attrs']['htmlAttributes'] ) ) {
-            return $block_content;
-        }
-
-        $html_attrs = '';
-        foreach ( $block['attrs']['htmlAttributes'] as $attr ) {
-            if ( ! empty( $attr['key'] ) ) {
-                $key = trim( (string) $attr['key'] );
-                $key = strip_tags( $key );
-                // Allow @, :, - for Alpine JS directives
-                $key = preg_replace( '/[^a-zA-Z0-9_\-\:@\.]/', '', $key );
-                
-                if ( empty( $key ) ) continue;
-
-                $value = esc_attr( $attr['value'] ?? '' );
-                $html_attrs .= sprintf( ' %s="%s"', $key, $value );
-            }
-        }
-
-        if ( empty( $html_attrs ) || empty( trim( $block_content ) ) ) {
-            return $block_content;
-        }
-
-        // Inject exactly into the opening tag of the block
-        $block_content = preg_replace( '/^(\s*<[a-zA-Z0-9\-]+)([^>]*?>)/', '$1' . $html_attrs . '$2', $block_content, 1 );
-
-        return $block_content;
-    }
 
     /**
      * Add .ska-builder class to body.
@@ -141,11 +105,23 @@ class Core {
     }
 
 	/**
-	 * Enqueue Tailwind CDN for Frontend.
+	 * Enqueue Alpine Store (Alpine.js is enqueued globally on-demand in blocks/init.php)
 	 */
 	public function enqueue_tailwind_frontend() {
-        // Frontend uses local JIT CSS mainly, but we keep this as fallback if needed
-        // Or for specific features. Currently, inject_tailwind_cdn handles production CSS.
+        // Enqueue local Alpine.js (so we can attach inline scripts)
+        wp_enqueue_script( 'ska-alpine' );
+        
+        // Alpine Store for UI Ecosystem Shared State
+        $alpine_store_script = "
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('skaBuilder', {
+                data: {},
+                get(key) { return this.data[key]; },
+                set(key, value) { this.data[key] = value; }
+            });
+        });
+        ";
+        wp_add_inline_script( 'ska-alpine', $alpine_store_script, 'before' );
 	}
 
     public function enqueue_editor_assets() {

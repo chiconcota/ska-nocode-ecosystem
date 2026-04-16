@@ -20,9 +20,10 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
 - **Render:** Áp dụng trực tiếp vào thẻ root (`p`, `h1`...).
 
 #### 2. Ska Container (`ska-builder/container`)
-- **Attributes:** `tagName`, `tailwindClasses`, `customStyle`, `logic`.
+- **Attributes:** `tagName`, `tailwindClasses`, `customStyle`, `logic`, `templateLock`.
 - **Render:** Sử dụng `get_block_wrapper_attributes()` trên thẻ wrapper chính.
 - **Editor (2026-03-26):** Sử dụng `useInnerBlocksProps` + `getPositionStyles()` helper để inject positioning inline styles. Đây là block đầu tiên và quan trọng nhất áp dụng pattern này.
+- **Molecule Base (2026-04-16):** Trở thành Root Element cho hệ Ska Molecules. Hỗ trợ thuộc tính `templateLock` (như 'all') truyền vào `useInnerBlocksProps` để Khóa Xương Sống cấu trúc đối với các Variation phức tạp (Multi-Step Form, Tabs, Accordion) nhằm tránh gãy Layout khi người dùng thao tác. Thẻ `tagName` có thể linh hoạt chuyển hóa (vd: `form` cho Quiz/Wizard).
 
 #### 3. Ska Image (`ska-builder/image`)
 - **Attributes:** `url`, `alt`, `id`, `tailwindClasses`, `customStyle`, `dynamic`.

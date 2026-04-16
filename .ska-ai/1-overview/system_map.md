@@ -52,6 +52,18 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-16 - 🟢 Architecture Shift - Global Smart Object Pop-ups & Interactive Engine Plan:**
+  - **Khai tử Ska Modal Block:** Chính thức loại bỏ khối "Ska Modal" cục bộ khỏi hệ thống biến thể (variations). Quyết định chiến lược: Mọi Popup/Lightbox sẽ được quản lý tập trung thông qua **Ska Smart Object (Global Template)** kết hợp với Logic Engine (kích hoạt bằng Click Handler hoặc Exit Intent / Delay Timer) ở các Phase sau, đảm bảo UI sạch sẽ và chuẩn mực Nocode Enterprise.
+  - **Vaccine Editor (Quy tắc CSS Tàng hình):** Tiêm `Vaccine CSS` vào `ska-editor-helper.js` để bảo vệ Gutenberg Editor khỏi hệ lụy của các khối HTML gắn lớp `fixed` (ví dụ như khi user dùng html2tailwind chuyển đổi raw HTML có chứa popup). Biến tất cả khối `fixed` thành `relative` với viền gạch đứt cảnh báo, đảm bảo luôn tương tác được mà không che khuất màn hình chỉnh sửa.
+  - **Ska Interactive Engine (Phase 4.5 Roadmap):** Đưa dự án "Alpine JIT cho React" vào lộ trình phát triển của Phase 4.5. Động cơ này sẽ tự động phân giải các thuộc tính `x-data`, `@click`, `x-show` thành Hook `React Context State` giả lập, giúp Editor "Sống" (Live) và hiển thị Dropdown, Tab, Slider theo thời gian thực mà không gây hỏng hóc Virtual DOM.
+- **2026-04-16 - 🟢 Done - Alpine.js & Render Filter Duplication Bugfix:**
+  - Phát hiện và dập tắt lỗi xung đột State của Alpine.js: Xóa bỏ việc load trùng lặp core script `alpine.min.js` (từ CDN trong `class-core.php` và local trong `init.php`). Hợp nhất về 1 nguồn duy nhất `ska-alpine` do `init.php` quyết định.
+  - Sửa lỗi tiêm HTML Attribute (`x-show`, `@click`) bị trùng lặp: Loại bỏ hook `render_block` bị khai báo 2 lần (ở `init.php` và `class-core.php`) gây ra tình trạng xuất html dị dạng `x-show="open" x-show="open"`.
+  - Khắc phục triệt để lỗi "Cancelled Transition" và Modal chỉ mở được 1 lần do dữ liệu Block HTML cũ lưu lại trong Database vẫn còn kẹt `x-transition` ở cha.
+- **2026-04-16 - 🟢 Done - Ska Molecules & Eco-UI State:**
+  - **Ska Multi-Step Form (Quiz/Wizard):** Triển khai thành công dưới dạng bản thể (Block Variation) `ska-molecule-multi-step` dựa trên cốt lõi của khối `ska-builder/container`. Áp dụng semantic tag `form` thay vì bọc rườm rà.
+  - **Block Lock (Khóa Xương Sống):** Nâng cấp `ska-builder/container` bằng thuộc tính `templateLock`, khóa chặt các cấu trúc Molecule phức tạp không cho người dùng vô tình kéo thả phá hỏng layout.
+  - **Ecosystem Shared State (Alpine.store):** Khởi tạo Store dùng chung mang tên `skaBuilder` (`Alpine.store('skaBuilder')`) tại lõi `class-core.php`. Chìa khóa vàng giúp mọi Component trong dự án có thể gọi và chia sẻ State cho nhau theo nguyên lý Decoupling.
 - **2026-04-16 - 🟢 Brainstorm: Phát triển Thư viện Ska Molecules:** Định hình lộ trình Phase 4 (Ska Multi-Step Form, Block Lock, Store) nhằm xây dựng hệ sinh thái UI tương tác thông minh dựa trên Alpine.js nhưng vẫn đảm bảo "Clean Slate Framework".
 - **2026-04-16 - 🟢 Architecture Verification: Tích hợp thành công Alpine.js cho Multi-step Forms & Tabs.** Trạng thái giao diện phức tạp được quản lý hoàn toàn ở frontend, đảm bảo nguyên tắc Decoupling. Áp dụng Tailwind Arbitrary Variants cho Native Element Styling (chữa lỗi select multiple). Cột mốc hoàn thiện hệ tương tác UI/UX Ska Form Builder.
 - **2026-04-15 - 🟢 Pivot Architecture: Schema JSON Native Support cho Multi-Select & Relation**:

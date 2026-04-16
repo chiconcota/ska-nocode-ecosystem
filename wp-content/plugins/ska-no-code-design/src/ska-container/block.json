@@ -40,6 +40,10 @@
         "usePersist": {
             "type": "boolean",
             "default": false
+        },
+        "templateLock": {
+            "type": "string",
+            "default": "false"
         }
     },
     "supports": {
