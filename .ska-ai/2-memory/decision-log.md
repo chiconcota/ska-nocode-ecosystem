@@ -1,6 +1,14 @@
+## 2026-04-16 - 🟢 Architecture Verification: Alpine.js Multi-step & Tabbed Interfaces
+- **Decision (Frontend UI State Decoupling):** Xác nhận thành công khả năng tích hợp của Alpine.js (`x-data`, `x-show`) cho các luồng giao diện phức tạp (Multi-step forms, Tab navigation) trong hệ sinh thái Ska Builder. UI State được quản lý hoàn toàn tại Client bằng Alpine.js, trong khi Data Validation & Persistence vẫn được bảo vệ nghiêm ngặt tại Backend.
+- **Decision (Native Element CSS Hack):** Chốt phương án sử dụng Tailwind Arbitrary Variants (`[&_option:checked]`) để xử lý highlight UI của thẻ `<select multiple>` Native thay vì sử dụng thư viện Select UI (JS bên thứ ba). Đảm bảo Clean Slate & No-Code.
+
+## 2026-04-15 - 🟢 Pivot Architecture: Sử Dụng Cấu Trúc Native JSON Cho Form & Relation
+- **Decision (MySQL Native JSON):** Chốt hủy phương án dùng Chuỗi CSV (`val1, val2`) gây lằng nhằng trong khâu Format Pipeline để giải quyết việc truyền mảng (Array) từ Frontend Form. Quyết định thay đổi thiết kế Lõi `Ska_Data_Pro_Database_Engine`: Tất cả các Cột thuộc Type `multi_select` và `relation` khi kích hoạt `dbDelta()` sẽ được khởi tạo với Native Type là **`JSON`** thay vì `TEXT` như trước đây (Yêu cầu Server MySQL >= 5.7 hoặc MariaDB >= 10.2).
+- **Reason:** Tăng tốc tuyệt đối tốc độ Insert và Fetch mà không cần tới Middleware Format. Các mảng `$form_id` hay list Checkboxes có thể được lưu trữ vẹn toàn định dạng Tree Struct, sẵn sàng mở chốt cho các hệ thống API Headless tích hợp không rào cản.
+
 ## 2026-04-15 - Bugfix: Form Multi-Select Payload & Defensive Logic Receiver
 - **Decision (Defensive Array Casting):** Quyết định ép kiểu biến `$form_id` (Trong API POST `handle_submit`) từ mảng về String tĩnh thông qua việc sử dụng `reset()` nếu Client bắn lên sai định dạng (có trường hợp JS gộp nhầm `$form_id: ['action_id']`). Kĩ thuật này loại bỏ triệt để lỗi PHP Fatal Error `Illegal offset type in isset` và đảm bảo băng chuyền Logic Engine luôn nhận đúng tên ID Workflow.
-- **Decision (Format Processor Multi-Select Support):** Nâng cấp Engine `Ska_Format_Processor` mở rộng thêm Action `array_to_string` để gom nhóm các Array (Select Multiple / Checkboxes) thành Chuỗi CSV (`val1, val2`) nhằm tương thích tuyệt đối với Flat Tables Schema (`ska_data_`) của `Ska_Data_Pro`. 
+- **Decision (Format Processor Multi-Select Support - Deprecated):** Đã nâng cấp Engine `Ska_Format_Processor` với `array_to_string` nhưng sau đó thay thế bằng phương thức Native JSON lưu thẳng ở Datastore Schema.
 
 ## 2026-04-13 - Decision: Ska System Dashboard & Dev Mode
 - **Decision (Phân tách AI Architect):** Quyết định Tách hệ thống tạo App Blueprint bằng AI (Ska AI Architect) khỏi Header giao diện và chuyển xuống dưới mục "Tiện Ích Mở Rộng". Phương án này giúp cung cấp không gian độc lập để người quản trị chèn API Key và cấu hình System Prompt. Hoãn việc Code logic chèn API sang các Version tiếp theo nhằm tập trung xây dựng Lõi (Milestone MVPs).
