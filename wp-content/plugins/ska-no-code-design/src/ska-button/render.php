@@ -46,13 +46,13 @@ $icon_class_attr = trim( 'material-symbols-outlined ' . esc_attr( $iconClasses )
 
 $inner_html = '';
 if ( $hasIcon && $iconPosition === 'left' && ! empty( $iconName ) ) {
-    $inner_html .= '<span class="' . $icon_class_attr . '">' . esc_html( $iconName ) . '</span>';
+    $inner_html .= '<span class="' . $icon_class_attr . '" aria-hidden="true">' . esc_html( $iconName ) . '</span>';
 }
 $inner_html .= ( $hasIcon && $iconPosition === 'left' && ! empty( $iconName ) && ! empty( $text ) ) ? ' ' : '';
 $inner_html .= esc_html( $text );
 $inner_html .= ( $hasIcon && $iconPosition === 'right' && ! empty( $iconName ) && ! empty( $text ) ) ? ' ' : '';
 if ( $hasIcon && $iconPosition === 'right' && ! empty( $iconName ) ) {
-    $inner_html .= '<span class="' . $icon_class_attr . '">' . esc_html( $iconName ) . '</span>';
+    $inner_html .= '<span class="' . $icon_class_attr . '" aria-hidden="true">' . esc_html( $iconName ) . '</span>';
 }
 
 if ( $tagName === 'button' ) {

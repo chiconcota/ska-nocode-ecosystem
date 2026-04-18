@@ -23,7 +23,7 @@ if ( ! empty( $attributes['logic']['enabled'] ) ) {
 }
 
 printf(
-    '<span %1$s>%2$s</span>',
+    '<span %1$s aria-hidden="true">%2$s</span>',
     $wrapper_attributes,
     esc_html( $icon_name )
 );
