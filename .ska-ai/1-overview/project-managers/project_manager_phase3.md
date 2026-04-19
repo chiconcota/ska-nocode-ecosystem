@@ -60,21 +60,11 @@ Phase 2 chịu trách nhiệm đúc "Thùng chứa" (Database) và thiết lập
   - **Processing:** Module siêu nhỏ (Strategy Pattern) rèn Data trước khi cất kho: Tạo Slug (`Ska_Slug_Processor`), Format Date (`Ska_Date_Processor`).
   - **Action:** Gửi Email (`Ska_Email_Action`), Đẩy lệnh `INSERT` và `UPDATE` dữ liệu xuống `Ska Data Pro` hoàn hảo qua Hook tách biệt ranh giới.
 - 🟢 **Logic UI DB Picker: [HOÀN TẤT]** Chuyển đổi thành công giao diện TextBox/Datalist cổ điển thành một hệ thống Glassmorphism Modal UI cao cấp với khả năng Real-time Search. Tích hợp thuật toán tự động lấy mảng dữ liệu `ska_data_apps` để gom nhóm chính xác (Grouping) các bảng theo đúng App ID (Tránh thảm họa chia nhóm lệch bằng Regex). Mở đường kết nối Mapping tức thì.
-- 🟡 Xử lý hệ thống Role-Based Access Control (RBAC) cho điều kiện hiển thị (Dời sang Milestone Update).
+
 - 🟢 **Quản Lý Băng Chuyền (Logic Manager UI): [HOÀN TẤT]** Xây dựng trang quản trị hiển thị Danh sách các Luồng Logic (List View). Cho phép người dùng trực quan Thêm Mới, Xóa, Đổi Tên các Luồng an toàn theo phong cách Dual-View.
 - 🟢 **Hoàn thiện UX Linear Builder: [HOÀN TẤT]** Loại bỏ hành vi Enter tự reload form gây gãy Chrome Extensions. Dịch chuyển luồng bằng DOM Swap 100%.
 - 🟢 **Băng Chuyền Dữ Liệu Không Rác (Native JSON Format): [HOÀN TẤT]** Lập cấu trúc phòng thủ (Defensive Array Casting) kết hợp với màn "Pivot Architecture" chuyển đổi toàn diện cột dữ liệu Multiselect/Relation sang cấu trúc Native JSON thay vì CSV. Giải quyết rốt ráo bài toán Frontend đệ trình Payload Array xuống thẳng trái tim Flat Table mà không cần xử lý chuỗi trung gian.
 
-### 3.3. Tính Năng Độc Lập Mọi Thời Điểm (UI Features & Canvas App / Theme Builder)
-- **Theme Builder** (Lắp Header, Footer từ CPT `ska_template`).
-  - 🔵 **Tính Năng Chìa Khóa: Khối Query Loop (Foreach / Map):** Tập trung xây dựng 1 Component/Block vòng lặp ở Frontend. Khối này sẽ nhận dữ liệu mảng (Array) từ SQL, từ đó lặp ra thẻ giao diện (List/Grid) để dựng Trang Danh sách (Archive, Blog, List view). Đây sẽ là mảnh ghép sức mạnh sống còn của Theme Builder.
-- **Milestone 2 (Design Engine): Dark Mode Thượng tầng:** (🔴 Pending) Lập kế hoạch mang lại chức năng Dark Mode hoàn chỉnh (`darkMode: 'class'`). Cần nghiên cứu cơ chế bọc selector `:is(html.dark, .dark)` an toàn mà không phá vỡ logic specificity hiện hành, đồng thời xây dựng UI Toggle trên Frontend/Editor.
-- **App Dashboards / Sub-Admin Portals (🔴 Pending):** Tạo Custom Post Type (`ska_portal`) trong `ska-builder-core`. Giúp User dùng luôn quyền trượng Editor để tự do kéo thả bộ khung giao diện trang quản lý Khóa Học, Thành Viên ra Frontend Portal thay vì ép phải xài trang cấu hình xám xịt của WordPress Admin.
-- **Auto-Generated CRUD Portal (🔴 Pending):** Nâng cấp cho khối "App Portal". Tích hợp với `Theme Builder`, xây dựng một Component/Smart Block cho phép người dùng chỉ định Nguồn (App Workspace) để hệ thống tự động bung ra toàn bộ Danh sách (List View) và Form thao tác (Create/Edit), tuân thủ hoàn toàn quy chuẩn giao diện của `ska-nocode-design`. Giao cho Builder Core đảm nhiệm để giữ vững ranh giới Decoupled với Data Pro.
-- **Custom Block / UI Symbols** (Khối tái sử dụng thiết kế).
-- *Lưu ý:* Mấy tính năng này bản chất là Hệ Giao diện Canvas UI/Design (Lưu cục HTML), không cần đợi Phase 3, có thể tranh thủ làm luôn ngay trong Phase 2 bất cứ khi nào rảnh rỗi.
-
-### 3.4. Milestone 4++: Tối ưu Big Data (SQL Indexing & Caching cho Cột Ảo)
-- Kế hoạch dự phòng cho ứng dụng quy mô lớn (>1,000,000 mẩu dữ liệu). Khi DataGrid/App Frontend cần thực thi các lệnh `ORDER BY` hoặc Tương tác Lọc (Filter) lên các Cột Ảo (`Rollup` / `Formula`).
-- Xây dựng Cỗ máy Caching Webhook/Trigger: Lưu vết giá trị tính toán cục bộ giấu xuống thẳng bảng MySQL (`SQL Persistence Layer`).
-- Không cần ưu tiên trong MVP hiện tại vì nó nằm ở độ khó Enterprise, Trade-off kiến trúc nặng.
+### 3.3. Phase 4: Frontend Ecosystem (UI/React/Canvas)
+- **THÔNG BÁO NIÊM PHONG:** Toàn bộ các hạng mục về Tầng hiển thị (Query Loop, Theme Builder, Custom Blocks, App Portals, Dark Mode) đã chính thức được bóc tách và chuyển giao sang một File Quản trị độc lập: `project_manager_phase4.md`.
+- File **Phase 3** này chính thức bị niêm phong tại đây. Mọi sự ủy quyền thuộc về Phase 4.
