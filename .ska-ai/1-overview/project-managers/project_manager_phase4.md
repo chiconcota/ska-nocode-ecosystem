@@ -1,0 +1,49 @@
+# PROJECT MANAGER: PHASE 4 - FRONTEND ECOSYSTEM (APP BUILDER & CANVAS UI)
+@status: 🟡 In Progress | @last_update: 2026-04-20 | @context: Master Roadmap cho toàn bộ Tầng Phân hệ Hiển thị (Frontend/React UI).
+
+---
+
+## 1. MỤC TIÊU CỐT LÕI (CORE GOALS)
+- **Hoàn thiện hệ sinh thái UI:** Chuyển giao sức mạnh cốt lõi từ `Ska Data Pro` và `Ska Logic Engine` lên giao diện người dùng (No-code / Canvas).
+- **The Dogfooding Model (Ska System):** Quản lý hệ thống Theme Builder, Organisms và Global Presets bằng giao diện Flat Tables thông qua Smart Object chống xóa `ska_system`.
+- **Framework-Agnostic Site Design:** Cho phép dựng toàn bộ Website (Header, Footer, Archive, Logic) mà KHÔNG cần dựa dẫm vào cấu trúc PHP của Theme WordPress.
+
+---
+
+## 2. ROADMAP THEO HẠNG MỤC (PHASE 4 TRACKER)
+
+### 2.1. Ska Symbols & Smart Object 'app-site' (Tầng Lưu Trữ & Custom Blocks)
+*Được khởi tạo từ `project_manager_custom_blocks.md` cũ.*
+- [x] Khởi tạo phân vùng App `ska_system` (nhãn "Site Management") trong `App_Manager` và chặn quyền thay đổi/xoá app này.
+- [x] Mồi/tạo 3 Bảng Hệ Thống (`ska_data_sys_organisms`, `ska_data_sys_theme_templates`, `ska_data_sys_presets`) tự động qua hook migration/setup của Ska Data Pro.
+- [x] Tuỳ biến `ska_data_dictionary` để có nhãn UI thuần Việt cực xịn ("Organisms Blocks", "Theme Templates", "Design Tokens").
+- [x] Kích hoạt hệ thống Cache thông minh: Bất cứ chức năng Update/Delete/Insert nào, ghi đè file `.json/.php` fallback giúp Frontend truy xuất Data nhanh siêu tốc.
+- [x] Cảnh báo cài đặt (Red Banner) nếu người dùng chối bỏ việc cài Ska Data Pro và Logic Engine.
+- [x] Gắn shortcut "Site Blueprint" tại menu Ska Builder Core trỏ sang UI DataGrid tương ứng của `ska_system`.
+- [ ] Tính năng (React UI): Tạo nút "Save as Organism Block" gửi đẩy Payload (JSON/HTML) thẳng xuống CSDL flat-table `ska_data_sys_organisms`.
+- [ ] Tính năng (Inserter): Lấy danh sách Block đã lưu đưa vào Inserter (+) của Gutenberg và render thành reference thay vì hardcode.
+
+### 2.2. Ska Molecule & Alpine.js Library (Tầng Tương tác Frontend)
+*Được tích hợp từ `project_manager_molecule_engine.md` cũ.*
+- [x] Mảng UI Tabs, Accordion (Sử dụng Template Lock). Trang bị chuẩn `x-data`.
+- [x] Mảng Dropdown Menu, Offcanvas Slider, Standard Forms.
+- [x] Khởi tạo hệ sinh thái `Alpine.store('app')` để kết nối Global State chéo giữa các block riêng rẽ.
+
+### 2.3. Theme Builder & Khối Vòng Lặp Vạn Năng (Ska Query Loop)
+*Được tích hợp từ `project_manager_theme_builder.md` cũ.*
+- [ ] Lập cấu trúc Ghi đè Template (WordPress Template Router) từ Flat table (Header/Footer/Archive...).
+- [ ] **Khối Query Loop (Foreach / Map):** Tập trung xây dựng 1 Component/Block vòng lặp ở Frontend. Khối này sẽ nhận dữ liệu mảng (Array) từ SQL, từ đó lặp ra thẻ giao diện (List/Grid) để dựng Trang Danh sách (Archive, Blog, List view).
+- [ ] Tích hợp Ska Query Loop kết nối với Ska Dynamic Content (Biến nhúng `{{...}}`).
+
+### 2.4. Tính Năng UI Độc Lập / Mới Cập Nhật
+*Được trích xuất từ phần 'Tương lai' (3.3) của Phase 3.*
+- [ ] **Milestone 2 (Design Engine) - Dark Mode Thượng tầng:** Lập kế hoạch mang lại chức năng Dark Mode hoàn chỉnh (`darkMode: 'class'`), kết hợp Tailwind. Cần xây dựng Switcher / Toggle Block.
+- [ ] **App Dashboards / Sub-Admin Portals:** Tạo Custom Post Type (`ska_portal`) giúp User dùng quyền Editor để tự thả các giao diện trang quản lý Khóa Học, Thành Viên ra Frontend Portal tách khỏi WordPress Admin xám xịt.
+- [ ] **Auto-Generated CRUD Portal:** Nâng cấp cho khối "App Portal" tích hợp với `Theme Builder`. Cho phép người dùng chỉ định Nguồn dữ liệu (App Workspace), hệ thống sẽ tự sinh ra Lưới danh sách (Grid) và Form Create/Edit.
+- [ ] **Role-Based Access Control (RBAC) cho Tầng Hiển thị:** Xử lý hệ thống phân quyền nâng cao (RBAC) để quyết định hiển thị Khối/Template cho từng nhóm đối tượng (Guest, Student, Admin). Được dời từ lộ trình Logic Engine (Phase 3) sang để gắn kết chặt với UI / Theme Builder.
+
+---
+
+## 3. CÁC QUY TẮC BẢO VỆ (CONSTRAINTS)
+- ⚠️ **Zero Dependency:** Khối Query Loop và Giao diện Theme KHÔNG lấy dữ liệu cứng, tất cả phải dùng chung cỗ máy Data Fetcher của `Ska Data Pro`. Giao tiếp qua `apply_filters`.
+- ⚠️ **Decoupled:** Danh sách các Template được xây dựng trên Flat Tables. Việc phân phối hiển thị sẽ do phân hệ `Ska Logic Engine` giám định để đảm bảo tách bạch.
