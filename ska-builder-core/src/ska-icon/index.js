@@ -80,7 +80,7 @@ registerBlockType(metadata.name, {
                             background: '#f0f0f0',
                             borderRadius: '6px',
                         }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '36px' }}>{iconName || 'star'}</span>
+                            <span className="material-symbols-outlined" style={{ fontSize: '36px' }} aria-hidden="true">{iconName || 'star'}</span>
                             <div style={{ flex: 1 }}>
                                 <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{iconName || 'star'}</div>
                                 <div style={{ fontSize: '11px', color: '#757575' }}>Current Icon</div>
@@ -101,7 +101,7 @@ registerBlockType(metadata.name, {
                             onClick={() => setIsModalOpen(true)}
                             style={{ width: '100%', justifyContent: 'center', marginBottom: '8px' }}
                         >
-                            <span className="material-symbols-outlined" style={{ fontSize: '18px', marginRight: '6px' }}>apps</span>
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px', marginRight: '6px' }} aria-hidden="true">apps</span>
                             {__('Browse Icons', 'ska-builder-core')} ({ALL_ICONS.length})
                         </Button>
                     </PanelBody>
@@ -172,7 +172,7 @@ registerBlockType(metadata.name, {
                                     }}
                                     title={icon}
                                 >
-                                    <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>{icon}</span>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '24px' }} aria-hidden="true">{icon}</span>
                                     <span style={{
                                         fontSize: '9px',
                                         color: '#666',
