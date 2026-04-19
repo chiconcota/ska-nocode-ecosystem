@@ -85,12 +85,20 @@ function evaluateAst(node, context) {
             // VD: open = !open. Trả về { open: newState } để setState merge lại
             if (node.operator === '=') {
                 const newValue = evaluateAst(node.right, context);
-                // Với Skapine, ta chỉ hỗ trợ Identifier assignment (tức là state root properties)
+                
                 if (node.left.type === 'Identifier') {
                     return { [node.left.name]: newValue };
                 }
+                else if (node.left.type === 'MemberExpression') {
+                    const obj = evaluateAst(node.left.object, context);
+                    if (obj) {
+                        const prop = node.left.computed ? evaluateAst(node.left.property, context) : node.left.property.name;
+                        obj[prop] = newValue;
+                        return { type: 'DEEP_UPDATE' };
+                    }
+                }
             }
-            throw new Error(`Chỉ hỗ trợ gán (Assignment) cho biến cơ bản (Identifier)`);
+            throw new Error(`Chỉ hỗ trợ gán (Assignment) cho biến cơ bản (Identifier) và thuộc tính (MemberExpression)`);
         }
         case 'MemberExpression': {
             const obj = evaluateAst(node.object, context);

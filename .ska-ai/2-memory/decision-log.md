@@ -1,3 +1,13 @@
+## 2026-04-20 - 🟢 System Finalization: Packaging & Dashboard UI
+- **Decision (Plugin Packaging Strategy):** Tinh chỉnh cấu trúc Build ZIP cho Plugin. Lọc bỏ 100% `node_modules` và `src` lẩn sâu trong các thư mục con (ví dụ: `skafx-editor`) giúp plugin `ska-logic-engine` nhẹ hơn gấp 250 lần (từ >100MB xuống 0.38MB), tối ưu tuyệt đối cho công tác sao chép, cài đặt trên server thực.
+- **Decision (Ecosystem Warning Banner):** Thực thi nghiêm ngặt UI chặn lỗi phụ thuộc. Nếu `Ska Data Pro` hoặc `Ska Logic Engine` chưa được kích hoạt, hệ thống sẽ chèn tức thì Red Banner tại Admin Dashboard giúp định hướng người quản trị kích hoạt ngay 2 thành tố sống còn của Ecosystem.
+- **Decision (Zero-Trash & Documentation Pipeline):** Tái áp dụng triệt để chính sách dọn dẹp và duy trì bộ nhớ tài liệu. Cập nhật `system_map.md` và `decision-log.md` an toàn để kết thúc Phase 3 - Kiến trúc cơ sở hạ tầng.
+
+## 2026-04-19 - Brainstorm: Ska Symbols & Smart Object 'app-site'
+- **Decision (App-site Tables):** Trong Smart Object `app-site` sẽ chứa các bảng quản lý Thông tin trang, Theme builder, Custom block, và Preset setting. Điều này giúp tận dụng tối đa hệ sinh thái Ska Data Pro để lưu trữ và quản lý cấu hình hệ thống mà không cần đẻ quá nhiều CPT nội bộ.
+- **Decision (html2tailwind Custom Colors):** Dự kiến ở Phase tiếp theo sẽ bổ sung cấu trúc lưu mã màu tùy chỉnh khi dán HTML code khối lớn từ Tailwind/Flowbite vào Editor, nhằm biến hóa Ska No-Code Design Engine mạnh mẽ hơn.
+- **Reference:** Kế hoạch chi tiết đã được đăng tải và suy xét kỹ lưỡng trên Notion.
+
 ## 2026-04-19 - 🟢 Bugfix & UX: Tối ưu UI Offcanvas (Ska Builder)
 - **Decision (Offcanvas Close Button Positioning):** Thay vì để nút Close nằm chơi vơi ngoài panel dễ bị ảnh hưởng bởi z-index cục bộ của cấu trúc Edit Mode, nút Close được đẩy vào trong Panel (position: absolute) cùng `z-index: 9999`. Việc này ngăn chặn sự cố các khối nội dung bên trong Gutenberg (thường tự sinh position relative và z-index khi được chọn) vô tình đè vùng nhận click, làm liệt chức năng tắt Offcanvas.
 - **Decision (Offcanvas Content Safety Padding):** Giảm thiểu xung đột layout bằng cách tăng `pt-16` (padding top) cho container nội dung của Offcanvas, đảm bảo người dùng Nocode khi kéo thả Text/Image sẽ không bị chữ đè lấn lên khu vực góc phải phía trên của nút Close.

@@ -5,10 +5,13 @@ import { useState, useEffect, useRef } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { SkapineProvider, useSkapine } from './context';
 import { parseInitialState, evaluateExpression } from './parser';
+import { useSkapineStore } from './store';
 
 const SkapineEngineChild = ({ blockProps, BlockEdit, htmlAttributes, isPreviewMode }) => {
     const skapine = useSkapine();
     const { state, updateState, isPreviewMode: contextPreviewMode } = skapine || {};
+    const $store = useSkapineStore();
+    const evalContext = { ...(state || {}), $store };
 
     const effectivePreviewMode = isPreviewMode || contextPreviewMode || false;
 
@@ -18,9 +21,28 @@ const SkapineEngineChild = ({ blockProps, BlockEdit, htmlAttributes, isPreviewMo
     const onClickAttr = htmlAttributes.find(a => a.key.startsWith('@click') || a.key.startsWith('x-on:click'));
     const onMouseEnterAttr = htmlAttributes.find(a => a.key.startsWith('@mouseenter') || a.key.startsWith('x-on:mouseenter'));
     const onMouseLeaveAttr = htmlAttributes.find(a => a.key.startsWith('@mouseleave') || a.key.startsWith('x-on:mouseleave'));
+    const xInitAttr = htmlAttributes.find(a => a.key === 'x-init');
+
+    // Mở khóa sức mạnh x-init trên Editor (Chạy 1 lần khi Preview)
+    useEffect(() => {
+        if (effectivePreviewMode && xInitAttr) {
+            try {
+                // Tạo môi trường ảo với $store và thẻ state root để giả lập Alpine init
+                const initScript = new Function('$store', 'state', `
+                    with(state) {
+                        ${xInitAttr.value}
+                    }
+                `);
+                initScript($store, state || {});
+                if (window.SkapineStore) window.SkapineStore.notify(); // Emit thay đổi nếu có
+            } catch (err) {
+                console.error("Skapine Preview: Lỗi khi giả lập x-init:", err);
+            }
+        }
+    }, [effectivePreviewMode, xInitAttr?.value]);
     
     // Evaluate x-show
-    const isVisible = hasXShow ? evaluateExpression(hasXShow.value, state || {}) : true;
+    const isVisible = hasXShow ? evaluateExpression(hasXShow.value, evalContext) : true;
 
     const [renderVisible, setRenderVisible] = useState(isVisible);
 
@@ -112,9 +134,12 @@ const SkapineEngineChild = ({ blockProps, BlockEdit, htmlAttributes, isPreviewMo
                 e.preventDefault();
                 
                 // Xử lý logic gán (VD: open = !open)
-                const result = evaluateExpression(onClickAttr.value, state || {});
+                const result = evaluateExpression(onClickAttr.value, evalContext);
                 
-                if (result && typeof result === 'object' && !Array.isArray(result)) {
+                if (result && result.type === 'DEEP_UPDATE') {
+                    updateState(prev => ({...prev}));
+                    if (window.SkapineStore) window.SkapineStore.notify();
+                } else if (result && typeof result === 'object' && !Array.isArray(result)) {
                     updateState(result);
                 }
             }
@@ -134,16 +159,22 @@ const SkapineEngineChild = ({ blockProps, BlockEdit, htmlAttributes, isPreviewMo
     const handleMouseEnter = (e) => {
         if (!effectivePreviewMode) return;
         if (onMouseEnterAttr && updateState) {
-            const result = evaluateExpression(onMouseEnterAttr.value, state || {});
-            if (result && typeof result === 'object' && !Array.isArray(result)) updateState(result);
+            const result = evaluateExpression(onMouseEnterAttr.value, evalContext);
+            if (result && result.type === 'DEEP_UPDATE') {
+                updateState(prev => ({...prev}));
+                if (window.SkapineStore) window.SkapineStore.notify();
+            } else if (result && typeof result === 'object' && !Array.isArray(result)) updateState(result);
         }
     };
 
     const handleMouseLeave = (e) => {
         if (!effectivePreviewMode) return;
         if (onMouseLeaveAttr && updateState) {
-            const result = evaluateExpression(onMouseLeaveAttr.value, state || {});
-            if (result && typeof result === 'object' && !Array.isArray(result)) updateState(result);
+            const result = evaluateExpression(onMouseLeaveAttr.value, evalContext);
+            if (result && result.type === 'DEEP_UPDATE') {
+                updateState(prev => ({...prev}));
+                if (window.SkapineStore) window.SkapineStore.notify();
+            } else if (result && typeof result === 'object' && !Array.isArray(result)) updateState(result);
         }
     };
 

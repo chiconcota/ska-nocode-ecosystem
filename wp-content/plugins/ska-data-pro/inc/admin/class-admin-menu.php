@@ -20,6 +20,7 @@ class Admin_Menu {
 		add_action( 'admin_menu', [ $this, 'register_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
         add_action( 'ska_system_dashboard_modules', [ $this, 'render_dashboard_card' ] );
+		add_action( 'ska_system_dashboard_extensions', [ $this, 'render_extensions' ] );
 	}
 
 	public function enqueue_assets( $hook ) {
@@ -79,6 +80,18 @@ class Admin_Menu {
         </div>
         <?php
     }
+
+	public function render_extensions() {
+		?>
+		<a href="?page=ska-data-pro-manage&app=ska_system" class="block bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:border-indigo-300 hover:shadow-md transition-all group no-underline text-slate-800">
+			<div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center mb-3">
+				<span class="material-symbols-outlined">web_stories</span>
+			</div>
+			<h3 class="font-bold text-base m-0 p-0 border-0 mb-1 group-hover:text-indigo-600 transition-colors">Site Blueprint</h3>
+			<p class="text-xs text-slate-500 m-0">Quản lý Theme Templates, Organisms & Tokens cho Web App.</p>
+		</a>
+		<?php
+	}
 
 	/**
 	 * Render trang UI Dashboard gốc.
