@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v1.0.0)
-@status: MVP DONE | @last_update: 2026-04-16
+@status: STABLE PHASE 3 DONE | @last_update: 2026-04-20
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core (Host) + PHP 8.2+
@@ -38,274 +38,38 @@ ska-ecosystem/ (mapped to app/public/)
 ## 4. MODULE REGISTRY & STATUS
 | App Module | Path | Responsibilities | Status |
 | :--- | :--- | :--- | :--- |
-| **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Done (v1) |
-| **Ska No-Code Design** | `plugins/ska-no-code-design/`| Base Blocks, Tailwind JIT, Inspector UI | 🟢 Done (v1) |
-| **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, Schema, Templates | 🟢 Done (MVP & Packaged) |
-| **Ska Logic Engine** | `plugins/ska-logic-engine/`| (Ska-xi măng) Bắt Sự kiện (Workflows), Xử lý Data & Logic (If/Then) | 🟢 Done (Manager UI & Linear Builder MVP) |
-| **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API (JSON Export) | 🟡 In Progress (html2tailwind Done) |
+| **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Stable (v1) |
+| **Ska No-Code Design** | `plugins/ska-no-code-design/`| Core Blocks, Tailwind JIT, Ska Molecule | 🟢 Stable Phase 3 |
+| **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, JSON Native Schema | 🟢 Stable Phase 3 |
+| **Ska Logic Engine** | `plugins/ska-logic-engine/`| Event Pipeline, SkaFX, Universal Binding | 🟢 Stable Phase 3 |
+| **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API (JSON Export) | 🟢 Integrated |
 
-## 5. GLOBAL CONSTRAINTS (FOR AI)
+## 5. SYSTEM CAPABILITIES (CHECKPOINTS - PHASES 1-3)
+Dù chi tiết quyết định đã được lưu vào `archive/decision-log-phase-1-2.md`, đây là bản đồ năng lực (trạng thái) hệ thống đang sở hữu trước khi vào Phase 4:
+- **Ska Design Engine (JIT Tailwind v4 & Alpine.js):** Gói lõi xử lý Giao diện bao gồm Biên dịch CSS thời gian thực tại Local (JIT) và Quản lý State/Interaction trên Frontend (Ska Molecule/Alpine.js). Đã xử lý triệt để CSS Specificity Parity, Flat DOM, và chuyển hóa HTML sang Tailwind thông minh (`Ska Bridge`). Hỗ trợ mượt mà Pseudo-classes, Grid/Flex layout, Animation phức tạp.
+- **Ska Data Pro (Flat Tables First):** Xóa xổ hoàn toàn rác EAV (`wp_postmeta`). Hệ thống DB quản trị bởi Schema Manager độc lập, có sức mạnh xử lý Rollup (Lookup Virtualization), Heuristic Filters, Auto-Prefix, và xuất nhập dưới dạng **Smart Object Blueprint (JSON)**.
+- **Ska Logic Engine (The Trinity):** Kiến trúc Event-Driven kết nối Vỏ (UI), Nhân (Logic), Kho (Data). Đã trang bị ngôn ngữ biểu thức **SkaFX DSL** (AST Evaluator) phục vụ Universal Dynamic Binding (Hiển thị có điều kiện & Inner Text nội suy) ngay trong thiết kế kéo thả. Mọi thao tác form đều tuân thủ nguyên lý Nonce chặt chẽ và Data Healing thông minh.
+- **Skapine Engine (Ska Molecule):** Nhúng sâu thư viện Alpine.js directives (`x-data`, `x-bind`, event listeners) cùng với Tailwind JIT lên Gutenberg Editor, đảm bảo live-preview mọi thao tác tương tác giao diện.
+
+## 6. GLOBAL CONSTRAINTS (FOR AI)
 1. **Micro-Ecosystem Boundary:** Plugins DO NOT call each other's classes directly. They communicate exclusively via WP `do_action` and `apply_filters`.
 2. **Flat Tables First:** All future data models must rely on Ska Data Pro's custom tables (`ska_data_*`), completely abandoning `wp_postmeta`.
-3. **Divide & Conquer:** File size < 700 lines. Exceed = Split.
-4. **Context Switching:** Always read the specific plugin's documentation inside `.ska-ai/3-ecosystem/` trước khi thao tác.
+3. **Zero-Trash Policy:** Mọi tài liệu bắt buộc phải nằm gọn bên trong 4 ngăn kéo (.ska-ai/1-overview, 2-memory, 3-ecosystem, 4-rules). Tuyệt đối không sinh rác file .md lung tung (Theo điều luật `ska-docs-management.md`).
+4. **Single Source Of Truth (SSOT):** Tài liệu phải liên tục được ghi đè, không lưu vết lan man. Dùng Lệnh Replace, không dùng Lệnh Write bừa bãi.
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
-## 6. RECENT UPDATES
-- **2026-04-19 - 🟢 Done - Ska System Multi-Tier Caching & Dashboard Integration:**
-  - **Zero-Query Caching (Tối ưu Bộ nhớ):** Xây dựng hệ thống Caching đa tầng (`System_Cache`) cho Smart Object `app-site` (`ska_system`). Lớp Tier 1 lưu trên RAM (Transient) để gọi siêu tốc. Tier 2 đẩy xuống file vật lý tĩnh (`.json`) tại `/uploads/ska-system-cache/` như giải pháp dự phòng (Fallback) đối phó với shared-hosting không cài Object Cache.
-  - **Mutation Observers:** Móc ngoặc Hook `ska_data_row_created`, `ska_data_cell_updated`, `ska_data_row_deleted` trực tiếp vào máy chủ `Database_Engine` của Ska Data Pro, giúp tự động vô hiệu hóa (Invalidate) và tái tạo file JSON tức thời khi user thao tác dữ liệu. Không còn tình trạng "Lưu xong phải F5 mới thấy trên web".
-  - **Ecosystem Integration:** Cài cấm lối tắt "Site Blueprint" vào Core Dashboard "Ska Ecosystem". Triển khai hệ thống thông báo trạng thái "Ecosystem Warning", cảnh cáo Admin nếu họ dám kích hoạt một Frontend UI (như Custom Blocks, Smart Forms) mà lỡ tắt mất máy mẹ `Ska Data Pro` hoặc `Ska Logic Engine`. Tôn chỉ: Sạch, an toàn và đồng nhất.
-- **2026-04-19 - 🟢 Brainstorm: Ska Symbols & Smart Object 'app-site':**
-  - Chốt phương án quy hoạch dữ liệu tại Phase 4 Custom Blocks: Không rải rác CPT wp_ska_data_symbols mà tập trung toàn vẹn mảng quản trị tái sử dụng, cài đặt Theme Builder, Preset Setting vào chung một Smart Object lõi mặc định mang tên `app-site` dưới sự quản lý trực tiếp của Ska Data Pro (Flat Table `Ska_data_app-site_*`). Ghi nhận ý tưởng mở rộng Bảng thiết lập mã màu HTML2Tailwind. Cập nhật Decision Logs và Roadmap Custom Blocks theo hướng phân mảnh bảng Flat Table phục vụ Nocode Ecosystem.
-- **2026-04-19 - 🟢 Done - Hệ sinh thái Global State (Alpine.store & Skapine Compatibility):**
-  - Khởi chạy tính năng Global State Management (giao tiếp chéo giữa các Block độc lập) thông qua cơ chế `Alpine.store()`.
-  - Nâng cấp AST Parser (`parser.js`): Mở rộng năng lực phân giải để hỗ trợ kỹ thuật Deep Assignment qua đối tượng đa nhánh `MemberExpression` (Cho phép lệnh dạng `$store.app.modal = true` lọt qua trạm kiểm duyệt).
-  - Skapine Editor Monkey-patching (`withSkapine.js`): Cấy ghép Hook cưỡng chế chạy mã JavaScript của thuộc tính `x-init` thành Polyfill `SkapineStore` khép kín trong Editor. Editor giờ đây giả lập hoàn hảo trải nghiệm tương tác xuyên Block với tỷ lệ phản hồi 1:1 so với Frontend.
-  - Phân vùng trách nhiệm Alpine CDN và Skapine Engine. Ban hành tài liệu chỉ dẫn chi tiết `alpine-store-guide.md` nhằm bảo vệ định hướng Single-page State lifecycle.
-- **2026-04-19 - 🟢 Bugfix & UX: Tối ưu UI Offcanvas (Ska Builder):**
-  - **Overlapping Fix:** Chuyển vị trí nút Close của Offcanvas từ vùng an toàn biên ngoài vào thẳng bên trong Panel nội dung (absolute, top/right-4, z-index: 9999) nhằm chống hiện tượng Block con trong cấu trúc Gutenberg "nuốt" z-index và che lấp nút bấm tắt khi tương tác.
-  - **Padding Adjustment:** Cân chỉnh padding cho vùng hiển thị nội dung bên trong Offcanvas (`pt-16`) để văn bản/hình ảnh được chèn thêm không đè vào khu vực an toàn của nút Close.
-- **2026-04-18 - 🟢 Nâng cấp UX: Skapine Engine Auto-fill & Phân nhóm HTML Attributes:**
-  - **HTML Attributes OptGroup:** Tái cấu trúc Panel nhập "Thuộc tính HTML/Alpine", chia thành 4 nhóm (Hiệu ứng/Animation chạy trong ranh giới Preview, Chức năng Data/Logic chạy ngầm, Tùy chỉnh Form và HTML Cơ bản) cho người dùng Nocode dễ sử dụng.
-  - **Smart Auto-fill Defaults:** Áp dụng bộ quy tắc Auto-fill tự động sinh logic phụ trợ mặc định (VD: `@mouseenter` sinh ra `hover = true`, `x-data` sinh `{ open: false, hover: false }`) giảm thiểu thiết lập cho End-user.
-  - **Skapine Engine Preview Mode (Mouse Events):** Mở rộng Event Listeners lắng nghe `onMouseEnter` và `onMouseLeave` cho nhân Skapine. Block (khi bật Preview Mode) lập tức trích xuất logic tương tác Hover và chạy trực tiếp trên hệ thống Render của Editor.
-- **2026-04-16 - 🟢 Architecture Shift - Global Smart Object Pop-ups & Interactive Engine Plan:**
-  - **Khai tử Ska Modal Block:** Chính thức loại bỏ khối "Ska Modal" cục bộ khỏi hệ thống biến thể (variations). Quyết định chiến lược: Mọi Popup/Lightbox sẽ được quản lý tập trung thông qua **Ska Smart Object (Global Template)** kết hợp với Logic Engine (kích hoạt bằng Click Handler hoặc Exit Intent / Delay Timer) ở các Phase sau, đảm bảo UI sạch sẽ và chuẩn mực Nocode Enterprise.
-  - **Vaccine Editor (Quy tắc CSS Tàng hình):** Tiêm `Vaccine CSS` vào `ska-editor-helper.js` để bảo vệ Gutenberg Editor khỏi hệ lụy của các khối HTML gắn lớp `fixed` (ví dụ như khi user dùng html2tailwind chuyển đổi raw HTML có chứa popup). Biến tất cả khối `fixed` thành `relative` với viền gạch đứt cảnh báo, đảm bảo luôn tương tác được mà không che khuất màn hình chỉnh sửa.
-  - **Ska Interactive Engine (Phase 4.5 Roadmap):** Đưa dự án "Alpine JIT cho React" vào lộ trình phát triển của Phase 4.5. Động cơ này sẽ tự động phân giải các thuộc tính `x-data`, `@click`, `x-show` thành Hook `React Context State` giả lập, giúp Editor "Sống" (Live) và hiển thị Dropdown, Tab, Slider theo thời gian thực mà không gây hỏng hóc Virtual DOM.
-- **2026-04-16 - 🟢 Done - Alpine.js & Render Filter Duplication Bugfix:**
-  - Phát hiện và dập tắt lỗi xung đột State của Alpine.js: Xóa bỏ việc load trùng lặp core script `alpine.min.js` (từ CDN trong `class-core.php` và local trong `init.php`). Hợp nhất về 1 nguồn duy nhất `ska-alpine` do `init.php` quyết định.
-  - Sửa lỗi tiêm HTML Attribute (`x-show`, `@click`) bị trùng lặp: Loại bỏ hook `render_block` bị khai báo 2 lần (ở `init.php` và `class-core.php`) gây ra tình trạng xuất html dị dạng `x-show="open" x-show="open"`.
-  - Khắc phục triệt để lỗi "Cancelled Transition" và Modal chỉ mở được 1 lần do dữ liệu Block HTML cũ lưu lại trong Database vẫn còn kẹt `x-transition` ở cha.
-- **2026-04-16 - 🟢 Done - Ska Molecules & Eco-UI State:**
-  - **Ska Multi-Step Form (Quiz/Wizard):** Triển khai thành công dưới dạng bản thể (Block Variation) `ska-molecule-multi-step` dựa trên cốt lõi của khối `ska-builder/container`. Áp dụng semantic tag `form` thay vì bọc rườm rà.
-  - **Block Lock (Khóa Xương Sống):** Nâng cấp `ska-builder/container` bằng thuộc tính `templateLock`, khóa chặt các cấu trúc Molecule phức tạp không cho người dùng vô tình kéo thả phá hỏng layout.
-  - **Ecosystem Shared State (Alpine.store):** Khởi tạo Store dùng chung mang tên `skaBuilder` (`Alpine.store('skaBuilder')`) tại lõi `class-core.php`. Chìa khóa vàng giúp mọi Component trong dự án có thể gọi và chia sẻ State cho nhau theo nguyên lý Decoupling.
-- **2026-04-16 - 🟢 Brainstorm: Phát triển Thư viện Ska Molecules:** Định hình lộ trình Phase 4 (Ska Multi-Step Form, Block Lock, Store) nhằm xây dựng hệ sinh thái UI tương tác thông minh dựa trên Alpine.js nhưng vẫn đảm bảo "Clean Slate Framework".
-- **2026-04-16 - 🟢 Architecture Verification: Tích hợp thành công Alpine.js cho Multi-step Forms & Tabs.** Trạng thái giao diện phức tạp được quản lý hoàn toàn ở frontend, đảm bảo nguyên tắc Decoupling. Áp dụng Tailwind Arbitrary Variants cho Native Element Styling (chữa lỗi select multiple). Cột mốc hoàn thiện hệ tương tác UI/UX Ska Form Builder.
-- **2026-04-15 - 🟢 Pivot Architecture: Schema JSON Native Support cho Multi-Select & Relation**:
-  - Định hình lại hoàn toàn tư tưởng kiến trúc lưu trữ: Chuyển đổi định dạng Data Type MySQL dưới Flat Tables (`ska_data_*`) đối với các trường `multi_select` và `relation` từ `TEXT` (viết dưới dạng list CSV) cực kỳ nặng nhọc sang sử dụng native column format là **`JSON`** của MySQL (5.7+ / MariaDB 10.2+).
-  - Khắc phục triệt để và gỡ bỏ phương pháp xử lý nối array thủ công qua `array_to_string`, cho phép `Logic Engine` truyền payload Array trực tiếp xuống Database, tăng tốc độ truy xuất và nâng cấp tư duy thiết kế API Pipeline không rác.
-- **2026-04-15 - 🟡 Bugfix Partial: Logic Engine API Receiver & Multi-Select array handling**:
-  - Sửa lỗi Fatal Error PHP ở API Pipeline `class-form-receiver.php` ngăn chặn thất thoát dữ liệu do truyền sai JS Array payload `$form_id`.
-  - Tích hợp Middleware Format `array_to_string` để xử lý mảng từ các Option/Checkbox Nocode qua Flat Tables (Sau đó đã Pivot thành giải pháp JSON thay thế).
+## 7. RECENT LOGS (LATEST)
+> *Các nhật ký từ Phase 1 và 2 đã được lưu trữ trong `.ska-ai/2-memory/archive/`. Chỉ giữ lại các cập nhật cốt lõi gần đây (Phase 3 -> Phase 4).*
 
-- **2026-04-14 - 🟢 Pivot: Ska Form Builder Cải Tiến (Hủy Code Injection):**
-  - **Hợp nhất Ska Universal Container** khả năng đổi thẻ Semantic (div/form/section) và hệ thống **Ska HTML Attributes (Key-Value Panel)** được bảo lưu.
-  - **Từ bỏ Code Injection:** Hủy định hướng nhúng mã Javascript (fetch API) vào Alpine `x-on:click` thông qua Inspector vì quá rối rắm và vi phạm nguyên lý Nocode. Các tính năng Alpine (như hiệu ứng Transition) chỉ dùng phục vụ UI (Tabs/Modal) thay vì gánh vác vòng lặp Data.
-  - **Trọng tâm tiếp theo:** Quay trở lại phát triển **Ska Form Builder Cải Tiến**. Tự động hóa quá trình hứng sự kiện form submit và thu thập payload dữ liệu bằng Javascript nội bộ ẩn đi, gửi lên cho Logic Engine giải quyết mà không đòi hỏi người dùng viết mã logic fetch.
+- **2026-04-20 - 🟢 System Finalization: Packaging, Dashboard UI & User Manual:** Tinh chỉnh cấu trúc Build ZIP cho Plugin (giảm dung lượng), thêm Ecosystem Warning Banner tại Admin Dashboard và áp dụng Zero-Trash Directive. Hoàn thiện Toàn tập bộ Cẩm nang End-User (`docs/`).
+- **2026-04-19 - 🟢 Ska System Multi-Tier Caching & Dashboard Integration:** Xây dựng hệ thống Caching đa tầng (`System_Cache`) cho Smart Object `app-site` (`ska_system`). Snapshot JSON Cache chống Database bị sập. Tích hợp Ecosystem Integration để quản lý an toàn dependencies.
+- **2026-04-19 - 🟢 Lập kiến trúc Smart Object 'app-site':** Quản trị Custom Blocks (Ska Symbols), Theme Builder, Preset Settings quy về 1 mối trên `Ska Data Pro`. Tránh phình to DB.
+- **2026-04-19 - 🟢 Hệ sinh thái Global State (Alpine.store):** Khởi chạy tính năng Global State Management cho Ska Builder để giao tiếp chéo giữa các Block độc lập. Skapine Editor Monkey-patching giúp giả lập 100% tương tác trong Editor.
+- **2026-04-18 - 🟢 Nâng cấp UX Skapine Engine:** Bổ sung HTML Attributes OptGroup (chia nhóm logic thuộc tính hợp lý), thuật toán Smart Auto-fill (tự bơm logic mẫu), và Skapine Engine Preview Mode hỗ trợ trực tiếp các Event `onMouseEnter` / `onMouseLeave`.
+- **2026-04-16 - 🟢 Hoàn thiện The Core Four & Ska Molecules:** Tích hợp Multi-Step Form Quiz/Wizard. Cập nhật Block Lock giúp khóa chặt cấu trúc giao diện Molecule.
 
-- **2026-04-13 - 🟢 Done - Ska System Framework Dashboard & Dev Mode:**
-  - Hoàn tất giao diện quản trị trung tâm của hệ sinh thái Ska thông qua mô hình Shared Drop-in. Tích hợp thanh điều hướng tab, Fallback báo lỗi nếu thiếu module (Plugin Dependency).
-  - Ra mắt **Ska Dev Mode** (Chế độ Nhà Phát Triển), hook thẳng vào lõi `Ska_Dynamic_Content`. Giờ đây, các mã lỗi Context Resolver (như Trùng lặp Data) hay Bug JIT Compiler sẽ bị giấu lẹm đi đối với khách phổ thông, nhưng hiển thị Badge Error cảnh báo đỏ chót trên Frontend nếu `Dev Mode = ON` (được bật/tắt trong System Dashboard).
-  - Tách Module tạo Blueprint bằng AI xuống mục **Extensions (Tiện Ích Mở Rộng)** để tạo tiền đề cho việc cấu hình Gemini API Key và chỉnh sửa System Prompts riêng tư ở Version tới.
-
-- **2026-04-12 - 🟢 Khai Tử Plugin Master & Chốt Roadmap Kiến Trúc:**
-  - Khai tử vĩnh viễn plugin `ska-no-code-home`. Chuyển đổi Khái niệm System Dashboard sang mô hình "Shared Drop-in Framework" (Thư viện dùng chung) đóng gói chéo vào các plugins.
-  - Chốt lộ trình 8 bước tích hợp: (1) Logic Engine CRUD -> (2) Logic UI DB Picker -> (3) Ska System Framework Dashboard -> (4) Ska Molecule & Alpine.js Integration -> (5) Custom Block/Symbols -> (6) Theme Builder/App Portals -> (7) Khối Auto-Generated CRUD -> (8) Frontend Triggers nâng cao.
-
-- **2026-04-12 - 🟢 Done - Context Resolver Verification (SkaFX Engine):**
-  - Khẳng định tính đúng đắn của cỗ máy Phân giải ngữ cảnh (Smart Context Guessing). Thuật toán Hậu Tố (Suffix Scanning) hoạt động hoàn hảo và bảo toàn hiệu suất siêu việt thông qua Static Cache RAM Arrays (tốc độ vòng lặp <1ms cho 5,000 bảng), lược bỏ mọi lo ngại về Server Load Array Traversal. Sẵn sàng cho đường băng Phase 3 Theme Builder.
-
-- **2026-04-11 - 🟢 Done - Context Resolver & Collision Detection (SkaFX Engine):**
-  - **Ska Logic Engine:** Hoàn tất thiết kế hạt nhân phân giải ngữ cảnh thông minh `SkaFX_Context_Resolver`. Cho phép người dùng Frontend chỉ cần gõ biến rút gọn (Shorthand) `{{users.name}}` thay vì phải gọi ID dài như cú pháp cũ `{{ska_data_app_b_users.name}}`.
-  - **Collision Defender:** Áp dụng hệ thống bắt lỗi và bắt Xung đột trùng lặp (Collision) dựa trên Exception. Nếu bắt được lỗi do cố tình khai báo không rõ ràng sinh ra sự trùng lặp, một khối Badge Đỏ rực báo Error sẽ xuất hiện thẳng trên Frontend (báo cho Developer/Admin). Khách xem trang bình thường chỉ thấy khoảng trống để tránh gãy Layout.
-
-- **2026-04-11 - 🟢 Done - Semantic Slug & Universal Binding Logic Fixes:**
-  - **Ska Data Pro:** Nâng cấp cỗ máy sinh ID bảng từ UUID vô nghĩa (`app_Do5p1uxz`) sang "Semantic Slug" (`app_viet_cong_cu_moi`) thân thiện với con người khi tạo App Blueprint dựa theo hàm `sanitize_title`. Triển khai tính năng phát hiện trùng lặp ID thông qua `WP_Error` trả thẳng ra Frontend UI thay vì tạo tiền tố `_1`, `_2` ngầm.
-  - **Ska Logic Engine:** Nâng cấp `Ska_Dynamic_Content` (Universal Binding) để cho phép **Chuỗi Rỗng (`""`)** được phép Override vào văn bản tĩnh thay vì bị bỏ qua. Bổ sung bắt các hằng số Literals (`true, false, null`) vào `SkaFX_Evaluator` để chống lỗi AST parse biến sai khi người dùng nhập Text hằng số.
-- **2026-04-09 - 🟢 Done - Cỗ máy SkaFX AST Evaluator:** Hoàn tất đúc lõi SkaFX Engine (Parser/Evaluator) bằng PHP. Trạm thông dịch AST có khả năng chạy Script nội bộ (`var x = y;`), xử lý hàm nội bộ (`IF`, `CONCAT`), phân loại Toán Tử với tốc độ ánh sáng `0 mili-giây`. Nuốt gọn mọi lỗi Syntax Error bảo vệ Website.
-- **2026-04-10 - 🟢 Done - Xuất/Nhập Bản Thiết Kế Smart Object (App Blueprint Export/Import):** Đã chốt kiến trúc Blueprint dạng file `.json`. Phát triển cơ chế Xử lý Xung đột Ký danh (Auto Slug Re-wiring) và Hook Pipeline (`ska_export_smart_object`) giúp giữ vững quy tắc Decoupling, cho phép Logic Engine và Portals tự nạp dữ liệu vào Blueprint file mà không bắt Data Pro bóc tách. Hoàn thành phát triển logic tải file JSON và giao diện Import kéo thả. Sẵn sàng cho việc liên kết đa không gian.
-- **2026-04-09 - 🟢 Done - Smart Object / App Blueprint Architecture (Phase 1):** Đại tu hệ thống Bảng `ska-data-pro` từ mô hình Group tĩnh (Text Category lỏng lẻo) sang định danh Application Workspace phân cấp (Quản lý qua Option API `ska_data_apps`). Triển khai Modal UI (Tạo/Sửa/Xóa App), Kéo bảng vào App bằng thẻ `<select>`, và xây dựng cơ chế Bảo Vệ (Safe Drop) - khi xoá App, tự động ném các Bảng vào môi trường an toàn thay vì Xóa SQL.
-- **2026-04-08 - 🟢 Done - Universal Dynamic Binding:** Khởi chạy dự án Data Hydration. Hoàn tất Phase 1 đến Phase 4 (Động cơ Backend đục Frontend the_content & render_block). Chốt sổ kiến trúc Máy chém CSS (Visibility) và Bơm Máu Data (Hydration) qua khối CodeMirror Inspector.
-- **2026-04-07 - Quản Lý Băng Chuyền Đa Không Gian (Logic Manager):** Triển khai mô hình Dual-View cho Logic Engine. Tách chế độ Danh Sách trực quan (Quản lý CRUD, Đổi tên) với chế độ Builder (Chuyên sâu logic) nhằm tránh người dùng NoCoder nhầm lẫn gây xóa dữ liệu (Đã khóa ID tại Mode Builder). Cập nhật Event Handler ở Backend chặn sự cố DOM Destruction gây nhiễu cho Chrome Extensions (Anti Promise-Break).
-- **2026-04-07 - Hệ Cứu Hộ "Data Healing" & Schema Mapping UI (Ska Logic Engine):** Nâng cấp module Form Insert với bảng Mapping trực quan giữa Database MySQL và Biến nội suy do user tạo. Tích hợp Native Swap Up/Down cho hệ thống Băng Chuyền, gia tăng UX Nocode kéo thả không mã. Tự động Data Healing cho Client POST variables chứa khoảng trắng. Bước ngoặt hoàn tất MVP Architecture cho Logic Engine "The Trinity".
-- **2026-04-07 - Hệ thống Băng Chuyền Linear Builder MVP (Logic Engine):** Hoàn tất giai đoạn MVP - Giao tiếp "The Trinity". Xây dựng "Linear Builder" bằng Vanilla JS thay thế NodeUI (Phase 4). Tái thiết lập mảng dữ liệu xuất bảng thành chuẩn `JsonGraph` đồng nhất dành cho core Pipeline Processor. Nâng cấp Linear Builder hỗ trợ Datalist tuỳ biến cho phép liên kết khối lượng Table khổng lồ trực tiếp (Kể cả Core Tables của WordPress).
-- **2026-04-06 - Vá lỗ hổng Modifier Validation (JIT Compiler Leak):** Vá khẩn cấp lỗi vòng lặp parser của JIT Compiler. Xây dựng chốt lọc `$is_valid_modifiers` để hủy bỏ và tống xuất mọi lớp Tailwind có chứa tiền tố lạ phân loại (như `dark:text-white` hoặc `sida:bg-red`) vào mảng thẻ chưa giải quyết. Ngăn chặn tuyệt đối tình trạng compiler dại dột bóc tách phần đuôi class và tiêm Global CSS phá nát hệ sinh thái (tôn trọng triệt để quyết định Hoãn Dark Mode trước đó).
-- **2026-04-05 - 🔵 [PHASE 3 INITIATION] Ska Form Engine & Tailwind Preflight Parity:**
-  - **Ska Form (Container):** Cấu trúc Flat DOM an toàn, sử dụng `InnerBlocks.Content` trong hành vi `save()` để mở khóa HTML cho Frontend JIT Compiler quét class. Không quy chụp wrapper mặc định bằng cách cho qua quyền tự do nhúng Layout Grid qua `Ska Container`.
-  - **Ska Input & Select (Atomic State):** Sửa soạn xong trạng thái Clean Slate. Từ chối cung cấp bất cứ Class Tailwind nào mặc định trong `block.json` để nhường toàn quyền "sinh sát" cho người thiết kế.
-  - **Form Preflight Parity (Kiện Toàn JIT):** Nâng cấp hàm `get_core_reset_css` của Tailwind Config. Giải quyết triệt để lỗi viền đen của WP Admin Editor bằng cách tái lập cấu trúc `appearance: none` và `border-color: #e5e7eb` của hệ sinh thái Tailwind vào Core Code. Đảm bảo giao diện Frontend/Backend hòa làm một.
-  - **Tailwind CDN Proxy Mutation (2026-04-06):** Khắc phục lỗi Race Condition khiến cờ `important: true` bị Tailwind CDN `v3` phớt lờ trong môi trường Iframe. Triển khai phương pháp `Proxy Mutation` (can thiệp trực tiếp vào Object `win.tailwind.config` sau khi Script Onload) kết hợp bơm Polyfill Layout CSS (`-outline-offset`) giả lập hệ V4. Đạt 100% Editor Visuality Parity cho khối Form. Bắt đầu Phase 3 an toàn.
-  - **Button Reset Specificity Fix (2026-04-06):** Giảm Specificity của bộ Clean CSS cho nút bấm bằng cách lồng pseudo-class `:where()` vào selector Reset (VD: `button:not(:where(.components-button))`). Qua đó trải thảm xanh cho các class JIT Tailwind utilities tự đo ghi đè style (Padding, BG) khi hiển thị khối Form Submit.
-
-- **2026-04-04 - ✅ [DONE] The Great Refactor & Packaging Ska Data Pro:**
-  - Hoàn tất đập đi xây lại cấu trúc Javascript Backend nguyên khối 1200 dòng của DataGrid thành mô hình ES6 Modules, kết hợp biên dịch tối tân qua **Vite**. Output file giảm thiểu còn `18.82 kB (gzip: 5.22 kB)`.
-  - Áp dụng quy chuẩn **Strategy Pattern** cho DataGrid Cell Engine: Các thao tác Inline Edit cho ô (Media, Boolean, Dropdown Options, Nhập Văn bản) được tách lập thành từng Strategy Class riêng biệt để giải quyết hiện trạng If/Else nhằng nhịt, sẵn sàng tiếp nhận thêm 50 loại Data Type trong Phase tới.
-  - Sửa lỗi (Hotfix) mất Logic Rollup Cascading và Relation Search do bất cẩn đợt Refactor nguyên khối. Phục hồi qua `RelationCell.js` Component độc lập.
-  - Nâng cấp API: Đồng bộ tất cả Request HTTP từ jQuery (`$.post`) sang ES6 Fetch Core (`apiFetch`) nhằm dứt điểm lệ thuộc thư viện. Tích hợp giải pháp Cache-Busting bằng `filemtime()` tự động cập nhật URL version sau mỗi lần biên dịch gói Vite để chống trình duyệt lưu Cache file `.js` thô thiển.
-  - Triển khai kịch bản đóng gói `node-archiver` chuẩn xác cho Ska Data Pro. Hoàn tất chu kỳ phát triển MVP!
-- **2026-04-03 - Nâng cấp Cỗ máy Rollup & Heuristic Filters:**
-  - Hoàn thiện UI DataGrid bằng cách tích hợp trực tiếp **Heuristic Filter** vào SQL Query của AJAX Backend. Chặn đứng hàng trăm meta keys rác của WordPress (`_wp_%`, `session_%`, `_edit_%`) lọt vào khung tra cứu Rollup, đem lại trải nghiệm "Clean Slack" gọn gàng ở Dropdown.
-  - Sửa lỗi UX (Async Race Condition & Stale Computed Data) bằng cách bắt buộc **trình duyệt Reload** (F5) ngay sau khi Lưu Tham Chiếu mảng Relation ID. Thay đổi tĩnh này buộc hệ thống Backend Server đẩy mảng ID mới chạy qua Data_Fetcher để "bơm" (Enrich) tức thời Data lên toàn bộ các Cột Toán Hạng (Rollup) cùng dòng bị phụ thuộc, xóa bỏ tận gốc cảnh user bấm lưu mà Rollup "trơ" như đá.
-  - Phân phát thành công cấu trúc Cột Rollup với tính chất hoàn toàn Ảo (Virtual). Áp dụng chiến lược không lưu dữ liệu (NULL) xuống DB nhằm cắt đứt Data Redundancy, song song đó trang bị tính năng Gom mảng N+1 tại tầng Data_Fetcher giúp ép MySQL hoàn trả dữ liệu Rollup với tốc độ 1 cú `SELECT IN (...)`.
-  - Giữa vững máy chiếu Shortcode `[ska_dump_table]` giúp Test giao tiếp API từ Frontend tiện lợi.
-- **2026-04-01 - ✅ [DONE] Triển khai DataGrid Relation & Formula Engine Ready:**
-  - Hoàn tất xây dựng Cổng Nối Bảng (Relation) theo chiến lược lưu CSV ID tại Bảng Phẳng `ska_data_*`.
-  - Hook phân giải Enrichment Resolution được cấy êm ái tại tầng Lõi Data Fetcher, giúp đái ra cục JSON Objects sẵn sàng cho API / Logic Engine thụ hưởng (tránh giật lag Query 1-N ở View Layer).
-  - Cập nhật Bypass bảo mật ở Backend Data Fetcher và AJAX Search để hỗ trợ tích hợp trực tiếp bảng truyền thống lõi của WordPress (`$wpdb->posts`, `$wpdb->users`) vào thẳng tính năng Cột Tham Chiếu (Relation) mà không cần cấu trúc Table mới. Mảng `json` phân giải sẽ tự động ánh xạ cấu trúc (Title, Name) thông minh.
-  - Hoàn tất UI Popover Relation Search (Debounce) cho Grid Dashboard. 
-  - Đóng gói Update sửa lỗi Cache Click Outsite Dropdown UI DataGrid và bổ sung đổi Label Icon `dashicons-edit` (Bút chì) cho Cột Editable.
-- **2026-04-12 - Logic UI DB Picker & App Auto-Grouping (Logic Engine):**
-  - Loại bỏ `datalist` dropdown truyền thống của WP, triển khai Glassmorphism Modal UI Picker hỗ trợ Real-time Search rành mạch. Tránh thảm họa user Nocode nhập Typo Table Name.
-  - Tích hợp thuật toán nội suy `app_id` tự động khai thác từ RAM Option `ska_data_apps` của hệ thống Ska Data Pro để chia nhóm Database (Group). Bảo vệ hệ thống khỏi những rủi ro sai sót chia nhóm do Regex Parsing yếu kém trước đây.
-- **2026-04-01 - Extensibility POC (Data Providers) & Logic Engine Hooking:**
-  - Sửa lỗi nghiêm trọng (Plugin Load Order Bubble): Các Data Provider hiện tại bị WordPress Alphabetical Load Order bóp chế chết từ trong nôi do gọi quá sớm. Cập nhật dời luồng Load Adapter vào `init()` (`plugins_loaded`) để tương thích với Ska Builder Core.
-  - Sửa lỗi Frontend không render biến: Bật Filter `the_content` (độ ưu tiên 90) cho Logic Engine để tự động biên dịch `{{...}}` ngoài Frontend.
-- **2026-04-01 - Tạm Hoãn Formula Component & Hoàn thiện DataGrid Controls (Phân tích Data/UI):**
-  - Pivot kiến trúc từ việc triển khai "Virtual Column Formula Engine" tốn kém thành việc tập trung hoàn thiện 3 tính năng DataGrid then chốt: Filter, Sort, Group.
-  - Xây dựng DataGrid View State (URL-Driven) cho phép Frontend chia sẻ và load các Bộ lộc data trực tiếp thông qua URL `?filter_field=x&orderby=y`.
-  - Triển khai "Nhóm dữ liệu" tối ưu (Zero-overhead Grouping): Data Backend dùng MySQL `ORDER BY` thuần túy, và PHP tự sinh dải Heading chia nhóm mỗi khi phát hiện bước nhảy dữ liệu nhằm giữ cho Data flow không bị phình to dưới dạng nested Array tĩnh.
-- **2026-03-31 - Relational DB (Reference) & Compute Fields (Formula):** Lên kế hoạch mô hình hóa Dữ liệu Quan hệ cho Flat Tables. Chốt lưu khóa ngoại (Foreign Keys) dưới dạng chuỗi `TEXT` CSV để đáp ứng Multi-reference (1-N). Chốt phương án Render cột Formula thông qua hàm suy luận (Virtual Column logic) lúc Runtime Backend thay vì ép chết SQL format.
-- **2026-03-31 - Ska Data Pro UX Vanguard:**
-  - Hoàn thiện xử lý va chạm Z-index giữa WP Media Modal và Custom JS Popover của DataGrid.
-  - Phế bỏ Default Checkbox, triển khai Component CSS Toggle Switch (1-click trigger AJAX) để tối đa hóa UX.
-  - Tự động hóa lớp Query_Builder: Auto-prefix `ska_data_` nếu Dev truy xuất bằng Alias ngắn nhằm nâng cao độ thân thiện của APIs.
-- **2026-03-30 - Brainstorm: Frontend App Portals (Unified Canvas):** Chốt hạ tư tưởng kiến trúc không sử dụng `wp-admin` và code thuần PHP để làm trang quản lý cho Sub-admin (VD: Kế toán, Giảng viên). Sử dụng phương pháp Single Canvas: Mở rộng `ska-builder-core` tạo ra CPT `App Portals` chuyên biệt, kết hợp RBAC của Logic Engine và Form CRUD của Data Pro để user tự cấu hình Giao diện Dashboard quản trị bằng kéo thả hoàn toàn trên Frontend ngoài.
-- **2026-03-30 - Ska Data Pro Schema Core & UI:**
-  - Hoàn tất Table CRUD (Tạo, Sửa Ký Danh, Xóa Bảng) và Column CRUD trên nền tảng `ska_data_dictionary` (Alias Label) giúp bảo vệ toàn vẹn MySQL query.
-  - Tích hợp Dynamic App Category (`__table_info['group']`) vào Modals & Sidebar để tổ chức Database như một Workspace thư mục (E-Commerce, LMS, v.v).
-  - Hoãn thực thi Quốc tế hóa I18n cho đến giai đoạn Packaging để tối đa tốc độ code MVP.
-- **2026-03-29 - Phase 2 (Ska Data Pro) Initialization:** Brainstorm kết thúc. Chốt kiến trúc Flat Tables, Template Gallery, Data Providers (`wp_users`, WooCommerce). Khởi tạo giao diện Dashboard Admin bằng Tailwind UI tĩnh. Cập nhật roadmap tại `project_manager_phase2.md`.
-- **2026-03-29 - Hardening Ska Builder CSS Engine & Editor Parity:**
-  - **JIT Compiler Fractional Resolving:** Hỗ trợ tính tỷ lệ phần trăm (percent `%`) cho CSS width/height theo cấu trúc đuôi phân số của Tailwind CDN như `w-1/2` (50%), `w-1/3` (33.333333%).
-  - **Inline Element Fix (Atomic Reset):** Ấn định block Ska Button luôn khởi tạo bằng class Default Inline-Flex (`display: inline-flex; align-items: center; justify-content: center;`) để Button/Link tag có thể nhận diện và thích ứng các class margin padding (-mt-10) mà vẫn bám sát "Clean Slate".
-  - **Constrained Layout Nullification:** Trị dứt điểm căn bệnh Theme Default Content Size. Bằng cách gán `null` Layout trong `theme.json` và chèn base `margin: 0` từ JIT Compiler Reset CSS cho mọi Block (`[class*='wp-block-ska-builder']`), dỡ bỏ hoàn toàn đặc quyền `margin: auto` cấy ngầm vào khối.
-  - **Editor Context Cleanup:** Giải nén cờ CSS `margin: 0 !important;` mặc định trong `ska-editor-helper.js` bị trỏ lầm vào block con, khai thông các hiệu ứng `mt-`, `mb-` từ Tailwind CDN trên Editor.
-- **2026-03-29 - Deployment Standardization:** Triển khai Node Archiver thay thế Windows zip script để khắc phục triệt để lỗi giải nén plugin trên môi trường Linux/TasteWP ("Tập tin của plugin không tồn tại").
-- **2026-03-28 - JIT Compiler Comprehensive Audit:**
-  - **Color Palette (Critical):** Bổ sung đầy đủ 11 shade (50-950) cho 17 màu chromatic. Trước đó chỉ có 5 shade → shade thiếu fallback `#000000` (đen).
-  - **Border Section:** Thêm `border-solid/dashed/dotted`, `border-{width}`, `border-t/r/b/l-{width}`, `border-{color}-{shade}`, `border-white/black/transparent`.
-  - **Filters & Effects:** `backdrop-blur-*`, `blur-*`, `brightness-*`, `contrast-*`, `opacity-*`, `isolate`.
-  - **Typography Expansion:** `whitespace-*`, `text-align`, `text-decoration`, `text-transform`, `leading-*`, `tracking-*`, `line-clamp-*`.
-  - **Transforms:** `translate-x/y-*` (numeric, fraction, arbitrary), `rotate-*`.
-  - **Negative Prefix:** Xử lý universal `-` prefix cho negative values (`-mt-4`, `-translate-y-1/2`).
-  - **Extras:** `size-*`, `flex-1/auto/none`, `self-*`, `order-*`, `cursor-*`, `pointer-events-*`, `select-*`, `group` marker.
-  - **Arbitrary Values:** `[120px]`, `[50vh]`, `[calc(...)]` cho dimensions, spacing, position.
-  - **TailwindPanel Categorization Fix:** Cập nhật tất cả regex phân loại (Typography, Layout, Spacing) + negative prefix support.
-  - **CSS Reset Scoping (Critical):** Scope tất cả JIT resets sang `[class*='wp-block-ska-builder']` thay vì toàn body — fix blog/archive page bị vỡ layout.
-  - **Ring:** `ring-*`, `ring-{color}-{shade}`, `ring-offset-*`, `ring-inset`.
-  - **Backgrounds & Gradients:** `bg-cover/contain/auto`, `bg-center/top/bottom`, `bg-no-repeat`, `bg-fixed`, `bg-clip-*`, `bg-gradient-to-*`, `from-*/via-*/to-*`.
-  - **Link Underline Fix:** Thêm scoped `a { text-decoration: none; color: inherit; }` cho Ska blocks.
-- **2026-03-27 - Bridge/html2tailwind Convert Placement Bug:** Thay đổi core logic của bộ chuyển đổi từ `insertBlocks` sang `replaceBlocks(clientId, blocks)` nhằm đảm bảo khối kết quả nằm chính xác vị trí lồng nhau (Nested) của Container mẹ thay vì văng ra gốc.
-- **2026-03-27 - Bridge/html2tailwind Insertion Fix:** Bổ sung `ska-builder/html2tailwind` vào danh sách `ALLOWED_BLOCKS` của `ska-container` và `ska-list-item` để cho phép thả công cụ convert vào các thẻ layout.
-- **2026-03-27 - Ska Button Atomic Action & Icon Support:** 
-  - Bổ sung nhóm thuộc tính Icon (`hasIcon`, `iconName`, `iconPosition`, `iconClasses`) và Action (`actionType`: link/submit/popup) cho khối Button. 
-  - Sửa lỗi Navigation URL: Ép kiểu Semantic HTML theo Logic (`actionType === 'link' -> <a>`). Người dùng không còn lo thẻ bị kẹt ở `<button>` khiến link chết.
-  - Sửa lỗi Thay Đổi Giao Diện Button Mặc Định: Gỡ bỏ class mượn danh `wp-element-button` đang mang CSS Theme bóp méo Tailwind. Triển khai file `index.css` chặn default underline của WP qua quy tắc specificity đặc biệt giúp Tailwind tùy ý ghi đè class `underline`.
-  - Cải tiến `html2tailwind` parser để tự nhận diện thẻ nút bấm và trích xuất thành công Icon ra khỏi chữ, ĐỒNG THỜI giữ nguyên trọn vẹn mọi Custom Tailwind Class của thẻ <span> chứa Icon để lưu vào mục "Icon Custom Classes".
-- **2026-03-27 - Icon Font Migration & Smart Text Detection:**
-  - **Material Symbols Outlined (Critical):** Hoàn tất chuyển đổi từ thư viện `material-icons-outlined` cũ sang `material-symbols-outlined` cho toàn dự án. Cập nhật `TailwindPanel` (Icon `auto_awesome` active state), và `ska-image` (placeholder icons).
-  - **Icon Library Array:** Tách dữ liệu ra `src/utils/material-icons.js` với 4207 icons. Triển khai Modal UI + Search logic trong `ska-icon/index.js` block.
-  - **Smart Text Detection:** Parser `html-to-blocks.js` tự động thăng cấp `p`/`span` thành `ska-builder/container` nếu chúng chứa các block element (như Icon, Button, Image). Text nodes sẽ thành con và tự động kế thừa (inherit) CSS của cha.
-  - **Flat DOM Preservation:** Các đoạn text thuần (TextNode) đặt cạnh icon sẽ giữ vai trò thẻ `span: ska-builder/text` mộc, không ôm dữ liệu class thừa để đảm bảo Clean Slate.
-- **2026-03-27 - Editor Flex-Col Alignment Fix:**
-- **2026-03-26 - Editor Layout Fidelity & Tailwind CDN Fix:**
-  - **TailwindPanel Single Attribute Model (Critical):** Loại bỏ `splitTailwindClasses()` bên trong TailwindPanel. `tailwindClasses` là Single Source of Truth duy nhất, `className` luôn rỗng.
-  - **useInnerBlocksProps (Critical):** Chuyển Container, List, List-Item từ `<InnerBlocks>` sang `useInnerBlocksProps` — loại bỏ intermediate wrapper divs (`block-editor-inner-blocks`) gây hỏng absolute positioning.
-  - **Tailwind CDN Config Fix (Critical):** Phát hiện `important: true` không hoạt động do config bị CDN ghi đè khi khởi tạo. Fix: set config qua `script.onload` callback thay vì trước CDN load.
-  - **JIT Compiler Position Offsets:** Thêm `inset-*`, `inset-x-*`, `inset-y-*`, `top-*`, `right-*`, `bottom-*`, `left-*` (numeric, full, auto, arbitrary) vào `class-tailwind-compiler.php`.
-  - **Inline Positioning (Container block):** Detect positioning classes → convert thành inline styles trong `useBlockProps` để override Gutenberg CSS.
-  - **Editor CSS:** Button border reset (`:not(.border)`), container `.border` fallback (`border-style: solid`), positioning overrides cho `.wp-block-ska-builder-container.absolute`.
-- **2026-03-22 (Late Evening - Debugging Session):**
-  - **Editor Positioning Context Fix (Critical):** Fixed absolute/fixed/sticky positioning in Gutenberg Editor (CSS injection to `ska-editor-helper.js`).
-  - **Container Block Class Bug Fix (Critical):** Fixed Tailwind classes not applying - removed erroneous `setAttributes({ className: tailwindClasses })` from `src/ska-container/index.js` line 26.
-  - **Comprehensive Debugging:** Explored 6 layers (TailwindPanel, JIT, Style Manager, Render, Config, System) - verified only Container block had issue.
-- **2026-03-22:**
-  - **Total Layout Fidelity Restoration & Flat DOM Optimization:**
-    - Gỡ bỏ hoàn toàn cấu trúc lồng nhau (inner divs) như `ska-container-content` hay `ska-list-content`. Đảm bảo các block structural (Container, List, Button, Text) luôn là **DOM phẳng (Flat DOM)** để bảo toàn 100% quan hệ parent-child cho `flex` và `grid`.
-    - Fix lỗi **"Missing Tailwind Classes" (The Non-Empty Fallback Bug)**: Thay thế lỗi logic `??` bằng kiểm tra `!empty()`. Đảm bảo nếu `tailwindClasses` mới là chuỗi rỗng (mặc định), hệ thống sẽ luôn tìm nạp class từ `className` cũ (legacy data).
-    - Đồng bộ hóa 2 tầng Attribute: `tailwindClasses` (Source of Truth cho Ska) và `className` (Mirror cho Gutenberg Standard).
-    - Hoàn tất rollout mô hình mới cho toàn bộ 8 block lõi, khắc phục các lỗi "Block encountered an error" do thiếu import hoặc sai cú pháp.
-  - **Backward Compatibility Fix (Missing Classes in Editor):**
-    - Khôi phục thuộc tính `className` trong `block.json` cho cả 8 block lõi để đảm bảo Gutenberg truyền dữ liệu cũ vào Editor.
-    - Triển khai cơ chế **Auto-Migration** trong JS: Tự động chuyển data từ `className` sang `tailwindClasses` khi người dùng thao tác, giúp dọn dẹp dữ liệu cũ một cách an toàn.
-    - Sửa lỗi mất icon ✨ (Tailwind Active) và các panel phân loại class khi nạp block cũ.
-  - **Video block render fix (2026-03-22):** Khắc phục mismatch attribute `videoUrl` -> `url` trong `ska-video/render.php` và thêm parse logic cho `youtube/vimeo`.
-  - **Session finalization:** Update system map + module docs.
-- **2026-03-21:**
-  - **Structural Style Isolation (The "Red Box" Fix):**
-    - Thực hiện cuộc đại tu kiến trúc: Chuyển đổi tên thuộc tính từ `className` sang `tailwindClasses` cho tất cả 8 block lõi.
-    - **Tại sao?** Để ngăn chặn Gutenberg tự động ghép class vào wrapper `div`. Giúp tách biệt hoàn toàn Logic CSS của Ska khỏi hạ tầng của WordPress.
-    - **Inner Element Isolation (Frontend):** Cập nhật `render.php` cho `Ska Button` và `Ska Image` để di chuyển `get_block_wrapper_attributes()` sang thẻ con (`<a>`, `<img>`). Giúp xóa bỏ lỗi hover "tràn khung" (Red Box) và đảm bảo tính bao đóng cho block.
-    - **Backward Compatibility:** Thêm cơ chế Fallback `$tailwindClasses ?? $className ?? ''` trong mã Render, đảm bảo các block cũ vẫn hiển thị đúng kiểu dáng.
-  - **JIT & UI Enhancements:**
-    - Cập nhật `TailwindPanel.js`: Thêm phân loại **"Transitions & Animation"**, hỗ trợ các class `transition-*`, `duration-*`, `ease-*`, `scale-*`.
-    - **Atomic Reset:** Thêm mã CSS Reset cho thẻ `button` trong phạm vi `.ska-builder` (xóa border 1px mặc định, xóa nền xám) để đảm bảo nút luôn sạch sẽ trên mọi thiết kế.
-  - **Sync & Deployment:** Thực hiện `npm run build` và `npm run sync` (Đồng bộ PHP sang `build/`) để dập tắt triệt để các "Ghost Bug" ở frontend.
-- **2026-03-20:**
-  - **Expert Debugger: Clean Specificity & Layout Fidelity Fix (Issue #4):**
-    - Trả lại sự toàn vẹn cho kiến trúc **"Clean Slate"**: Gỡ bỏ hoàn toàn việc ép class `relative` vào block PHP & JS, đảm bảo block hoàn toàn sạch sẽ.
-    - Sửa lỗi hạ tầng Editor cho phần tử `absolute` và áp dụng filter CSS tinh tế `:not([class*="max-w-"]):not(.container)` trong `ska-editor-helper.js` để tự động mở khóa giới hạn 600px của WP mà không đè bẹp các class định cỡ của User.
-    - Cập nhật **Tailwind Compiler** để hỗ trợ class `.container` (width: 100%, max-width: 1280px, mx-auto).
-  - **Expert Debugger: Hybrid Source & Inline Style Fix (Issue #3):**
-    - Triển khai kiến trúc **Hybrid Source** cho Editor: PHP Core (Source of Truth) tự tạo CSS cho brand colors.
-    - **Inline Style Support (Issue #3)**: Thêm thuộc tính `customStyle` để bảo toàn `background-image: url()` và các style đặc thù khác khi convert HTML sang block.
-    - Cập nhật Bridge Parser và Block Index (JS) để hỗ trợ preview `customStyle` trong Editor thông qua `parseStyle` helper.
-    - Bổ sung ô nhập liệu **Custom Inline Style** dạng `TextareaControl` vào component `TailwindPanel.js` cho TẤT CẢ 8 khối lõi. Giúp người dùng hiển thị "Ghost Data" thành UI trực quan và có thể chỉnh sửa tự do.
-    - Mở rộng bảng màu tiêu chuẩn và hỗ trợ Opacity (`/50`).
-    - Cải tiến `Style_Manager` để quét thêm `tailwindClasses` và nội dung `content`.
-    - Sửa lỗi mapping Bridge và gỡ bỏ Dark Mode v1.
-- **2026-04-20:**
-  - **Ska System Framework & Packaging:**
-    - Hoàn trả The Zero-Trash Directive: Kiểm duyệt và tái cấu trúc Docs không rác.
-    - Cập nhật **Dashboard UI**: Bổ sung Khung cảnh báo nổi bật (Red Banner) khi hệ sinh thái thiếu hụt các plugins cốt lõi (`Ska Data Pro`, `Ska Logic Engine`).
-    - Hoàn tất quy trình Build & Đóng gói Plugin Cốt lõi (Packaging): Tinh chỉnh Node scripts chặn triệt để `node_modules` và `src/` lẩn khuất ở mọi tầng ngầm. Giảm dung lượng `ska-logic-engine` xuống dưới 0.4MB, chuẩn bị sẵn sàng cho quá trình test trên Server đích.
-    - Kiểm định thành công cơ chế **Physical JSON Caching** và **Steel Wall Database Protection** của Ska System Smart Object.
-- **2026-03-19:**
-    - Triển khai cơ chế **"Class Doubling"** (`.class.class`) kết hợp tiền tố `html body.ska-builder` trong `Tailwind_Compiler` để thắng CSS Theme (đặc biệt là `gap`) mà không dùng `!important`.
-    - Fix lỗi **CSS Locale**: Sử dụng `number_format` với dấu chấm thập phân (`.`) cho toàn bộ giá trị spacing/dimensions, đảm bảo CSS không bị trình duyệt từ chối ở môi trường Việt Nam/Châu Âu.
-  - **Block & Icon Improvements:**
-    - Sửa lỗi **Icon Rendering**: Áp dụng `html_entity_decode` và `wp_kses` tùy chỉnh cho block `Ska Text` để hiển thị đúng icons Material Symbols/Icons.
-    - **Global "Clean Slate"**: Loại bỏ triệt để class `w-full` mặc định khỏi `render.php` của Container, Video, List và xóa khỏi Whitelist của `Style_Manager`.
-  - **Workflow & Build:**
-    - Thiết lập quy trình **Build Sync**: Đồng bộ thủ công file PHP từ `src/` sang `build/` để đảm bảo WordPress luôn nạp code mới nhất (khắc phục lỗi nạp file cũ từ build gây sai lệch layout).
-  - **Bridge Enhancements:**
-    - Cải thiện `html-to-blocks.js` để bảo toàn thẻ tag gốc (`section`, `header`, `footer`...) cho `Ska Container`.
-    - Thêm cơ chế trích xuất class từ thẻ `<body>` khi convert file HTML đầy đủ và bọc nội dung trong một root container.
-    - Cập nhật `src/ska-container/index.js` hỗ trợ dynamic tag rendering trong editor.
-- **2026-03-18:**
-
-  - **Bridge Status:** 🟢 Done | Đã hội quân vào Core, có nút Toggle trong Dashboard.
-  - **Bridge Integration:** Hoàn thành hội quân module **Bridge** vào **Ska Builder Core**.
-  - Di chuyển `html-to-blocks.js` vào Core assets, sửa lỗi "Parser not loaded".
-  - Thêm Toggle bật/tắt module Bridge trong **Admin Dashboard** (lưu vào `ska_bridge_enabled` option).
-  - Fix lỗi mất CSS classes khi convert bằng cách đồng bộ attribute `className`.
-  - **Custom Color Registry:** Thêm cơ chế Brand Colors vào JIT Compiler + Dashboard UI. Hỗ trợ `bg-{name}`, `text-{name}`, `border-{name}`, `ring-{name}` + opacity modifier (`bg-primary/10`).
-  - **🔧 Planned Refactor:** Tách `class-tailwind-compiler.php` (>500 dòng) thành 3 file: `compiler`, `config`, `color-registry`. Thực hiện sau khi html2tailwind ổn định.
-- **2026-03-13:**
-  - Giải quyết triệt để lỗi layout của block **Ska Video**:
-    - Nâng cấp `Style_Manager` để quét toàn bộ attributes của block (JIT Scanning full context).
-    - Triển khai `MutationObserver` trong `ska-editor-helper.js` để đồng bộ style ngay khi block được render trong editor.
-    - Sửa lỗi Grid trong Editor bằng `display: contents` cho wrapper của video block.
-    - Tăng độ ưu tiên CSS (`!important`) và force `relative` layout cho video wrapper trên frontend.
-    - **Atomic Defaults:** Loại bỏ toàn bộ class "ý kiến chủ quan" (`rounded-lg`, `shadow-md`...) trong `block.json` (cả src & build) để blocks bắt đầu ở trạng thái sạch.
-    - **Isolation Fix:** Sử dụng `isolation: isolate` thay vì ép `overflow: hidden` mặc định để người dùng chủ động kiểm soát layout mà vẫn đảm bảo cắt góc chuẩn.
-- **2026-03-15:**
-  - Fix lỗi render của **Ska Video** block ở frontend (Regression sau cập nhật 2026-03-14) bằng `body.ska-builder` specificity.
-  - **UI Refinement:** Thay thế "Dot Indicator" bị biến dạng bằng "Icon Indicator" ✨ (`auto_awesome`) từ Material Icons để đảm bảo thẩm mỹ và độ ổn định cao trên Sidebar WordPress. Đã loại bỏ hoàn toàn các chấm tròn debug thừa.
-  - **Standardization:** Chốt cơ chế **Selector Specificity** cho toàn bộ Design Engine, loại bỏ 100% `!important` khỏi compiler.
-- **2026-03-14:**
-  - Hoàn thiện luồng `[/brainstorm]` - Thêm mới cụm block **Ska List** & **Ska List Item** làm tiền đề cho tính năng HTML2Tailwind.
-  - Tổng vệ sinh **Atomic CSS Standardization**: Gỡ bỏ hoàn toàn Inline CSS rác (`padding-bottom hack`, `flow-root`, `display: grid !important`, `box-sizing: border-box !important`) ra khỏi file PHP Render của `Ska Video`, `Ska Container`, `Ska List`, `Ska List Item`.
-  - Fix lỗi duplicate class Tailwind do xung đột giữa `get_block_wrapper_attributes()` và biến cục bộ.
-  - Xử lý lỗi tràn ảnh (Image Overflow) trong Flex/Grid layout bằng các class responsive chuẩn (`max-w-full h-auto object-cover`).
-  - **JIT Compiler Refactoring:** Gỡ bỏ **100% cờ `!important`** trong `class-tailwind-compiler.php` và cơ chế CDN Fallback (`class-core.php`). Áp dụng cơ chế **CSS Specificity Scope** (`body .ska-builder`) để tự nhiên ghi đè CSS của WP Themes mà vẫn giữ được sự tinh khiết của Tailwind classes, sẵn sàng cho hạ tầng Headless.
-
-- **2026-03-12:** 
-- **2026-03-10:** Hoàn thiện block **Ska Image** (sửa lỗi chọn ảnh & layout frontend) và block **Ska Icon** (Material Icons selection, visual rendering trong editor). Thực hiện cải tiến UI/UX: Thay thế status bar/nhãn text bằng "Indicator dạng chấm tròn" (dot indicator) trên toàn hệ thống để tăng tính thẩm mỹ (Lưu ý: Sidebar indicator đang được xử lý triệt để lỗi cache).
-- **2026-03-09:** Nâng cấp **Tailwind Panel** (Reset button, Tag UI). Chuyển đổi **Ska Text** sang JSX & chuẩn hóa quy trình build (`src/` vs `build/`). Đặc biệt: Sửa lỗi **Grid Layout trong Editor** qua `ska-editor-helper.js` (Iframe injection, `display: contents` fix, `important` modes & cache bypass).
-- **2026-03-07:** Thêm module **Admin Dashboard** (`inc/admin-dashboard`). Tạo block **Ska Container** (hỗ trợ `InnerBlocks`). Nâng cấp **Design Engine** (hỗ trợ `@media` queries responsive prefixes `sm:`, `md:`, css grid `grid-cols-*`, auto margin `mx-auto`, max width và áp dụng cờ `!important` chống đè class WP default).
-- **2026-02-10:** Review & Documentation update. Finalized Phase 1 (MVP) documentation. Verified Design Engine (Local JIT Compiler with Colors, Spacing, Dimensions support) and Logic Engine (If/Foreach support).
-- **2026-02-09:** Implemented Logic Engine (If/Foreach) and Local JIT Compiler (Regex-based). Fixed Editor real-time styling issues in Iframe.
-- **2026-02-05:** Initial Project Setup & System Mapping.
-
-## 7. FUTURE ROADMAP (PLANNED) - PHASE 2: APP BUILDER ARCHITECTURE
-- **Ska Theme (Barebone):** Tạo WordPress theme trống, loại bỏ 100% CSS mặc định của WP, nhường toàn quyền layout cho khối Ska.
-- **Ska App Portals (CPT Dashboards):** Tích hợp CPT `ska_portal` vào `ska-builder-core` chuyên dùng để dựng các màn hình Frontend Admin (Dành cho Học viên, Giảng viên, Manager) sử dụng các Builder Blocks tiêu chuẩn và cô lập hoàn toàn khỏi hệ thống phân tích SEO (No-index by default) + Cơ chế chặn URL dựa trên Role (Logic Engine).
-- **Micro-Ecosystem Decoupling:** Tách `ska-no-code-design` (trước là `ska-builder-core`) mảng Data và Logic ra thành các plugins độc lập (`ska-data-pro`, `ska-logic-engine`). Quản lý toàn bộ thông qua Master Plugin `ska-no-code-home`.
-- **Ska Data Pro (Flat Tables):** Khởi tạo hệ thống Database tự trị với bảng phẳng `ska_data_*`. Thoát ly hoàn toàn khỏi bảng `wp_postmeta`. Xây dựng Schema Manager và Query Builder trực quan.
-- **Ska Attributes (Key-Value Dynamic Panel):** Trong plugin Design Engine, thay thế `customStyle` bằng mảng `htmlAttributes` để rải thuộc tính HTML (`data-*`, `aria-*`, `style`...) vào thẻ wrapper Frontend.
-- **Tailwind CSS v4:** Nâng cấp cỗ máy Local JIT từ v3 lên cấu trúc của v4 để hỗ trợ mở rộng động.
-- **🔴 REST JIT Compiler (Editor Refactor):** Đại tu lõi `ska-no-code-design` sau khi MVP hoàn tất. Bãi bỏ Tailwind CDN khỏi môi trường Gutenberg Editor. Áp dụng cơ chế **AJAX Polling / wp.data.subscribe** để gọi thẳng sức mạnh biên dịch của hàm PHP `Tailwind_Compiler` từ local server nhằm kết nối 100% Logic biên dịch thành một cục (Single Source of Truth), gia tăng hiệu năng và chấm dứt các lỗi sai biệt render class của CSS Editor.
+## 8. FUTURE ROADMAP (PHASE 4: SKA SMART OBJECTS & MOLECULES)
+- **Ska Smart Object (`app-site`):** Xây dựng hệ thống quản trị trung tâm cho Theme Builder, Custom Blocks (Ska Symbols), và Preset Settings dựa trên Flat Tables của Ska Data Pro. Lưu code HTML dưới dạng JSON Reference.
+- **Ska Symbols (Reusable Components):** Lưu lại các block phức tạp dưới dạng template/components độc lập và chèn vào cấu trúc bằng thuộc tính `refId` thay vì nhân bản HTML phình to. Tích hợp Component trực tiếp vào Inserter (+) của Gutenberg.
+- **Thư Viện Ska Molecules:** Phát triển các UI Components Nocode (Tabs, Accordion, Slider, Logic Modal) sử dụng Ska Universal Container kết hợp Alpine.js.
+- **Ska Interactive Engine:** Cơ chế mô phỏng (Live preview) trạng thái của Alpine.js ngay bên trong Editor, biến JIT thành "React Virtual DOM của Tailwind", giúp Editor phản hồi "sống" với các hiệu ứng tương tác (xổ dropdown, chuyển form nội bộ) theo thời gian thực.

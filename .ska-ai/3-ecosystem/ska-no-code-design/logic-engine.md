@@ -1,4 +1,5 @@
-# MODULE: LOGIC ENGINE
+# MODULE: TEMPLATE LOGIC PARSER (Legacy Naming: Logic Engine)
+> ⚠️ **CẢNH BÁO KIẾN TRÚC:** Tên gọi này chỉ chịu trách nhiệm parse cú pháp Handlebars (`{{#if}}`, `{{#foreach}}`) trên nền Frontend. KHÔNG ĐƯỢC nhầm lẫn với Backend plugin `Ska Logic Engine` (Hệ thống Data Pipeline, Form Submit, SkaFX).
 > **Namespace:** `Ska\Builder\Logic`
 > **Path:** `ska-builder-core/inc/logic-engine/`
 

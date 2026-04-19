@@ -1,0 +1,29 @@
+# PROJECT MANAGER: SKA SYMBOLS & ORGANISMS (REACT UI)
+@status: 🟡 In Progress | @target: Phase 4.1 UI Component | @context: Tầng React Gutenberg cho việc lưu trữ và kết xuất Block tái sử dụng.
+
+---
+
+## 1. MỤC TIÊU CỐT LÕI (CORE GOALS)
+- Xây dựng tính năng biến bất kỳ Block nào trên giao diện (ví dụ: Header, Hero Section, Card) thành một "Ska Organism / Symbol".
+- Khắc phục các hạn chế nặng nề của Reusable Block mặc định trong WordPress bằng cơ chế định danh Ref-ID gắn kết chặt chẽ vào hệ thống Data Engine của Ska.
+- Lưu trữ trực tiếp mã nguồn (HTML/JSON/Attributes) xuống hệ thống bảng phẳng của Ska Data Pro (`ska_data_sys_organisms`), hoàn toàn loại trừ sự phụ thuộc vào Postmeta.
+
+---
+
+## 2. ROADMAP TRIỂN KHAI (TASKS)
+
+### 2.1. Tầng Hạ Tầng Hệ Thống (Mạch Máu - Đã Hoàn Tất)
+- [x] Khởi tạo phân vùng App `ska_system` (nhãn "Site Management") trong `App_Manager` và chặn quyền can thiệp thay đổi/xoá Cấu trúc App.
+- [x] Mồi và tạo tự động 3 Bảng Hệ Thống (`ska_data_sys_organisms`, `ska_data_sys_theme_templates`, `ska_data_sys_presets`) thông qua hook migration/setup của Ska Data Pro.
+- [x] Tuỳ biến `ska_data_dictionary` để hiển thị nhãn UI thuần Việt ("Organisms Blocks", "Theme Templates", "Design Tokens").
+- [x] Kích hoạt hệ thống Cache thông minh (Zero-Query): Bất cứ chức năng Update/Delete/Insert nào diễn ra, hệ thống tự động ghi đè file `.json/.php` fallback giúp Frontend truy xuất dữ liệu cực tốc độ.
+- [x] Gắn shortcut "Site Blueprint" tại menu Ska Builder Core trỏ sang khu vực Schema Manager UI của `ska_system`.
+
+### 2.2. Tầng Tương Tác Gutenberg / React UI (Đang Làm Việc)
+- [ ] **UI Button 'Save as Organism':** Tạo React Component (Toolbar Button hoặc Inspector Panel) hiển thị trên các Block được chọn trong Ska Builder.
+- [ ] **Luồng POST Data (Save):** Viết logic thu thập Nội dung (HTML/JSON Attributes) của khối hiện hành và gọi REST API (hoặc Ajax) để `INSERT` thẳng xuống bảng phẳng `ska_data_sys_organisms`.
+- [ ] **Block Transformation (Ref-ID Ghosting):** Ngay sau khi Lưu thành công, Block đang chọn sẽ tự động được thay đổi định dạng (Transformed) thành một Khối Ref rỗng (Ghost Block) chỉ giữ đúng một ID duy nhất: `{{organism_id}}`. Phần Renderer của PHP sẽ dựa vào ID này để bốc ngược dữ liệu từ JSON Cache File để đắp vào FrontEnd.
+- [ ] **Tab Thư Viện Inserter (+):** Mở rộng bảng chọn Block Menu (+) mặc định của Gutenberg. Cấp lệnh Fetch danh sách các Organisms đã bọc sẵn Cache để tạo ra Nhóm "Ska Thư Viện UI" giúp người dùng lôi cấu trúc đã lưu ném ra giao diện một cách trực quan.
+
+---
+*Ghi Chú: File PM Phụ này chỉ dùng như tấm bảng ghim nhắc việc tập trung cho luồng Frontend của tính năng Ska Symbols. Khi tính năng vận hành trơn tru trên môi trường Editor, người dùng có thể tùy ý xóa bỏ file.*
