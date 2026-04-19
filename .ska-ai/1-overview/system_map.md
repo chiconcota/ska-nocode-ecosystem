@@ -52,6 +52,9 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-19 - 🟢 Bugfix & UX: Tối ưu UI Offcanvas (Ska Builder):**
+  - **Overlapping Fix:** Chuyển vị trí nút Close của Offcanvas từ vùng an toàn biên ngoài vào thẳng bên trong Panel nội dung (absolute, top/right-4, z-index: 9999) nhằm chống hiện tượng Block con trong cấu trúc Gutenberg "nuốt" z-index và che lấp nút bấm tắt khi tương tác.
+  - **Padding Adjustment:** Cân chỉnh padding cho vùng hiển thị nội dung bên trong Offcanvas (`pt-16`) để văn bản/hình ảnh được chèn thêm không đè vào khu vực an toàn của nút Close.
 - **2026-04-18 - 🟢 Nâng cấp UX: Skapine Engine Auto-fill & Phân nhóm HTML Attributes:**
   - **HTML Attributes OptGroup:** Tái cấu trúc Panel nhập "Thuộc tính HTML/Alpine", chia thành 4 nhóm (Hiệu ứng/Animation chạy trong ranh giới Preview, Chức năng Data/Logic chạy ngầm, Tùy chỉnh Form và HTML Cơ bản) cho người dùng Nocode dễ sử dụng.
   - **Smart Auto-fill Defaults:** Áp dụng bộ quy tắc Auto-fill tự động sinh logic phụ trợ mặc định (VD: `@mouseenter` sinh ra `hover = true`, `x-data` sinh `{ open: false, hover: false }`) giảm thiểu thiết lập cho End-user.
