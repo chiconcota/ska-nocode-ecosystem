@@ -1,4 +1,5 @@
-# MODULE: DATA ENGINE (CORE DATA BINDER)
+# MODULE: FRONTEND DATA BINDER (Legacy Naming: Data Engine)
+> ⚠️ **CẢNH BÁO KIẾN TRÚC:** Tên gọi "Data Engine" trong thư mục này (namespace Ska\Builder\Data) chỉ đề cập đến Lớp Phân Giải Text Placeholder ở mặt tiền (Frontend Text Renderer). KHÔNG ĐƯỢC nhầm lẫn với `Ska Data Pro` (Hệ quản trị Database Flat Tables ở Backend). Tên đúng của module này là Data Binder.
 > **Namespace:** `Ska\Builder\Data`
 > **Path:** `ska-builder-core/inc/data-engine/`
 > **Status:** 🟢 Hoạt động | Đã tích hợp với `ska-data-pro` (Phase 2).

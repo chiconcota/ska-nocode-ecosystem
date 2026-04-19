@@ -5,7 +5,7 @@
 - Đã hoàn tất lên ý tưởng và thiết lập ranh giới dữ liệu cho cấu trúc quản trị biến thể tái sử dụng (Ska Symbols, Presets, Theme Builder).
 - Smart Object hệ thống `ska_system` (App) đã được mồi thành công kèm 3 bảng phẳng (`ska_data_sys_organisms`, `ska_data_sys_theme_templates`, `ska_data_sys_presets`). Cơ chế chống xoá/chống sửa (Steel Wall) đã được kiểm định an toàn.
 - Đã kích hoạt hệ thống **Physical JSON Caching** (trích xuất ra file `.js` / `.json` ở vùng `uploads/` để hỗ trợ Nginx caching tối đa mà không dính SQL/PHP khi load ngoài trang chủ).
-- Ecosystem Warning: Chèn Red Banner ở giao diện Dashboard để cảnh báo cài đặt `Ska Data Pro` & `Ska Logic Engine`.
+- Ecosystem Warning & Documentation: Chèn Red Banner cảnh báo và hoàn tất Cẩm nang Hướng dẫn End-User (lưu tại folder `docs/`).
 
 ## Trọng Tâm Phiên Tiếp Theo (Next Session Target)
 - Bước vào **Phase 4 (Tầng Hiển Thị React UI):**

@@ -60,6 +60,12 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
 - **Attributes:** `fieldName`, `inputType`, `placeholder`, `isRequired`, `tailwindClasses`, `customStyle`.
 - **Styling Architecture (2026-04-05):** Mọi viền, nền, outline của WP Admin bị gỡ bỏ ở Backend. Hệ thống áp dụng Global Tailwind Preflight Form Reset (`border-color: #e5e7eb;` và `appearance: none;`) trực tiếp thông qua JIT Code (Class `class-tailwind-config.php`), đảm bảo UI 100% tàng hình và giống hệt như Front-End nếu không có Tailwind classes nào.
 
+#### 10. Ska Symbols & Molecules (Phase 4 Foundation)
+- **Ska Symbols (Reusable Blocks):** Thay vì lưu toàn bộ HTML bị nhân bản, block sẽ chỉ chứa thuộc tính `refId` trỏ tới Smart Object `app-site` của Data Pro. Quá trình render sẽ Hook vào Engine để lôi cấu trúc gốc ra áp dụng. Đảm bảo Single Source of Truth kể cả trên Canvas.
+- **Ska Molecules (UI Components):** Cấu trúc Khóa Xương Sống (`templateLock`). Áp dụng kết hợp Alpine.js nhằm tạo ra các UI tĩnh có tương tác mượt mà như:
+  - **Tabs:** Quản lý state hiển thị qua `x-data="{ activeTab: 1 }"`.
+  - **Accordion:** Quản lý collapse bằng chiều cao biến thiên (`max-height`).
+  - **Logic Modal:** Modal Popup độc lập xử lý state bật / tắt với hiệu ứng `x-transition`.
 ## 3. Cấu trúc thư mục
 - `init.php`: Đăng ký các block.
 - `[block-name]/`: Thư mục chứa code của block.
