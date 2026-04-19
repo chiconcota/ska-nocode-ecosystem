@@ -52,6 +52,17 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-19 - 🟢 Done - Ska System Multi-Tier Caching & Dashboard Integration:**
+  - **Zero-Query Caching (Tối ưu Bộ nhớ):** Xây dựng hệ thống Caching đa tầng (`System_Cache`) cho Smart Object `app-site` (`ska_system`). Lớp Tier 1 lưu trên RAM (Transient) để gọi siêu tốc. Tier 2 đẩy xuống file vật lý tĩnh (`.json`) tại `/uploads/ska-system-cache/` như giải pháp dự phòng (Fallback) đối phó với shared-hosting không cài Object Cache.
+  - **Mutation Observers:** Móc ngoặc Hook `ska_data_row_created`, `ska_data_cell_updated`, `ska_data_row_deleted` trực tiếp vào máy chủ `Database_Engine` của Ska Data Pro, giúp tự động vô hiệu hóa (Invalidate) và tái tạo file JSON tức thời khi user thao tác dữ liệu. Không còn tình trạng "Lưu xong phải F5 mới thấy trên web".
+  - **Ecosystem Integration:** Cài cấm lối tắt "Site Blueprint" vào Core Dashboard "Ska Ecosystem". Triển khai hệ thống thông báo trạng thái "Ecosystem Warning", cảnh cáo Admin nếu họ dám kích hoạt một Frontend UI (như Custom Blocks, Smart Forms) mà lỡ tắt mất máy mẹ `Ska Data Pro` hoặc `Ska Logic Engine`. Tôn chỉ: Sạch, an toàn và đồng nhất.
+- **2026-04-19 - 🟢 Brainstorm: Ska Symbols & Smart Object 'app-site':**
+  - Chốt phương án quy hoạch dữ liệu tại Phase 4 Custom Blocks: Không rải rác CPT wp_ska_data_symbols mà tập trung toàn vẹn mảng quản trị tái sử dụng, cài đặt Theme Builder, Preset Setting vào chung một Smart Object lõi mặc định mang tên `app-site` dưới sự quản lý trực tiếp của Ska Data Pro (Flat Table `Ska_data_app-site_*`). Ghi nhận ý tưởng mở rộng Bảng thiết lập mã màu HTML2Tailwind. Cập nhật Decision Logs và Roadmap Custom Blocks theo hướng phân mảnh bảng Flat Table phục vụ Nocode Ecosystem.
+- **2026-04-19 - 🟢 Done - Hệ sinh thái Global State (Alpine.store & Skapine Compatibility):**
+  - Khởi chạy tính năng Global State Management (giao tiếp chéo giữa các Block độc lập) thông qua cơ chế `Alpine.store()`.
+  - Nâng cấp AST Parser (`parser.js`): Mở rộng năng lực phân giải để hỗ trợ kỹ thuật Deep Assignment qua đối tượng đa nhánh `MemberExpression` (Cho phép lệnh dạng `$store.app.modal = true` lọt qua trạm kiểm duyệt).
+  - Skapine Editor Monkey-patching (`withSkapine.js`): Cấy ghép Hook cưỡng chế chạy mã JavaScript của thuộc tính `x-init` thành Polyfill `SkapineStore` khép kín trong Editor. Editor giờ đây giả lập hoàn hảo trải nghiệm tương tác xuyên Block với tỷ lệ phản hồi 1:1 so với Frontend.
+  - Phân vùng trách nhiệm Alpine CDN và Skapine Engine. Ban hành tài liệu chỉ dẫn chi tiết `alpine-store-guide.md` nhằm bảo vệ định hướng Single-page State lifecycle.
 - **2026-04-19 - 🟢 Bugfix & UX: Tối ưu UI Offcanvas (Ska Builder):**
   - **Overlapping Fix:** Chuyển vị trí nút Close của Offcanvas từ vùng an toàn biên ngoài vào thẳng bên trong Panel nội dung (absolute, top/right-4, z-index: 9999) nhằm chống hiện tượng Block con trong cấu trúc Gutenberg "nuốt" z-index và che lấp nút bấm tắt khi tương tác.
   - **Padding Adjustment:** Cân chỉnh padding cho vùng hiển thị nội dung bên trong Offcanvas (`pt-16`) để văn bản/hình ảnh được chèn thêm không đè vào khu vực an toàn của nút Close.
@@ -236,8 +247,13 @@ ska-ecosystem/ (mapped to app/public/)
     - Mở rộng bảng màu tiêu chuẩn và hỗ trợ Opacity (`/50`).
     - Cải tiến `Style_Manager` để quét thêm `tailwindClasses` và nội dung `content`.
     - Sửa lỗi mapping Bridge và gỡ bỏ Dark Mode v1.
+- **2026-04-20:**
+  - **Ska System Framework & Packaging:**
+    - Hoàn trả The Zero-Trash Directive: Kiểm duyệt và tái cấu trúc Docs không rác.
+    - Cập nhật **Dashboard UI**: Bổ sung Khung cảnh báo nổi bật (Red Banner) khi hệ sinh thái thiếu hụt các plugins cốt lõi (`Ska Data Pro`, `Ska Logic Engine`).
+    - Hoàn tất quy trình Build & Đóng gói Plugin Cốt lõi (Packaging): Tinh chỉnh Node scripts chặn triệt để `node_modules` và `src/` lẩn khuất ở mọi tầng ngầm. Giảm dung lượng `ska-logic-engine` xuống dưới 0.4MB, chuẩn bị sẵn sàng cho quá trình test trên Server đích.
+    - Kiểm định thành công cơ chế **Physical JSON Caching** và **Steel Wall Database Protection** của Ska System Smart Object.
 - **2026-03-19:**
-  - **Grid & Specificity Fixes:**
     - Triển khai cơ chế **"Class Doubling"** (`.class.class`) kết hợp tiền tố `html body.ska-builder` trong `Tailwind_Compiler` để thắng CSS Theme (đặc biệt là `gap`) mà không dùng `!important`.
     - Fix lỗi **CSS Locale**: Sử dụng `number_format` với dấu chấm thập phân (`.`) cho toàn bộ giá trị spacing/dimensions, đảm bảo CSS không bị trình duyệt từ chối ở môi trường Việt Nam/Châu Âu.
   - **Block & Icon Improvements:**

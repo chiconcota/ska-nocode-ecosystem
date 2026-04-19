@@ -146,7 +146,11 @@ class Database_Engine
 		}
 
 		// Trả về ID tự tăng vừa được đúc xong
-		return $wpdb->insert_id;
+		$insert_id = $wpdb->insert_id;
+		
+		do_action( 'ska_data_row_created', $table_name, $insert_id );
+		
+		return $insert_id;
 	}
 
 	/**
@@ -191,6 +195,8 @@ class Database_Engine
 		if (false === $result) {
 			return new \WP_Error('update_failed', 'Lỗi lưu dữ liệu: ' . $wpdb->last_error);
 		}
+
+		do_action( 'ska_data_cell_updated', $table_name, $row_id, $column_name, $value );
 
 		return true;
 	}
@@ -461,6 +467,8 @@ class Database_Engine
 			return new \WP_Error('delete_failed', 'Lỗi xóa dữ liệu: ' . $wpdb->last_error);
 		}
 
+		do_action( 'ska_data_row_deleted', $table_name, $row_id );
+
 		return true;
 	}
 
@@ -486,6 +494,8 @@ class Database_Engine
 		$clean_app_id = sanitize_key($app_id);
 		if (empty($clean_app_id) || $clean_app_id === 'uncategorized') {
 			$base_slug = 'ska_data_' . str_replace('-', '_', $slug);
+		} elseif ($clean_app_id === 'ska_system') {
+			$base_slug = 'ska_data_sys_' . str_replace('-', '_', $slug);
 		} else {
 			$base_slug = 'ska_data_' . $clean_app_id . '_' . str_replace('-', '_', $slug);
 		}
@@ -540,6 +550,16 @@ class Database_Engine
 			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
 		}
 
+		// Bức tường thép: Chặn xóa System Tables
+		$protected_tables = array(
+			$wpdb->prefix . 'ska_data_sys_organisms',
+			$wpdb->prefix . 'ska_data_sys_theme_templates',
+			$wpdb->prefix . 'ska_data_sys_presets'
+		);
+		if (in_array($table_name, $protected_tables)) {
+			return new \WP_Error('protected_table', 'Bảo mật: Không được phép xóa bảng thuộc Hệ thống Lõi.');
+		}
+
 		// Xóa DB
 		$sql = "DROP TABLE IF EXISTS `{$table_name}`";
 		$wpdb->query($sql);
@@ -560,6 +580,16 @@ class Database_Engine
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
 			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+		}
+
+		// Bức tường thép: Chặn đổi tên/di chuyển System Tables
+		$protected_tables = array(
+			$wpdb->prefix . 'ska_data_sys_organisms',
+			$wpdb->prefix . 'ska_data_sys_theme_templates',
+			$wpdb->prefix . 'ska_data_sys_presets'
+		);
+		if (in_array($table_name, $protected_tables)) {
+			return new \WP_Error('protected_table', 'Bảo mật: Không được phép sửa đổi cấu hình bảng thuộc Hệ thống Lõi.');
 		}
 
 		$dictionary = get_option('ska_data_dictionary', array());

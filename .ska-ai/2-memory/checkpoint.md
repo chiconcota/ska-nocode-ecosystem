@@ -1,15 +1,17 @@
 # SYSTEM CHECKPOINT
-@last_update: 2026-04-19 | @milestone: Cải thiện UI/UX Offcanvas - Thư viện Ska Molecules (Phase 4)
+@last_update: 2026-04-20 | @milestone: Hoàn tất Kiến trúc Smart Object 'app-site', UI Cảnh báo & Physical Cache
 
 ## Trạng Thái Hệ Thống (System State)
-- Đã hoàn tất việc khắc phục lỗi hiển thị và tương tác của Ska Offcanvas. Vị trí nút Close đã được tinh chỉnh (chuyển vào trong Panel với `z-index: 9999`) và điều chỉnh padding nội dung an toàn (`pt-16`).
-- Bản nháp ROADMAP PHASE 4 đã được cập nhật, đánh dấu hoàn thiện Ska Offcanvas trong `project_manager_molecule_engine.md`.
-- Lịch sử cập nhật hệ thống đã được ghi lại đầy đủ vào `system_map.md` và `decision-log.md`.
-- Toàn bộ thay đổi source code và documentation đã chuẩn bị sẵn sàng để đẩy lên GitHub.
+- Đã hoàn tất lên ý tưởng và thiết lập ranh giới dữ liệu cho cấu trúc quản trị biến thể tái sử dụng (Ska Symbols, Presets, Theme Builder).
+- Smart Object hệ thống `ska_system` (App) đã được mồi thành công kèm 3 bảng phẳng (`ska_data_sys_organisms`, `ska_data_sys_theme_templates`, `ska_data_sys_presets`). Cơ chế chống xoá/chống sửa (Steel Wall) đã được kiểm định an toàn.
+- Đã kích hoạt hệ thống **Physical JSON Caching** (trích xuất ra file `.js` / `.json` ở vùng `uploads/` để hỗ trợ Nginx caching tối đa mà không dính SQL/PHP khi load ngoài trang chủ).
+- Ecosystem Warning: Chèn Red Banner ở giao diện Dashboard để cảnh báo cài đặt `Ska Data Pro` & `Ska Logic Engine`.
 
 ## Trọng Tâm Phiên Tiếp Theo (Next Session Target)
-- **Ưu tiên 1:** Sẵn sàng chuyển hướng sang phát triển các Module tiếp theo của Phase 4 hoặc bắt đầu phát triển các Smart Object dùng chung để thay thế triệt để các khối Overlay cũ.
-- **Ưu tiên 2:** Mở rộng trải nghiệm Nocode cho Editor nếu có yêu cầu bổ sung tính năng mới.
+- Bước vào **Phase 4 (Tầng Hiển Thị React UI):**
+- **Mục tiêu 1:** Viết React Component trên giao diện Gutenberg (Ska No-code Design) tạo nút "Save as Organism Block" (Sử dụng API đẩy Payload (JSON/HTML) xuống thẳng Lõi bảng `ska_data_sys_organisms` thay vì CPT).
+- **Mục tiêu 2:** Thực thi Fetch & Cấy ghép danh sách Organisms vào bảng Inserter (+) của Editor. Khi thả vào, render ra dạng tham chiếu (Reference ID) thay vì chèn code trùng lập khổng lồ.
 
 ## Lưu ý Bug/Refactor (Nếu có)
-- (None) Khả năng nuốt tương tác của các khối con trong Gutenberg đã được phòng ngừa bằng cấu trúc Position/Z-index ưu tiên tuyệt đối cho nút Close. Phiên làm việc đã chính thức niêm phong.
+- (None) Hệ sinh thái đã ổn định. Quy trình đóng gói (Build Script) cũng đã loại bỏ toàn bộ file rác `node_modules` giúp plugin cực kỳ gọn nhẹ (0.3MB).
+- Chặn đứng hoàn toàn nguy cơ mất đồng bộ giữa CSDL và File Cache. Phiên làm việc đã chính thức niêm phong để chuẩn bị bước sang chặng code React (Phase 4.1).

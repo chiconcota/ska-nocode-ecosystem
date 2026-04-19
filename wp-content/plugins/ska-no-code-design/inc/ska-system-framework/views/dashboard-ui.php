@@ -52,6 +52,27 @@ defined( 'ABSPATH' ) || exit;
             </div>
         </header>
 
+        <?php
+        if (!function_exists('is_plugin_active')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+        $is_data_active = is_plugin_active('ska-data-pro/ska-data-pro.php');
+        $is_logic_active = is_plugin_active('ska-logic-engine/ska-logic-engine.php');
+        
+        if ( ! $is_data_active || ! $is_logic_active ) :
+        ?>
+        <!-- Ecosystem Warning -->
+        <div class="bg-rose-50 border-l-4 border-rose-500 p-5 rounded-r-xl shadow-sm flex items-start gap-4">
+            <div class="w-12 h-12 bg-white text-rose-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm border border-rose-100">
+                <span class="material-symbols-outlined text-[28px]">error</span>
+            </div>
+            <div>
+                <h3 class="text-rose-800 font-bold m-0 border-0 p-0 text-base">Thiếu các Module Cột Sống!</h3>
+                <p class="text-rose-700 text-sm mt-1.5 mb-0">Hệ sinh thái đang chạy ở chế độ giới hạn! Vui lòng Cài đặt/Kích hoạt <strong>Ska Data Pro</strong> & <strong>Ska Logic Engine</strong> (Miễn phí) để mở khóa <em>Theme Builder, Kho Organisms Block</em>, và <em>Workflows No-code</em> vô hạn.</p>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <!-- Grid 2 Cột: Modules (Trái) & Settings (Phải) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 

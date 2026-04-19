@@ -41,4 +41,4 @@
 ## 4. CHIẾN LƯỢC KỸ THUẬT TIẾP THEO
 1. Nghiên cứu và xây dựng cấu trúc `Ska Multi-Step Form` mới mang tính thực tiễn cao hơn. (không làm nữa)
 2. ~~Bổ sung tính năng Khóa (Block Lock)~~ -> **ĐÃ HOÀN TẤT** (Áp dụng API `templateLock: 'all'` thành công cho các block Variation như Accordion).
-3. Liên kết Alpine State (Nếu cần điều khiển xuyên Block, sử dụng `Alpine.store()`).
+4. **[x] Ecosystem Shared State (Alpine.store):** Khởi tạo thành công `Alpine.store()` (Polyfill trong Editor Skapine và CDN ngoài Frontend). Hoàn thiện cầu nối liên kết State chéo giữa các Block độc lập (Cross-Block Management), cho phép gán mutate `$store.app.modal = true` và trigger `DEEP_UPDATE` re-render trong Editor. Đã hoàn thành hệ sinh thái ở Phase 4!

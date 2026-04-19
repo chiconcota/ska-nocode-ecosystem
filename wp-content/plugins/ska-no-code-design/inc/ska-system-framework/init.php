@@ -15,8 +15,10 @@ define( 'SKA_SYSTEM_FRAMEWORK_URL', plugin_dir_url( __FILE__ ) );
 
 require_once SKA_SYSTEM_FRAMEWORK_PATH . '/includes/class-framework-ui.php';
 require_once SKA_SYSTEM_FRAMEWORK_PATH . '/includes/class-ai-proxy.php';
+require_once SKA_SYSTEM_FRAMEWORK_PATH . '/includes/class-system-cache.php';
 
 add_action( 'plugins_loaded', function() {
     \Ska_System_Framework\Framework_UI::get_instance();
     \Ska_System_Framework\AI_Proxy::get_instance();
+    \Ska_System_Framework\System_Cache::get_instance();
 }, 99 );
