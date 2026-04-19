@@ -28,7 +28,7 @@
 
 ### 3.2. Overlay & Popup (Đang Brainstorm)
 - [x] **Ska Modal / Popup:** (ĐÃ LOẠI BỎ) - Chuyển sang phương án sử dụng **Ska Smart Object (Global Template)** để tránh xung đột HTML2Tailwind.
-- [ ] **Ska Offcanvas / Mobile Menu:** Sidebar trượt ngang từ một phía màn hình.
+- [x] **Ska Offcanvas / Mobile Menu:** Sidebar trượt ngang từ một phía màn hình. Đã hoàn thiện và tối ưu tương tác nút Close (Z-index priority).
 
 ### 3.3. Advanced Functional Blocks
 - [x] **Ska Standard Form:** 
