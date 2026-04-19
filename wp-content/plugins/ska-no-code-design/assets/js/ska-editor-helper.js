@@ -173,38 +173,6 @@
                 margin: 0 !important;
             }
 
-            /* VACCINE CSS: Tame Fixed positioning in Editor to prevent UI blackout */
-            .wp-block-ska-builder-container.fixed,
-            .wp-block-ska-builder-container.fixed.block-editor-block-list__layout,
-            .wp-block-ska-builder-container > .wp-block.fixed {
-                position: relative !important; /* Force to relative inside editor */
-                width: 100% !important;
-                height: auto !important;
-                min-height: 50px;
-                border: 2px dashed #f87171 !important; /* red-400 */
-                background: rgba(254, 226, 226, 0.2) !important; /* light red tint */
-                margin-top: 10px !important;
-                margin-bottom: 10px !important;
-                z-index: 1 !important;
-                inset: auto !important;
-                transform: none !important;
-            }
-            
-            /* Add warning label to tamed fixed blocks */
-            .wp-block-ska-builder-container.fixed::before,
-            .wp-block-ska-builder-container > .wp-block.fixed::before {
-                content: "FIXED POSITION LAYER (Tamed for Editor)";
-                display: block;
-                font-family: monospace;
-                font-size: 10px;
-                font-weight: bold;
-                color: #dc2626;
-                text-align: center;
-                padding: 4px;
-                background: #fef2f2;
-                border-bottom: 2px dashed #f87171;
-            }
-
             /* Sticky positioning */
             .wp-block-ska-builder-container.sticky,
             .wp-block-ska-builder-container.sticky.block-editor-block-list__layout,

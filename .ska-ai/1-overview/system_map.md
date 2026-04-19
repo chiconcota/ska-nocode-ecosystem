@@ -52,6 +52,10 @@ ska-ecosystem/ (mapped to app/public/)
 5. **Build Sync Confirmation:** AI BẮT BUỘC phải hỏi ý kiến người dùng trước khi thực hiện `npm run sync`.
 
 ## 6. RECENT UPDATES
+- **2026-04-18 - 🟢 Nâng cấp UX: Skapine Engine Auto-fill & Phân nhóm HTML Attributes:**
+  - **HTML Attributes OptGroup:** Tái cấu trúc Panel nhập "Thuộc tính HTML/Alpine", chia thành 4 nhóm (Hiệu ứng/Animation chạy trong ranh giới Preview, Chức năng Data/Logic chạy ngầm, Tùy chỉnh Form và HTML Cơ bản) cho người dùng Nocode dễ sử dụng.
+  - **Smart Auto-fill Defaults:** Áp dụng bộ quy tắc Auto-fill tự động sinh logic phụ trợ mặc định (VD: `@mouseenter` sinh ra `hover = true`, `x-data` sinh `{ open: false, hover: false }`) giảm thiểu thiết lập cho End-user.
+  - **Skapine Engine Preview Mode (Mouse Events):** Mở rộng Event Listeners lắng nghe `onMouseEnter` và `onMouseLeave` cho nhân Skapine. Block (khi bật Preview Mode) lập tức trích xuất logic tương tác Hover và chạy trực tiếp trên hệ thống Render của Editor.
 - **2026-04-16 - 🟢 Architecture Shift - Global Smart Object Pop-ups & Interactive Engine Plan:**
   - **Khai tử Ska Modal Block:** Chính thức loại bỏ khối "Ska Modal" cục bộ khỏi hệ thống biến thể (variations). Quyết định chiến lược: Mọi Popup/Lightbox sẽ được quản lý tập trung thông qua **Ska Smart Object (Global Template)** kết hợp với Logic Engine (kích hoạt bằng Click Handler hoặc Exit Intent / Delay Timer) ở các Phase sau, đảm bảo UI sạch sẽ và chuẩn mực Nocode Enterprise.
   - **Vaccine Editor (Quy tắc CSS Tàng hình):** Tiêm `Vaccine CSS` vào `ska-editor-helper.js` để bảo vệ Gutenberg Editor khỏi hệ lụy của các khối HTML gắn lớp `fixed` (ví dụ như khi user dùng html2tailwind chuyển đổi raw HTML có chứa popup). Biến tất cả khối `fixed` thành `relative` với viền gạch đứt cảnh báo, đảm bảo luôn tương tác được mà không che khuất màn hình chỉnh sửa.
