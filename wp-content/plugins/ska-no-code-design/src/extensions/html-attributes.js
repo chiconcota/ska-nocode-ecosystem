@@ -7,6 +7,8 @@ import { InspectorControls } from '@wordpress/block-editor';
 // Import our molecule variations so they register in the Gutenberg inserter
 import './molecules-variations';
 
+// Tích hợp hệ thống Skapine (Alpine in Gutenberg)
+import './skapine/withSkapine';
 /**
  * 1. Add `htmlAttributes` to all Ska blocks schema
  */
@@ -107,42 +109,53 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
 
                                     let COMMON_KEYS = [
                                         { label: '-- Chọn một thuộc tính --', value: '' },
-                                        { label: '🎨 Style (Inline CSS)', value: 'style' },
-                                        { label: '🏷️ ID định danh', value: 'id' },
                                     ];
 
-                                    // Form-specific properties
-                                    if (isFormContext) {
-                                        COMMON_KEYS.push(
-                                            { label: '🔗 Form Action', value: 'action' },
-                                            { label: '📮 Form Method', value: 'method' },
-                                            { label: '📤 @submit.prevent (Alpine Form)', value: '@submit.prevent' }
-                                        );
-                                    }
-
-                                    // General Alpine & DOM attributes
+                                    // 🌟 NHÓM 1: HIỆU ỨNG & TƯƠNG TÁC (Chạy trong Preview Mode)
                                     COMMON_KEYS.push(
-                                        { label: '⚡ x-data (AlpineJS State)', value: 'x-data' },
-                                        { label: '👁️ x-show (Alpine Ẩn/Hiện)', value: 'x-show' },
+                                        { label: '--- ✨ HIỆU ỨNG & ANIMATION ---', value: 'opt-group-1', disabled: true },
+                                        { label: '👁️ x-show (Ẩn/Hiện bằng Script)', value: 'x-show' },
+                                        { label: '🖱️ @click (Click Chuột)', value: '@click' },
+                                        { label: '👆 @mouseenter (Rê chuột vào)', value: '@mouseenter' },
+                                        { label: '👇 @mouseleave (Rê chuột ra)', value: '@mouseleave' },
+                                        { label: '🛑 @click.prevent (Chống Submit/Load)', value: '@click.prevent' },
                                         { label: '✨ x-transition:enter', value: 'x-transition:enter' },
                                         { label: '✨ x-transition:enter-start', value: 'x-transition:enter-start' },
                                         { label: '✨ x-transition:enter-end', value: 'x-transition:enter-end' },
                                         { label: '✨ x-transition:leave', value: 'x-transition:leave' },
                                         { label: '✨ x-transition:leave-start', value: 'x-transition:leave-start' },
-                                        { label: '✨ x-transition:leave-end', value: 'x-transition:leave-end' },
-                                        { label: '🖱️ @click (Alpine Click)', value: '@click' },
-                                        { label: '🛑 @click.prevent (Chặn cuộn/load trang)', value: '@click.prevent' }
+                                        { label: '✨ x-transition:leave-end', value: 'x-transition:leave-end' }
                                     );
 
-                                    // Data Binding (Hide on Input/Select as they have their own settings)
+                                    // 🌟 NHÓM 2: DỮ LIỆU & LOGIC (Không ảnh hưởng Preview)
                                     if (!isInputComponent) {
                                         COMMON_KEYS.push(
-                                            { label: '🔄 x-model (Alpine Data Bind)', value: 'x-model' },
-                                            { label: '📝 x-text (Alpine Text)', value: 'x-text' }
+                                            { label: '--- 🔢 DỮ LIỆU & LOGIC ---', value: 'opt-group-2', disabled: true },
+                                            { label: '⚡ x-data (Khởi tạo State Component)', value: 'x-data' },
+                                            { label: '🔄 x-model (Ràng buộc 2 chiều)', value: 'x-model' },
+                                            { label: '📝 x-text (Gắn Text động)', value: 'x-text' },
+                                            { label: '🌐 x-html (Gắn HTML động)', value: 'x-html' }
                                         );
                                     }
 
-                                    COMMON_KEYS.push({ label: '✏️ --- Tùy chỉnh (Gõ tay) ---', value: 'custom' });
+                                    // Form-specific properties
+                                    if (isFormContext) {
+                                        COMMON_KEYS.push(
+                                            { label: '--- 📮 TÙY CHỈNH FORM ---', value: 'opt-group-form', disabled: true },
+                                            { label: '🔗 action (Đường dẫn gửi)', value: 'action' },
+                                            { label: '📮 method (POST/GET)', value: 'method' },
+                                            { label: '📤 @submit.prevent (Khóa gửi Form)', value: '@submit.prevent' }
+                                        );
+                                    }
+
+                                    // General DOM attributes
+                                    COMMON_KEYS.push(
+                                        { label: '--- 🔧 HTML CƠ BẢN ---', value: 'opt-group-3', disabled: true },
+                                        { label: '🎨 style (CSS nội tuyến)', value: 'style' },
+                                        { label: '🏷️ id (Định danh riêng)', value: 'id' },
+                                        { label: '--- ✏️ TUỲ CHỈNH ---', value: 'opt-group-4', disabled: true },
+                                        { label: 'Tùy chỉnh tự gõ (Ví dụ: aria-label)', value: 'custom' }
+                                    );
 
                                     const isStandard = COMMON_KEYS.some(k => k.value === (attr.key || '')) && (attr.key || '') !== 'custom';
                                     const selectValue = isStandard ? (attr.key || '') : 'custom';
@@ -154,11 +167,25 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                                 options={COMMON_KEYS}
                                                 value={selectValue}
                                                 onChange={(val) => {
+                                                    if (val.startsWith('opt-group')) return;
+
                                                     if (val === 'custom') {
-                                                        // Tạm lưu cờ 'custom_mode' hoặc chuỗi rỗng để TextControl rỗng
                                                         updateAttribute(index, 'key', 'custom_mode_on');
                                                     } else {
-                                                        updateAttribute(index, 'key', val);
+                                                        // Tự động điền dữ liệu mẫu nếu giá trị hiện đang trống
+                                                        let defaultValue = attr.value || '';
+                                                        if (defaultValue === '' || defaultValue === 'custom_mode_on') {
+                                                            if (val === 'x-data') defaultValue = '{ open: false, hover: false }';
+                                                            if (val.startsWith('@click')) defaultValue = 'open = !open';
+                                                            if (val.startsWith('@mouseenter')) defaultValue = 'hover = true';
+                                                            if (val.startsWith('@mouseleave')) defaultValue = 'hover = false';
+                                                            if (val === 'x-show') defaultValue = 'open || hover';
+                                                            if (val.includes('transition')) defaultValue = 'transition ease-in duration-300';
+                                                        }
+
+                                                        const newAttributes = [...htmlAttributes];
+                                                        newAttributes[index] = { key: val, value: defaultValue };
+                                                        setAttributes({ htmlAttributes: newAttributes });
                                                     }
                                                 }}
                                                 style={{ marginBottom: isCustom ? '4px' : '8px' }}
