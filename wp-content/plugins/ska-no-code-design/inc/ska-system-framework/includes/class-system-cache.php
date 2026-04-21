@@ -73,9 +73,9 @@ class System_Cache
             $rows = array();
         }
 
-        // Thư mục lưu trữ: wp-content/uploads/ska-system-cache/
+        // Thư mục lưu trữ: wp-content/uploads/ska-data/
         $upload_dir = wp_upload_dir();
-        $cache_dir = trailingslashit($upload_dir['basedir']) . 'ska-system-cache';
+        $cache_dir = trailingslashit($upload_dir['basedir']) . 'ska-data';
 
         if (!wp_mkdir_p($cache_dir)) {
             error_log('Ska System Cache: Không thể tạo thư mục lưu trữ System Cache => ' . $cache_dir);
@@ -114,7 +114,7 @@ class System_Cache
 
         // 2. Lớp Disk: Fallback quét file JSON physical
         $upload_dir = wp_upload_dir();
-        $file_path = trailingslashit($upload_dir['basedir']) . 'ska-system-cache/' . $slug . '.json';
+        $file_path = trailingslashit($upload_dir['basedir']) . 'ska-data/' . $slug . '.json';
 
         if (file_exists($file_path)) {
             $json_data = file_get_contents($file_path);

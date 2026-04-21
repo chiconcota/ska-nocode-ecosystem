@@ -142,6 +142,34 @@ class Core {
             'brandColorsCss'  => \Ska\Builder\Design\Tailwind_Config::get_core_reset_css() . "\n" . \Ska\Builder\Design\Tailwind_Color_Registry::get_brand_colors_css(),
         ) );
 
+        // Inject Organisms Cache to JS (Zero-Query)
+        $upload_dir = wp_upload_dir();
+        $cache_file = trailingslashit( $upload_dir['basedir'] ) . 'ska-data/organisms.json';
+        $organisms_data = array();
+        
+        if ( file_exists( $cache_file ) ) {
+            $file_contents = file_get_contents( $cache_file );
+            if ( ! empty( $file_contents ) ) {
+                $decoded = json_decode( $file_contents, true );
+                if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+                    foreach ( $decoded as $org ) {
+                        if ( isset( $org['id'] ) ) {
+                            $organisms_data[ $org['id'] ] = array(
+                                'id'   => $org['id'],
+                                'name' => ! empty( $org['name'] ) ? $org['name'] : $org['id'],
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        wp_add_inline_script(
+            'ska-editor-helper',
+            'window.skaOrganismsCache = ' . wp_json_encode( $organisms_data ) . ';',
+            'before'
+        );
+
         // Enqueue Bridge Parser if enabled
         if ( get_option( 'ska_bridge_enabled', 'yes' ) === 'yes' ) {
             wp_enqueue_script(

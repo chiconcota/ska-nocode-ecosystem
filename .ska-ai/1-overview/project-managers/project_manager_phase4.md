@@ -12,7 +12,14 @@
 
 ## 2. ROADMAP THEO HẠNG MỤC (PHASE 4 TRACKER)
 
-### 2.1. Ska Symbols & Smart Object 'app-site' (Tầng Lưu Trữ & Custom Blocks)
+### 2.1. Ska System Dashboard & App-site Routing (Ưu tiên Cao)
+*Nhiệm vụ chuyển hướng phát triển từ React Editor sang hoàn thiện vòng lặp UI.*
+- [ ] Gắn Action Links (Mở Trình Thiết Kế, Option Design) vào card hiển thị của Plugin Ska No-code Design trên System Dashboard. Khóa ổ khóa 🔒 nếu thiếu Dependencies.
+- [ ] Xử lý Routing cho nút "Mở Trình Thiết Kế" trỏ thẳng vào giao diện DataGrid của Smart Object `app-site`.
+- [x] Thiết kế trang / modal React "Brand, Font & Theme Options". Móc nối REST API để POST JSON vào bảng `ska_data_sys_presets`. (Sử dụng Alpine.js thay React)
+- [x] Xuất file Physical Cache `.json/.js` để JIT Tailwind render tốc độ cao mỗi khi Save.
+
+### 2.2. Ska Symbols & Smart Object 'app-site' (Tầng Lưu Trữ & Custom Blocks)
 *Được khởi tạo từ `project_manager_custom_blocks.md` cũ.*
 - [x] Khởi tạo phân vùng App `ska_system` (nhãn "Site Management") trong `App_Manager` và chặn quyền thay đổi/xoá app này.
 - [x] Mồi/tạo 3 Bảng Hệ Thống (`ska_data_sys_organisms`, `ska_data_sys_theme_templates`, `ska_data_sys_presets`) tự động qua hook migration/setup của Ska Data Pro.
@@ -20,8 +27,8 @@
 - [x] Kích hoạt hệ thống Cache thông minh: Bất cứ chức năng Update/Delete/Insert nào, ghi đè file `.json/.php` fallback giúp Frontend truy xuất Data nhanh siêu tốc.
 - [x] Cảnh báo cài đặt (Red Banner) nếu người dùng chối bỏ việc cài Ska Data Pro và Logic Engine.
 - [x] Gắn shortcut "Site Blueprint" tại menu Ska Builder Core trỏ sang UI DataGrid tương ứng của `ska_system`.
-- [ ] Tính năng (React UI): Tạo nút "Save as Organism Block" gửi đẩy Payload (JSON/HTML) thẳng xuống CSDL flat-table `ska_data_sys_organisms`.
-- [ ] Tính năng (Inserter): Lấy danh sách Block đã lưu đưa vào Inserter (+) của Gutenberg và render thành reference thay vì hardcode.
+- [ ] (Pending) Tính năng (React UI): Tạo nút "Save as Organism Block" gửi đẩy Payload (JSON/HTML) thẳng xuống CSDL flat-table `ska_data_sys_organisms`.
+- [ ] (Pending) Tính năng (Inserter): Lấy danh sách Block đã lưu đưa vào Inserter (+) của Gutenberg và render thành reference thay vì hardcode.
 
 ### 2.2. Ska Molecule & Alpine.js Library (Tầng Tương tác Frontend)
 *Được tích hợp từ `project_manager_molecule_engine.md` cũ.*

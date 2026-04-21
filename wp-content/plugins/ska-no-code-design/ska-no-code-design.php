@@ -40,6 +40,20 @@ function ska_no_code_design_init() {
         Ska_Design_Dashboard_Integration::init();
     }
 
+    // Design Tokens (Brand & Theme Options)
+    require_once SKA_DESIGN_PATH . 'inc/design-engine/class-design-tokens-api.php';
+    require_once SKA_DESIGN_PATH . 'inc/design-engine/class-design-tokens-ui.php';
+    require_once SKA_DESIGN_PATH . 'inc/design-engine/class-organisms-api.php';
+    if ( class_exists( '\Ska\Design\Api\Design_Tokens_API' ) ) {
+        \Ska\Design\Api\Design_Tokens_API::get_instance();
+    }
+    if ( class_exists( '\Ska\Design\Api\Organisms_API' ) ) {
+        \Ska\Design\Api\Organisms_API::get_instance();
+    }
+    if ( class_exists( '\Ska\Design\Admin\Design_Tokens_UI' ) ) {
+        \Ska\Design\Admin\Design_Tokens_UI::get_instance();
+    }
+
 	// 4. Blocks System
 	require_once SKA_DESIGN_PATH . 'blocks/init.php';
 

@@ -1,17 +1,19 @@
-# SYSTEM CHECKPOINT
-@last_update: 2026-04-20 | @milestone: Hoàn tất Kiến trúc Smart Object 'app-site', UI Cảnh báo & Physical Cache
+# CHECKPOINT: BÀN GIAO PHIÊN (2026-04-21)
 
-## Trạng Thái Hệ Thống (System State)
-- Đã hoàn tất lên ý tưởng và thiết lập ranh giới dữ liệu cho cấu trúc quản trị biến thể tái sử dụng (Ska Symbols, Presets, Theme Builder).
-- Smart Object hệ thống `ska_system` (App) đã được mồi thành công kèm 3 bảng phẳng (`ska_data_sys_organisms`, `ska_data_sys_theme_templates`, `ska_data_sys_presets`). Cơ chế chống xoá/chống sửa (Steel Wall) đã được kiểm định an toàn.
-- Đã kích hoạt hệ thống **Physical JSON Caching** (trích xuất ra file `.js` / `.json` ở vùng `uploads/` để hỗ trợ Nginx caching tối đa mà không dính SQL/PHP khi load ngoài trang chủ).
-- Ecosystem Warning & Documentation: Chèn Red Banner cảnh báo và hoàn tất Cẩm nang Hướng dẫn End-User (lưu tại folder `docs/`).
+## Trạng Thái (Status)
+- Đã giải quyết triệt để lỗi "Block rendered as empty" của khối `ska-organism-ref` bên trong Editor. 
+- Nguyên nhân lõi là do cơ chế Output Buffering `ob_start()` của WP > 6.1 khi gọi từ `render.php` trong `block.json`, buộc phải dùng `echo` thay vì `return`.
+- Đồng thời fix lỗi REST API 400 Bad Request bằng cách định nghĩa đầy đủ Schema cho các attributes phức tạp (`htmlAttributes`, `logic`).
 
-## Trọng Tâm Phiên Tiếp Theo (Next Session Target)
-- Bước vào **Phase 4 (Tầng Hiển Thị React UI):**
-- **Mục tiêu 1:** Viết React Component trên giao diện Gutenberg (Ska No-code Design) tạo nút "Save as Organism Block" (Sử dụng API đẩy Payload (JSON/HTML) xuống thẳng Lõi bảng `ska_data_sys_organisms` thay vì CPT).
-- **Mục tiêu 2:** Thực thi Fetch & Cấy ghép danh sách Organisms vào bảng Inserter (+) của Editor. Khi thả vào, render ra dạng tham chiếu (Reference ID) thay vì chèn code trùng lập khổng lồ.
+## Yêu Cầu Của User Cho Phiên Tới
+- **Bắt đầu lập trình 2 tính năng chỉnh sửa nội tuyến cho khối "Ska Organism Reference" trên thanh Toolbar/Inspector:**
+   1. **Nút "Sửa Mẫu Gốc" (Edit Source):** Nút này khi ấn vào sẽ mở tab chỉnh sửa Organism gốc.
+   2. **Nút "Phân Rã Khối" (Detach/Unlink):** Nút này sẽ biến đổi (Transform) khối `ska-organism-ref` thành các khối Gutenberg riêng lẻ (Ska Container, Button, Text...) để người dùng tự do tuỳ biến trên trang hiện tại mà không ảnh hưởng tới Organism gốc.
 
-## Lưu ý Bug/Refactor (Nếu có)
-- (None) Hệ sinh thái đã ổn định. Quy trình đóng gói (Build Script) cũng đã loại bỏ toàn bộ file rác `node_modules` giúp plugin cực kỳ gọn nhẹ (0.3MB).
-- Chặn đứng hoàn toàn nguy cơ mất đồng bộ giữa CSDL và File Cache. Phiên làm việc đã chính thức niêm phong để chuẩn bị bước sang chặng code React (Phase 4.1).
+## Code Path Liên Quan
+- `wp-content/plugins/ska-no-code-design/src/ska-organism-ref/edit.js`
+- `wp-content/plugins/ska-no-code-design/src/ska-organism-ref/block.json`
+
+## Dặn dò Agent Phiên Sau
+- Khi quay lại, đọc `checkpoint.md` này và bắt đầu luôn vào việc implement nút "Edit Source" và "Detach" trên React Block Controls.
+- Hãy tham khảo mã nguồn của khối Reusable Block của WP core để làm tính năng "Detach" (Tách inner HTML parse thành blocks raw).

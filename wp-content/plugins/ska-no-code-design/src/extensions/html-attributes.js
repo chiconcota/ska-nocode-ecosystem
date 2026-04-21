@@ -9,6 +9,13 @@ import './molecules-variations';
 
 // Tích hợp hệ thống Skapine (Alpine in Gutenberg)
 import './skapine/withSkapine';
+
+// Tích hợp hệ thống Ska Symbols (Save as Organism)
+import './ska-symbols';
+
+// Kéo thả Ska Symbols ra Frontend (Thư viện)
+import './ska-inserter';
+
 /**
  * 1. Add `htmlAttributes` to all Ska blocks schema
  */
