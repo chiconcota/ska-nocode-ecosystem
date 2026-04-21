@@ -8,6 +8,14 @@ class Ska_Design_Dashboard_Integration {
     }
 
     public static function render_module_card() {
+        if ( ! function_exists( 'is_plugin_active' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        $data_pro_active     = is_plugin_active( 'ska-data-pro/ska-data-pro.php' );
+        $logic_engine_active = is_plugin_active( 'ska-logic-engine/ska-logic-engine.php' );
+        $can_use_design      = $data_pro_active && $logic_engine_active;
+
         ?>
         <!-- Module: Design Engine -->
         <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col sm:flex-row gap-5 relative overflow-hidden">
@@ -26,9 +34,19 @@ class Ska_Design_Dashboard_Integration {
                     </span>
                 </div>
                 <div class="mt-4 flex gap-3 text-sm">
-                    <a href="#" class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline">Mở Trình thiết kế</a>
-                    <span class="text-slate-300">|</span>
-                    <a href="#" class="text-slate-600 hover:text-slate-900">Brand, Font & Theme Options</a>
+                    <?php if ( $can_use_design ) : ?>
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=ska-design-workspace' ) ); ?>" class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline">Mở Trình thiết kế</a>
+                        <span class="text-slate-300">|</span>
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=ska-design-tokens' ) ); ?>" class="text-slate-600 hover:text-slate-900">Brand, Font & Theme Options</a>
+                    <?php else : ?>
+                        <span class="text-slate-400 font-medium flex items-center gap-1 cursor-not-allowed" title="Yêu cầu kích hoạt Ska Data Pro & Ska Logic Engine">
+                            <span class="material-symbols-outlined text-[16px]">lock</span> Mở Trình thiết kế
+                        </span>
+                        <span class="text-slate-300">|</span>
+                        <span class="text-slate-400 flex items-center gap-1 cursor-not-allowed" title="Yêu cầu kích hoạt Ska Data Pro & Ska Logic Engine">
+                            <span class="material-symbols-outlined text-[16px]">lock</span> Brand, Font & Theme Options
+                        </span>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

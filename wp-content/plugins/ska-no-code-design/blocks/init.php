@@ -25,6 +25,9 @@ function ska_builder_core_register_blocks() {
     register_block_type( SKA_DESIGN_PATH . 'build/ska-input' );
     register_block_type( SKA_DESIGN_PATH . 'build/ska-select' );
 
+    // Ska Symbols (Organism Reference)
+    register_block_type( SKA_DESIGN_PATH . 'build/ska-organism-ref' );
+
     // Register Bridge Import if enabled
     if ( get_option( 'ska_bridge_enabled', 'yes' ) === 'yes' ) {
         register_block_type( SKA_DESIGN_PATH . 'build/ska-bridge-import' );
@@ -49,6 +52,11 @@ function ska_no_code_design_block_categories( $categories, $post ) {
 				'title' => __( 'Ska Molecules', 'ska-no-code-design' ),
 				'icon'  => 'networking',
 			),
+			array(
+				'slug'  => 'ska-organisms',
+				'title' => __( 'Ska Organisms', 'ska-no-code-design' ),
+				'icon'  => 'superhero',
+			),
 		),
 		$categories
 	);
@@ -69,6 +77,18 @@ function ska_builder_core_enqueue_extensions() {
             $assets['version'],
             true
         );
+
+        // Preload organisms cache into JS window object
+        $organisms_cache_file = WP_CONTENT_DIR . '/uploads/ska-data/organisms.json';
+        $organisms_data = array();
+        if ( file_exists( $organisms_cache_file ) ) {
+            $json = file_get_contents( $organisms_cache_file );
+            $data = json_decode( $json, true );
+            if ( is_array( $data ) ) {
+                $organisms_data = $data;
+            }
+        }
+        wp_localize_script( 'ska-builder-extensions', 'skaOrganismsCache', $organisms_data );
     }
 }
 add_action( 'enqueue_block_editor_assets', 'ska_builder_core_enqueue_extensions' );
