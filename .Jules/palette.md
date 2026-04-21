@@ -1,0 +1,1 @@
+## 2024-05-24 - Material Symbols Accessibility\n**Learning:** Decorative Material Symbols ligatures need aria-hidden="true" to prevent screen readers from confusingly reading the ligature text aloud.\n**Action:** Add aria-hidden="true" to span tags using material-symbols-outlined class when they are decorative.
