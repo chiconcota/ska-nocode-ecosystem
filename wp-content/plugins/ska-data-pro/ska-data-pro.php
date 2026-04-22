@@ -174,7 +174,16 @@ add_filter('ska_data_update_record', function ($result, $payload, $table_name, $
     }
 
     // Lệnh Cập Nhật Data của WordPress
-    return $wpdb->update($table_name_with_prefix, $clean_update_data, $where_conditions);
+    $update_result = $wpdb->update($table_name_with_prefix, $clean_update_data, $where_conditions);
+    
+    if ( $update_result !== false ) {
+        $row_id = isset( $where_conditions['id'] ) ? intval( $where_conditions['id'] ) : 0;
+        if ( $row_id ) {
+            do_action( 'ska_data_row_updated', $table_name_with_prefix, $row_id, $clean_update_data );
+        }
+    }
+    
+    return $update_result;
 }, 10, 4);
 
 // --- ĐOẠN CODE TEST NHANH (MÁY BƠM DỮ LIỆU THỬ NGHIỆM) ---

@@ -140,6 +140,8 @@ class Core {
             'brandColorsJson' => \Ska\Builder\Design\Tailwind_Color_Registry::get_custom_colors(),
             // Vẫn giữ brandColorsCss fallback nếu file JS chưa được cập nhật cache.
             'brandColorsCss'  => \Ska\Builder\Design\Tailwind_Config::get_core_reset_css() . "\n" . \Ska\Builder\Design\Tailwind_Color_Registry::get_brand_colors_css(),
+            'dummyPostId'     => get_option( 'ska_organism_dummy_post_id' ),
+            'adminUrl'        => admin_url(),
         ) );
 
         // Inject Organisms Cache to JS (Zero-Query)

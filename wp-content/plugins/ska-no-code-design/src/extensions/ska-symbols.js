@@ -71,10 +71,20 @@ const withOrganismSaveButton = createHigherOrderComponent((BlockEdit) => {
                     }
 
                     // Biến hình (Transform) block hiện tại thành Ghost Block (Reference)
-                    if (response.data && response.data.id) {
+                    const returnedId = response.id || (response.data && response.data.id);
+                    if (returnedId) {
+                        // Bơm dữ liệu trực tiếp vào System Cache để Frontend sử dụng liền mà không cần tải lại trang
+                        window.skaOrganismsCache = window.skaOrganismsCache || {};
+                        window.skaOrganismsCache[returnedId] = {
+                            id: String(returnedId),
+                            name: organismName,
+                            block_json: typeof blockContent === 'string' ? blockContent : JSON.stringify(blockContent),
+                            html_content: htmlContent
+                        };
+
                         wp.data.dispatch('core/block-editor').replaceBlock(
                             clientId,
-                            window.wp.blocks.createBlock('ska-builder/organism-ref', { organismId: response.data.id })
+                            window.wp.blocks.createBlock('ska-builder/organism-ref', { organismId: String(returnedId) })
                         );
                     }
                 } else {
@@ -118,6 +128,16 @@ const withOrganismSaveButton = createHigherOrderComponent((BlockEdit) => {
                                 onChange={(value) => setOrganismName(value)}
                                 placeholder="Nhập tên..."
                             />
+                            {(() => {
+                                const data = window.skaOrganismsCache || {};
+                                const isDuplicate = organismName.trim() && Object.values(data).some(org => 
+                                    org.name && org.name.trim().toLowerCase() === organismName.trim().toLowerCase()
+                                );
+                                if (isDuplicate) {
+                                    return <div style={{ color: '#ef4444', fontSize: '12px', marginTop: '-8px' }}>Tên này đã tồn tại!</div>;
+                                }
+                                return null;
+                            })()}
                             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                                 <Button isTertiary onClick={() => setIsPopoverVisible(false)}>
                                     Hủy
@@ -125,7 +145,11 @@ const withOrganismSaveButton = createHigherOrderComponent((BlockEdit) => {
                                 <Button 
                                     isPrimary 
                                     isBusy={isSaving} 
-                                    disabled={!organismName.trim() || isSaving}
+                                    disabled={
+                                        !organismName.trim() || 
+                                        isSaving || 
+                                        Object.values(window.skaOrganismsCache || {}).some(org => org.name && org.name.trim().toLowerCase() === organismName.trim().toLowerCase())
+                                    }
                                     onClick={handleSaveOrganism}
                                     style={{
                                         background: '#10b981', // Màu Emerald của Ska

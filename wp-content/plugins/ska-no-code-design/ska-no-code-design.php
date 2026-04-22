@@ -44,6 +44,7 @@ function ska_no_code_design_init() {
     require_once SKA_DESIGN_PATH . 'inc/design-engine/class-design-tokens-api.php';
     require_once SKA_DESIGN_PATH . 'inc/design-engine/class-design-tokens-ui.php';
     require_once SKA_DESIGN_PATH . 'inc/design-engine/class-organisms-api.php';
+    require_once SKA_DESIGN_PATH . 'inc/design-engine/class-organism-editor.php';
     if ( class_exists( '\Ska\Design\Api\Design_Tokens_API' ) ) {
         \Ska\Design\Api\Design_Tokens_API::get_instance();
     }
@@ -52,6 +53,9 @@ function ska_no_code_design_init() {
     }
     if ( class_exists( '\Ska\Design\Admin\Design_Tokens_UI' ) ) {
         \Ska\Design\Admin\Design_Tokens_UI::get_instance();
+    }
+    if ( class_exists( '\Ska\Builder\Design\Organism_Editor' ) ) {
+        \Ska\Builder\Design\Organism_Editor::instance();
     }
 
 	// 4. Blocks System
