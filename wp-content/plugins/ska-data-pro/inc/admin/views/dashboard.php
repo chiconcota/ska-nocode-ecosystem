@@ -87,6 +87,24 @@ defined( 'ABSPATH' ) || exit;
             </button>
         </div>
 
+        <!-- Template: Bệnh Viện / Phòng Khám (Online Hospital) -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden flex flex-col group p-6">
+            <div class="w-12 h-12 bg-red-100 text-red-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <span class="dashicons dashicons-heart" style="font-size: 24px; width: 24px; height: 24px;"></span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Online Hospital</h3>
+            <p class="text-sm text-gray-500 flex-grow mb-4">Hệ thống Y tế, Bệnh viện trực tuyến. Quản lý danh sách Bác sĩ, chuyên khoa, lịch khám.</p>
+            <div class="bg-gray-50 rounded p-3 mb-5 border border-gray-100">
+                <p class="text-xs text-gray-600 font-mono mb-1"><strong>Bảng tự tạo: </strong>1</p>
+                <div class="flex flex-wrap gap-1 mt-2 -ml-1">
+                    <span class="inline-block bg-white text-xs text-gray-600 px-2 py-1 rounded border">ska_data_doctors</span>
+                </div>
+            </div>
+            <button data-template-id="hospital" class="ska-install-btn w-full bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                <span class="dashicons dashicons-download mt-0.5"></span> <span class="btn-text">Cài Đặt Mẫu Này</span>
+            </button>
+        </div>
+
         <!-- Template: Custom Empty Table -->
         <div class="bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 shadow-sm hover:shadow-md hover:border-emerald-400 hover:bg-emerald-50 transition-all duration-300 overflow-hidden flex flex-col group p-6 items-center text-center cursor-pointer">
             <div class="w-16 h-16 bg-white border border-gray-100 text-gray-400 rounded-full flex items-center justify-center mb-4 group-hover:text-emerald-500 group-hover:scale-110 transition-transform shadow-sm">

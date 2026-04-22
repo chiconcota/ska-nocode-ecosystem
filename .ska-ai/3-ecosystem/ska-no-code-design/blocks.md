@@ -66,6 +66,12 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
   - **Tabs:** Quản lý state hiển thị qua `x-data="{ activeTab: 1 }"`.
   - **Accordion:** Quản lý collapse bằng chiều cao biến thiên (`max-height`).
   - **Logic Modal:** Modal Popup độc lập xử lý state bật / tắt với hiệu ứng `x-transition`.
+
+#### 11. Ska Loop (`ska-builder/loop`)
+- **Role:** Vòng lặp hiển thị dữ liệu động (Data Loop) với Zero N+1 Queries.
+- **Backend Architecture (2026-04-22):** Sử dụng cơ chế Bulk Loading thông qua `Organisms_API::get_bulk_html` để load hàng loạt template HTML của Organism. Áp dụng Hydration Engine tốc độ cao bằng `preg_replace_callback` để đắp Data (Flat Tables) vào cặp thẻ Mustache `{{key}}`. Không được query SQL bên trong vòng lặp.
+- **Condition Matching:** Sử dụng `SkaLogicEngine::evaluate` (SkaFX) để quét và quyết định Slot hiển thị. Hỗ trợ biến hệ thống có tiền tố `$` như `$index`, `$first`, `$last` thông qua bộ từ vựng SkaFX Lexer đã cập nhật.
+
 ## 3. Cấu trúc thư mục
 - `init.php`: Đăng ký các block.
 - `[block-name]/`: Thư mục chứa code của block.

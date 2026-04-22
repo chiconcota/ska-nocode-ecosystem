@@ -1,0 +1,27 @@
+{
+  "app_name": "Online Hospital",
+  "app_icon": "dashicons-heart",
+  "version": "1.0.0",
+  "description": "Smart Object Blueprint for Online Hospital",
+  "objects": [
+    {
+      "slug": "doctors",
+      "label": "Doctors",
+      "icon": "dashicons-businessman",
+      "fields": [
+        { "name": "doctor_name", "label": "Doctor Name", "type": "short_text" },
+        { "name": "avatar", "label": "Avatar", "type": "media" },
+        { "name": "specialty", "label": "Specialty", "type": "short_text" },
+        { "name": "experience", "label": "Experience", "type": "short_text" },
+        { "name": "qualifications", "label": "Qualifications", "type": "short_text" },
+        { "name": "city", "label": "City", "type": "short_text" },
+        { "name": "clinic_name", "label": "Clinic Name", "type": "short_text" },
+        { "name": "rating", "label": "Rating", "type": "short_text" },
+        { "name": "patient_count", "label": "Patient Count", "type": "short_text" },
+        { "name": "consultation_fee", "label": "Consultation Fee", "type": "number" },
+        { "name": "availability_text", "label": "Availability Text", "type": "short_text" },
+        { "name": "has_guarantee", "label": "Has Guarantee", "type": "boolean" }
+      ]
+    }
+  ]
+}
