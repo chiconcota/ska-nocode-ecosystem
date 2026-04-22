@@ -27,9 +27,10 @@
 - [x] Kích hoạt hệ thống Cache thông minh: Bất cứ chức năng Update/Delete/Insert nào, ghi đè file `.json/.php` fallback giúp Frontend truy xuất Data nhanh siêu tốc.
 - [x] Cảnh báo cài đặt (Red Banner) nếu người dùng chối bỏ việc cài Ska Data Pro và Logic Engine.
 - [x] Gắn shortcut "Site Blueprint" tại menu Ska Builder Core trỏ sang UI DataGrid tương ứng của `ska_system`.
-- [ ] (Pending) Tính năng (React UI): Tạo nút "Save as Organism Block" gửi đẩy Payload (JSON/HTML) thẳng xuống CSDL flat-table `ska_data_sys_organisms`.
-- [ ] (Pending) Tính năng (Inserter): Lấy danh sách Block đã lưu đưa vào Inserter (+) của Gutenberg và render thành reference thay vì hardcode.
-
+- [x] Tính năng (React UI): Tạo nút "Save as Organism Block" gửi đẩy Payload (JSON/HTML) thẳng xuống CSDL flat-table `ska_data_sys_organisms`.
+- [x] Tính năng (Inserter): Lấy danh sách Block đã lưu đưa vào Inserter (+) của Gutenberg và render thành reference thay vì hardcode.
+- [x] Tính năng (Global Edit): Sửa bản gốc bằng Shadow CPT và Iframe Modal.
+- [x] Tính năng (Local Edit / Detach): Phân rã (Detach) Symbol thành các block thường (Native Blocks) để người dùng có thể sửa nội dung cục bộ trên trang hiện tại.
 ### 2.2. Ska Molecule & Alpine.js Library (Tầng Tương tác Frontend)
 *Được tích hợp từ `project_manager_molecule_engine.md` cũ.*
 - [x] Mảng UI Tabs, Accordion (Sử dụng Template Lock). Trang bị chuẩn `x-data`.
@@ -45,7 +46,7 @@
 ### 2.4. Tính Năng UI Độc Lập / Mới Cập Nhật
 *Được trích xuất từ phần 'Tương lai' (3.3) của Phase 3.*
 - [ ] **Milestone 2 (Design Engine) - Dark Mode Thượng tầng:** Lập kế hoạch mang lại chức năng Dark Mode hoàn chỉnh (`darkMode: 'class'`), kết hợp Tailwind. Cần xây dựng Switcher / Toggle Block.
-- [ ] **App Dashboards / Sub-Admin Portals:** Tạo Custom Post Type (`ska_portal`) giúp User dùng quyền Editor để tự thả các giao diện trang quản lý Khóa Học, Thành Viên ra Frontend Portal tách khỏi WordPress Admin xám xịt.
+- [ ] **App Dashboards / Sub-Admin Portals:** Tạo Custom Post Type (`ska_portal`) giúp User dùng quyền Editor để tự thả các giao diện trang quản lý Khóa Học, Thành Viên ra Frontend Portal tách khỏi WordPress Admin xám xịt. *(Lưu ý Kiến trúc: Sử dụng kỹ thuật **Shadow CPT (Post Type Ảo)** kết hợp **Data Injection** qua Iframe để mang Full sức mạnh Gutenberg Editor ra Frontend Portal. Admin nhập liệu thoải mái, data vẫn lưu về Flat Table, không làm rác wp_posts).*
 - [ ] **Auto-Generated CRUD Portal:** Nâng cấp cho khối "App Portal" tích hợp với `Theme Builder`. Cho phép người dùng làm App Portal tự sinh Lưới danh sách.
 - [ ] **Role-Based Access Control (RBAC) cho Tầng Hiển thị:** Xử lý hệ thống phân quyền nâng cao (RBAC) để quyết định hiển thị Khối/Template cho từng nhóm đối tượng.
 - [ ] **Ska System Framework (Dashboard):** 

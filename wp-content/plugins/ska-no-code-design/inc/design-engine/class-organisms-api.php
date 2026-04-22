@@ -42,14 +42,12 @@ class Organisms_API {
         }
 
         $table_name = 'ska_data_sys_organisms';
-        $organism_id = 'org_' . uniqid();
         
         // Transform the incoming block_json into a string safely
         $json_content = wp_json_encode( $body['block_json'] );
         $html_content = isset( $body['html_content'] ) ? $body['html_content'] : '';
 
         $record_data = [
-            'id'           => $organism_id,
             'type'         => 'organism',
             'name'         => sanitize_text_field( $body['name'] ),
             'json_content' => $json_content,
@@ -62,6 +60,13 @@ class Organisms_API {
         if ( is_wp_error( $result ) ) {
             return $result;
         }
+        
+        // Grab the auto-increment DB ID
+        if ( $result ) {
+            $record_data['id'] = $result;
+        } else {
+            return new \WP_Error( 'db_error', 'Không thể chèn bản ghi vào database.', [ 'status' => 500 ] );
+        }
 
         // Export physical cache
         $this->export_physical_cache();
@@ -73,10 +78,11 @@ class Organisms_API {
         ] );
     }
 
-    private function export_physical_cache() {
-        $table_name = 'ska_data_sys_organisms';
+    public function export_physical_cache() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ska_data_sys_organisms';
         
-        $rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $table_name, [], -1 );
+        $rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $table_name, [], 1000 );
         
         $cache_data = [];
         if ( ! empty( $rows ) ) {

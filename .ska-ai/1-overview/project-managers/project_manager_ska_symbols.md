@@ -25,7 +25,8 @@
 - [x] **Block Transformation (Ref-ID Ghosting):** Ngay sau khi Lưu thành công, Block đang chọn sẽ tự động được thay đổi định dạng (Transformed) thành một Khối Ref rỗng (Ghost Block) chỉ giữ đúng một ID duy nhất: `{{organism_id}}`. Phần Renderer của PHP sẽ dựa vào ID này để bốc ngược dữ liệu từ JSON Cache File để đắp vào FrontEnd.
 - [x] **ServerSideRender Fix (2026-04-21):** Sửa lỗi `echo output` của hàm PHP render block do tính năng quét của WP REST API và output buffering của WP > 6.1.
 - [x] **Tab Thư Viện Inserter (+):** Mở rộng bảng chọn Block Menu (+) mặc định của Gutenberg. Cấp lệnh Fetch danh sách các Organisms đã bọc sẵn Cache để tạo ra Nhóm "Ska Thư Viện UI" giúp người dùng lôi cấu trúc đã lưu ném ra giao diện một cách trực quan.
-- [ ] **Chỉnh sửa nội tuyến (Phiên tới):** Lập trình thêm nút "Edit Mẫu Gốc" (Sync) và nút "Detach/Phân Rã Khối" (Local Edit) trên thanh Block Toolbar.
-
+- [x] **Phân Rã Khối nội tuyến (Detach - Local Edit):** Đã hoàn thiện luồng Data Injection vào `window.skaOrganismsCache` phía Client-side sau khi Lưu mới, giúp tính năng Detach hoạt động Real-time (0ms latency, không yêu cầu Reload Trang).
+- [x] **Chỉnh sửa Mẫu Gốc (Global Edit Pop-up):** Đã lập trình xong nút "Sửa Bản Gốc", mở ra Iframe (Shadow CPT) toàn màn hình cho phép thay đổi cấu trúc cốt lõi của Organism và lưu lại an toàn (chống ghi đè `name`). Đã tích hợp PostMessage để cập nhật giao diện Editor theo thời gian thực.
+*(Toàn bộ phân hệ Ska Symbols / Organism đã hoàn thành 100%)*
 ---
 *Ghi Chú: File PM Phụ này chỉ dùng như tấm bảng ghim nhắc việc tập trung cho luồng Frontend của tính năng Ska Symbols. Khi tính năng vận hành trơn tru trên môi trường Editor, người dùng có thể tùy ý xóa bỏ file.*

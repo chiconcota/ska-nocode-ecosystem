@@ -30,6 +30,7 @@ class System_Cache
         // Lắng nghe các thay đổi CRUD trên DataGrid từ Ska Data Pro
         add_action('ska_data_row_created', array($this, 'handle_data_mutation'), 10, 2);
         add_action('ska_data_cell_updated', array($this, 'handle_data_mutation'), 10, 4);
+        add_action('ska_data_row_updated', array($this, 'handle_data_mutation'), 10, 4);
         add_action('ska_data_row_deleted', array($this, 'handle_data_mutation'), 10, 2);
     }
 

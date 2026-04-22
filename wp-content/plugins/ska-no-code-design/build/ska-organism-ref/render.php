@@ -10,7 +10,8 @@
 defined( 'ABSPATH' ) || exit;
 
 if ( empty( $attributes['organismId'] ) ) {
-    return '<div style="padding:10px; border:1px dashed gray; color:gray;">[Ska Symbol] No organism ID provided.</div>';
+    echo '<div style="padding:10px; border:1px dashed gray; color:gray;">[Ska Symbol] No organism ID provided.</div>';
+    return;
 }
 
 $organism_id = sanitize_text_field( $attributes['organismId'] );
@@ -20,18 +21,21 @@ $upload_dir = wp_upload_dir();
 $cache_file = trailingslashit( $upload_dir['basedir'] ) . 'ska-data/organisms.json';
 
 if ( ! file_exists( $cache_file ) ) {
-    return '<div style="padding:10px; border:1px dashed red; color:red;">[Ska Symbol] organisms.json not found!</div>';
+    echo '<div style="padding:10px; border:1px dashed red; color:red;">[Ska Symbol] organisms.json not found!</div>';
+    return;
 }
 
 // Read cache JSON
 $file_contents = file_get_contents( $cache_file );
 if ( empty( $file_contents ) ) {
-    return '<div style="padding:10px; border:1px dashed red; color:red;">[Ska Symbol] organisms.json is empty!</div>';
+    echo '<div style="padding:10px; border:1px dashed red; color:red;">[Ska Symbol] organisms.json is empty!</div>';
+    return;
 }
 
 $organisms = json_decode( $file_contents, true );
 if ( json_last_error() !== JSON_ERROR_NONE || ! is_array( $organisms ) ) {
-    return '<div style="padding:10px; border:1px dashed red; color:red;">[Ska Symbol] JSON Parse Error!</div>';
+    echo '<div style="padding:10px; border:1px dashed red; color:red;">[Ska Symbol] JSON Parse Error!</div>';
+    return;
 }
 
 // Find Organism
@@ -54,19 +58,21 @@ if ( empty( $found_html ) ) {
         </div>',
         esc_html( $organism_id )
     );
-    return $error_ui;
+    echo $error_ui;
+    return;
 }
 
 $output = do_blocks( $found_html );
 
 if ( empty( trim( $output ) ) ) {
-    return sprintf(
+    echo sprintf(
         '<div style="padding:16px; border:2px dashed #eab308; background:#fefce8; color:#a16207; border-radius:6px;">
             <strong>Warning:</strong> Symbol ID %s returned empty HTML after do_blocks().
         </div>',
         esc_html( $organism_id )
     );
+    return;
 }
 
 echo $output;
-return $output;
+return;
