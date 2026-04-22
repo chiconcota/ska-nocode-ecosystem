@@ -157,7 +157,63 @@ class Template_Registry {
 				)
 			),
 
-			// 4. CUSTOM (BẢNG TRỐNG)
+			// 4. BỆNH VIỆN / PHÒNG KHÁM (ONLINE HOSPITAL)
+			'hospital' => array(
+				'main_table' => 'ska_data_doctors',
+				'tables' => array(
+					'ska_data_doctors' => "
+						id bigint(20) NOT NULL AUTO_INCREMENT,
+						doctor_name varchar(255) NOT NULL,
+						avatar varchar(500) DEFAULT '',
+						specialty varchar(255) DEFAULT '',
+						experience varchar(255) DEFAULT '',
+						qualifications varchar(255) DEFAULT '',
+						city varchar(255) DEFAULT '',
+						clinic_name varchar(255) DEFAULT '',
+						rating varchar(50) DEFAULT '',
+						patient_count varchar(100) DEFAULT '',
+						consultation_fee decimal(10,2) NOT NULL DEFAULT 0.00,
+						availability_text varchar(255) DEFAULT '',
+						has_guarantee tinyint(1) DEFAULT 0,
+						created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+						PRIMARY KEY  (id)
+					"
+				),
+				'dummy_data' => array(
+					'ska_data_doctors' => array(
+						array(
+							'doctor_name' => 'Dr. Shesham Srinidhi',
+							'avatar' => 'https://via.placeholder.com/150',
+							'specialty' => 'General Practitioner',
+							'experience' => '5 YEARS',
+							'qualifications' => 'MD(PHYSICIAN)',
+							'city' => 'Hyderabad',
+							'clinic_name' => 'Apollo 24|7 Clinic, Hyderabad',
+							'rating' => '86%',
+							'patient_count' => '175+ Patients',
+							'consultation_fee' => 660.00,
+							'availability_text' => 'Available in 1 minutes',
+							'has_guarantee' => 1
+						),
+						array(
+							'doctor_name' => 'Dr. Ly Tat Thanh',
+							'avatar' => 'https://via.placeholder.com/150',
+							'specialty' => 'Cardiologist',
+							'experience' => '12 YEARS',
+							'qualifications' => 'MD, Ph.D',
+							'city' => 'Hanoi',
+							'clinic_name' => 'Ska Heart Institute',
+							'rating' => '99%',
+							'patient_count' => '2000+ Patients',
+							'consultation_fee' => 1500.00,
+							'availability_text' => 'Available Tomorrow',
+							'has_guarantee' => 1
+						)
+					)
+				)
+			),
+
+			// 5. CUSTOM (BẢNG TRỐNG)
 			'custom' => array(
 				'main_table' => 'ska_data_custom',
 				'tables' => array(

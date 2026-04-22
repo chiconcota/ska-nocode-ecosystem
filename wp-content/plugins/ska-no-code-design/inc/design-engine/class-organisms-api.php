@@ -106,4 +106,36 @@ class Organisms_API {
         $file_path = $ska_dir . '/organisms.json';
         file_put_contents( $file_path, wp_json_encode( $cache_data ) );
     }
+
+    /**
+     * Tải hàng loạt HTML của các Organisms dựa vào mảng ID
+     * (Phục vụ cho Loop Block siêu tốc để tránh N+1 Query)
+     * 
+     * @param array $ids Danh sách các organism ID
+     * @return array Mảng kết hợp [ id => html_content ]
+     */
+    public static function get_bulk_html( array $ids ) {
+        if ( empty( $ids ) ) return [];
+
+        $ids = array_map( 'absint', $ids );
+        $ids = array_filter( $ids ); // Loại bỏ 0
+        $ids = array_unique( $ids );
+        
+        if ( empty( $ids ) ) return [];
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ska_data_sys_organisms';
+        $in_clause = implode( ',', $ids );
+        
+        $results = $wpdb->get_results( "SELECT id, html_content FROM {$table_name} WHERE id IN ({$in_clause})", ARRAY_A );
+        
+        $bulk = [];
+        if ( ! empty( $results ) ) {
+            foreach ( $results as $row ) {
+                $bulk[ $row['id'] ] = $row['html_content'];
+            }
+        }
+        
+        return $bulk;
+    }
 }

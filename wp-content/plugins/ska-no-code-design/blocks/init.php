@@ -28,6 +28,9 @@ function ska_builder_core_register_blocks() {
     // Ska Symbols (Organism Reference)
     register_block_type( SKA_DESIGN_PATH . 'build/ska-organism-ref' );
 
+    // Ska Query Loop
+    register_block_type( SKA_DESIGN_PATH . 'build/ska-loop' );
+
     // Register Bridge Import if enabled
     if ( get_option( 'ska_bridge_enabled', 'yes' ) === 'yes' ) {
         register_block_type( SKA_DESIGN_PATH . 'build/ska-bridge-import' );
