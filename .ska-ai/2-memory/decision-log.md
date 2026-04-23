@@ -8,6 +8,17 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-04-23 - 🔴 Khủng hoảng UX Nocode Form & Pivot Kế hoạch
+- **Decision (Form Builder UX Pivot):** Thừa nhận thất bại trong trải nghiệm người dùng (UX) của giải pháp kết nối Form thủ công. Việc bắt buộc người dùng Nocode tự gõ các attribute `x-data="skaForm()"`, `fields.tên_trường`, `status.submitting` thông qua Inspector Gutenberg là quá rủi ro và bất khả thi cho non-coder. Quyết định: Phải có giải pháp "Abstraction Layer" (Ví dụ: Form Builder UI tự động map thẻ HTML với Workflow) để giấu hoàn toàn Alpine.js đi. Tạm ngưng để suy nghĩ giải pháp ở phiên sau.
+
+## 2026-04-23 - 🟢 Khôi phục Alpine Form Integration & System Initialization
+- **Decision (Script Dependency Injection):** Bổ sung dependency `'ska-frontend'` vào hook đăng ký `ska-alpine` script (`wp_register_script` trong `blocks/init.php`). Quyết định này giải quyết dứt điểm rủi ro Race Condition khiến thư viện Alpine.js khởi chạy vòng lặp DOM Tree (quét `x-data`) trước khi Controller `skaForm` (trong `ska-frontend.js`) được định nghĩa, triệt tiêu lỗi `doctorForm is not defined`.
+- **Decision (State Synchronization):** Quyết định đồng bộ tuyệt đối Cấu trúc State của Frontend HTML (Template `doctor_form.html` và page `doctor-form` trong CSDL) với khung thiết kế chuẩn của Logic Engine (`skaForm()`). Tiến hành thay thế mảng State cũ (`formData.*`, `isSubmitting`) sang mô hình đóng gói `fields.*` và `status.*` để tận dụng trọn vẹn sức mạnh Auto-Validation và Data Handling của Backend Pipeline.
+
+## 2026-04-23 - 🟢 React Inspector cho Ska Select & Zero N+1 Auto-Generation
+- **Decision (Dynamic Data Binding Inspector):** Bổ sung UI bật/tắt (Toggle) "Nguồn dữ liệu động" tại React Inspector của khối `Ska Select`. Gỡ bỏ check khắt khe `__table_info` giúp tất cả các bảng (kể cả bảng do user tạo) đều hiển thị. Áp dụng Protective UX bằng cách chỉ cho phép người dùng chọn các cột có dữ liệu Option (`select/radio/checkbox`), ngăn chặn rủi ro lỗi giao diện khi gán nhầm trường dữ liệu Text/Number.
+- **Decision (Template Auto-Generation):** Chấp nhận tự động sinh chuỗi HTML nội suy (`<option value="{{value}}">{{label}}</option>`) nếu block Select đang gọi vòng lặp từ React UI mà không cung cấp template body. Quyết định này giúp làm gọn UI thiết lập (Zero config), nhưng vẫn đáp ứng được tính toàn vẹn của cấu trúc Zero N+1 Queries (Foreach) mà `Ska Logic Engine` yêu cầu tại Frontend.
+
 ## 2026-04-22 - 🟢 Ska Loop Block (Backend Core) & Hospital Template
 - **Decision (Zero N+1 Query Architecture):** Triển khai cơ chế Backend Rendering cho `Ska Loop Block`. Quyết định sử dụng `Organisms_API::get_bulk_html` để load hàng loạt (Bulk Load) HTML của các Symbol Template trước khi vòng lặp bắt đầu. Cấm tuyệt đối việc Query SQL riêng lẻ (`get_table_data`) bên trong vòng `foreach`.
 - **Decision (Hydration Engine & Mustache Syntax):** Không sử dụng cơ chế nối chuỗi HTML chậm chạp. Áp dụng kỹ thuật Hydration siêu tốc bằng hàm `preg_replace_callback` kết hợp cú pháp Mustache (`{{key}}`) để đắp dữ liệu từ mảng phẳng (Flat Tables) vào thẳng cấu trúc HTML của Organism.
