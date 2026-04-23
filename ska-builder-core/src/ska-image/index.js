@@ -152,7 +152,7 @@ registerBlockType(metadata.name, {
                                     flexDirection: 'column',
                                     alignItems: 'center'
                                 }}>
-                                    <span className="material-symbols-outlined" style={{ fontSize: '48px', color: '#ccc', marginBottom: '10px' }}>image</span>
+                                    <span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: '48px', color: '#ccc', marginBottom: '10px' }}>image</span>
                                     <p style={{ margin: 0, color: '#666' }}>{__('No image selected', 'ska-builder-core')}</p>
                                 </div>
                         )
@@ -165,7 +165,7 @@ registerBlockType(metadata.name, {
                             opacity: 0.7,
                             border: '1px solid #ccc'
                         }}>
-                            <span className="material-symbols-outlined" style={{ verticalAlign: 'middle', marginRight: '5px' }}>settings_backup_restore</span>
+                            <span className="material-symbols-outlined" aria-hidden="true" style={{ verticalAlign: 'middle', marginRight: '5px' }}>settings_backup_restore</span>
                             <strong>{__('Dynamic Image:', 'ska-builder-core')}</strong> {dynamic.source === 'scf_image' ? `SCF: ${dynamic.key}` : 'Featured Image'}
                         </div>
                     )}
