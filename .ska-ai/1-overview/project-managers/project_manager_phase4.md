@@ -36,6 +36,8 @@
 - [x] Mảng UI Tabs, Accordion (Sử dụng Template Lock). Trang bị chuẩn `x-data`.
 - [x] Mảng Dropdown Menu, Offcanvas Slider, Standard Forms.
 - [x] Khởi tạo hệ sinh thái `Alpine.store('app')` để kết nối Global State chéo giữa các block riêng rẽ.
+- [x] React Inspector cho Ska Select: Bật tắt Dynamic Binding, Protective UX lọc bảng/cột và Template Auto-Generation (Zero N+1).
+- [ ] **Khủng hoảng UX - Pivot Nocode Form:** Nhận thấy việc bắt người dùng cấu hình thủ công các biến trạng thái (`fields.*`, `status.*`, `skaForm()`) trong Alpine là bất khả thi đối với non-coder. Yêu cầu thiết kế lại giải pháp "Abstraction Layer" (Ví dụ: Form Builder UI riêng hoặc Block Form tự động map attributes) nhằm tự động hoá quy trình kết nối Logic Engine.
 
 ### 2.3. Theme Builder & Khối Vòng Lặp Vạn Năng (Ska Query Loop)
 *Được tích hợp từ `project_manager_theme_builder.md` cũ.*
