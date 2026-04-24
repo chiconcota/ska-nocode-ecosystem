@@ -1,0 +1,3 @@
+## 2023-10-27 - Decorative Ligature Accessibility
+**Learning:** Screen readers may read out the text contents of decorative font icons implemented with ligatures (like Material Symbols, e.g., `<span className="material-symbols-outlined">play_arrow</span>`), which is confusing to users who might hear "play underscore arrow" instead of understanding its meaning.
+**Action:** Always add `aria-hidden="true"` to icon ligature spans like `<span className="material-symbols-outlined">` unless they are explicitly meant to provide semantic text. Use `aria-label` on the parent button or anchor to provide meaning if needed.
