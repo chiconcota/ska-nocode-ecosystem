@@ -15,6 +15,6 @@ class Ska_Slug_Processor implements Ska_Logic_Node {
         }
 
         // Đẩy dòng Data ra ống để đi tới Node kế tiếp
-        return $payload; 
+        return [ 'payload' => $payload, 'port' => 'main' ]; 
     }
 }

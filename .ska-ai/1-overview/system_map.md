@@ -41,7 +41,7 @@ ska-ecosystem/ (mapped to app/public/)
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Stable (v1) |
 | **Ska No-Code Design** | `plugins/ska-no-code-design/`| Core Blocks, Tailwind JIT, Ska Molecule | 🟢 Stable Phase 3 |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, JSON Native Schema | 🟢 Stable Phase 3 |
-| **Ska Logic Engine** | `plugins/ska-logic-engine/`| Event Pipeline, SkaFX, Universal Binding | 🟢 Stable Phase 3 |
+| **Ska Logic Engine** | `plugins/ska-logic-engine/`| Event Pipeline, SkaFX, Universal Binding | 🟡 In Progress (Phase 4.2) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API (JSON Export) | 🟢 Integrated |
 
 ## 5. SYSTEM CAPABILITIES (CHECKPOINTS - PHASES 1-3)
@@ -61,6 +61,8 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 ## 7. RECENT LOGS (LATEST)
 > *Các nhật ký từ Phase 1 và 2 đã được lưu trữ trong `.ska-ai/2-memory/archive/`. Chỉ giữ lại các cập nhật cốt lõi gần đây (Phase 3 -> Phase 4).*
 
+- **2026-04-24 - 🟢 DAG Builder UI (React Flow & BaseNode):** Triển khai thành công giao diện Canvas DAG 2D với thư viện React Flow v11. Tích hợp `ReactFlowProvider` hỗ trợ Sidebar Drag & Drop. Đã dựng `Settings Panel` với cơ chế đồng bộ 2 chiều (Real-time 2-Way Binding) và chuẩn hóa cấu trúc component `BaseNode` làm nền móng để đúc 10 Atomic Nodes ở phiên kế.
+- **2026-04-24 - 🔴 Pivot Tối Ưu UX (Logic Engine):** Chấp nhận tạm hoãn tiến độ Ska Query Loop Block (đã chuyển sang file tracking độc lập) để tập trung toàn lực "đập đi xây lại" giao diện của Ska Logic Engine (Node Workflow UX). Quyết tâm đẩy Logic Engine đạt tiêu chuẩn Nocode 100% thông qua Schema API, Component Data Picker (chọn biến trực quan), và thuật toán Auto-Mapping thay vì bắt người dùng gõ tay.
 - **2026-04-23 - 🔴 Khủng hoảng UX Nocode Form & Yêu cầu Pivot:** Tạm ngưng triển khai hệ thống Form Backend hiện tại. Nguyên nhân do mức độ phức tạp quá cao đối với non-coder khi phải tự gán thủ công `x-data`, `fields.*`, và `status.*` vào HTML Attributes. Quyết định sẽ thiết kế một 'Abstraction Layer' mới (Form Builder Wizard hoặc khối form tự map data) trong phiên tới.
 - **2026-04-23 - 🟢 Khắc phục Alpine Form Integration (Frontend Binding):** Xử lý triệt để lỗi bất đồng bộ Alpine.js và Ska Logic Engine tại Frontend bằng cách thiết lập cấu trúc tải file chính xác (`alpine.min.js` phải load sau `ska-frontend.js`). Cập nhật và đồng bộ 100% Data Architecture giữa HTML Form (`x-data="skaForm('doctor_data')"`, `fields.*`) với cấu hình REST API Submit, cho phép người dùng Post dữ liệu trực tiếp vào hệ thống DB (Workflow `doctor_data`) trơn tru.
 - **2026-04-23 - 🟢 React Inspector cho Ska Select:** Hoàn tất hệ thống UI Inspector (React) cho block Ska Select, tích hợp Ska Data Pro Dictionary để bật/tắt nguồn dữ liệu động. Hệ thống Frontend Logic Engine đã được nâng cấp để hỗ trợ cơ chế Template Auto-Generation, cho phép Dropdown tự động render danh sách các option (cột `select/radio/checkbox`) với cấu hình JSON tối giản, chuẩn Zero N+1 Queries.
@@ -81,3 +83,4 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 - **Ska Symbols (Reusable Components):** Lưu lại các block phức tạp dưới dạng template/components độc lập và chèn vào cấu trúc bằng thuộc tính `refId` thay vì nhân bản HTML phình to. Tích hợp Component trực tiếp vào Inserter (+) của Gutenberg.
 - **Thư Viện Ska Molecules:** Phát triển các UI Components Nocode (Tabs, Accordion, Slider, Logic Modal) sử dụng Ska Universal Container kết hợp Alpine.js.
 - **Ska Interactive Engine:** Cơ chế mô phỏng (Live preview) trạng thái của Alpine.js ngay bên trong Editor, biến JIT thành "React Virtual DOM của Tailwind", giúp Editor phản hồi "sống" với các hiệu ứng tương tác (xổ dropdown, chuyển form nội bộ) theo thời gian thực.
+- **🔴 [PENDING] Ska Logic Engine (Automation Platform):** Nâng cấp Logic Engine thành một nền tảng Automation với giao diện 2D Canvas Graph (giống n8n). Hỗ trợ kiến trúc DAG (Directed Acyclic Graph) để rẽ nhánh (Success/Error), đa dạng hóa Trigger (Webhook, Cron), chạy nền (Async Process), và đặc biệt hỗ trợ **AI JSON Blueprint Import** để AI thiết kế 100% logic tự động.

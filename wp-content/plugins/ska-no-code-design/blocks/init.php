@@ -92,6 +92,9 @@ function ska_builder_core_enqueue_extensions() {
             }
         }
         wp_localize_script( 'ska-builder-extensions', 'skaOrganismsCache', $organisms_data );
+
+        $ska_data_dict = get_option( 'ska_data_dictionary', array() );
+        wp_localize_script( 'ska-builder-extensions', 'skaDataDictionary', $ska_data_dict );
     }
 }
 add_action( 'enqueue_block_editor_assets', 'ska_builder_core_enqueue_extensions' );
@@ -103,7 +106,7 @@ function ska_builder_core_register_alpine() {
     wp_register_script(
         'ska-alpine',
         SKA_DESIGN_URL . 'assets/js/alpine.min.js',
-        array(),
+        array( 'ska-frontend' ),
         '3.13.3',
         true
     );

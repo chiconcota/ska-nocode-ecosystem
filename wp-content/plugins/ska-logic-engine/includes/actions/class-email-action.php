@@ -24,6 +24,8 @@ class Ska_Email_Action implements Ska_Logic_Node {
         
         $payload['_action_response_email'] = $sent ? 'Email Sent' : 'Email Failed';
 
-        return $payload;
+        $port = $sent ? 'main' : 'error';
+
+        return [ 'payload' => $payload, 'port' => $port ];
     }
 }

@@ -8,7 +8,7 @@ class Ska_Update_Data_Action implements Ska_Logic_Node {
         $condition_column = $config['condition_column'] ?? 'id';
         
         if ( empty( $table_name ) ) {
-            return $payload; 
+            return [ 'payload' => $payload, 'port' => 'error' ]; 
         }
 
         $mapped_payload = $payload;
@@ -32,7 +32,7 @@ class Ska_Update_Data_Action implements Ska_Logic_Node {
             }
             
             if ( empty( $mapped_payload ) ) {
-                return $payload; 
+                return [ 'payload' => $payload, 'port' => 'error' ]; 
             }
         }
 
@@ -54,7 +54,7 @@ class Ska_Update_Data_Action implements Ska_Logic_Node {
         }
 
         if ( empty( $record_id ) ) {
-            return $payload; // Không có điều kiện update
+            return [ 'payload' => $payload, 'port' => 'error' ]; // Không có điều kiện update
         }
 
         // Giao tiếp với Lớp Kho (Ska Data Pro) BẰNG HOOK (Kẻ vạch ranh giới Microservice).
@@ -66,6 +66,8 @@ class Ska_Update_Data_Action implements Ska_Logic_Node {
             'result'     => $update_result
         ];
 
-        return $payload;
+        $port = ( $update_result === false || is_wp_error( $update_result ) ) ? 'error' : 'main';
+
+        return [ 'payload' => $payload, 'port' => $port ];
     }
 }

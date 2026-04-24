@@ -35,6 +35,10 @@
     "className": {
       "type": "string",
       "default": ""
+    },
+    "skaDynamicBinding": {
+      "type": "string",
+      "default": ""
     }
   },
   "supports": {

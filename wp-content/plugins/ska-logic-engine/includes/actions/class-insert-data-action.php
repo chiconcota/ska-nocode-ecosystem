@@ -8,7 +8,7 @@ class Ska_Insert_Data_Action implements Ska_Logic_Node {
         
         // Nếu cục Node cắm thẳng xuống đất mà không cấu hình, bỏ qua!
         if ( empty( $table_name ) ) {
-            return $payload; 
+            return [ 'payload' => $payload, 'port' => 'error' ]; 
         }
 
         // Tích hợp Kế hoạch Explicit Mapping (Ánh xạ rõ ràng từ User)
@@ -35,7 +35,7 @@ class Ska_Insert_Data_Action implements Ska_Logic_Node {
             
             // Chống lỗi mảng trống (bị map sai)
             if ( empty( $mapped_payload ) ) {
-                return $payload; 
+                return [ 'payload' => $payload, 'port' => 'error' ]; 
             }
         }
 
@@ -51,6 +51,8 @@ class Ska_Insert_Data_Action implements Ska_Logic_Node {
             'result'     => $insert_result // true, false, hoac array data
         ];
 
-        return $payload;
+        $port = ( empty($insert_result) || is_wp_error( $insert_result ) ) ? 'error' : 'main';
+
+        return [ 'payload' => $payload, 'port' => $port ];
     }
 }

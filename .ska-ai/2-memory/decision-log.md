@@ -8,6 +8,22 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-04-24 - 🟢 Logic Engine UI: React Flow Provider & Inspector Architecture
+- **Decision (ReactFlowProvider & Sidebar DnD):** Áp dụng kiến trúc `ReactFlowProvider` để bọc toàn cục ứng dụng Node Builder, cho phép xử lý Drag & Drop (kéo thả) các node từ Sidebar vào Canvas bằng API `screenToFlowPosition` mượt mà và chuẩn xác.
+- **Decision (Settings Panel & 2-Way Binding):** Tách biệt Sidebar (chứa danh sách Nodes) và Settings Panel (Inspector cấu hình Node). Inspector tự động cập nhật State và re-render dữ liệu lên Node Canvas theo thời gian thực (Real-time 2-way binding), đồng thời tự động lưu trữ cấu trúc mảng JSON xuống trường ẩn (hidden input) của WordPress để lưu trữ.
+- **Decision (Generic BaseNode Architecture):** Quy hoạch thiết kế chuẩn hóa cho 10 Atomic Nodes bằng cách tạo ra một `BaseNode` bọc ngoài. Khối lượng code lặp lại (hiển thị Handles/Ports ngõ ra-vào, icon, tên node) được gom chung, giúp quá trình triển khai các logic node cụ thể (If/Else, DB Action) nhanh chóng và triệt tiêu lỗi UI.
+
+## 2026-04-24 - 🔴 Pivot Architecture: Logic Engine Automation Platform
+- **Decision (N8N-like Canvas UI & DAG):** Chốt phương án đập bỏ giao diện Linear Node (tuyến tính) hiện tại. Nâng cấp Ska Logic Engine lên mô hình 2D Canvas Graph (React Flow) với cấu trúc lưu trữ đồ thị phân nhánh (Directed Acyclic Graph - DAG) để diễn đạt các luồng Logic phức tạp.
+- **Decision (Trigger Nodes & API Expansion):** Mọi workflow giờ đây bắt buộc bắt đầu bằng một **Trigger Node** (Form Submit, Webhook In, Cron Schedule). Điều này mở đường cho việc gọi và nhận API bên ngoài, biến Ska Logic Engine thành một Nền tảng Automation thực thụ.
+- **Decision (Multiple Outputs & Error Handling):** Các Node (đặc biệt là API Node) sẽ có đa ngõ ra (Cổng Success 🟢 và Cổng Error 🔴), cho phép xây dựng luồng Try/Catch rẽ nhánh không bao giờ Crash.
+- **Decision (Async Execution - Background Process):** Thêm cờ "Chạy nền" (Async Flag) ở các điểm nối (Edges). Các tác vụ nặng (Gọi API, Gửi hàng loạt Email) sẽ được chuyển xuống hàng đợi Action Scheduler/WP-Cron để không làm tắc nghẽn (Block) giao diện Frontend của End-user.
+- **Decision (AI JSON Blueprint Import):** Xác lập chuẩn lưu trữ Workflow bằng JSON Blueprint (Node & Edges). Tính năng này nhắm mục đích lấy AI làm trung tâm: User có thể nhờ AI viết 100% logic workflow và chỉ cần 1-click Import thay vì tự kéo thả thủ công.
+
+## 2026-04-24 - 🔴 Định Hướng Rebuild Logic Engine & Hoãn Loop Block
+- **Decision (Logic Engine Workflow UX Rebuild):** Tạm hoãn toàn bộ tiến độ của Ska Query Loop Block để dồn toàn lực thiết kế lại giao diện của Logic Engine Nodes (cụ thể là các node Insert/Update Record). Quyết định này nhằm giải quyết triệt để rào cản Low-code (bắt người dùng tự gõ tay tên cột cơ sở dữ liệu và tên biến payload). Giải pháp thay thế sẽ bao gồm: Schema-driven UI tự tải danh sách cột từ DB, hệ thống Data Picker (chọn biến trực quan qua dropdown), và thuật toán Auto-mapping.
+- **Decision (Project Management Separation):** Bóc tách Loop Block ra một project manager file riêng (`project_manager_ska_loop_block.md`) và thiết lập trạng thái `Paused`. Đồng thời, khởi tạo `project_manager_logic_engine_rebuild.md` để dẫn dắt lộ trình 4 bước đập đi xây lại Logic Node UI trong phiên làm việc tiếp theo.
+
 ## 2026-04-23 - 🔴 Khủng hoảng UX Nocode Form & Pivot Kế hoạch
 - **Decision (Form Builder UX Pivot):** Thừa nhận thất bại trong trải nghiệm người dùng (UX) của giải pháp kết nối Form thủ công. Việc bắt buộc người dùng Nocode tự gõ các attribute `x-data="skaForm()"`, `fields.tên_trường`, `status.submitting` thông qua Inspector Gutenberg là quá rủi ro và bất khả thi cho non-coder. Quyết định: Phải có giải pháp "Abstraction Layer" (Ví dụ: Form Builder UI tự động map thẻ HTML với Workflow) để giấu hoàn toàn Alpine.js đi. Tạm ngưng để suy nghĩ giải pháp ở phiên sau.
 

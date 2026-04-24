@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+/* Scoped to avoid breaking WP Admin */
+#ska-dag-root {
+  width: 100%;
+  height: calc(100vh - 120px);
+  min-height: 600px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* React Flow custom edge labels */
+.react-flow__edge-textbg {
+  fill: white;
+}
+.react-flow__edge-text {
+  font-size: 12px;
+  font-weight: 600;
+  fill: #64748b;
+}
+
+/* Base resets inside the builder */
+#ska-dag-root * {
+  box-sizing: border-box;
+}

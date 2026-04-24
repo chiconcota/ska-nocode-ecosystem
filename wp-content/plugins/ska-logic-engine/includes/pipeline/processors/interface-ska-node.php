@@ -10,7 +10,7 @@ interface Ska_Logic_Node {
      * Dòng điện (Data) chạy qua Node.
      * @param array $payload Bộ dữ liệu đi vào (In).
      * @param array $config Cấu hình của Cục Node (Ghi từ Giao diện UI).
-     * @return array Bộ dữ liệu sau khi "biến hình" đẩy ra (Out).
+     * @return array Định dạng chuẩn: ['payload' => $new_data, 'port' => 'main' | 'error']
      */
     public function execute( $payload, $config );
 }

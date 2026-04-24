@@ -30,8 +30,9 @@ class Ska_Logic_Core {
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/actions/class-update-data-action.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/actions/class-email-action.php';
         
-        // 3. Đường ray Tàu Hỏa (Pipeline Runner)
+        // 3. Đường ray Tàu Hỏa (Pipeline Runner & Async)
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/class-workflow-runner.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/class-async-worker.php';
         
         // 4. Họng Đón Dữ liệu (API)
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/api/class-form-receiver.php';
@@ -219,28 +220,9 @@ class Ska_Logic_Core {
 
             <div style="display: flex; gap: 24px; flex-wrap: wrap;">
                 <?php if ($current_view === 'builder'): ?>
-                    <!-- Nhúng Giao diện Builder vào Cột Trái -->
-                    <div style="flex: 1; min-width: 400px; max-width: 600px;">
+                    <!-- Nhúng Giao diện Builder Full Width -->
+                    <div style="flex: 1; width: 100%;">
                         <?php require_once SKA_LOGIC_ENGINE_DIR . 'includes/admin/admin-builder-ui.php'; ?>
-                    </div>
-
-                    <!-- Cột Phải Giải Thích -->
-                    <div style="flex: 1; min-width: 300px; max-width: 400px;">
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
-                            <h2 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #1f2937;">Về Băng Chuyền Logic</h2>
-                            <p style="margin: 0 0 16px 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
-                                Hệ thống Linear Builder này sẽ biến chuỗi thao tác của bạn thành một mảng <strong style="color:#0ea5e9;">JSON Graph Nhiều Tầng</strong>.
-                            </p>
-                            <p style="margin: 0 0 16px 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
-                                Khi người dùng Submit Form, dữ liệu rác sẽ chạy qua bộ <code>Processor</code> để chắt lọc (vd: tạo Slug tự động, dọn dẹp Tag). Sau đó chạy tiếp tới bộ <code>Action</code> để phát sinh kết quả vật lý ngoài đời thực (Vd: Gửi Email cảnh báo hoặc Ghi Data xuống Kho).
-                            </p>
-                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b; border-radius: 6px; padding: 12px;">
-                                <strong style="display: block; color: #b45309; margin-bottom: 4px; font-size: 13px;">Biến Động {{field}}</strong>
-                                <p style="margin: 0; color: #78350f; font-size: 12px; line-height: 1.5;">
-                                    Trong khối Cấu hình của Bước Action (Vd: Gửi Email), bạn có thể gọi tên một cột bất kỳ được gửi lên từ Form bằng cú pháp râu mép kép: <code>{{name}}</code>, <code>{{sdt}}</code>.
-                                </p>
-                            </div>
-                        </div>
                     </div>
                 <?php else: ?>
                     <!-- Màn hình Danh sách Quản lý (Manager UI) đè toàn bộ -->
