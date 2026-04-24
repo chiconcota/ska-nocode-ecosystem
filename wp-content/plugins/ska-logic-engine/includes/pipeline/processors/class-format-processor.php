@@ -23,7 +23,7 @@ class Ska_Format_Processor implements Ska_Logic_Node
         }
 
         if (empty($formats) || !is_array($formats)) {
-            return $payload;
+            return [ 'payload' => $payload, 'port' => 'main' ];
         }
 
         foreach ($formats as $format) {
@@ -115,6 +115,6 @@ class Ska_Format_Processor implements Ska_Logic_Node
             $payload[$target_key] = $val;
         }
 
-        return $payload;
+        return [ 'payload' => $payload, 'port' => 'main' ];
     }
 }

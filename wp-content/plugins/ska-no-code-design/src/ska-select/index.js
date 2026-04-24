@@ -127,6 +127,7 @@ registerBlockType(metadata.name, {
         const {
             fieldName,
             optionsText,
+            skaDynamicBinding,
             isRequired,
             isMultiple,
             displayStyle,
@@ -134,7 +135,7 @@ registerBlockType(metadata.name, {
             className = ''
         } = attributes;
 
-        const { useEffect } = wp.element;
+        const { useEffect, useMemo } = wp.element;
 
         useEffect(() => {
             if (className && !tailwindClasses) {
@@ -143,6 +144,58 @@ registerBlockType(metadata.name, {
                 setAttributes({ className: '' });
             }
         }, []);
+
+        let currentTable = '';
+        let currentColumn = '';
+        if (skaDynamicBinding && typeof skaDynamicBinding === 'string') {
+            const match = skaDynamicBinding.match(/{{#foreach\s+([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]*)\s*}}/);
+            if (match) {
+                currentTable = match[1];
+                currentColumn = match[2] || '';
+            }
+        }
+
+        const tableOptions = useMemo(() => {
+            const opts = [{ label: '-- Chọn Bảng Dữ Liệu --', value: '' }];
+            if (window.skaDataDictionary) {
+                Object.keys(window.skaDataDictionary).forEach(key => {
+                    const table = window.skaDataDictionary[key];
+                    const val = key.replace(/^wp_/, '');
+                    const labelName = table.__table_info ? table.__table_info.name : val;
+                    opts.push({ label: `${labelName} (${val})`, value: val });
+                });
+            }
+            return opts;
+        }, []);
+
+        const columnOptions = useMemo(() => {
+            const opts = [{ label: '-- Chọn Cột --', value: '' }];
+            if (currentTable && window.skaDataDictionary) {
+                let tableDict = window.skaDataDictionary[currentTable] || window.skaDataDictionary['wp_' + currentTable];
+                if (tableDict) {
+                    Object.keys(tableDict).forEach(colKey => {
+                        if (colKey !== '__table_info') {
+                            const col = tableDict[colKey];
+                            // Chỉ hiển thị các cột có chứa danh sách options (loại select/radio/checkbox)
+                            if (col.options || col.type === 'select') {
+                                opts.push({ label: (col.label || colKey) + ` (${colKey})`, value: colKey });
+                            }
+                        }
+                    });
+                }
+            }
+            return opts;
+        }, [currentTable]);
+
+        const updateDynamicBinding = (newTable, newColumn) => {
+            if (newTable && newColumn) {
+                setAttributes({ skaDynamicBinding: `{{#foreach ${newTable}.${newColumn}}}` });
+            } else if (newTable) {
+                setAttributes({ skaDynamicBinding: `{{#foreach ${newTable}.}}` });
+            } else {
+                setAttributes({ skaDynamicBinding: '' });
+            }
+        };
 
         const parseStyle = (styleString) => {
             if (!styleString) return {};
@@ -165,18 +218,81 @@ registerBlockType(metadata.name, {
         const blockProps = useBlockProps({
             className: `ska-select-block wp-block-ska-builder-select base-transition ${fullClasses}`.trim()});
 
-        const optionsList = optionsText.split('\n').filter(line => line.trim() !== '').map(line => {
-            const parts = line.split(':');
-            return {
-                label: parts[0].trim(),
-                value: parts.length > 1 ? parts[1].trim() : parts[0].trim()
-            };
-        });
+        let optionsList = [];
+        if (skaDynamicBinding && currentTable && currentColumn) {
+            let tableDict = window.skaDataDictionary && (window.skaDataDictionary[currentTable] || window.skaDataDictionary['wp_' + currentTable]);
+            if (tableDict && tableDict[currentColumn] && tableDict[currentColumn].options) {
+                optionsList = tableDict[currentColumn].options.split(',').filter(opt => opt.trim() !== '').map(opt => ({
+                    label: opt.trim(),
+                    value: opt.trim()
+                }));
+            } else {
+                optionsList = [
+                    { label: '[Dynamic Data (Frontend)...]', value: '' }
+                ];
+            }
+        } else {
+            optionsList = (optionsText || '').split('\n').filter(line => line.trim() !== '').map(line => {
+                const parts = line.split(':');
+                return {
+                    label: parts[0] ? parts[0].trim() : '',
+                    value: parts.length > 1 ? parts[1].trim() : (parts[0] ? parts[0].trim() : '')
+                };
+            });
+        }
 
         return (
             <>
                 <InspectorControls>
-                    <PanelBody title={__('Choice Settings', 'ska-builder-core')} initialOpen={true}>
+                    <PanelBody title={__('Nguồn Dữ Liệu (Dynamic)', 'ska-builder-core')} initialOpen={true}>
+                        {!window.skaDataDictionary ? (
+                            <div style={{ padding: '12px', background: '#fffbeb', color: '#b45309', fontSize: '13px', borderRadius: '4px', border: '1px solid #fcd34d' }}>
+                                <strong>Chưa kích hoạt Ska Data Pro</strong><br/>
+                                Tính năng <i>Nguồn Dữ Liệu Động</i> yêu cầu phải có hệ sinh thái <b>Ska Data Pro</b>. Vui lòng cài đặt và kích hoạt plugin này để trải nghiệm tính năng Zero N+1 Query.
+                            </div>
+                        ) : (
+                            <>
+                                <ToggleControl
+                                    label={__('Kết nối dữ liệu động', 'ska-builder-core')}
+                                    checked={!!skaDynamicBinding}
+                                    onChange={(val) => {
+                                        if (!val) {
+                                            setAttributes({ skaDynamicBinding: '' });
+                                        } else {
+                                            setAttributes({ skaDynamicBinding: 'true' });
+                                        }
+                                    }}
+                                    help={<>Lấy danh sách option tự động từ Database của <strong style={{color: '#dc2626', textTransform: 'uppercase'}}>Ska Data Pro</strong></>}
+                                />
+                                {!!skaDynamicBinding && (
+                                    <>
+                                        <SelectControl
+                                            label={__('Bảng Dữ Liệu', 'ska-builder-core')}
+                                            value={currentTable}
+                                            options={tableOptions}
+                                            onChange={(val) => updateDynamicBinding(val, '')}
+                                        />
+                                        {currentTable && (
+                                            <SelectControl
+                                                label={__('Cột Dữ Liệu (Option)', 'ska-builder-core')}
+                                                value={currentColumn}
+                                                options={columnOptions}
+                                                onChange={(val) => updateDynamicBinding(currentTable, val)}
+                                            />
+                                        )}
+                                        {skaDynamicBinding && currentTable && currentColumn && (
+                                            <div style={{ padding: '8px', background: '#ecfdf5', border: '1px solid #10b981', borderRadius: '4px', fontSize: '12px', marginTop: '10px' }}>
+                                                <strong>Binding:</strong> <code>{skaDynamicBinding}</code>
+                                                <p style={{ margin: '4px 0 0', color: '#047857' }}>Dữ liệu options sẽ được nạp tự động lúc tải trang Frontend (Zero N+1).</p>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </>
+                        )}
+                    </PanelBody>
+
+                    <PanelBody title={__('Choice Settings', 'ska-builder-core')} initialOpen={false}>
                         <TextControl
                             label={__('Field Name (Data Key)', 'ska-builder-core')}
                             value={fieldName}
@@ -203,10 +319,18 @@ registerBlockType(metadata.name, {
                                 onChange={(val) => setAttributes({ isMultiple: val })}
                             />
                         )}
-                        <OptionsBuilderControl
-                            value={optionsText}
-                            onChange={(val) => setAttributes({ optionsText: val })}
-                        />
+                        
+                        {!skaDynamicBinding ? (
+                            <OptionsBuilderControl
+                                value={optionsText}
+                                onChange={(val) => setAttributes({ optionsText: val })}
+                            />
+                        ) : (
+                            <div style={{ padding: '12px', background: '#f1f5f9', color: '#64748b', fontSize: '13px', borderRadius: '4px', fontStyle: 'italic', marginBottom: '15px' }}>
+                                Tùy chọn tĩnh đã bị vô hiệu hóa do bạn đang sử dụng Nguồn dữ liệu động {currentTable ? `từ bảng ` : ''}<strong>{currentTable}</strong>.
+                            </div>
+                        )}
+                        
                         <ToggleControl
                             label={__('Required', 'ska-builder-core')}
                             checked={isRequired}

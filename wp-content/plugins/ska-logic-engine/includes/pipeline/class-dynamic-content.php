@@ -49,8 +49,16 @@ class Ska_Dynamic_Content {
         }
 
         // Hút Sinh lực từ Universal Dynamic Binding
-        if ( isset( $block['attrs']['skaDynamicBinding']['script'] ) && ! empty( $block['attrs']['skaDynamicBinding']['script'] ) ) {
-            $script = $block['attrs']['skaDynamicBinding']['script'];
+        $script = '';
+        if ( isset( $block['attrs']['skaDynamicBinding'] ) ) {
+            if ( is_string( $block['attrs']['skaDynamicBinding'] ) ) {
+                $script = trim( $block['attrs']['skaDynamicBinding'] );
+            } elseif ( is_array( $block['attrs']['skaDynamicBinding'] ) && ! empty( $block['attrs']['skaDynamicBinding']['script'] ) ) {
+                $script = trim( $block['attrs']['skaDynamicBinding']['script'] );
+            }
+        }
+
+        if ( ! empty( $script ) ) {
 
             // Lấy con trỏ ngữ cảnh: Phổ biến nhất là $_GET['id'] cho các trang Chi tiết (Detail Portal)
             $record_id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
@@ -70,7 +78,9 @@ class Ska_Dynamic_Content {
                 // --- 1. Sát thủ Ẩn Hiện (Visibility Check) ---
                 // Chấp nhận biến `visible = true` HOẶC nếu User chỉ gõ điều kiện cụt lủn `[tuoi] > 18` (trả về Boolean thuần túy)
                 $is_visible = true;
-                if ( isset( $symbols['visible'] ) ) {
+                if ( strpos( $script, '{{#foreach' ) !== false ) {
+                    $is_visible = true; // Bỏ qua visibility check nếu đây là template loop, tránh lỗi SkaFX trả về false
+                } elseif ( isset( $symbols['visible'] ) ) {
                     $is_visible = (bool) $symbols['visible'];
                 } elseif ( isset( $result['last_val'] ) && is_bool( $result['last_val'] ) ) {
                     $is_visible = $result['last_val'];
@@ -100,10 +110,79 @@ class Ska_Dynamic_Content {
                          // Dự báo Logic tương lai: Thúc thẳng vảo thẻ <img src="...">
                          // Tạm thời chưa build vì hệ thống SkaFX cần trả object cho Ảnh.
                     }
+                } else {
+                    // CỘNG THÊM: Hỗ trợ vòng lặp {{#foreach schema.table_name.column_name}} để tự sinh Option Dropdown
+                    if ( strpos( $script, '{{#foreach' ) !== false ) {
+                        $block_content = $this->process_foreach_loop( $script, $block_content );
+                    }
                 }
             }
         }
         
+        return $block_content;
+    }
+
+    /**
+     * Bộ xử lý Vòng lặp ForEach tĩnh (Thường dùng cho Select Options)
+     */
+    private function process_foreach_loop( $script, $block_content ) {
+        $path = '';
+        $template = '';
+
+        if ( preg_match( '/\{\{#foreach\s+([a-zA-Z0-9_\.]+)\s*\}\}(.*?)\{\{\/foreach\}\}/s', $script, $matches ) ) {
+            $path = $matches[1];
+            $template = $matches[2];
+        } elseif ( preg_match( '/\{\{#foreach\s+([a-zA-Z0-9_\.]+)\s*\}\}/s', $script, $matches ) ) {
+            // Trường hợp Auto-generate cho Select: không có thẻ đóng {{/foreach}}
+            $path = $matches[1];
+            $template = '<option value="{{value}}">{{label}}</option>';
+        }
+
+        if ( $path && $template ) {
+            
+            // Hỗ trợ cả `schema.table_name.column_name` và `table_name.column_name`
+            $parts = explode( '.', str_replace( 'schema.', '', $path ) );
+            if ( count( $parts ) >= 2 ) {
+                $table_name = $parts[0];
+                $column_name = $parts[1];
+                
+                global $wpdb;
+                $all_dict = get_option('ska_data_dictionary', array());
+                
+                // Chuẩn hóa tên bảng: Thêm `ska_data_` nếu thiếu
+                $real_table_name = $table_name;
+                if ( strpos( $real_table_name, 'ska_data_' ) !== 0 && strpos( $real_table_name, $wpdb->prefix . 'ska_data_' ) !== 0 ) {
+                    $real_table_name = 'ska_data_' . $real_table_name;
+                }
+                // Thêm `wp_` prefix (hoặc prefix hiện tại) nếu thiếu
+                if ( strpos( $real_table_name, $wpdb->prefix ) !== 0 ) {
+                    $real_table_name = $wpdb->prefix . $real_table_name;
+                }
+
+                if ( isset( $all_dict[ $real_table_name ][ $column_name ]['options'] ) ) {
+                    $options_str = $all_dict[ $real_table_name ][ $column_name ]['options'];
+                    $options_arr = array_map( 'trim', explode( ',', $options_str ) );
+                    
+                    $generated_html = '';
+                    foreach ( $options_arr as $opt ) {
+                        // Mảng phẳng chuỗi: {{.}}
+                        // Tạm thời thay thế {{.}} và {{value}}, {{label}} về cùng 1 biến $opt
+                        $row_html = str_replace( array( '{{.}}', '{{value}}', '{{label}}' ), esc_attr( $opt ), $template );
+                        $generated_html .= $row_html;
+                    }
+                    
+                    // Thay thế toàn bộ ruột của thẻ <select> hoặc vùng chứa đầu tiên bằng $generated_html
+                    // Sửa lỗi Regex cũ (nuốt nhầm thẻ </span> báo lỗi bên dưới Select)
+                    if ( strpos( $block_content, '<select' ) !== false ) {
+                        $block_content = preg_replace( '/(<select[^>]*>)(.*?)(<\/select>)/is', '${1}' . $generated_html . '${3}', $block_content );
+                    } else {
+                        // Fallback cho thẻ div hoặc các wrapper khác (radio/checkbox)
+                        // Bắt thẻ mở đầu tiên và thẻ đóng tương ứng của nó (giả định thẻ wrapper chứa các option)
+                        $block_content = preg_replace( '/^(.*?>)(.*?)(<\/[a-zA-Z0-9]+>\s*<span.*)$/is', '${1}' . $generated_html . '${3}', $block_content );
+                    }
+                }
+            }
+        }
         return $block_content;
     }
 

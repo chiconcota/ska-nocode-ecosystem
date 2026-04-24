@@ -31,7 +31,7 @@ class Database_Engine
 	 * @param string $template_id
 	 * @return array|\WP_Error
 	 */
-	public function install_schema($template_id)
+	public function install_schema($template_id, $app_id = 'uncategorized')
 	{
 		$template = Template_Registry::get_template($template_id);
 
@@ -50,6 +50,28 @@ class Database_Engine
 		if (!empty($template['dummy_data'])) {
 			$this->insert_dummy_data($template['dummy_data']);
 		}
+
+		// 3. Cập nhật Dictionary để thêm __table_info cho UI có thể nhận diện được
+		global $wpdb;
+		$dictionary = get_option('ska_data_dictionary', array());
+		if (!is_array($dictionary)) {
+			$dictionary = array();
+		}
+
+		foreach ($template['tables'] as $raw_table_name => $sql) {
+			$table_name_with_prefix = $wpdb->prefix . $raw_table_name;
+			if (!isset($dictionary[$table_name_with_prefix])) {
+				$dictionary[$table_name_with_prefix] = array();
+			}
+			// Khởi tạo thông tin table info
+			$display_name = ucwords(str_replace('ska_data_', '', $raw_table_name));
+			$dictionary[$table_name_with_prefix]['__table_info'] = array(
+				'name' => $display_name,
+				'icon' => 'dashicons-admin-page',
+				'app_id' => $app_id
+			);
+		}
+		update_option('ska_data_dictionary', $dictionary);
 
 		return array(
 			'success' => true,

@@ -1,37 +1,29 @@
-# [CHECKPOINT: CURRENT SESSION HANDOVER]
-> **Ngày tạo:** 2026-04-23 | **Phiên bản System:** v1.0.0
-> *File này dùng để lưu lại "điểm dừng" của AI sau mỗi phiên làm việc, giúp phiên sau có thể khôi phục lại bối cảnh (Context) chính xác.*
+# Bàn Giao Checkpoint (Ska Logic Engine - Phase 4.2)
+@last_update: 2026-04-24
 
----
+## 1. Trạng Thái Hiện Tại
+- Đã thiết lập thành công kiến trúc React Flow v11 (DAG Builder) cho Ska Logic Engine.
+- Đã sửa lỗi màn hình trắng (Polyfill `process.env.NODE_ENV`) và sửa cấu hình Tailwind JIT.
+- Đã tích hợp `ReactFlowProvider` và hệ thống Kéo-Thả (Drag & Drop) từ Sidebar sang Canvas.
+- Đã xây dựng `Settings Panel` với cơ chế đồng bộ dữ liệu (2-Way Binding) giữa Node UI và Form Input ẩn của WordPress.
+- Đã chuẩn hóa `BaseNode` làm component lõi cho tất cả các Atomic Nodes sau này.
+- Đã cập nhật Roadmap cho 10 Atomic Nodes vào File Project Manager.
 
-## 1. MỤC TIÊU ĐANG THEO ĐUỔI (ACTIVE GOAL)
-- **Feature:** Xây dựng Khối Vòng Lặp Vạn Năng (Ska Query Loop) & Hệ sinh thái Data Pro (Online Hospital).
-- **Mục đích:** Hỗ trợ Loop rendering thông minh, loại bỏ hoàn toàn query N+1, và xây dựng Smart Object Hospital để test.
-- **Trạng thái:** Đã hoàn thiện Backend Core MVP và hệ thống Logic xử lý. Vừa hoàn thành React Inspector cho khối Ska Select liên thông Data. Sẵn sàng vào Phase Testing Loop Block.
+## 2. Kế Hoạch Cho Phiên Tiếp Theo
+Vào phiên làm việc kế tiếp, Agent cần bám theo lộ trình trong file `project_manager_logic_engine_rebuild.md` và `task.md`, tập trung triển khai Nhóm Core & Logic (P1):
 
-## 2. TRẠNG THÁI HIỆN TẠI (CURRENT STATUS)
-- **Ska Select (React Inspector & Data Binding): HOÀN THÀNH.**
-  - **Dynamic Binding Toggle:** Cho phép bật tắt nguồn dữ liệu động từ bảng (Ska Data Pro).
-  - **Protective UX:** Bỏ ràng buộc `__table_info` và tự động lọc chỉ hiển thị các cột `select/radio/checkbox`.
-  - **Zero N+1 Auto-Generation:** Tự động bơm template `<option>` khi Frontend thiếu nội dung vòng lặp Mustache.
-- **Ska Loop Block (Backend Core): HOÀN THÀNH.**
-  - **Zero N+1 Query:** Đã triển khai Bulk Load (`Organisms_API::get_bulk_html`) để lấy trước toàn bộ Symbol HTML.
-  - **Hydration Engine:** Render bằng biểu thức Mustache `{{key}}` kết hợp `preg_replace_callback`.
-  - **SkaFX:** Nâng cấp Lexer để nhận dạng biến hệ thống của vòng lặp (`$index`, `$first`, vv).
-- **Alpine Form Integration (Frontend Binding): HOÀN THÀNH.**
-  - **Script Dependency Fixed:** Sửa lỗi load `alpine.min.js` trước `ska-frontend.js` qua hook Dependency Register.
-  - **Variable Synchronization:** Cập nhật biến State của HTML Form sang kiến trúc `skaForm('doctor_data')` (`fields.*`, `status.*`).
-  - **Endpoint Validation:** Khớp lệnh Database Insert thông qua `/wp-json/ska-logic/v1/submit`.
+1. **[L1] If/Else Condition Node:**
+   - Tạo React Component cho Node If/Else.
+   - Thêm giao diện Inspector cho phép Add/Remove các Rule (Điều kiện).
+2. **[D1] DB CRUD Action Node:**
+   - Xây dựng Component cho Node Insert/Update Data.
+   - Phát triển Schema API: Fetch danh sách Bảng và Cột từ bảng phẳng Ska Data Pro.
+   - **Đặc biệt lưu ý:** Bắt đầu nghiên cứu làm tính năng `Data Picker` (Dropdown lấy biến động) thay vì bắt người dùng tự nhập tay chuỗi JSON path.
 
-#### 6. KHỦNG HOẢNG UX VÀ PIVOT KẾ HOẠCH (UX PIVOT)
-*   **Vấn đề:** Trải nghiệm người dùng (UX) hiện tại của Form Builder là một thất bại. Việc bắt buộc người dùng Nocode (non-coder) tự thiết lập thủ công các thuộc tính cấu trúc nội bộ của AlpineJS như `x-data="skaForm()"`, định tuyến các biến state thành `fields.tên_trường`, và setup trạng thái `status.success` qua Inspector Gutenberg là quá rủi ro, cồng kềnh và hoàn toàn sai lệch định hướng No-code.
-*   **Giải pháp đề xuất (Abstraction Layer):** Cần tạm ngưng triển khai hệ thống form hiện hành để tư duy lại một giải pháp "Tầng trừu tượng". Ví dụ: Một UI Form Builder wizard tự động tạo block và map trường dữ liệu; Hoặc Khối Form tự động inject toàn bộ các state cần thiết ở Backend trước khi render ra Frontend (để người dùng chỉ cần thiết lập thuộc tính trực quan trong UI Gutenberg).
+## 3. Các File Đang Làm Việc Trọng Tâm
+- `plugins/ska-logic-engine/assets/src/builder/App.jsx`
+- `plugins/ska-logic-engine/assets/src/builder/components/Sidebar.jsx`
+- `plugins/ska-logic-engine/assets/src/builder/components/SettingsPanel.jsx`
+- `plugins/ska-logic-engine/assets/src/builder/nodes/BaseNode.jsx`
 
-#### 7. GHI CHÚ BÀN GIAO (HAND-OFF)
-*   **Môi trường:** Đã dọn dẹp sạch các file tạm PHP update CSDL (`fix_doctor_form.php`, `do_fix_doctor_form.php`, v.v.).
-*   **Nhiệm vụ ở phiên tới:** 
-    1. Nghỉ ngơi và Brainstorm giải pháp UX mới cho **Ska No-code Form**.
-    2. Triển khai kiến trúc **Form Abstraction Layer**.
-    3. Tiếp tục Roadmap (Testing Loop Block) sau khi vấn đề Form được định hướng rõ ràng.
-
-*Sổ bộ nhớ App Builder đã được niêm phong. Hệ thống dừng lại để suy ngẫm giải pháp ở phiên tiếp theo.*
+Hệ thống đã ổn định và Clean. Sẵn sàng Code!

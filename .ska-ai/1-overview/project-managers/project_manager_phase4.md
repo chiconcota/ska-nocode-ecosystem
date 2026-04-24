@@ -42,10 +42,9 @@
 ### 2.3. Theme Builder & Khối Vòng Lặp Vạn Năng (Ska Query Loop)
 *Được tích hợp từ `project_manager_theme_builder.md` cũ.*
 - [ ] Lập cấu trúc Ghi đè Template (WordPress Template Router) từ Flat table (Header/Footer/Archive...).
-- [/] **Khối Query Loop (Foreach / Map):** Tập trung xây dựng 1 Component/Block vòng lặp ở Frontend. Khối này sẽ nhận dữ liệu mảng (Array) từ SQL, từ đó lặp ra thẻ giao diện (List/Grid) để dựng Trang Danh sách (Archive, Blog, List view).
-  - [x] Backend Core MVP: Cơ chế Bulk Load Organisms, Hydration Engine (Mustache), SkaFX Token `$`.
-  - [ ] React UI (Inspector): Chọn Bảng (Source Table), cấu hình Slot/Rule bằng SkaFX.
-- [ ] Tích hợp Ska Query Loop kết nối với Ska Dynamic Content (Biến nhúng `{{...}}`).
+- [⏸️] **Khối Query Loop (Foreach / Map):** Đã bóc tách thành một chiến dịch riêng để theo dõi chi tiết. 
+  -> 👉 **Xem chi tiết tại:** `project_manager_ska_loop_block.md`
+- [⏸️] Tích hợp Ska Query Loop kết nối với Ska Dynamic Content (Biến nhúng `{{...}}`).
 
 ### 2.4. Tính Năng UI Độc Lập / Mới Cập Nhật
 *Được trích xuất từ phần 'Tương lai' (3.3) của Phase 3.*

@@ -19,6 +19,6 @@ class Ska_Date_Processor implements Ska_Logic_Node {
             }
         }
 
-        return $payload; 
+        return [ 'payload' => $payload, 'port' => 'main' ]; 
     }
 }
