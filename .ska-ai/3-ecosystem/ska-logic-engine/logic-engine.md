@@ -51,3 +51,20 @@ SkaFX cấu tạo nên Trái Tim Giải Trí (Logic & Calculation) của toàn b
   - (1) **Lexer:** Băm chuỗi người dùng gõ.
   - (2) **Parser (Statements):** Biến thành luồng xử lý và lập bản đồ Cây phân cấp (Top-Down Precedence). Hỗ trợ Statement variables `var x = 1;`.
   - (3) **Evaluator:** Đối chiếu Symbol Table Local Row đầu tiên, nếu không thấy mới phân tách Scope App/Table tìm ngoài DB. Nuốt 100% Syntax Error không bao giờ Fatal Website.
+
+## 7. Kiến trúc Primitive & Composite Nodes (Phase 4.2)
+Triết lý thiết kế Node của Ska Logic Engine thay đổi từ "Specialized Nodes" (các node chức năng đóng hộp to bản) sang mô hình **Core Primitives** (các khối cơ sở) kết hợp **Composite Nodes** (Macro đóng gói).
+
+- **Core Primitives (Khối cơ sở):**
+  - *Trigger:* Webhook, Action Hook, Cron.
+  - *Logic:* If/Else, Switch, For Loop.
+  - *Data/Context:* JSON Parse/Stringify, Get/Set Variable, SkaFX Code.
+  - *Protocol:* Raw HTTP Request.
+  - *Ska Native:* DB Action (CRUD trực tiếp trên Flat Tables của Data Pro).
+- **Composite Nodes (Post-MVP):** Người dùng có thể nhóm nhiều Primitive Nodes lại thành một Sub-flow (Macro) và lưu vào `ska_data_sys_logic_macros` để tái sử dụng như một Custom Node độc lập (Ví dụ: nhóm JSON + HTTP Request thành "Send Slack Node").
+
+### 7.1. Cơ Chế An Toàn (Performance & Safety)
+Do bản chất của việc xâu chuỗi nhiều Primitive Nodes và chạy vòng lặp, hệ thống lõi (`Workflow_Runner`) áp dụng 3 quy tắc thép để chống quá tải (Overhead) và lặp vô hạn (Infinite Loop):
+1. **Circuit Breaker (Ngắt mạch):** Bộ đếm `$step_count` đếm số lượng Node đã thực thi trong 1 phiên. Nếu vượt quá ngưỡng (VD: 1000), lập tức `throw CircuitBreakerException` để dừng hệ thống chống treo. Có giới hạn độ sâu đệ quy (`$call_stack_depth`) và thời gian chạy tối đa (Execution Timeout).
+2. **State Pruning (Dọn rác bộ nhớ):** Ở môi trường Production, biến `$context` của luồng chỉ giữ lại các Output cần thiết cho các node sau. Output của các Node trung gian không còn tác dụng sẽ bị `unset()` để tiết kiệm RAM. Async Worker (Action Scheduler) được dùng để chặt nhỏ (chunking) xử lý cho vòng lặp lớn.
+3. **Data Vector / Batch Processing (Chống N+1):** Các Action Nodes (như DB Action) được thiết kế nhận diện đầu vào dạng Mảng (Array). Thay vì gọi lặp `insert/update` 1000 lần sinh ra lỗi N+1 Queries, Node sẽ tự động gom thành 1 câu lệnh Bulk SQL duy nhất để xử lý với Ska Data Pro.

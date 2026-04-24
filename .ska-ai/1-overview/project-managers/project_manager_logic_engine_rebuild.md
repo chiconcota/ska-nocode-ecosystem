@@ -10,23 +10,22 @@
 
 ---
 
-## 2. ROADMAP PHÁT TRIỂN 10 ATOMIC NODES (PHASE 4.2)
+## 2. ROADMAP PHÁT TRIỂN CORE PRIMITIVE NODES (PHASE 4.2 MVP)
+Thay vì làm các Node chức năng khổng lồ, hệ thống sẽ chỉ cung cấp các "Viên gạch cơ sở" (Primitives). Các Composite Nodes (nhóm các Primitive thành Sub-flow) sẽ được dời sang Phase sau MVP.
 
-### 2.1. Nhóm Core & Logic (Ưu tiên P1)
+### 2.1. Nhóm Logic & Trigger (Ưu tiên P1)
 - [ ] **[T1] Event Trigger Node:** (Đang làm) Lắng nghe Hooks (Form Submit, Insert). 
-- [ ] **[D1] DB CRUD Action Node:** Node thao tác CSDL với Ska Data Pro. (Tích hợp Schema UI, Auto-map fields, Data Picker).
 - [ ] **[L1] If/Else Condition Node:** Rẽ nhánh logic 2 cổng (True/False).
+- [ ] **[L2] Switch Router Node:** Rẽ nhiều nhánh dựa trên giá trị.
 
-### 2.2. Nhóm Mở rộng Kết nối (Ưu tiên P2)
-- [ ] **[I1] HTTP Request Node:** Trình gọi API RESTful (Cấu hình Headers, Method, Payload).
-- [ ] **[T2] Webhook Trigger Node:** Nhận Payload từ bên ngoài.
-- [ ] **[I2] Email/Notification Node:** Gửi thông báo SMTP & Push Notification.
+### 2.2. Nhóm Data & Giao thức (Ưu tiên P2)
+- [ ] **[D1] DB CRUD Action Node (Ska Native):** Node thao tác CSDL với Ska Data Pro. (Tích hợp Schema UI, Auto-map fields, Data Picker, hỗ trợ Data Vector Batch Process để chống N+1).
+- [ ] **[U1] Context / JSON Node:** Parse, Stringify, Set/Get Variable.
+- [ ] **[I1] Raw HTTP Request Node:** Trình gọi API RESTful (Cấu hình Headers, Method, Payload) dùng chung cho mọi dịch vụ ngoài.
 
 ### 2.3. Nhóm Nâng cao (Ưu tiên P3)
-- [ ] **[L2] Switch Router Node:** Rẽ nhiều nhánh Switch/Case.
 - [ ] **[L3] Iterator/Loop Node:** Lặp qua mảng dữ liệu để xử lý Bulk.
-- [ ] **[T3] Schedule Trigger Node:** Thiết lập Cronjobs (Thời gian thực).
-- [ ] **[U1] Data Transform / Set Node:** Trạm trung chuyển format lại biến bằng biểu thức SkaFX DSL trước khi đẩy xuống luồng dưới.
+- [ ] **[T2] Webhook & Cron Trigger:** Hỗ trợ nhận tải trọng và lên lịch.
 
 ---
 
@@ -38,9 +37,9 @@
 - [x] Thiết lập React Flow, Sidebar Kéo-thả (Drag & Drop).
 - [x] Xây dựng Settings Panel (Inspector) cho phép map UI Data ngược vào Đồ thị.
 
-### 3.2. Triển khai Node: If/Else & DB CRUD (Đang thực hiện)
+### 3.2. Triển khai Cơ Chế Core & Primitive Nodes (Phiên Tiếp Theo)
 - [ ] Khởi tạo File Frontend React cho `ConditionNode` (If/Else).
 - [ ] Xây dựng giao diện Setting Add Rules cho If/Else.
 - [ ] Khởi tạo File Frontend React cho `DBActionNode` (CRUD).
-- [ ] Viết chức năng Call API Fetch Schema từ Ska Data Pro.
+- [ ] Cập nhật `class-workflow-runner.php` thêm giới hạn đệ quy (`Circuit Breaker`).
 - [ ] Tích hợp tính năng Data Picker (Biến số động).
