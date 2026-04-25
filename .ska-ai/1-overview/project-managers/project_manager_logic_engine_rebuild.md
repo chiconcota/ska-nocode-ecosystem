@@ -14,13 +14,13 @@
 Thay vì làm các Node chức năng khổng lồ, hệ thống sẽ chỉ cung cấp các "Viên gạch cơ sở" (Primitives). Các Composite Nodes (nhóm các Primitive thành Sub-flow) sẽ được dời sang Phase sau MVP.
 
 ### 2.1. Nhóm Logic & Trigger (Ưu tiên P1)
-- [ ] **[T1] Event Trigger Node:** (Đang làm) Lắng nghe Hooks (Form Submit, Insert). 
-- [ ] **[L1] If/Else Condition Node:** Rẽ nhánh logic 2 cổng (True/False).
+- [x] **[T1] Event Trigger Node:** (Đang làm) Lắng nghe Hooks (Form Submit, Insert). 
+- [x] **[L1] If/Else Condition Node:** Rẽ nhánh logic 2 cổng (True/False).
 - [ ] **[L2] Switch Router Node:** Rẽ nhiều nhánh dựa trên giá trị.
 
 ### 2.2. Nhóm Data & Giao thức (Ưu tiên P2)
-- [ ] **[D1] DB CRUD Action Node (Ska Native):** Node thao tác CSDL với Ska Data Pro. (Tích hợp Schema UI, Auto-map fields, Data Picker, hỗ trợ Data Vector Batch Process để chống N+1).
-- [ ] **[U1] Context / JSON Node:** Parse, Stringify, Set/Get Variable.
+- [x] **[D1] DB CRUD Action Node (Ska Native):** Node thao tác CSDL với Ska Data Pro. (Tích hợp Schema UI, Auto-map fields, Data Picker, hỗ trợ Data Vector Batch Process để chống N+1).
+- [x] **[U1] Context / JSON Node:** Parse, Stringify, Set Data (Gán biến qua SkaFX).
 - [ ] **[I1] Raw HTTP Request Node:** Trình gọi API RESTful (Cấu hình Headers, Method, Payload) dùng chung cho mọi dịch vụ ngoài.
 
 ### 2.3. Nhóm Nâng cao (Ưu tiên P3)
@@ -37,9 +37,12 @@ Thay vì làm các Node chức năng khổng lồ, hệ thống sẽ chỉ cung 
 - [x] Thiết lập React Flow, Sidebar Kéo-thả (Drag & Drop).
 - [x] Xây dựng Settings Panel (Inspector) cho phép map UI Data ngược vào Đồ thị.
 
-### 3.2. Triển khai Cơ Chế Core & Primitive Nodes (Phiên Tiếp Theo)
-- [ ] Khởi tạo File Frontend React cho `ConditionNode` (If/Else).
-- [ ] Xây dựng giao diện Setting Add Rules cho If/Else.
-- [ ] Khởi tạo File Frontend React cho `DBActionNode` (CRUD).
+### 3.2. Triển khai Cơ Chế Core & Primitive Nodes
+- [x] Khởi tạo Frontend React và Backend Core cho Primitive Node `Set Data` (Gán biến).
+- [x] Khởi tạo File Frontend React cho `ConditionNode` (If/Else).
+- [x] Xây dựng giao diện Setting Add Rules cho If/Else.
+- [x] Khởi tạo File Frontend React cho `DBActionNode` (CRUD).
+- [x] Hoàn thiện trải nghiệm UX/UI (Dynamic Submenus, Unified Dashboard Cards, chống tràn Settings Panel, sửa lỗi ESC đóng modal).
 - [ ] Cập nhật `class-workflow-runner.php` thêm giới hạn đệ quy (`Circuit Breaker`).
-- [ ] Tích hợp tính năng Data Picker (Biến số động).
+- [ ] Tích hợp tính năng Data Picker nâng cao (Gom nhóm theo App).
+- [ ] Kiểm thử toàn diện DBActionNode (Insert/Update Record) cho quy trình cuối.

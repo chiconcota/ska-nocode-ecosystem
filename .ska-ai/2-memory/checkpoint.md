@@ -1,26 +1,27 @@
-# Bàn Giao Checkpoint (Ska Logic Engine - Phase 4.2)
+# Bàn Giao Checkpoint (Ska Logic Engine - UX/UI & System Dashboard)
 @last_update: 2026-04-24
 
 ## 1. Trạng Thái Hiện Tại (Kiến Trúc)
-- Đã thiết lập thành công kiến trúc React Flow v11 (DAG Builder) cho Ska Logic Engine.
-- Đã sửa lỗi màn hình trắng (Polyfill `process.env.NODE_ENV`) và sửa cấu hình Tailwind JIT.
-- Đã tích hợp `ReactFlowProvider` và hệ thống Kéo-Thả (Drag & Drop) từ Sidebar sang Canvas.
-- Đã xây dựng `Settings Panel` với cơ chế đồng bộ dữ liệu (2-Way Binding) giữa Node UI và Form Input ẩn của WordPress.
-- **[QUYẾT ĐỊNH MỚI]**: Đã chốt phương án thay đổi cấu trúc Node từ dạng Đóng Hộp sang **Primitive Nodes (Cơ sở)** và **Composite Nodes (Tổng hợp)**. Tích hợp cơ chế Circuit Breaker (ngắt mạch đệ quy vô hạn) và Bulk Processing (chống N+1).
+- Đã hoàn thiện **Dynamic Submenu** cho Ska Logic Engine, cho phép truy cập trực tiếp các luồng workflow từ thanh sidebar của WordPress.
+- Đã nâng cấp **System Dashboard** của Hệ sinh thái Ska với component `module-card` cao cấp, thống nhất trải nghiệm UI/UX cho toàn bộ các Plugins.
+- Đã khắc phục lỗi **Overflow** và sự cố hiển thị ở Settings Panel của DAG Builder.
+- Đã vá lỗi **Keyboard Shortcut** (bấm phím ESC để đóng Data Picker).
+- Đã xử lý triệt để rủi ro xung đột chữ ký (signature) trong phương thức `execute()` của `class-ska-logic-set-data.php` và các cảnh báo Undefined Index ở Backend Save Handler.
 
 ## 2. Kế Hoạch Cho Phiên Tiếp Theo
-Người dùng đang tạm ngưng (End Session) để suy nghĩ thêm về rủi ro của phương án Primitive. Nếu được duyệt trong phiên kế tiếp, Agent cần bám theo lộ trình mới trong `project_manager_logic_engine_rebuild.md`, tập trung triển khai:
+Người dùng đã yêu cầu tạm dừng để chuẩn bị cho phiên kiểm thử tiếp theo. Các hạng mục ưu tiên khi quay lại:
 
-1. **Cập nhật Lõi PHP (`class-workflow-runner.php`):**
-   - Bổ sung bộ đếm `$step_count` làm Circuit Breaker.
-   - Thêm cơ chế State Pruning (dọn rác dữ liệu không xài tới) để tiết kiệm RAM.
-2. **Triển khai Frontend UI cho Primitive Nodes:**
-   - Tạo React Component cho Node If/Else và DB CRUD Action.
-   - Tích hợp tính năng Schema Fetching và Data Picker.
+1. **Kiểm thử Node "Insert Node" (DB Action):**
+   - Người dùng đã hoãn việc test Node DB Action. Phiên tới cần tập trung kiểm thử toàn diện tính năng chọn bảng dữ liệu và mapping cột (sau khi đã sửa lỗi bị đá văng ra ngoài).
+2. **Nâng cấp Data Picker:**
+   - Người dùng yêu cầu gom nhóm các table theo "App" bên trong giao diện Data Picker thay vì danh sách phẳng.
+3. **Mở rộng Primitive Nodes:**
+   - Phát triển Node `If/Else` (Rẽ nhánh) và Node `Iterator` (Vòng lặp) để hoàn thiện luồng kiểm soát cơ bản.
 
 ## 3. Các File Đang Làm Việc Trọng Tâm
-- `plugins/ska-logic-engine/includes/pipeline/class-workflow-runner.php`
-- `plugins/ska-logic-engine/assets/src/builder/nodes/BaseNode.jsx`
+- `plugins/ska-logic-engine/includes/class-ska-logic-core.php` (Submenu & Save Handler)
+- `plugins/ska-logic-engine/assets/src/builder/nodes/DBActionNode.jsx`
 - `plugins/ska-logic-engine/assets/src/builder/components/SettingsPanel.jsx`
+- `plugins/ska-logic-engine/assets/src/builder/components/TablePicker.jsx`
 
-Hệ thống tài liệu đã được niêm phong. Sẵn sàng Code ngay khi người dùng bật đèn xanh!
+Hệ thống tài liệu đã được niêm phong và Ghi nhớ! Sẵn sàng Code ngay khi người dùng khởi động phiên mới (Start Session).
