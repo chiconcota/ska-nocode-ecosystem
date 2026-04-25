@@ -27,9 +27,10 @@ Mọi thứ vào là `$payload` và bắt buộc trả về mảng `$payload` ch
 - **BaseNode Architecture:** Cung cấp generic `BaseNode` bọc ngoài các Node logic, chuẩn hóa UI hiển thị cho Icon, Label, và các cổng In/Out (Handles) giúp việc mở rộng 10 Atomic Nodes được đồng nhất.
 
 ## 4. UI Tương Tác & Quản Trị Băng Chuyền
-- **Hệ Thống Dual-View (Quản Trị vs Thiết Kế):** Lớp giao diện quản trị wp-admin được tách thành 2 module riêng biệt. `Manager UI` đóng vai trò Dashboard (List View) cho phép Thêm/Xóa/Sửa tên các ID Luồng an toàn. `Builder UI` đóng vai trò không gian kéo thả tuyến tính, hoàn toàn cô lập để bảo vệ dữ liệu cấu trúc luồng hiện tại.
+- **Hệ Thống Dual-View & Dynamic Submenu:** Lớp giao diện quản trị wp-admin tách thành `Manager UI` (Dashboard List View) và `Builder UI` (Không gian kéo thả). Đặc biệt, hệ thống hỗ trợ Dynamic Submenu, tự động đăng ký các workflows đang hoạt động thành các menu con trên thanh sidebar của WordPress, cho phép người dùng Nocode truy cập nhanh trực tiếp vào builder mà không cần qua Dashboard trung gian.
+- **Settings Panel & Tối ưu Responsive (UX/UI):** Bảng Settings Panel bên phải được gia cố CSS (`flex-shrink-0`, `word-break`) để chống tình trạng vỡ layout hoặc tràn màn hình khi thực hiện Mapping nhiều trường dữ liệu phức tạp. Hỗ trợ sự kiện phím tắt (VD: bấm `ESC` để đóng Modal nhanh gọn).
+- **Ska System Dashboard & Module Cards:** Áp dụng thiết kế thống nhất (Unified Card UI) cho toàn bộ hệ sinh thái Ska thông qua `System Framework`. Các Module Cards (bao gồm của Logic Engine) sử dụng chung một `module-card` component Tailwind với hiệu ứng hover, blur-backdrop cao cấp, tạo cảm giác Premium và đồng bộ tuyệt đối giữa các Plugins.
 - **Explicit Target Mapping:** Hỗ trợ tính năng `Mapping DB Database` trực quan cho Node Hành động Cuối. Bấm nút OK sẽ kích hoạt ngầm AJAX lôi Lược đồ từ `Ska Data Pro` (dùng khóa an ninh `ska_data_nonce`) giúp người dùng khớp dữ liệu tự do mà KHÔNG THỰC HIỆN Re-render phá hủy DOM tree (ngăn lỗi Extension Chrome dính kèm).
-- **Tính năng Đi Lên / Đi Xuống (Swap Array):** Thay vì thêm một Node ở dạng Modal cố định, UI cho phép dịch chuyển trực tiếp cục Node rảnh tay bằng Native DOM Vanilla Swap.
 - **Hệ Cơ Chế Tự Phục Hồi HTTP POST (Data Healing):** Độc quyền hệ điều hành Nocode mới có. Khi Client nhập biến tự thân có chứa khoảng trắng (Vd: `ngày sinh`), máy chủ PHP sinh ra biến cục bộ theo Post (`ngày_sinh`). Logic Engine Processor và Logic Insert tự động tìm dò quy hồi bằng cách replace ` ` -> `_` để thỏa dụng đầu vào. Tôn trọng 100% người dùng Nocode.
 - **Logic Database Picker (UI Nhúng Cao Cấp):** Modal DB Picker (Glassmorphism design) loại bỏ hoàn toàn thẻ `datalist` cũ. Phân nhóm (Group) tự động tuyệt đối bằng cách khai thác khóa ngoại tĩnh `__table_info['app_id']` đồng bộ trực tiếp mảng `ska_data_apps` từ Data Pro. Giải quyết vĩnh viễn rác rưởi Regex tên App, và Trigger tự động Load Lược đồ Database (Mapping Scheme) khi Người dùng Nocode chọn Bảng Đích.
 
@@ -58,9 +59,10 @@ Triết lý thiết kế Node của Ska Logic Engine thay đổi từ "Specializ
 - **Core Primitives (Khối cơ sở):**
   - *Trigger:* Webhook, Action Hook, Cron.
   - *Logic:* If/Else, Switch, For Loop.
-  - *Data/Context:* JSON Parse/Stringify, Get/Set Variable, SkaFX Code.
+  - *Data/Context:* Set Data (Gán biến/Thay đổi Payload cục bộ bằng SkaFX), JSON Parse/Stringify, SkaFX Code.
   - *Protocol:* Raw HTTP Request.
   - *Ska Native:* DB Action (CRUD trực tiếp trên Flat Tables của Data Pro).
+- **Cơ chế Payload Mutability (Sự thay đổi mảng toàn cục):** Hệ thống hoạt động theo nguyên lý "thùng hàng" `$payload` truyền qua dạng Pass-by-Reference ở mức Runner. Các Primitive Node (Như `Set Data`) sẽ thực thi tính toán SkaFX và chèn thẳng (hoặc ghi đè) biến vào `$payload`, giúp các Node phía sau có thể trực tiếp lấy dữ liệu thông qua ngữ cảnh `{{ ... }}` mà không cần phải truy vết ngược.
 - **Composite Nodes (Post-MVP):** Người dùng có thể nhóm nhiều Primitive Nodes lại thành một Sub-flow (Macro) và lưu vào `ska_data_sys_logic_macros` để tái sử dụng như một Custom Node độc lập (Ví dụ: nhóm JSON + HTTP Request thành "Send Slack Node").
 
 ### 7.1. Cơ Chế An Toàn (Performance & Safety)
