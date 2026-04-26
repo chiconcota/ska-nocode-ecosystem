@@ -39,6 +39,14 @@ function _registerSkaForm() {
         step: 1,
         bot_trap: '', // Honeypot
 
+        // === GETTERS DÀNH CHO UI ===
+        get success() {
+            return this.status === 'success';
+        },
+        get errorMessage() {
+            return this.status === 'error' ? this.message : '';
+        },
+
         // === KHỞI TẠO ===
         init() {
             // Quét tất cả input bên trong form này, khởi tạo fields nếu chưa có
@@ -165,10 +173,12 @@ function _registerSkaForm() {
                     ska_form_id: actionId,
                 };
 
-                const response = await fetch(window.skaEnv?.restUrl + 'ska-logic/v1/submit', {
+                const restUrl = (window.skaAppEnv && window.skaAppEnv.restUrl) ? window.skaAppEnv.restUrl : '/wp-json/ska-logic/v1/submit';
+                const response = await fetch(restUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-WP-Nonce': window.skaAppEnv ? window.skaAppEnv.nonce : ''
                     },
                     body: JSON.stringify(payload),
                 });

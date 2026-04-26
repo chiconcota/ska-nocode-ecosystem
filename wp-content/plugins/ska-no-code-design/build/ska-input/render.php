@@ -7,7 +7,7 @@
 $tailwindClasses = isset($attributes['tailwindClasses']) ? $attributes['tailwindClasses'] : '';
 $className = isset($attributes['className']) ? $attributes['className'] : '';
 $customStyle = isset($attributes['customStyle']) ? $attributes['customStyle'] : '';
-$fieldName = isset($attributes['fieldName']) ? $attributes['fieldName'] : 'my_field';
+$fieldName = isset($attributes['fieldName']) ? trim($attributes['fieldName']) : '';
 $fieldId = isset($attributes['fieldId']) ? $attributes['fieldId'] : '';
 $inputType = isset($attributes['inputType']) ? $attributes['inputType'] : 'text';
 $fieldValue = isset($attributes['fieldValue']) ? $attributes['fieldValue'] : '';
@@ -19,9 +19,12 @@ $fullClasses = trim($tailwindClasses . ' ' . $className);
 
 $wrapper_attrs_args = [
 	'class' => "ska-input-block {$fullClasses}",
-	'type' => esc_attr($inputType),
-	'name' => esc_attr($fieldName)
+	'type' => esc_attr($inputType)
 ];
+
+if (!empty($fieldName)) {
+	$wrapper_attrs_args['name'] = esc_attr($fieldName);
+}
 
 if (in_array($inputType, ['text', 'email', 'number', 'password']) && !empty($placeholder)) {
 	$wrapper_attrs_args['placeholder'] = esc_attr($placeholder);
@@ -53,19 +56,23 @@ $wrapper_attributes = get_block_wrapper_attributes($wrapper_attrs_args);
 // Khi Input nằm bên trong một Ska Form (Container tag=form + isSkaForm=true),
 // Alpine.js sẽ tự quét x-model để liên kết dữ liệu 2 chiều.
 // Cách hoạt động: render.php in ra x-model, Alpine Controller đón nhận binding.
-$alpine_bind = sprintf( ' x-model="fields.%s"', esc_attr( $fieldName ) );
-
-// Validation: Thêm @blur để kiểm tra lỗi khi user rời ô nhập
+$alpine_bind = '';
 $alpine_validation = '';
-if ( $isRequired ) {
-	$alpine_validation = sprintf( ' @blur="validate(\'%s\')"', esc_attr( $fieldName ) );
+$error_display = '';
+
+if (!empty($fieldName)) {
+	$alpine_bind = sprintf( ' x-model="fields.%s"', esc_attr( $fieldName ) );
+	
+	if ( $isRequired ) {
+		$alpine_validation = sprintf( ' @blur="validate(\'%s\')"', esc_attr( $fieldName ) );
+	}
+	
+	$error_display = sprintf(
+		'<span x-show="errors.%1$s" x-text="errors.%1$s" class="ska-form-error" style="color:#ef4444;font-size:0.75rem;display:block;margin-top:0.25rem;"></span>',
+		esc_attr( $fieldName )
+	);
 }
 
-// Ghép thêm hiển thị lỗi validation dưới input
-$error_display = sprintf(
-	'<span x-show="errors.%1$s" x-text="errors.%1$s" class="ska-form-error" style="color:#ef4444;font-size:0.75rem;display:block;margin-top:0.25rem;"></span>',
-	esc_attr( $fieldName )
-);
 ?>
-<input <?php echo $wrapper_attributes . $alpine_bind . $alpine_validation; ?> />
+<input <?php echo $wrapper_attributes . $alpine_bind . $alpine_validation; ?> data-test="render-is-working" />
 <?php echo $error_display; ?>

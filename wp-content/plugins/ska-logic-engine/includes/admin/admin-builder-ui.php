@@ -20,10 +20,63 @@ foreach ($data_dictionary as $table_name => $meta) {
             $app_group = 'APP: ' . strtoupper($m[1]);
         }
 
+        global $wpdb;
+        $columns = [];
+        
+        $wpdb->suppress_errors(true);
+        $physical_columns = $wpdb->get_results("SHOW COLUMNS FROM `{$table_name}`");
+        $wpdb->suppress_errors(false);
+        
+        if (!empty($physical_columns)) {
+            foreach ($physical_columns as $p_col) {
+                $col_key = $p_col->Field;
+                
+                // Map friendly names from dictionary if available
+                $options = null;
+                if (isset($meta[$col_key]) && is_array($meta[$col_key])) {
+                    $name = isset($meta[$col_key]['title']) ? $meta[$col_key]['title'] : $col_key;
+                    $type = isset($meta[$col_key]['type']) ? $meta[$col_key]['type'] : 'text';
+                    if (isset($meta[$col_key]['options'])) {
+                        $options = $meta[$col_key]['options'];
+                    } elseif (isset($meta[$col_key]['choices'])) {
+                        $options = $meta[$col_key]['choices'];
+                    }
+                } else {
+                    $name = $col_key;
+                    if ($col_key === 'id') $name = 'ID';
+                    if ($col_key === 'created_at') $name = 'Ngày tạo (created_at)';
+                    
+                    $type = 'text';
+                    if (strpos(strtolower($p_col->Type), 'int') !== false) $type = 'number';
+                    if (strpos(strtolower($p_col->Type), 'datetime') !== false || strpos(strtolower($p_col->Type), 'timestamp') !== false) $type = 'datetime';
+                }
+                
+                $columns[] = [
+                    'id' => $col_key,
+                    'name' => $name,
+                    'type' => $type,
+                    'options' => $options
+                ];
+            }
+        } else {
+            // Fallback to dictionary if physical table fetch fails
+            foreach ($meta as $col_key => $col_data) {
+                if ($col_key !== '__table_info' && is_array($col_data)) {
+                    $columns[] = [
+                        'id' => $col_key,
+                        'name' => isset($col_data['title']) ? $col_data['title'] : $col_key,
+                        'type' => isset($col_data['type']) ? $col_data['type'] : 'text',
+                        'options' => isset($col_data['options']) ? $col_data['options'] : (isset($col_data['choices']) ? $col_data['choices'] : null)
+                    ];
+                }
+            }
+        }
+
         $available_tables[] = [
             'id' => $table_name,
             'name' => $meta['__table_info']['name'],
-            'app_group' => $app_group
+            'app_group' => $app_group,
+            'columns' => $columns
         ];
     }
 }
@@ -98,6 +151,7 @@ $saved_graph = empty($current_wf['graph']) ? '[]' : wp_json_encode($current_wf['
         <form method="POST" id="skaWorkflowForm" style="margin: 0;">
             <?php wp_nonce_field('ska_logic_nonce'); ?>
             <input type="hidden" name="ska_logic_save" value="1">
+            <input type="hidden" name="ska_form_id" value="<?php echo esc_attr($current_wf_id); ?>">
             <input type="hidden" name="ska_linear_graph" id="skaLinearGraphInput" value="">
             <button type="submit" class="button button-primary" style="background:#059669; border-color:#059669; font-size: 14px; padding: 0 16px; display:flex; align-items:center; gap:6px;">
                 <span class="dashicons dashicons-saved" style="margin-top:0;"></span> Lưu Đồ Thị

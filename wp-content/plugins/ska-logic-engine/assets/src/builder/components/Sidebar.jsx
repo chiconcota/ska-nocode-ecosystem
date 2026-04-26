@@ -2,37 +2,59 @@ import React from 'react';
 import { 
   Zap, 
   GitBranch, 
+  GitMerge,
   Globe, 
   AlertTriangle, 
   ServerCog,
   Database,
-  Mail
+  Mail,
+  Variable
 } from 'lucide-react';
 
 const NODE_TYPES = [
   {
     type: 'TriggerNode',
-    label: 'Trigger Event',
+    backendClass: 'Ska_Logic_Trigger_Node',
+    label: 'Trigger Node',
     icon: <Zap size={16} />,
     description: 'Start workflow on event',
     color: 'bg-red-50 text-red-700 border-red-200'
   },
   {
-    type: 'ActionNode',
-    label: 'Database Action',
+    type: 'SetDataNode',
+    backendClass: 'Ska_Logic_Set_Data',
+    label: 'Set Data',
+    icon: <Variable size={16} />,
+    description: 'Assign variables',
+    color: 'bg-indigo-50 text-indigo-700 border-indigo-200'
+  },
+  {
+    type: 'DBActionNode',
+    backendClass: 'Ska_Logic_DB_Action',
+    label: 'DB CRUD Action',
     icon: <Database size={16} />,
     description: 'Read/Write to DB',
-    color: 'bg-blue-50 text-blue-700 border-blue-200'
+    color: 'bg-emerald-50 text-emerald-700 border-emerald-200'
   },
   {
     type: 'ConditionNode',
+    backendClass: 'Ska_Condition_Node',
     label: 'If/Else',
     icon: <GitBranch size={16} />,
     description: 'Branching logic',
     color: 'bg-amber-50 text-amber-700 border-amber-200'
   },
   {
+    type: 'SwitchNode',
+    backendClass: 'Ska_Logic_Switch',
+    label: 'Switch Router',
+    icon: <GitMerge size={16} />,
+    description: 'Multi-branch routing',
+    color: 'bg-purple-50 text-purple-700 border-purple-200'
+  },
+  {
     type: 'ApiNode',
+    backendClass: 'Ska_Api_Node',
     label: 'HTTP Request',
     icon: <Globe size={16} />,
     description: 'Call external API',
@@ -40,6 +62,7 @@ const NODE_TYPES = [
   },
   {
     type: 'ErrorNode',
+    backendClass: 'Ska_Error_Node',
     label: 'Catch Error',
     icon: <AlertTriangle size={16} />,
     description: 'Handle exceptions',
@@ -47,6 +70,7 @@ const NODE_TYPES = [
   },
   {
     type: 'BackgroundNode',
+    backendClass: 'Ska_Background_Node',
     label: 'Background Job',
     icon: <ServerCog size={16} />,
     description: 'Run asynchronously',
@@ -55,9 +79,10 @@ const NODE_TYPES = [
 ];
 
 export default function Sidebar() {
-  const onDragStart = (event, nodeType, label) => {
-    event.dataTransfer.setData('application/reactflow', nodeType);
-    event.dataTransfer.setData('application/reactflow-label', label);
+  const onDragStart = (event, node) => {
+    event.dataTransfer.setData('application/reactflow', node.type);
+    event.dataTransfer.setData('application/reactflow-label', node.label);
+    event.dataTransfer.setData('application/reactflow-class', node.backendClass || '');
     event.dataTransfer.effectAllowed = 'move';
   };
 
@@ -78,7 +103,7 @@ export default function Sidebar() {
           <div
             key={node.type}
             className={`p-3 border rounded-lg cursor-grab hover:shadow-md transition-shadow ${node.color}`}
-            onDragStart={(event) => onDragStart(event, node.type, node.label)}
+            onDragStart={(event) => onDragStart(event, node)}
             draggable
           >
             <div className="flex items-center gap-2 font-medium text-sm mb-1">

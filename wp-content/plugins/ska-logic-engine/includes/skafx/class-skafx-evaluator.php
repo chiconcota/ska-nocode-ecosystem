@@ -73,6 +73,24 @@ class SkaFX_Evaluator {
                 return $this->row_context[ $var_name ];
             }
 
+            // Ưu tiên 2.5: Quét mảng dữ liệu Dòng nội khu hỗ trợ Dot Notation (VD: `trigger.nam_sinh` hoặc `form.ten`)
+            if ( strpos( $var_name, '.' ) !== false ) {
+                $keys = explode( '.', $var_name );
+                $current = $this->row_context;
+                $found = true;
+                foreach ( $keys as $key ) {
+                    if ( is_array( $current ) && array_key_exists( $key, $current ) ) {
+                        $current = $current[ $key ];
+                    } else {
+                        $found = false;
+                        break;
+                    }
+                }
+                if ( $found ) {
+                    return $current;
+                }
+            }
+
             // Ưu tiên 3: Quét chéo Object (Smart Object / App Context) bằng Context_Resolver
             // Hỗ trợ cả 3 dạng: [app.model.col], [model.col], và [col]
             $resolved_context = null;
@@ -228,7 +246,7 @@ class SkaFX_Engine {
         } catch ( SkaFX_Syntax_Error | SkaFX_Runtime_Error $e ) {
              // Đạt tiêu chuẩn Nuốt Lỗi: Ghi log, Không là sập web frontend.
              error_log("[SkaFX Engine Failure]: " . $e->getMessage());
-             return [ 'last_val' => false, 'symbols' => [] ];
+             return [ 'last_val' => false, 'symbols' => [], 'error' => $e->getMessage() ];
         }
     }
 }
