@@ -8,6 +8,13 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-04-26 - 🟢 Debug Hoàn tất Luồng Dữ liệu Ska Logic Engine & Giao diện Node
+- **Decision (SkaFX Smart Fallback cho Chuỗi Tĩnh):** Giải quyết triệt để lỗi người dùng Nocode nhập "chuỗi tĩnh" (không có nháy kép, VD: `khách lẻ`) vào DB Action Node khiến hệ thống tưởng nhầm là tên biến và đánh giá ra `null` (hoặc lỗi cú pháp). Quyết định: Cập nhật `SkaFX_Evaluator` để trả về cờ báo lỗi chính xác, và cập nhật luồng Mapping của Node DB Action bằng cơ chế **Smart Fallback** (Fall back to string). Nếu hệ thống báo lỗi không phân giải được biểu thức, chuỗi đó sẽ được hiểu là văn bản thuần túy và tự động Parse tham số bên trong ngoặc vuông (VD: `[hoten]`) bằng Regular Expression, đảm bảo luồng Logic không bao giờ chèn dữ liệu rỗng (`NULL`) một cách vô lý vào DB.
+
+- **Decision (SkaFX Evaluator & Condition Syntax):** Hướng dẫn người dùng Nocode hiểu đúng cú pháp của `If/Else Node`. Biểu thức điều kiện cần trả về boolean (VD: `[tuoi] > 18`) thay vì phép gán hay so sánh với biến rỗng (`[tuoi] > 18 == active`). Đã xác minh `Ska_Workflow_Runner` định tuyến nhánh `true`/`false` chính xác khi biểu thức hợp lệ.
+- **Decision (React Flow UI State Preservation):** Sửa lỗi giao diện `SetDataNode` trên Canvas ghi đè (overwrite) description của người dùng bằng generic assignments (Sets:...). Quyết định tái cấu trúc `SetDataNode.jsx` để đẩy nội dung assignments xuống `children` của `BaseNode`, giữ nguyên vẹn description tùy chỉnh và hiển thị đồng thời cả 2 khối thông tin gọn gàng.
+- **Decision (Workflow Execution Validation):** Chốt chặn và xác nhận toàn bộ Data Pipeline từ `Trigger (Form)` -> `Set Data (SkaFX)` -> `Condition (If/Else)` -> `DB Action (Insert)` hoạt động hoàn hảo trong mô hình DAG mà không bị gãy chuỗi tham chiếu `$payload`.
+
 ## 2026-04-24 - 🟢 Tối ưu Hóa Giao diện Quản trị & Dashboard Ecosystem
 - **Decision (Dynamic Workflow Submenu):** Quyết định đăng ký tự động các luồng workflow (Ska Logic Engine) thành các menu con ở thanh quản trị WordPress. Thay vì người dùng phải vào giao diện chính rồi ấn chọn luồng, giờ họ có thể truy cập (1-click) ngay từ sidebar, giúp giảm thiểu độ trễ thao tác UX.
 - **Decision (Unified Module Card UI):** Áp dụng kiến trúc thiết kế thẻ `.module-card` cao cấp dùng chung cho cả Hệ sinh thái Ska thông qua lớp System Framework. Giao diện Dashboard được nâng cấp các hiệu ứng hover, shadow, và status indicators giúp mang lại trải nghiệm Nocode đồng bộ, chuyên nghiệp cho mọi Plugins.

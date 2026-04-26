@@ -75,32 +75,31 @@ class Framework_UI
                 $status_class = $is_installed ? 'bg-slate-200 text-slate-700 border-slate-300' : 'bg-rose-100 text-rose-700 border-rose-200';
                 $status_text = $is_installed ? 'Chưa kích hoạt' : 'Chưa cài đặt';
                 ?>
-                <div
-                    class="bg-slate-50 rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col sm:flex-row gap-5 relative overflow-hidden mt-6 opacity-75 grayscale-[30%] hover:grayscale-0 transition-all">
-                    <div
-                        class="w-14 h-14 bg-slate-200 text-slate-500 rounded-xl flex items-center justify-center flex-shrink-0 border border-slate-300">
-                        <span class="material-symbols-outlined text-[28px]"><?php echo esc_attr($mod['icon']); ?></span>
+                <div class="module-card rounded-2xl p-6 flex flex-col sm:flex-row gap-6 relative overflow-hidden mt-4 group opacity-75 grayscale-[40%] hover:grayscale-0 transition-all duration-500">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-300 group-hover:bg-indigo-400 transition-colors"></div>
+                    <div class="w-16 h-16 bg-slate-100 text-slate-500 rounded-2xl flex items-center justify-center flex-shrink-0 border border-slate-200 shadow-inner group-hover:bg-indigo-50 group-hover:text-indigo-500 group-hover:border-indigo-100 transition-all duration-300">
+                        <span class="material-symbols-outlined text-[32px]"><?php echo esc_attr($mod['icon']); ?></span>
                     </div>
                     <div class="flex-1">
                         <div class="flex justify-between items-start">
                             <div>
-                                <h3 class="font-bold text-slate-700 text-base m-0 border-0 pt-0 pb-0">
+                                <h3 class="font-bold text-slate-800 text-lg m-0 border-0 pt-0 pb-0">
                                     <?php echo esc_html($mod['name']); ?></h3>
-                                <p class="text-sm text-slate-500 mt-1"><?php echo esc_html($mod['desc']); ?></p>
+                                <p class="text-sm text-slate-500 mt-2 leading-relaxed"><?php echo esc_html($mod['desc']); ?></p>
                             </div>
-                            <span
-                                class="h-[22px] inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border <?php echo esc_attr($status_class); ?>">
+                            <span class="h-[24px] inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold border shadow-sm <?php echo esc_attr($status_class); ?>">
                                 <?php echo esc_html($status_text); ?>
                             </span>
                         </div>
-                        <div class="mt-4 flex gap-3 text-sm">
+                        <div class="mt-5 flex gap-3 text-sm">
                             <?php if ($is_installed): ?>
-                                <button class="border-0 bg-transparent text-slate-400 font-medium cursor-not-allowed p-0">Vui lòng bật trong
-                                    thẻ Plugins</button>
+                                <button class="border-0 bg-slate-100 text-slate-500 px-4 py-2 rounded-lg font-medium cursor-not-allowed flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[18px]">power_off</span> Vui lòng bật trong thẻ Plugins
+                                </button>
                             <?php else: ?>
                                 <a href="<?php echo esc_url($mod['url']); ?>" target="_blank"
-                                    class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[16px]">download</span> Tải xuống Plugin
+                                    class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg no-underline">
+                                    <span class="material-symbols-outlined text-[18px]">download</span> Tải xuống Plugin
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -112,27 +111,25 @@ class Framework_UI
 
         ?>
         <!-- Module: Bridge -->
-        <div
-            class="mt-6 bg-slate-50 rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col sm:flex-row gap-5 relative overflow-hidden opacity-75 grayscale-[30%] hover:grayscale-0 transition-all">
-            <div
-                class="w-14 h-14 bg-slate-200 text-slate-500 rounded-xl flex items-center justify-center flex-shrink-0 border border-slate-300">
-                <span class="material-symbols-outlined text-[28px]">api</span>
+        <div class="module-card rounded-2xl p-6 flex flex-col sm:flex-row gap-6 relative overflow-hidden mt-4 group opacity-75 grayscale-[40%] hover:grayscale-0 transition-all duration-500">
+            <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-300 group-hover:bg-slate-400 transition-colors"></div>
+            <div class="w-16 h-16 bg-slate-100 text-slate-500 rounded-2xl flex items-center justify-center flex-shrink-0 border border-slate-200 shadow-inner group-hover:scale-105 transition-transform duration-300">
+                <span class="material-symbols-outlined text-[32px]">api</span>
             </div>
             <div class="flex-1">
                 <div class="flex justify-between items-start">
                     <div>
-                        <h3 class="m-0 pt-0 pb-0 border-0 font-bold text-slate-700 text-base">Ska Bridge (Đang phát triển)</h3>
-                        <p class="text-sm text-slate-500 mt-1">Cầu nối kiến trúc Headless (wordpress2nextjs) & JSON Schema API
-                            Export. Giải pháp tối thượng tách biệt hoàn toàn Frontend và Backend.</p>
+                        <h3 class="m-0 pt-0 pb-0 border-0 font-bold text-slate-800 text-lg">Ska Bridge (Đang phát triển)</h3>
+                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">Cầu nối kiến trúc Headless (wordpress2nextjs) & JSON Schema API Export. Giải pháp tối thượng tách biệt hoàn toàn Frontend và Backend.</p>
                     </div>
-                    <span
-                        class="h-[22px] inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-200 text-slate-700 border border-slate-300">
+                    <span class="h-[24px] inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200 shadow-sm">
                         Đóng băng
                     </span>
                 </div>
-                <div class="mt-4 flex gap-3 text-sm">
-                    <button class="border-0 bg-transparent text-slate-400 font-medium cursor-not-allowed p-0">Tính năng sắp ra
-                        mắt</button>
+                <div class="mt-5 flex gap-3 text-sm">
+                    <button class="border-0 bg-slate-50 text-slate-400 px-4 py-2 rounded-lg font-medium cursor-not-allowed flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">lock_clock</span> Tính năng sắp ra mắt
+                    </button>
                 </div>
             </div>
         </div>
@@ -144,52 +141,48 @@ class Framework_UI
         $theme_active = (get_template() === 'ska-canvas' || get_stylesheet() === 'ska-canvas');
 
         // CSS Style theo trạng thái Theme
-        $t_wrap_style = $theme_active ? 'bg-white border-indigo-100 border-2' : 'bg-slate-50 border-slate-200 border opacity-75 grayscale-[30%] hover:grayscale-0 transition-all';
-        $t_icon_style = $theme_active ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-slate-200 text-slate-500 border-slate-300';
-        $t_title_style = $theme_active ? 'text-slate-900' : 'text-slate-700';
+        $t_wrap_style = $theme_active ? 'module-card rounded-2xl p-6 flex flex-col sm:flex-row gap-6 relative overflow-hidden mt-4 group' : 'module-card rounded-2xl p-6 flex flex-col sm:flex-row gap-6 relative overflow-hidden mt-4 group opacity-75 grayscale-[40%] hover:grayscale-0 transition-all duration-500';
+        $t_icon_style = $theme_active ? 'bg-gradient-to-br from-indigo-50 to-purple-50 text-indigo-600 border border-indigo-100 shadow-inner group-hover:scale-105 transition-transform duration-300' : 'bg-slate-100 text-slate-500 border-slate-200 shadow-inner group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-all duration-300';
+        $t_title_style = $theme_active ? 'text-slate-900' : 'text-slate-800';
         ?>
-        <div
-            class="<?php echo esc_attr($t_wrap_style); ?> rounded-xl p-5 shadow-sm flex flex-col sm:flex-row gap-5 relative overflow-hidden mt-6">
+        <div class="<?php echo esc_attr($t_wrap_style); ?>">
+            <div class="absolute top-0 left-0 w-1.5 h-full <?php echo $theme_active ? 'bg-gradient-to-b from-indigo-400 to-purple-600' : 'bg-slate-300 group-hover:bg-indigo-400'; ?> transition-colors"></div>
             <?php if ($theme_active): ?>
-                <div
-                    class="absolute top-0 right-0 bg-indigo-100 text-indigo-700 text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">
+                <div class="absolute top-0 right-0 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-bl-xl uppercase tracking-wider shadow-sm">
                     Active Theme
                 </div>
             <?php endif; ?>
-            <div
-                class="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 border <?php echo esc_attr($t_icon_style); ?>">
-                <span class="material-symbols-outlined text-[28px]">web</span>
+            <div class="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 <?php echo esc_attr($t_icon_style); ?>">
+                <span class="material-symbols-outlined text-[32px]">web</span>
             </div>
             <div class="flex-1">
                 <div class="flex justify-between items-start">
                     <div>
-                        <h3 class="m-0 pt-0 pb-0 border-0 font-bold text-base <?php echo esc_attr($t_title_style); ?>">Ska
-                            Canvas Theme</h3>
-                        <p class="text-sm text-slate-500 mt-1">Barebone WP Theme (Zero CSS). Loại bỏ 100% rác CSS mặc định của
-                            WordPress để nhường sân khấu cho JIT Compiler.</p>
+                        <h3 class="m-0 pt-0 pb-0 border-0 font-bold text-lg <?php echo esc_attr($t_title_style); ?>">Ska Canvas Theme</h3>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">Barebone WP Theme (Zero CSS). Loại bỏ 100% rác CSS mặc định của WordPress để nhường sân khấu cho JIT Compiler.</p>
                     </div>
                     <?php if (!$theme_active): ?>
                         <?php
-                        $t_status_class = $theme_exists ? 'bg-slate-200 text-slate-700 border-slate-300' : 'bg-rose-100 text-rose-700 border-rose-200';
+                        $t_status_class = $theme_exists ? 'bg-slate-100 text-slate-600 border-slate-200' : 'bg-rose-50 text-rose-600 border-rose-200';
                         $t_status_text = $theme_exists ? 'Chưa kích hoạt' : 'Chưa cài đặt';
                         ?>
-                        <span
-                            class="h-[22px] inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border <?php echo esc_attr($t_status_class); ?>">
+                        <span class="h-[24px] inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold border shadow-sm <?php echo esc_attr($t_status_class); ?>">
                             <?php echo esc_html($t_status_text); ?>
                         </span>
                     <?php endif; ?>
                 </div>
-                <div class="mt-4 flex gap-3 text-sm">
+                <div class="mt-5 flex gap-4 text-sm">
                     <?php if ($theme_active): ?>
-                        <a href="#" class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline">Tùy biến
-                            Theme.json</a>
+                        <a href="#" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg no-underline">
+                            <span class="material-symbols-outlined text-[18px]">brush</span> Tùy biến Theme.json
+                        </a>
                     <?php elseif ($theme_exists): ?>
-                        <a href="<?php echo admin_url('themes.php'); ?>"
-                            class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline">Kích hoạt trong Appearance</a>
+                        <a href="<?php echo admin_url('themes.php'); ?>" class="inline-flex items-center gap-1 text-slate-700 font-semibold hover:text-indigo-700 transition-colors bg-slate-100 hover:bg-indigo-50 px-4 py-2 rounded-lg no-underline border border-slate-200 hover:border-indigo-200">
+                            <span class="material-symbols-outlined text-[18px]">toggle_on</span> Kích hoạt trong Appearance
+                        </a>
                     <?php else: ?>
-                        <a href="https://ska.vn/canvas-theme" target="_blank"
-                            class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[16px]">download</span> Tải xuống Base Theme
+                        <a href="https://ska.vn/canvas-theme" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg no-underline">
+                            <span class="material-symbols-outlined text-[18px]">download</span> Tải xuống Base Theme
                         </a>
                     <?php endif; ?>
                 </div>

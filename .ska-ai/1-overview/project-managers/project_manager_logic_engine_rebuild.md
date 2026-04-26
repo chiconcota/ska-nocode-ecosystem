@@ -16,7 +16,7 @@ Thay vì làm các Node chức năng khổng lồ, hệ thống sẽ chỉ cung 
 ### 2.1. Nhóm Logic & Trigger (Ưu tiên P1)
 - [x] **[T1] Event Trigger Node:** (Đang làm) Lắng nghe Hooks (Form Submit, Insert). 
 - [x] **[L1] If/Else Condition Node:** Rẽ nhánh logic 2 cổng (True/False).
-- [ ] **[L2] Switch Router Node:** Rẽ nhiều nhánh dựa trên giá trị.
+- [x] **[L2] Switch Router Node:** Rẽ nhiều nhánh dựa trên giá trị.
 
 ### 2.2. Nhóm Data & Giao thức (Ưu tiên P2)
 - [x] **[D1] DB CRUD Action Node (Ska Native):** Node thao tác CSDL với Ska Data Pro. (Tích hợp Schema UI, Auto-map fields, Data Picker, hỗ trợ Data Vector Batch Process để chống N+1).
@@ -45,4 +45,4 @@ Thay vì làm các Node chức năng khổng lồ, hệ thống sẽ chỉ cung 
 - [x] Hoàn thiện trải nghiệm UX/UI (Dynamic Submenus, Unified Dashboard Cards, chống tràn Settings Panel, sửa lỗi ESC đóng modal).
 - [ ] Cập nhật `class-workflow-runner.php` thêm giới hạn đệ quy (`Circuit Breaker`).
 - [ ] Tích hợp tính năng Data Picker nâng cao (Gom nhóm theo App).
-- [ ] Kiểm thử toàn diện DBActionNode (Insert/Update Record) cho quy trình cuối.
+- [x] Kiểm thử toàn diện DBActionNode (Insert/Update Record) kết hợp với If/Else và Set Data (Đã hoàn tất quy trình cuối).

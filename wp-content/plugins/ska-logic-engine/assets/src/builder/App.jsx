@@ -15,6 +15,10 @@ import { GitBranch, Globe, AlertTriangle, ServerCog } from 'lucide-react';
 
 import TriggerNode from './nodes/TriggerNode';
 import ActionNode from './nodes/ActionNode';
+import SetDataNode from './nodes/SetDataNode';
+import ConditionNode from './nodes/ConditionNode';
+import SwitchNode from './nodes/SwitchNode';
+import DBActionNode from './nodes/DBActionNode';
 import BaseNode from './nodes/BaseNode';
 import Sidebar from './components/Sidebar';
 import SettingsPanel from './components/SettingsPanel';
@@ -22,7 +26,10 @@ import SettingsPanel from './components/SettingsPanel';
 const nodeTypes = {
   TriggerNode: TriggerNode,
   ActionNode: ActionNode,
-  ConditionNode: (props) => <BaseNode {...props} icon={<GitBranch size={16} />} title="If/Else" colorClass="bg-amber-50" borderClass="border-amber-200" headerClass="bg-amber-100 text-amber-800 border-amber-200" />,
+  SetDataNode: SetDataNode,
+  ConditionNode: ConditionNode,
+  SwitchNode: SwitchNode,
+  DBActionNode: DBActionNode,
   ApiNode: (props) => <BaseNode {...props} icon={<Globe size={16} />} title="HTTP Request" colorClass="bg-emerald-50" borderClass="border-emerald-200" headerClass="bg-emerald-100 text-emerald-800 border-emerald-200" />,
   ErrorNode: (props) => <BaseNode {...props} icon={<AlertTriangle size={16} />} title="Catch Error" colorClass="bg-rose-50" borderClass="border-rose-200" headerClass="bg-rose-100 text-rose-800 border-rose-200" />,
   BackgroundNode: (props) => <BaseNode {...props} icon={<ServerCog size={16} />} title="Background Job" colorClass="bg-purple-50" borderClass="border-purple-200" headerClass="bg-purple-100 text-purple-800 border-purple-200" />
@@ -58,8 +65,9 @@ function DnDFlow() {
         {
           id: 'trigger_1',
           type: 'TriggerNode',
+          class: 'Ska_Logic_Trigger_Node',
           position: { x: 250, y: 50 },
-          data: { label: 'Form Submit Trigger', workflowId: ctx.CURRENT_WF_ID || 'default' }
+          data: { label: 'Trigger Node', workflowId: ctx.CURRENT_WF_ID || 'default' }
         }
       ]);
     }
@@ -89,6 +97,7 @@ function DnDFlow() {
 
       const type = event.dataTransfer.getData('application/reactflow');
       const label = event.dataTransfer.getData('application/reactflow-label');
+      const backendClass = event.dataTransfer.getData('application/reactflow-class');
 
       if (typeof type === 'undefined' || !type) {
         return;
@@ -103,6 +112,7 @@ function DnDFlow() {
       const newNode = {
         id: getId(),
         type,
+        class: backendClass || '',
         position,
         data: { label: label },
       };
@@ -132,6 +142,12 @@ function DnDFlow() {
     );
   }, [setNodes]);
 
+  const handleDeleteNode = useCallback((id) => {
+    setNodes((nds) => nds.filter((node) => node.id !== id));
+    setEdges((eds) => eds.filter((edge) => edge.source !== id && edge.target !== id));
+    setSelectedNodeId(null);
+  }, [setNodes, setEdges]);
+
   const selectedNode = nodes.find(n => n.id === selectedNodeId);
 
   return (
@@ -160,6 +176,7 @@ function DnDFlow() {
         <SettingsPanel 
           selectedNode={selectedNode} 
           onUpdateNode={handleUpdateNode}
+          onDeleteNode={handleDeleteNode}
           onClose={() => setSelectedNodeId(null)}
         />
       )}

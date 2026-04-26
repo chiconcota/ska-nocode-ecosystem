@@ -1,7 +1,7 @@
 import React from 'react';
 import { Handle, Position } from '@xyflow/react';
 
-export default function BaseNode({ data, icon, title, colorClass, borderClass, headerClass }) {
+export default function BaseNode({ data, icon, title, colorClass, borderClass, headerClass, hideInput = false, hideOutput = false, children }) {
     return (
         <div className={`border-2 rounded-lg shadow-sm min-w-[220px] overflow-hidden bg-white ${borderClass}`}>
             <div className={`${headerClass} px-3 py-2 flex items-center gap-2 font-semibold text-sm border-b`}>
@@ -12,7 +12,8 @@ export default function BaseNode({ data, icon, title, colorClass, borderClass, h
             <div className="p-3 text-sm text-gray-600">
                 {data.description && <p className="text-xs mb-2">{data.description}</p>}
                 {Object.entries(data).map(([key, value]) => {
-                    if (key === 'label' || key === 'description') return null;
+                    if (key === 'label' || key === 'description' || key === 'expression') return null;
+                    if (typeof value === 'object' && value !== null) return null;
                     return (
                         <div key={key} className="mb-2 last:mb-0">
                             <span className="text-xs font-medium text-gray-500 capitalize">{key}:</span>
@@ -24,21 +25,28 @@ export default function BaseNode({ data, icon, title, colorClass, borderClass, h
                 })}
             </div>
 
+            {/* Custom Content / Handles */}
+            {children}
+
             {/* Input Handle */}
-            <Handle 
-                type="target" 
-                position={Position.Top} 
-                className="w-3 h-3 border-2 border-white"
-                style={{ background: '#94a3b8' }}
-            />
+            {!hideInput && (
+                <Handle 
+                    type="target" 
+                    position={Position.Top} 
+                    className="w-3 h-3 border-2 border-white"
+                    style={{ background: '#94a3b8' }}
+                />
+            )}
             
             {/* Output Handle */}
-            <Handle 
-                type="source" 
-                position={Position.Bottom} 
-                className="w-3 h-3 border-2 border-white"
-                style={{ background: '#94a3b8' }}
-            />
+            {!hideOutput && (
+                <Handle 
+                    type="source" 
+                    position={Position.Bottom} 
+                    className="w-3 h-3 border-2 border-white"
+                    style={{ background: '#94a3b8' }}
+                />
+            )}
         </div>
     );
 }

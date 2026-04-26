@@ -77,10 +77,17 @@ SkaFX cung cấp sẵn các nhóm hàm tiêu chuẩn giống Excel. Tham số tr
 
 ---
 
-## 5. CƠ CHẾ BẢO VỆ "NUỐT LỖI" (SYNTAX ERROR ESCAPE)
+## 5. CƠ CHẾ BẢO VỆ "NUỐT LỖI" VÀ SMART FALLBACK
 Do SkaFX được Evaluator phân tích ở tầng máy chủ (Backend), nên nếu Tác giả gõ sai cú pháp (Ví dụ thiếu dấu ngoặc: `IF([name] = 2`), bộ máy PHP Cốt lõi của Ska Logic Engine tuyệt đối sẽ:
 1. **KHÔNG** làm White Screen of Death (Sập trình duyệt hay crash PHP).
 2. **KẾT QUẢ:** Tự động nuốt lỗi vào hư không, trả về Rỗng `""` hoặc `false` không điều kiện để vượt rào (Fallback).
+
+### 5.1. Smart Fallback Cho Văn Bản Tĩnh (Literal String) & Template
+Đặc biệt trong các Action Node (như DB Action, Set Data), nếu người dùng Nocode điền một chuỗi văn bản không có nháy kép (VD: `khách lẻ` hoặc `vip`) hoặc chuỗi pha trộn (VD: `Khách hàng [hoten]`), SkaFX sẽ:
+1. Đánh giá xem chuỗi đó có hợp lệ là mã SkaFX hay không.
+2. Nếu xảy ra lỗi cú pháp (Syntax Error) hoặc trả về `null` do không tìm thấy biến `vip`, bộ máy sẽ tự động kích hoạt **Smart Fallback**.
+3. **Smart Fallback** sẽ quét chuỗi để thay thế các tham số trong ngoặc vuông (VD: `[hoten]`) bằng giá trị thực tế từ `$payload`, và giữ nguyên văn bản tĩnh còn lại.
+4. Điều này giúp người dùng Nocode có thể gõ trực tiếp nội dung tĩnh vào ô cấu hình mà không bị ép buộc phải hiểu về quy tắc "chuỗi phải nằm trong cặp dấu ngoặc kép" của Lập trình viên.
 
 ---
 

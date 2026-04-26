@@ -25,12 +25,14 @@ class Ska_Workflow_Runner {
         }
 
         if ( empty($graph) ) {
+            error_log("Ska_Workflow_Runner: Graph rỗng hoặc không tìm thấy workflow_id = " . $workflow_id);
             return $payload; // Không làm gì cả
         }
+        error_log("Ska_Workflow_Runner: Đã load graph cho " . $workflow_id . ". Nodes count: " . count($graph['nodes'] ?? []));
 
-        // Tương thích ngược: Nếu là mảng tuần tự cũ (không có cấu trúc 'nodes', 'edges') -> Chạy Linear
-        if ( ! isset($graph['nodes']) ) {
-            return self::run_legacy_linear( $payload, $graph );
+        // Đảm bảo có cấu trúc DAG hợp lệ
+        if ( ! isset($graph['nodes']) || ! is_array($graph['nodes']) ) {
+            return $payload; // Graph không hợp lệ
         }
 
         // Tìm các Node gốc (Trigger Nodes) - Node không có ai trỏ vào
@@ -44,23 +46,6 @@ class Ska_Workflow_Runner {
 
         // Vì hệ thống DAG phân nhánh phức tạp, và trả về $payload gốc sau khi đã chạy đồng bộ
         return $payload;
-    }
-
-    /**
-     * Chạy tương thích ngược cho dữ liệu cũ (Linear Array)
-     */
-    private static function run_legacy_linear( $payload, $graph ) {
-        $current_payload = $payload;
-        foreach ( $graph as $node ) {
-            if ( isset( $node['class'] ) && class_exists( $node['class'] ) ) {
-                $instance = new $node['class']();
-                if ( $instance instanceof Ska_Logic_Node ) {
-                    $result = $instance->execute( $current_payload, $node['config'] ?? [] );
-                    $current_payload = (is_array($result) && isset($result['payload'])) ? $result['payload'] : $result;
-                }
-            }
-        }
-        return $current_payload;
     }
 
     private static function find_trigger_node( $nodes ) {
@@ -101,7 +86,8 @@ class Ska_Workflow_Runner {
         if ( isset( $current_node['class'] ) && class_exists( $current_node['class'] ) ) {
             $instance = new $current_node['class']();
             if ( $instance instanceof Ska_Logic_Node ) {
-                $result = $instance->execute( $payload, $current_node['config'] ?? [] );
+                $node_config = $current_node['data'] ?? ($current_node['config'] ?? []);
+                $result = $instance->execute( $payload, $node_config );
                 if ( is_array($result) && isset($result['payload']) && isset($result['port']) ) {
                     $payload = $result['payload'];
                     $port    = $result['port'];

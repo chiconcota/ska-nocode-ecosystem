@@ -220,10 +220,10 @@ class SkaFX_Lexer {
     private function consume_identifier() {
         $start = $this->position;
         
-        // Quét cho phép a-z, A-Z, gạch dưới, số và $ (phục vụ biến hệ thống như $index)
+        // Quét cho phép a-z, A-Z, gạch dưới, số, $ và dấu chấm . (phục vụ biến hệ thống như trigger.nam_sinh)
         while ( $this->position < $this->length ) {
             $char = $this->input[ $this->position ];
-            if ( preg_match( '/[a-zA-Z0-9_$]/', $char ) ) {
+            if ( preg_match( '/[a-zA-Z0-9_$.]/', $char ) ) {
                 $this->position++;
             } else {
                 break;

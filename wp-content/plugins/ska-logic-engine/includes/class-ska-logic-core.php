@@ -20,15 +20,14 @@ class Ska_Logic_Core {
 
     private function includes() {
         // 1. Interfaces (Khuôn mẫu)
-        require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/processors/interface-ska-node.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/interface-ska-node.php';
         
         // 2. Các cục Cục Nút (Nodes)
-        require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/processors/class-slug-processor.php';
-        require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/processors/class-date-processor.php';
-        require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/processors/class-format-processor.php';
-        require_once SKA_LOGIC_ENGINE_DIR . 'includes/actions/class-insert-data-action.php';
-        require_once SKA_LOGIC_ENGINE_DIR . 'includes/actions/class-update-data-action.php';
-        require_once SKA_LOGIC_ENGINE_DIR . 'includes/actions/class-email-action.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-trigger.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-set-data.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-condition.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-switch.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-db-action.php';
         
         // 3. Đường ray Tàu Hỏa (Pipeline Runner & Async)
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/class-workflow-runner.php';
@@ -59,7 +58,7 @@ class Ska_Logic_Core {
         add_filter( 'ska_logic_run_pipeline', [ 'Ska_Workflow_Runner', 'execute' ], 10, 2 );
 
         // Đăng ký WP Admin Menu
-        add_action( 'admin_menu', [ $this, 'register_admin_menu' ] );
+        add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
         
         // Đăng ký Module Card vào System Dashboard
         add_action( 'ska_system_dashboard_modules', [ $this, 'render_dashboard_card' ] );
@@ -118,35 +117,49 @@ class Ska_Logic_Core {
     public function register_admin_menu() {
         // Gắn vào under Ska System Framework thay vì tạo Menu Độc Lập
         add_submenu_page(
-            'ska-system-framework',
+            'ska-system-dashboard',
             'Ska Logic Automation', 
             'Ska Logic Engine', 
             'manage_options', 
             'ska-logic-engine', 
             [ $this, 'render_admin_page' ]
         );
+
+        // Render thêm submenu cho từng workflow
+        $workflows = get_option('ska_logic_simple_workflows', []);
+        if (is_array($workflows)) {
+            foreach ($workflows as $id => $data) {
+                add_submenu_page(
+                    'ska-system-dashboard',
+                    $id . ' Workflow', 
+                    '— ' . $id, 
+                    'manage_options', 
+                    'ska-logic-engine&view=builder&workflow_id=' . $id, 
+                    [ $this, 'render_admin_page' ]
+                );
+            }
+        }
     }
 
     public function render_dashboard_card() {
         ?>
         <!-- Module: Logic Engine -->
-        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col sm:flex-row gap-5 relative overflow-hidden mt-6">
-            <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
-            <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center flex-shrink-0 border border-amber-100">
-                <span class="material-symbols-outlined text-[28px]">account_tree</span>
+        <div class="module-card rounded-2xl p-6 flex flex-col sm:flex-row gap-6 relative overflow-hidden mt-4 group">
+            <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-amber-400 to-orange-600 opacity-80 group-hover:opacity-100 transition-opacity"></div>
+            <div class="w-16 h-16 bg-gradient-to-br from-amber-50 to-orange-50 text-amber-600 rounded-2xl flex items-center justify-center flex-shrink-0 border border-amber-100 shadow-inner group-hover:scale-105 transition-transform duration-300">
+                <span class="material-symbols-outlined text-[32px]">account_tree</span>
             </div>
             <div class="flex-1">
                 <div class="flex justify-between items-start">
                     <div>
-                        <h3 class="font-bold text-slate-900 text-base">Ska Logic Engine</h3>
-                        <p class="text-sm text-slate-500 mt-1">Xi-măng kết dính hệ sinh thái. Xử lý sự kiện (Workflows), Phân giải ngữ cảnh (Smart Context), CodeMirror UI và SkaFX AST.</p>
+                        <h3 class="font-bold text-slate-900 text-lg m-0 p-0">Ska Logic Engine</h3>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">Xi-măng kết dính hệ sinh thái. Xử lý sự kiện (Workflows), Phân giải ngữ cảnh (Smart Context), CodeMirror UI và SkaFX AST.</p>
                     </div>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
-                        Đang hoạt động
-                    </span>
                 </div>
-                <div class="mt-4 flex gap-3 text-sm">
-                    <a href="?page=ska-logic-engine" class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline">Mở Băng chuyền (Workflows)</a>
+                <div class="mt-5 flex gap-4 text-sm">
+                    <a href="?page=ska-logic-engine" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors bg-indigo-50 px-3 py-1.5 rounded-lg no-underline">
+                        <span class="material-symbols-outlined text-[18px]">account_tree</span> Mở Băng chuyền (Workflows)
+                    </a>
                 </div>
             </div>
         </div>
@@ -189,7 +202,7 @@ class Ska_Logic_Core {
 
         // Xử lý Lưu Form Line Builder
         if ( isset($_POST['ska_logic_save']) && check_admin_referer('ska_logic_nonce') ) {
-            $form_id    = sanitize_text_field( $_POST['ska_form_id'] );
+            $form_id    = isset($_POST['ska_form_id']) ? sanitize_text_field( $_POST['ska_form_id'] ) : '';
             $raw_json   = wp_unslash( $_POST['ska_linear_graph'] );
             $graph      = json_decode($raw_json, true);
 
