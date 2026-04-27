@@ -24,8 +24,15 @@ if ( $actionType === 'link' ) {
 // Robust Fallback: Check for non-empty tailwindClasses first, then fallback to className (legacy).
 $user_tailwindClasses = ! empty( $attributes['tailwindClasses'] ) ? $attributes['tailwindClasses'] : ( $attributes['className'] ?? '' );
 
+if ( $actionType === 'logic_api' ) {
+    $fieldName = $attributes['fieldName'] ?? '';
+    if ( ! empty( $fieldName ) ) {
+        $user_tailwindClasses .= ' ska-action-' . sanitize_html_class( $fieldName );
+    }
+}
+
 $wrapper_attributes = get_block_wrapper_attributes( array(
-    'class' => 'ska-button-block ' . esc_attr( $user_tailwindClasses ),
+    'class' => 'ska-button-block ' . esc_attr( trim( $user_tailwindClasses ) ),
 ) );
 
 if ( ! empty( $attributes['dynamic']['text_source'] ) && $attributes['dynamic']['text_source'] !== 'static' ) {

@@ -1,24 +1,16 @@
-# Bàn Giao Checkpoint (Ska Logic Engine - Automation Pipeline)
-@last_update: 2026-04-26
+# CHECKPOINT BÀN GIAO PHIÊN
+@last_update: 2026-04-27
+@status: Sẵn sàng cho Phiên mới
 
-## 1. Trạng Thái Hiện Tại (Kiến Trúc)
-- Đã kiểm thử thành công và xác nhận toàn bộ Luồng Pipeline của **Ska Logic Engine** hoạt động trơn tru: `Form Submit` -> `Set Data` -> `Switch Router` -> `DB Action Insert`.
-- Đã vá lỗi nghiêm trọng ở **DB Action Node** khi mapping các chuỗi văn bản tĩnh (VD: `khách lẻ`, `vip`). Bổ sung cơ chế **Smart Fallback** kết hợp với xử lý cờ lỗi `error` từ **SkaFX Evaluator**, cho phép điền văn bản thuần túy hoặc template (VD: `Khách hàng [hoten]`) mà không bị crash thành rỗng (`NULL`) hay báo lỗi cú pháp.
-- Đã hoàn thiện xong **Switch Router Node** trên cả giao diện kéo thả React và luồng thực thi xử lý đồ thị ở Backend.
+## 1. Trạng Thái Hiện Tại (System State)
+- **Kiến trúc Logic Engine (Phase 4.2):** Đã phân tách luồng Client Action (Phản hồi UI) thành 3 Primitive Nodes: `[C1] Client Redirect`, `[C2] Client Notification`, `[C3] Client State` để tránh tạo ra God Node ôm đồm. Các quy định đã được cập nhật đầy đủ trong Decision Log và System Map.
+- **Tiến độ Mới nhất:** Đã hoàn thành `Ska_Logic_Http_Request` (Gọi API ngoại vi) và `Global Action Click Listener` (`.ska-action-[workflow_id]`).
 
-## 2. Kế Hoạch Cho Phiên Tiếp Theo
-1. **Hoàn thiện các Primitive Nodes cơ bản còn lại:**
-   - Xây dựng **Raw HTTP Request Node** để gọi API ngoài.
-   - Xây dựng **Loop Node (Vòng lặp)** để xử lý mảng (Array) dữ liệu.
-2. **Nâng cấp tính năng UI Logic Builder:**
-   - Hoàn thiện luồng Data Picker (gom nhóm DB/App) trực quan hơn.
-3. **Củng cố An toàn Hệ thống (Circuit Breaker):**
-   - Triển khai giới hạn đệ quy (Stack depth) trong `class-workflow-runner.php` để chống Infinite Loop trong đồ thị vòng.
+## 2. Nhiệm Vụ Cho Phiên Kế Tiếp (Next Tasks)
+Theo yêu cầu trực tiếp từ người dùng:
+1. **Sửa lại Ska Button (Ưu tiên số 1):** Rà soát và nâng cấp lại Block `ska-button`. (Có thể liên quan đến UI/UX, hỗ trợ Action Click, hoặc kết nối tốt hơn với luồng Client Action sắp tới).
+2. **Triển khai Nhóm Client Action:** Tiếp tục xây dựng các UI Node trong hệ sinh thái React Flow (`[C3] Client State Node` hoặc `[C2] Notification Node`).
 
-## 3. Các File Đang Làm Việc Trọng Tâm
-- `plugins/ska-logic-engine/includes/skafx/class-skafx-evaluator.php`
-- `plugins/ska-logic-engine/includes/primitives/class-ska-logic-db-action.php`
-- `plugins/ska-logic-engine/includes/primitives/class-ska-logic-switch.php`
-- `plugins/ska-logic-engine/assets/src/builder/nodes/SwitchNode.jsx`
-
-Hệ thống tài liệu đã được niêm phong và Ghi nhớ! Sẵn sàng Code ngay khi người dùng khởi động phiên mới (Start Session).
+## 3. Lời Nhắn Cho Agent Phiên Sau
+- Vui lòng bắt đầu phiên bằng cách xem xét yêu cầu "Sửa lại Ska Button". Kiểm tra file `wp-content/plugins/ska-no-code-design/src/ska-button/index.js` và `render.php` để đối chiếu với yêu cầu của User.
+- Duy trì nguyên tắc Zero-Trash: Không tự ý tạo file `.md` ngoài 4 ngăn kéo quản lý.

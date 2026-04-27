@@ -54,7 +54,7 @@ const NODE_TYPES = [
   },
   {
     type: 'ApiNode',
-    backendClass: 'Ska_Api_Node',
+    backendClass: 'Ska_Logic_Http_Request',
     label: 'HTTP Request',
     icon: <Globe size={16} />,
     description: 'Call external API',

@@ -67,7 +67,8 @@ registerBlockType(metadata.name, {
                             options={[
                                 { label: 'Link URL', value: 'link' },
                                 { label: 'Trigger Popup', value: 'popup' },
-                                { label: 'Submit Form', value: 'submit' }
+                                { label: 'Submit Form', value: 'submit' },
+                                { label: 'Trigger Logic API', value: 'logic_api' }
                             ]}
                             onChange={(val) => {
                                 const newTagName = val === 'link' ? 'a' : 'button';
@@ -107,6 +108,14 @@ registerBlockType(metadata.name, {
                                     help="Giá trị gửi lên Server (Ví dụ: publish, draft)"
                                 />
                             </>
+                        )}
+                        {actionType === 'logic_api' && (
+                            <TextControl
+                                label={__('Workflow ID', 'ska-builder-core')}
+                                value={fieldName}
+                                onChange={(val) => setAttributes({ fieldName: val })}
+                                help="Nhập ID của Workflow để chạy (Ví dụ: api_test)"
+                            />
                         )}
                     </PanelBody>
 

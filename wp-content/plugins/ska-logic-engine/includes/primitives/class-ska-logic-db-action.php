@@ -59,7 +59,7 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
                         // Xử lý nội suy biến đơn giản như Template (VD: "Mã khách: [id]")
                         $final_string = preg_replace_callback('/\[([a-zA-Z0-9_$.]+)\]/', function($matches) use ($payload) {
                             $var_name = $matches[1];
-                            $res = \Ska\Logic\SkaFX\SkaFX_Engine::execute('[' . $var_name . ']', $payload);
+                            $res = \Ska\Logic\SkaFX\SkaFX_Engine::execute($var_name, $payload);
                             return isset($res['last_val']) && !isset($res['error']) ? $res['last_val'] : '';
                         }, $expr);
                         
