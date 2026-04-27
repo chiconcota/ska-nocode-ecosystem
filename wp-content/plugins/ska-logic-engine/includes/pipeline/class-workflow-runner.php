@@ -4,6 +4,12 @@ defined( 'ABSPATH' ) || exit;
 class Ska_Workflow_Runner {
     
     /**
+     * Ngưỡng ngắt mạch (Circuit Breaker)
+     */
+    private static $step_count = 0;
+    private static $max_steps = 1000;
+
+    /**
      * Vận hành Cỗ máy Băng Chuyền
      * 
      * @param array $payload Dữ liệu thô từ Lớp Vỏ dội vào (Input Form)
@@ -11,6 +17,7 @@ class Ska_Workflow_Runner {
      * @return array Dữ liệu chắt lọc (Output)
      */
     public static function execute( $payload, $workflow_id_or_graph ) {
+        self::$step_count = 0; // Reset circuit breaker
         
         $workflow_id = is_string($workflow_id_or_graph) ? $workflow_id_or_graph : 'default';
         $graph = [];
@@ -42,7 +49,7 @@ class Ska_Workflow_Runner {
         }
 
         // Bắt đầu duyệt đồ thị
-        self::traverse_graph( $graph, $trigger_node_id, $payload, $workflow_id );
+        self::traverse_graph( $graph, $trigger_node_id, $payload, $workflow_id, 0 );
 
         // Vì hệ thống DAG phân nhánh phức tạp, và trả về $payload gốc sau khi đã chạy đồng bộ
         return $payload;
@@ -65,7 +72,19 @@ class Ska_Workflow_Runner {
      * Thuật toán duyệt DAG (Graph Traversal)
      * Vừa chạy vừa truyền Reference biến $payload
      */
-    public static function traverse_graph( $graph, $current_node_id, &$payload, $workflow_id ) {
+    public static function traverse_graph( $graph, $current_node_id, &$payload, $workflow_id, $depth = 0 ) {
+        self::$step_count++;
+        
+        if ( self::$step_count > self::$max_steps ) {
+            error_log("Ska_Workflow_Runner: CIRCUIT BREAKER TRIGGERED - Max steps exceeded (" . self::$max_steps . ") tại node " . $current_node_id);
+            return; // Ngắt mạch
+        }
+
+        if ( $depth > 50 ) {
+            error_log("Ska_Workflow_Runner: CIRCUIT BREAKER TRIGGERED - Stack depth exceeded (50) tại node " . $current_node_id);
+            return; // Tránh Stack Overflow
+        }
+
         $nodes = $graph['nodes'] ?? [];
         $edges = $graph['edges'] ?? [];
 
@@ -114,7 +133,7 @@ class Ska_Workflow_Runner {
                         Ska_Logic_Async_Worker::dispatch( $workflow_id, $target_node_id, $payload );
                     } else {
                         // Gọi đệ quy duyệt tiếp nhánh đó
-                        self::traverse_graph( $graph, $target_node_id, $payload, $workflow_id );
+                        self::traverse_graph( $graph, $target_node_id, $payload, $workflow_id, $depth + 1 );
                     }
                 }
             }

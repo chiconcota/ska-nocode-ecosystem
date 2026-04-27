@@ -21,11 +21,21 @@ Thay vì làm các Node chức năng khổng lồ, hệ thống sẽ chỉ cung 
 ### 2.2. Nhóm Data & Giao thức (Ưu tiên P2)
 - [x] **[D1] DB CRUD Action Node (Ska Native):** Node thao tác CSDL với Ska Data Pro. (Tích hợp Schema UI, Auto-map fields, Data Picker, hỗ trợ Data Vector Batch Process để chống N+1).
 - [x] **[U1] Context / JSON Node:** Parse, Stringify, Set Data (Gán biến qua SkaFX).
-- [ ] **[I1] Raw HTTP Request Node:** Trình gọi API RESTful (Cấu hình Headers, Method, Payload) dùng chung cho mọi dịch vụ ngoài.
+- [x] **[I1] Raw HTTP Request Node:** Trình gọi API RESTful (Cấu hình Headers, Method, Payload) dùng chung cho mọi dịch vụ ngoài.
 
 ### 2.3. Nhóm Nâng cao (Ưu tiên P3)
 - [ ] **[L3] Iterator/Loop Node:** Lặp qua mảng dữ liệu để xử lý Bulk.
 - [ ] **[T2] Webhook & Cron Trigger:** Hỗ trợ nhận tải trọng và lên lịch.
+- [x] **[T3] Action Click / Custom Event:** Cho phép gắn Trigger vào bất kỳ một Nút bấm (Button) hoặc Thẻ (Div) nào trên Frontend thay vì bắt buộc dùng Form.
+
+### 2.4. Nhóm Client Action / Phản hồi UI (Tiền đề Smart Lightbox)
+- [ ] **[C1] Client Redirect Node:** Trả về lệnh chuyển hướng trang hoặc tải lại trang (Reload).
+- [ ] **[C2] Client Notification Node:** Trả về lệnh hiển thị thông báo (Toast/Alert) như Thành công/Thất bại ở góc màn hình.
+- [ ] **[C3] Client State Node:** Trả về lệnh cập nhật biến trong `Alpine.store` (Dùng để Mở Pop-up, Cập nhật Giỏ hàng, Đổi trạng thái UI mà không cần load trang).
+
+### 2.5. Nhóm Pre-built Integration (Tương lai / Post-MVP)
+- [ ] **[N1] Notion Node:** Đóng gói sẵn kết nối API của Notion (Tự động chèn Authorization & Notion-Version).
+- [ ] **[N2] Các dịch vụ bên thứ 3 phổ biến:** Google Sheets, Zalo ZNS, Telegram Bot... (Mục tiêu: Người dùng chỉ cần nhập API Key, Node tự xử lý Header/Payload).
 
 ---
 

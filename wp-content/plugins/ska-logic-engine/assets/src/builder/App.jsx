@@ -20,6 +20,7 @@ import ConditionNode from './nodes/ConditionNode';
 import SwitchNode from './nodes/SwitchNode';
 import DBActionNode from './nodes/DBActionNode';
 import BaseNode from './nodes/BaseNode';
+import HttpRequestNode from './nodes/HttpRequestNode';
 import Sidebar from './components/Sidebar';
 import SettingsPanel from './components/SettingsPanel';
 
@@ -30,7 +31,7 @@ const nodeTypes = {
   ConditionNode: ConditionNode,
   SwitchNode: SwitchNode,
   DBActionNode: DBActionNode,
-  ApiNode: (props) => <BaseNode {...props} icon={<Globe size={16} />} title="HTTP Request" colorClass="bg-emerald-50" borderClass="border-emerald-200" headerClass="bg-emerald-100 text-emerald-800 border-emerald-200" />,
+  ApiNode: HttpRequestNode,
   ErrorNode: (props) => <BaseNode {...props} icon={<AlertTriangle size={16} />} title="Catch Error" colorClass="bg-rose-50" borderClass="border-rose-200" headerClass="bg-rose-100 text-rose-800 border-rose-200" />,
   BackgroundNode: (props) => <BaseNode {...props} icon={<ServerCog size={16} />} title="Background Job" colorClass="bg-purple-50" borderClass="border-purple-200" headerClass="bg-purple-100 text-purple-800 border-purple-200" />
 };

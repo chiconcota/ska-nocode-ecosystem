@@ -57,10 +57,11 @@ SkaFX cấu tạo nên Trái Tim Giải Trí (Logic & Calculation) của toàn b
 Triết lý thiết kế Node của Ska Logic Engine thay đổi từ "Specialized Nodes" (các node chức năng đóng hộp to bản) sang mô hình **Core Primitives** (các khối cơ sở) kết hợp **Composite Nodes** (Macro đóng gói).
 
 - **Core Primitives (Khối cơ sở):**
-  - *Trigger:* Webhook, Action Hook, Cron.
+  - *Trigger:* Webhook, Action Hook, Cron, Action Click / Custom Event (`.ska-action-[workflow_id]`).
   - *Logic:* If/Else, Switch, For Loop.
   - *Data/Context:* Set Data (Gán biến/Thay đổi Payload cục bộ bằng SkaFX), JSON Parse/Stringify, SkaFX Code.
-  - *Protocol:* Raw HTTP Request.
+  - *Protocol:* Raw HTTP Request (Hỗ trợ GET/POST, URL/Headers/Payload mapping qua SkaFX).
+  - *Client Action (Phản hồi UI):* Client Redirect (Chuyển trang), Client Notification (Toast/Alert), Client State (Cập nhật `Alpine.store` để tương tác Lightbox/Pop-up).
   - *Ska Native:* DB Action (CRUD trực tiếp trên Flat Tables của Data Pro).
 - **Cơ chế Payload Mutability (Sự thay đổi mảng toàn cục):** Hệ thống hoạt động theo nguyên lý "thùng hàng" `$payload` truyền qua dạng Pass-by-Reference ở mức Runner. Các Primitive Node (Như `Set Data`) sẽ thực thi tính toán SkaFX và chèn thẳng (hoặc ghi đè) biến vào `$payload`, giúp các Node phía sau có thể trực tiếp lấy dữ liệu thông qua ngữ cảnh `{{ ... }}` mà không cần phải truy vết ngược.
 - **Composite Nodes (Post-MVP):** Người dùng có thể nhóm nhiều Primitive Nodes lại thành một Sub-flow (Macro) và lưu vào `ska_data_sys_logic_macros` để tái sử dụng như một Custom Node độc lập (Ví dụ: nhóm JSON + HTTP Request thành "Send Slack Node").

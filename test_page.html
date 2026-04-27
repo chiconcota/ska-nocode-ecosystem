@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>test http api node &#8211; Ska-core-builder</title>
+<meta name='robots' content='max-image-preview:large' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel="alternate" type="application/rss+xml" title="Ska-core-builder &raquo; test http api node Comments Feed" href="http://ska-core-builder.local/test-http-api-node/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="http://ska-core-builder.local/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fska-core-builder.local%2Ftest-http-api-node%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="http://ska-core-builder.local/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fska-core-builder.local%2Ftest-http-api-node%2F&#038;format=xml" />
+<style id='wp-img-auto-sizes-contain-inline-css' type='text/css'>
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<link rel='stylesheet' id='material-symbols-outlined-css' href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined%3Aopsz%2Cwght%2CFILL%2CGRAD%4020..48%2C100..700%2C0..1%2C-50..200&#038;display=swap&#038;ver=1.0.0' type='text/css' media='all' />
+<link rel="https://api.w.org/" href="http://ska-core-builder.local/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="http://ska-core-builder.local/wp-json/wp/v2/posts/857" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://ska-core-builder.local/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 6.9.4" />
+<link rel="canonical" href="http://ska-core-builder.local/test-http-api-node/" />
+<link rel='shortlink' href='http://ska-core-builder.local/?p=857' />
+<style id='ska-jit-styles'>
+/* Scanned Classes: max-w-md, mx-auto, bg-white, p-8, rounded-2xl, shadow-xl, border, border-slate-100, relative, overflow-hidden, grid, flex, flex-col, gap-8, absolute, top-0, left-0, w-full, h-1.5, bg-gradient-to-r, from-emerald-400, to-blue-500, mb-6, text-2xl, font-bold, text-slate-800, text-emerald-500, h2, text-sm, text-slate-500, mt-1, space-y-5, form, block, font-semibold, text-slate-700, mb-1.5, label, span, px-4, py-2.5, bg-slate-50, border-slate-200, rounded-xl, focus:bg-white, focus:ring-2, focus:ring-emerald-500/20, focus:border-emerald-500, outline-none, transition-all, duration-200, focus:ring-blue-500/20, focus:border-blue-500, mt-2, bg-slate-900, hover:bg-slate-800, text-white, font-medium, py-3, shadow-md, hover:shadow-lg, items-center, justify-center, gap-2, disabled:opacity-70, disabled:cursor-not-allowed, button, bg-blue-500, p-2, rounded, api_test */
+/* Ska Core Block Resets (Atomic Specificity) */
+html body.ska-builder, .editor-styles-wrapper { font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
+html body.ska-builder :where([class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder']) { --wp--style--block-gap: 0px; box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; margin: 0; }
+html body.ska-builder :where(button:not(:where(.components-button))[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] button:not(:where(.components-button))), .editor-styles-wrapper :where(button:not(:where(.components-button))[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] button:not(:where(.components-button))) { border: 0; background: none; padding: 0; margin: 0; cursor: pointer; font-family: inherit; }
+html body.ska-builder :where(a[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] a), .editor-styles-wrapper :where(a[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] a) { text-decoration: none; color: inherit; }
+html body.ska-builder :where(a.underline[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] a.underline), .editor-styles-wrapper :where(a.underline[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] a.underline) { text-decoration: underline; }
+html body.ska-builder :where(p[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] p), .editor-styles-wrapper :where(p[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] p) { margin: 0; }
+html body.ska-builder :where(h1[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] h1), .editor-styles-wrapper :where(h1[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] h1) { margin: 0; }
+html body.ska-builder :where(h2[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] h2), .editor-styles-wrapper :where(h2[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] h2) { margin: 0; }
+html body.ska-builder :where(h3[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] h3), .editor-styles-wrapper :where(h3[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] h3) { margin: 0; }
+html body.ska-builder :where(h4[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] h4), .editor-styles-wrapper :where(h4[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] h4) { margin: 0; }
+html body.ska-builder :where(h5[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] h5), .editor-styles-wrapper :where(h5[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] h5) { margin: 0; }
+html body.ska-builder :where(h6[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] h6), .editor-styles-wrapper :where(h6[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] h6) { margin: 0; }
+html body.ska-builder :where(blockquote[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] blockquote), .editor-styles-wrapper :where(blockquote[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] blockquote) { margin: 0; }
+html body.ska-builder :where(figure[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] figure), .editor-styles-wrapper :where(figure[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] figure) { margin: 0; }
+html body.ska-builder :where(hr[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] hr), .editor-styles-wrapper :where(hr[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] hr) { margin: 0; }
+html body.ska-builder :where(ul[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] ul), .editor-styles-wrapper :where(ul[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] ul) { list-style: none; margin: 0; padding: 0; }
+html body.ska-builder :where(ol[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] ol), .editor-styles-wrapper :where(ol[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] ol) { list-style: none; margin: 0; padding: 0; }
+html body.ska-builder :where(input:not([type="checkbox"]):not([type="radio"])[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] input:not([type="checkbox"]):not([type="radio"])), .editor-styles-wrapper :where(input:not([type="checkbox"]):not([type="radio"])[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] input:not([type="checkbox"]):not([type="radio"])) { appearance: none; background-color: transparent; border-width: 0; border-radius: 0; padding: 0; border-color: #e5e7eb; outline: none; font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; }
+html body.ska-builder :where(select[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] select), .editor-styles-wrapper :where(select[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] select) { appearance: none; background-color: transparent; border-width: 0; border-radius: 0; padding: 0; border-color: #e5e7eb; outline: none; font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; }
+html body.ska-builder :where(textarea[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] textarea), .editor-styles-wrapper :where(textarea[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] textarea) { appearance: none; background-color: transparent; border-width: 0; border-radius: 0; padding: 0; border-color: #e5e7eb; outline: none; font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; }
+html body.ska-builder :where(option[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] option), .editor-styles-wrapper :where(option[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] option) { appearance: none; background-color: transparent; border-width: 0; border-radius: 0; padding: 0; border-color: #e5e7eb; outline: none; font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; }
+html body.ska-builder :where(optgroup[class*='wp-block-ska-builder']), html body.ska-builder :where([class*='wp-block-ska-builder'] optgroup), .editor-styles-wrapper :where(optgroup[class*='wp-block-ska-builder']), .editor-styles-wrapper :where([class*='wp-block-ska-builder'] optgroup) { appearance: none; background-color: transparent; border-width: 0; border-radius: 0; padding: 0; border-color: #e5e7eb; outline: none; font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; }
+/* Source: mx-auto */
+html body.ska-builder .mx-auto.mx-auto { margin-left: auto; margin-right: auto; }
+.editor-styles-wrapper .mx-auto.mx-auto { margin-left: auto; margin-right: auto; }
+/* Source: bg-white */
+html body.ska-builder .bg-white.bg-white { background-color: #ffffff; }
+.editor-styles-wrapper .bg-white.bg-white { background-color: #ffffff; }
+/* Source: p-8 */
+html body.ska-builder .p-8.p-8 { padding: 2.000rem; }
+.editor-styles-wrapper .p-8.p-8 { padding: 2.000rem; }
+/* Source: shadow-xl */
+html body.ska-builder .shadow-xl.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+.editor-styles-wrapper .shadow-xl.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+/* Source: border */
+html body.ska-builder .border.border { border-width: 1px; border-style: solid; }
+.editor-styles-wrapper .border.border { border-width: 1px; border-style: solid; }
+/* Source: border-slate-100 */
+html body.ska-builder .border-slate-100.border-slate-100 { border-color: #f1f5f9; }
+.editor-styles-wrapper .border-slate-100.border-slate-100 { border-color: #f1f5f9; }
+/* Source: relative */
+html body.ska-builder .relative.relative { position: relative; }
+.editor-styles-wrapper .relative.relative { position: relative; }
+/* Source: overflow-hidden */
+html body.ska-builder .overflow-hidden.overflow-hidden { overflow: hidden; }
+.editor-styles-wrapper .overflow-hidden.overflow-hidden { overflow: hidden; }
+/* Source: grid */
+html body.ska-builder .grid.grid { display: grid; }
+.editor-styles-wrapper .grid.grid { display: grid; }
+/* Source: flex */
+html body.ska-builder .flex.flex { display: flex; }
+.editor-styles-wrapper .flex.flex { display: flex; }
+/* Source: flex-col */
+html body.ska-builder .flex-col.flex-col { flex-direction: column; }
+.editor-styles-wrapper .flex-col.flex-col { flex-direction: column; }
+/* Source: gap-8 */
+html body.ska-builder .gap-8.gap-8 { gap: 2.000rem; row-gap: 2.000rem; column-gap: 2.000rem; --wp--style--block-gap: 2.000rem; }
+.editor-styles-wrapper .gap-8.gap-8 { gap: 2.000rem; row-gap: 2.000rem; column-gap: 2.000rem; --wp--style--block-gap: 2.000rem; }
+/* Source: absolute */
+html body.ska-builder .absolute.absolute { position: absolute; }
+.editor-styles-wrapper .absolute.absolute { position: absolute; }
+/* Source: top-0 */
+html body.ska-builder .top-0.top-0 { top: 0px; }
+.editor-styles-wrapper .top-0.top-0 { top: 0px; }
+/* Source: left-0 */
+html body.ska-builder .left-0.left-0 { left: 0px; }
+.editor-styles-wrapper .left-0.left-0 { left: 0px; }
+/* Source: w-full */
+html body.ska-builder .w-full.w-full { width: 100%; }
+.editor-styles-wrapper .w-full.w-full { width: 100%; }
+/* Source: h-1.5 */
+html body.ska-builder .h-1\.5.h-1\.5 { height: 0.375rem; }
+.editor-styles-wrapper .h-1\.5.h-1\.5 { height: 0.375rem; }
+/* Source: bg-gradient-to-r */
+html body.ska-builder .bg-gradient-to-r.bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+.editor-styles-wrapper .bg-gradient-to-r.bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+/* Source: from-emerald-400 */
+html body.ska-builder .from-emerald-400.from-emerald-400 { --tw-gradient-from: #34d399; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+.editor-styles-wrapper .from-emerald-400.from-emerald-400 { --tw-gradient-from: #34d399; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+/* Source: to-blue-500 */
+html body.ska-builder .to-blue-500.to-blue-500 { --tw-gradient-to: #3b82f6; }
+.editor-styles-wrapper .to-blue-500.to-blue-500 { --tw-gradient-to: #3b82f6; }
+/* Source: mb-6 */
+html body.ska-builder .mb-6.mb-6 { margin-bottom: 1.500rem; }
+.editor-styles-wrapper .mb-6.mb-6 { margin-bottom: 1.500rem; }
+/* Source: text-2xl */
+html body.ska-builder .text-2xl.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.editor-styles-wrapper .text-2xl.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+/* Source: font-bold */
+html body.ska-builder .font-bold.font-bold { font-weight: 700; }
+.editor-styles-wrapper .font-bold.font-bold { font-weight: 700; }
+/* Source: text-slate-800 */
+html body.ska-builder .text-slate-800.text-slate-800 { color: #1e293b; }
+.editor-styles-wrapper .text-slate-800.text-slate-800 { color: #1e293b; }
+/* Source: text-emerald-500 */
+html body.ska-builder .text-emerald-500.text-emerald-500 { color: #10b981; }
+.editor-styles-wrapper .text-emerald-500.text-emerald-500 { color: #10b981; }
+/* Source: text-sm */
+html body.ska-builder .text-sm.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.editor-styles-wrapper .text-sm.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+/* Source: text-slate-500 */
+html body.ska-builder .text-slate-500.text-slate-500 { color: #64748b; }
+.editor-styles-wrapper .text-slate-500.text-slate-500 { color: #64748b; }
+/* Source: mt-1 */
+html body.ska-builder .mt-1.mt-1 { margin-top: 0.250rem; }
+.editor-styles-wrapper .mt-1.mt-1 { margin-top: 0.250rem; }
+/* Source: space-y-5 */
+html body.ska-builder .space-y-5.space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.25rem; margin-bottom: 0; }
+/* Source: block */
+html body.ska-builder .block.block { display: block; }
+.editor-styles-wrapper .block.block { display: block; }
+/* Source: font-semibold */
+html body.ska-builder .font-semibold.font-semibold { font-weight: 600; }
+.editor-styles-wrapper .font-semibold.font-semibold { font-weight: 600; }
+/* Source: text-slate-700 */
+html body.ska-builder .text-slate-700.text-slate-700 { color: #334155; }
+.editor-styles-wrapper .text-slate-700.text-slate-700 { color: #334155; }
+/* Source: mb-1.5 */
+html body.ska-builder .mb-1\.5.mb-1\.5 { margin-bottom: 0.375rem; }
+.editor-styles-wrapper .mb-1\.5.mb-1\.5 { margin-bottom: 0.375rem; }
+/* Source: px-4 */
+html body.ska-builder .px-4.px-4 { padding-left: 1.000rem; padding-right: 1.000rem; }
+.editor-styles-wrapper .px-4.px-4 { padding-left: 1.000rem; padding-right: 1.000rem; }
+/* Source: py-2.5 */
+html body.ska-builder .py-2\.5.py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+.editor-styles-wrapper .py-2\.5.py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+/* Source: bg-slate-50 */
+html body.ska-builder .bg-slate-50.bg-slate-50 { background-color: #f8fafc; }
+.editor-styles-wrapper .bg-slate-50.bg-slate-50 { background-color: #f8fafc; }
+/* Source: border-slate-200 */
+html body.ska-builder .border-slate-200.border-slate-200 { border-color: #e2e8f0; }
+.editor-styles-wrapper .border-slate-200.border-slate-200 { border-color: #e2e8f0; }
+/* Source: rounded-xl */
+html body.ska-builder .rounded-xl.rounded-xl { border-radius: 0.75rem; }
+.editor-styles-wrapper .rounded-xl.rounded-xl { border-radius: 0.75rem; }
+/* Source: focus:bg-white */
+html body.ska-builder .focus\:bg-white.focus\:bg-white:focus { background-color: #ffffff; }
+.editor-styles-wrapper .focus\:bg-white.focus\:bg-white:focus { background-color: #ffffff; }
+/* Source: focus:ring-2 */
+html body.ska-builder .focus\:ring-2.focus\:ring-2:focus { box-shadow: 0 0 0 2px var(--tw-ring-color, rgba(59, 130, 246, 0.5)); }
+.editor-styles-wrapper .focus\:ring-2.focus\:ring-2:focus { box-shadow: 0 0 0 2px var(--tw-ring-color, rgba(59, 130, 246, 0.5)); }
+/* Source: focus:ring-emerald-500/20 */
+html body.ska-builder .focus\:ring-emerald-500\/20.focus\:ring-emerald-500\/20:focus { --tw-ring-color: rgba(16, 185, 129, 0.2); }
+.editor-styles-wrapper .focus\:ring-emerald-500\/20.focus\:ring-emerald-500\/20:focus { --tw-ring-color: rgba(16, 185, 129, 0.2); }
+/* Source: focus:border-emerald-500 */
+html body.ska-builder .focus\:border-emerald-500.focus\:border-emerald-500:focus { border-color: #10b981; }
+.editor-styles-wrapper .focus\:border-emerald-500.focus\:border-emerald-500:focus { border-color: #10b981; }
+/* Source: outline-none */
+html body.ska-builder .outline-none.outline-none { outline: 2px solid transparent !important; outline-offset: 2px !important; }
+.editor-styles-wrapper .outline-none.outline-none { outline: 2px solid transparent !important; outline-offset: 2px !important; }
+/* Source: transition-all */
+html body.ska-builder .transition-all.transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.editor-styles-wrapper .transition-all.transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+/* Source: duration-200 */
+html body.ska-builder .duration-200.duration-200 { transition-duration: 200ms; }
+.editor-styles-wrapper .duration-200.duration-200 { transition-duration: 200ms; }
+/* Source: focus:ring-blue-500/20 */
+html body.ska-builder .focus\:ring-blue-500\/20.focus\:ring-blue-500\/20:focus { --tw-ring-color: rgba(59, 130, 246, 0.2); }
+.editor-styles-wrapper .focus\:ring-blue-500\/20.focus\:ring-blue-500\/20:focus { --tw-ring-color: rgba(59, 130, 246, 0.2); }
+/* Source: focus:border-blue-500 */
+html body.ska-builder .focus\:border-blue-500.focus\:border-blue-500:focus { border-color: #3b82f6; }
+.editor-styles-wrapper .focus\:border-blue-500.focus\:border-blue-500:focus { border-color: #3b82f6; }
+/* Source: mt-2 */
+html body.ska-builder .mt-2.mt-2 { margin-top: 0.500rem; }
+.editor-styles-wrapper .mt-2.mt-2 { margin-top: 0.500rem; }
+/* Source: bg-slate-900 */
+html body.ska-builder .bg-slate-900.bg-slate-900 { background-color: #0f172a; }
+.editor-styles-wrapper .bg-slate-900.bg-slate-900 { background-color: #0f172a; }
+/* Source: hover:bg-slate-800 */
+html body.ska-builder .hover\:bg-slate-800.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.editor-styles-wrapper .hover\:bg-slate-800.hover\:bg-slate-800:hover { background-color: #1e293b; }
+/* Source: text-white */
+html body.ska-builder .text-white.text-white { color: #ffffff; }
+.editor-styles-wrapper .text-white.text-white { color: #ffffff; }
+/* Source: font-medium */
+html body.ska-builder .font-medium.font-medium { font-weight: 500; }
+.editor-styles-wrapper .font-medium.font-medium { font-weight: 500; }
+/* Source: py-3 */
+html body.ska-builder .py-3.py-3 { padding-top: 0.750rem; padding-bottom: 0.750rem; }
+.editor-styles-wrapper .py-3.py-3 { padding-top: 0.750rem; padding-bottom: 0.750rem; }
+/* Source: shadow-md */
+html body.ska-builder .shadow-md.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+.editor-styles-wrapper .shadow-md.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+/* Source: hover:shadow-lg */
+html body.ska-builder .hover\:shadow-lg.hover\:shadow-lg:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+.editor-styles-wrapper .hover\:shadow-lg.hover\:shadow-lg:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+/* Source: items-center */
+html body.ska-builder .items-center.items-center { align-items: center; }
+.editor-styles-wrapper .items-center.items-center { align-items: center; }
+/* Source: justify-center */
+html body.ska-builder .justify-center.justify-center { justify-content: center; }
+.editor-styles-wrapper .justify-center.justify-center { justify-content: center; }
+/* Source: gap-2 */
+html body.ska-builder .gap-2.gap-2 { gap: 0.500rem; row-gap: 0.500rem; column-gap: 0.500rem; --wp--style--block-gap: 0.500rem; }
+.editor-styles-wrapper .gap-2.gap-2 { gap: 0.500rem; row-gap: 0.500rem; column-gap: 0.500rem; --wp--style--block-gap: 0.500rem; }
+/* Source: disabled:opacity-70 */
+html body.ska-builder .disabled\:opacity-70.disabled\:opacity-70:disabled { opacity: 0.7; }
+.editor-styles-wrapper .disabled\:opacity-70.disabled\:opacity-70:disabled { opacity: 0.7; }
+/* Source: disabled:cursor-not-allowed */
+html body.ska-builder .disabled\:cursor-not-allowed.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+.editor-styles-wrapper .disabled\:cursor-not-allowed.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+/* Source: bg-blue-500 */
+html body.ska-builder .bg-blue-500.bg-blue-500 { background-color: #3b82f6; }
+.editor-styles-wrapper .bg-blue-500.bg-blue-500 { background-color: #3b82f6; }
+/* Source: p-2 */
+html body.ska-builder .p-2.p-2 { padding: 0.500rem; }
+.editor-styles-wrapper .p-2.p-2 { padding: 0.500rem; }
+/* Source: rounded */
+html body.ska-builder .rounded.rounded { border-radius: 0.25rem; }
+.editor-styles-wrapper .rounded.rounded { border-radius: 0.25rem; }
+
+</style>
+<!-- Ska Hybrid Fallback: Unresolved classes found (max-w-md, rounded-2xl, h2, form, label, span, button, api_test) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>window.tailwind = { config: { important: false, corePlugins: { preflight: false } } }</script>
+<style id='wp-block-paragraph-inline-css' type='text/css'>
+.is-small-text{font-size:.875em}.is-regular-text{font-size:1em}.is-large-text{font-size:2.25em}.is-larger-text{font-size:3em}.has-drop-cap:not(:focus):first-letter{float:left;font-size:8.4em;font-style:normal;font-weight:100;line-height:.68;margin:.05em .1em 0 0;text-transform:uppercase}body.rtl .has-drop-cap:not(:focus):first-letter{float:none;margin-left:.1em}p.has-drop-cap.has-background{overflow:hidden}:root :where(p.has-background){padding:1.25em 2.375em}:where(p.has-text-color:not(.has-link-color)) a{color:inherit}p.has-text-align-left[style*="writing-mode:vertical-lr"],p.has-text-align-right[style*="writing-mode:vertical-rl"]{rotate:180deg}
+/*# sourceURL=http://ska-core-builder.local/wp-includes/blocks/paragraph/style.min.css */
+</style>
+<style id='wp-block-separator-inline-css' type='text/css'>
+@charset "UTF-8";.wp-block-separator{border:none;border-top:2px solid}:root :where(.wp-block-separator.is-style-dots){height:auto;line-height:1;text-align:center}:root :where(.wp-block-separator.is-style-dots):before{color:currentColor;content:"···";font-family:serif;font-size:1.5em;letter-spacing:2em;padding-left:2em}.wp-block-separator.is-style-dots{background:none!important;border:none!important}
+/*# sourceURL=http://ska-core-builder.local/wp-includes/blocks/separator/style.min.css */
+</style>
+
+</head>
+<body class="wp-singular post-template-default single single-post postid-857 single-format-standard wp-theme-ska-canvas ska-builder ska-canvas">
+
+
+	
+	<main id="primary" class="ska-main-content">
+		
+		
+		<div class="ska-container-block max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl border border-slate-100 relative overflow-hidden wp-block-ska-builder-container">
+<div class="ska-container-block absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-400 to-blue-500 wp-block-ska-builder-container"></div>
+
+<div class="ska-container-block mb-6 wp-block-ska-builder-container">
+<h2 class="ska-text-block text-2xl font-bold text-slate-800 wp-block-ska-builder-text">Test Gửi API <span class="text-emerald-500">Reqres</span></h2>
+
+<p class="ska-text-block text-sm text-slate-500 mt-1 wp-block-ska-builder-text">Form này dùng để test bắn dữ liệu payload ra webhook ngoài qua HTTP Node.</p>
+</div>
+
+<form class="ska-container-block space-y-5 wp-block-ska-builder-container" x-data="skaForm('api_test', {persist: false})" @submit.prevent="submitForm()">
+<div class="ska-container-block  wp-block-ska-builder-container">
+<label class="ska-container-block block text-sm font-semibold text-slate-700 mb-1.5 wp-block-ska-builder-container">
+<span class="ska-text-block  wp-block-ska-builder-text">Tên nhân sự (Name)</span>
+</label>
+
+<input class="ska-input-block w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all duration-200 text-sm wp-block-ska-builder-input" type="text" name="name" placeholder="Nhập tên..." required="required" x-model="fields.name" @blur="validate('name')" data-test="render-is-working" />
+<span x-show="errors.name" x-text="errors.name" class="ska-form-error" style="color:#ef4444;font-size:0.75rem;display:block;margin-top:0.25rem;"></span>
+</div>
+
+<div class="ska-container-block  wp-block-ska-builder-container">
+<label class="ska-container-block block text-sm font-semibold text-slate-700 mb-1.5 wp-block-ska-builder-container">
+<span class="ska-text-block  wp-block-ska-builder-text">Nghề nghiệp (Job)</span>
+</label>
+
+<input class="ska-input-block w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all duration-200 text-sm wp-block-ska-builder-input" type="text" name="job" placeholder="Vd: Dev, Designer..." required="required" x-model="fields.job" @blur="validate('job')" data-test="render-is-working" />
+<span x-show="errors.job" x-text="errors.job" class="ska-form-error" style="color:#ef4444;font-size:0.75rem;display:block;margin-top:0.25rem;"></span>
+</div>
+
+<button type="submit" class="ska-button-block w-full mt-2 bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed wp-block-ska-builder-button">Bắn Tên Lửa API Đang bay</button>
+</form>
+</div>
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+
+
+<form class="ska-container-block  wp-block-ska-builder-container" x-data="skaForm('lay-api', {persist: false})" @submit.prevent="submitForm()" id="api_test">
+<button type="submit" class="ska-button-block bg-blue-500 text-white p-2 rounded wp-block-ska-builder-button">Chỉ là 1 cái nút Click lấy API</button>
+</form>
+
+
+<p></p>
+
+		
+	</main>
+
+	
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/ska-canvas/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<script type="text/javascript" id="ska-frontend-js-extra">
+/* <![CDATA[ */
+var skaEnv = {"restUrl":"http://ska-core-builder.local/wp-json/"};
+//# sourceURL=ska-frontend-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="http://ska-core-builder.local/wp-content/plugins/ska-no-code-design/assets/js/ska-frontend.js?ver=1.0.1" id="ska-frontend-js"></script>
+<script type="text/javascript" src="http://ska-core-builder.local/wp-content/plugins/ska-no-code-design/assets/js/alpine.min.js?ver=3.13.3" id="ska-alpine-js"></script>
+<script type="text/javascript" id="ska-core-js-js-extra">
+/* <![CDATA[ */
+var skaAppEnv = {"ajaxUrl":"http://ska-core-builder.local/wp-admin/admin-ajax.php","restUrl":"http://ska-core-builder.local/wp-json/ska-logic/v1/submit","nonce":"31c58cdfb3"};
+//# sourceURL=ska-core-js-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="http://ska-core-builder.local/wp-content/plugins/ska-logic-engine/assets/js/ska-core.js?ver=1.0.0" id="ska-core-js-js"></script>
+
+</body>
+</html>

@@ -8,6 +8,13 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-04-27 - 🟢 Kiến Trúc Phân rã Client Action Nodes (Phản hồi UI)
+- **Decision (Bảo Vệ Tính Primitive của UI Response):** Thay vì tạo một Node "God Object" khổng lồ gánh mọi thao tác trình duyệt (Chuyển trang, Pop-up, Thông báo, Update Giỏ hàng) gây phá vỡ triệt để kiến trúc Primitive, chúng tôi quyết định băm nhỏ tính năng "UI Response" thành nhóm 3 Primitive Nodes độc lập: `[C1] Client Redirect` (Chuyển trang), `[C2] Client Notification` (Thông báo Toast/Alert), và `[C3] Client State` (Giao tiếp với Alpine.store để bật tắt Lightbox, Cập nhật giỏ hàng). Cơ chế này giúp giữ nguyên vòng đời Đơn nhiệm (Single Responsibility) của hệ thống DAG, ngăn chặn Spaghetti UI ở Backend.
+
+## 2026-04-27 - 🟢 Hoàn thành Raw HTTP Request (GET) & Action Click Trigger
+- **Decision (Raw HTTP Request Node - GET Pipeline):** Chốt kiến trúc và hoàn thành luồng gọi API ngoại vi thông qua `Ska_Logic_Http_Request`. HTTP Node hiện đã tương thích hoàn toàn với DAG pipeline, nhận `url`, `method`, `headers`, và `query_params`, hỗ trợ Nội suy dữ liệu `{{ ... }}` động. Cho phép nhận phản hồi (Response JSON) và chèn ngược vào mảng `$payload` để Node tiếp theo (như DB Action Node) tiến hành ghi vào CSDL an toàn.
+- **Decision (Unified Action Click Listener):** Độc lập hóa Trigger: Nút bấm (Ska Button) không còn bắt buộc phải nằm trong Form để gửi dữ liệu. Áp dụng cơ chế Global Event Listener trên class `ska-action-[workflow_id]` tại `ska-core.js`. Khi Button mang class này được bấm, nó sẽ gửi tín hiệu kích hoạt luồng Workflow độc lập (Async) xuống Backend (Endpoint: `/ska-logic/v1/submit`), mở đường cho kiến trúc UI "Smart Lightbox/Popup" tự kích hoạt dữ liệu trong tương lai.
+
 ## 2026-04-26 - 🟢 Debug Hoàn tất Luồng Dữ liệu Ska Logic Engine & Giao diện Node
 - **Decision (SkaFX Smart Fallback cho Chuỗi Tĩnh):** Giải quyết triệt để lỗi người dùng Nocode nhập "chuỗi tĩnh" (không có nháy kép, VD: `khách lẻ`) vào DB Action Node khiến hệ thống tưởng nhầm là tên biến và đánh giá ra `null` (hoặc lỗi cú pháp). Quyết định: Cập nhật `SkaFX_Evaluator` để trả về cờ báo lỗi chính xác, và cập nhật luồng Mapping của Node DB Action bằng cơ chế **Smart Fallback** (Fall back to string). Nếu hệ thống báo lỗi không phân giải được biểu thức, chuỗi đó sẽ được hiểu là văn bản thuần túy và tự động Parse tham số bên trong ngoặc vuông (VD: `[hoten]`) bằng Regular Expression, đảm bảo luồng Logic không bao giờ chèn dữ liệu rỗng (`NULL`) một cách vô lý vào DB.
 

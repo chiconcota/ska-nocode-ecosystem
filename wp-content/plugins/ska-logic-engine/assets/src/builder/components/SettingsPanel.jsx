@@ -390,27 +390,96 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
         )}
 
         {selectedNode.type === 'ApiNode' && (
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Endpoint URL</label>
-            <input 
-              type="text" 
-              value={selectedNode.data.endpointUrl || ''} 
-              onChange={(e) => handleChange('endpointUrl', e.target.value)}
-              className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              placeholder="https://api.example.com/v1"
-            />
-            
-            <label className="block text-sm font-medium text-slate-700 mt-3 mb-1">Method</label>
-            <select 
-              value={selectedNode.data.method || 'GET'} 
-              onChange={(e) => handleChange('method', e.target.value)}
-              className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            >
-              <option value="GET">GET</option>
-              <option value="POST">POST</option>
-              <option value="PUT">PUT</option>
-              <option value="DELETE">DELETE</option>
-            </select>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Method</label>
+              <select 
+                value={selectedNode.data.method || 'GET'} 
+                onChange={(e) => handleChange('method', e.target.value)}
+                className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+              >
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="PATCH">PATCH</option>
+                <option value="DELETE">DELETE</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Endpoint URL</label>
+              <input 
+                type="text" 
+                value={selectedNode.data.url || ''} 
+                onChange={(e) => handleChange('url', e.target.value)}
+                className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono text-xs"
+                placeholder="https://api.example.com/v1/users/{{payload.id}}"
+              />
+              <p className="text-[10px] text-slate-500 mt-1">Hỗ trợ SkaFX bằng cú pháp &#123;&#123; payload.abc &#125;&#125;</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Headers</label>
+              {(selectedNode.data.headers || []).map((header, index) => (
+                <div key={index} className="flex gap-2 items-start mb-2">
+                  <div className="flex-1 space-y-2">
+                    <input 
+                      type="text" 
+                      value={header.key || ''} 
+                      onChange={(e) => {
+                        const newHeaders = [...(selectedNode.data.headers || [])];
+                        newHeaders[index] = { ...newHeaders[index], key: e.target.value };
+                        handleChange('headers', newHeaders);
+                      }}
+                      className="w-full text-xs p-1.5 border border-slate-300 rounded outline-none"
+                      placeholder="Header-Name"
+                    />
+                    <input 
+                      type="text" 
+                      value={header.value || ''} 
+                      onChange={(e) => {
+                        const newHeaders = [...(selectedNode.data.headers || [])];
+                        newHeaders[index] = { ...newHeaders[index], value: e.target.value };
+                        handleChange('headers', newHeaders);
+                      }}
+                      className="w-full text-xs p-1.5 border border-slate-300 rounded outline-none font-mono text-blue-600 bg-slate-50"
+                      placeholder="Value or {{ expr }}"
+                    />
+                  </div>
+                  <button 
+                    onClick={() => {
+                      const newHeaders = [...(selectedNode.data.headers || [])];
+                      newHeaders.splice(index, 1);
+                      handleChange('headers', newHeaders);
+                    }}
+                    className="p-1 text-slate-400 hover:text-red-500 rounded bg-slate-100 mt-1"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+              <button 
+                onClick={() => {
+                  const newHeaders = [...(selectedNode.data.headers || []), { key: '', value: '' }];
+                  handleChange('headers', newHeaders);
+                }}
+                className="w-full py-1.5 text-xs font-medium text-emerald-600 border border-emerald-200 rounded bg-emerald-50 hover:bg-emerald-100 transition-colors mt-1"
+              >
+                + Add Header
+              </button>
+            </div>
+
+            {(selectedNode.data.method !== 'GET' && selectedNode.data.method !== 'DELETE') && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Body (JSON/String)</label>
+                <textarea 
+                  value={selectedNode.data.body || ''} 
+                  onChange={(e) => handleChange('body', e.target.value)}
+                  className="w-full text-xs p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono bg-slate-50 min-h-[100px]"
+                  placeholder='{ "key": "{{payload.value}}" }'
+                />
+              </div>
+            )}
           </div>
         )}
         

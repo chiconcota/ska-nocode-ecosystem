@@ -17,14 +17,23 @@ window.$ska = {
         };
 
         // 3. UI State: Hỗ trợ tự động vô hiệu hóa nút bấm
-        const submitBtn = el.querySelector('button[type="submit"], input[type="submit"]') || el.querySelector('a.wp-block-button__link');
+        const submitBtn = el.querySelector('button[type="submit"], input[type="submit"]') || el.querySelector('a.wp-block-button__link') || el;
         let originalText = '';
         if (submitBtn) {
-            originalText = submitBtn.textContent || submitBtn.value;
-            submitBtn.textContent = 'Đang xử lý...';
+            originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span style="display:inline-block; animation: ska-spin 1s linear infinite; margin-right: 8px;">⏳</span> Đang xử lý...';
             submitBtn.disabled = true;
-            submitBtn.style.opacity = '0.5';
+            submitBtn.style.opacity = '0.7';
+            submitBtn.style.cursor = 'not-allowed';
             submitBtn.style.pointerEvents = 'none';
+            
+            // Add spinner animation CSS if missing
+            if (!document.getElementById('ska-spin-css')) {
+                const style = document.createElement('style');
+                style.id = 'ska-spin-css';
+                style.innerHTML = '@keyframes ska-spin { 100% { transform: rotate(360deg); } }';
+                document.head.appendChild(style);
+            }
         }
 
         // 3.1. Giao tiếp với AlpineJS (Nếu có) để người dùng tự do hiển thị Loading bằng logic x-show
@@ -73,6 +82,9 @@ window.$ska = {
                 // Ném một tín hiệu global để ai muốn bắt thì bắt (Vd: Analytics)
                 el.dispatchEvent(new CustomEvent('ska-submit-success', { bubbles: true, detail: result }));
                 
+                // Hiển thị Toast Thành công
+                window.$ska.showToast('Gửi dữ liệu thành công!', 'success');
+                
                 return result;
             } else {
                 throw new Error(result.message || 'Lỗi chưa xác định từ máy chủ!');
@@ -91,13 +103,14 @@ window.$ska = {
             
             // Hỗ trợ console để dev kiểm tra thêm thông tin
             console.error('Ska Core Form Submit Error:', error);
-            alert('❌ Lỗi Logic Engine: ' + error.message);
+            window.$ska.showToast('Lỗi: ' + error.message, 'error');
         } finally {
             // Khôi phục nút bấm để bấm lại
             if (submitBtn) {
-                submitBtn.textContent = originalText;
+                submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
                 submitBtn.style.pointerEvents = 'auto';
             }
             
@@ -137,5 +150,80 @@ window.$ska = {
                 window.dispatchEvent(new CustomEvent(evt.event_name, { detail: evt.payload || {} }));
             }
         });
+    },
+
+    /**
+     * Hiển thị thông báo Toast
+     */
+    showToast: (message, type = 'success') => {
+        const toast = document.createElement('div');
+        toast.className = `ska-toast ska-toast-${type}`;
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-family: sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 999999;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: ${type === 'success' ? '#10b981' : '#ef4444'};
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        `;
+        
+        // Add icon
+        const icon = type === 'success' ? '✅' : '❌';
+        toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.style.transform = 'translateY(0)';
+            toast.style.opacity = '1';
+        }, 10);
+
+        // Animate out
+        setTimeout(() => {
+            toast.style.transform = 'translateY(100px)';
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
     }
 };
+
+/**
+ * Global Action Click Listener
+ * Hỗ trợ kích hoạt API Workflow từ MỌI nút bấm (không cần bọc trong Form)
+ * Bằng cách thêm class CSS: ska-action-[workflow_id]
+ */
+document.addEventListener('click', function(e) {
+    // Tìm element có class bắt đầu bằng ska-action-
+    const actionEl = e.target.closest('[class*="ska-action-"]');
+    if (!actionEl) return;
+    
+    // Nếu nó nằm trong Form đã được binding bằng Alpine (skaForm) thì bỏ qua để Form tự xử lý
+    if (actionEl.closest('form[x-data*="skaForm"]')) return;
+
+    e.preventDefault();
+
+    // Trích xuất ID workflow từ class. Ví dụ: ska-action-api_test -> api_test
+    const match = actionEl.className.match(/ska-action-([a-zA-Z0-9_-]+)/);
+    if (!match) return;
+
+    const workflowId = match[1];
+    
+    // Gắn ID tạm để submitForm nhận diện
+    actionEl.dataset.logicId = workflowId;
+    
+    // Kích hoạt chu trình gọi Backend
+    window.$ska.submitForm(actionEl);
+});
