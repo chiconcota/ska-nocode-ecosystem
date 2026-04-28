@@ -11,7 +11,7 @@ export default function BaseNode({ data, icon, title, colorClass, borderClass, h
             
             <div className="p-3 text-sm text-gray-600">
                 {data.description && <p className="text-xs mb-2">{data.description}</p>}
-                {Object.entries(data).map(([key, value]) => {
+                {Object.entries(data || {}).map(([key, value]) => {
                     if (key === 'label' || key === 'description' || key === 'expression') return null;
                     if (typeof value === 'object' && value !== null) return null;
                     return (

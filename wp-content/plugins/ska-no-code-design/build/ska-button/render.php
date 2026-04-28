@@ -24,10 +24,12 @@ if ( $actionType === 'link' ) {
 // Robust Fallback: Check for non-empty tailwindClasses first, then fallback to className (legacy).
 $user_tailwindClasses = ! empty( $attributes['tailwindClasses'] ) ? $attributes['tailwindClasses'] : ( $attributes['className'] ?? '' );
 
+$alpine_attrs = '';
 if ( $actionType === 'logic_api' ) {
-    $fieldName = $attributes['fieldName'] ?? '';
-    if ( ! empty( $fieldName ) ) {
-        $user_tailwindClasses .= ' ska-action-' . sanitize_html_class( $fieldName );
+    $workflow_id = $attributes['fieldName'] ?? '';
+    if ( ! empty( $workflow_id ) ) {
+        $user_tailwindClasses .= ' ska-action-' . sanitize_html_class( $workflow_id );
+        // The event will be intercepted globally by ska-core.js (window.$ska.submitForm)
     }
 }
 
@@ -76,10 +78,11 @@ if ( $tagName === 'button' ) {
         }
     }
     printf(
-        '<button%1$s %2$s>%3$s</button>',
+        '<button%1$s %2$s%4$s>%3$s</button>',
         $type_attr,
         $wrapper_attributes,
-        $inner_html
+        $inner_html,
+        $alpine_attrs
     );
 } else {
     printf(

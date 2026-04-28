@@ -12,6 +12,7 @@
   1. Giao diện (React UI) cho DB Query Node (Chọn Bảng, Điều Kiện Where, Order By, Limit).
   2. Lớp Backend PHP (`class-ska-logic-db-query.php`).
   3. Đảm bảo hỗ trợ SkaFX Expression trong các trường điều kiện.
+- **Tính năng lùi mốc:** Bắt đầu suy nghĩ về cấu trúc **Template Settings (Display Rules)** cho Global Popup (Delay, Scroll Trigger, Scope). Tính năng này sẽ được triển khai trong Phase Theme Builder (Ska Design Engine) qua công cụ Alpine.js thay vì dùng Logic Engine.
 
 ## 3. Các files liên đới dự kiến (Phiên sau)
 - `wp-content/plugins/ska-logic-engine/assets/src/builder/nodes/DBQueryNode.jsx`

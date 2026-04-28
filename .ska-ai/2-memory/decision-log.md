@@ -8,6 +8,18 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-04-28 - 🟢 Brainstorm: Phân rã Trigger Frontend (Alpine) & Backend (Logic Engine)
+- **Decision (Frontend vs Backend Trigger Boundary):** Thống nhất và phân rạch ròi ranh giới xử lý sự kiện:
+  - **Sự kiện Giao diện (UI Interactions):** Các tác vụ như mở Popup sau 10s, cuộn chuột, bật tắt Modal BẮT BUỘC xử lý bằng **Alpine.js** (Ska Design Engine) tại trình duyệt (Frontend) để đảm bảo tốc độ Zero-latency và không làm quá tải Server. Tuyệt đối không dùng Logic Engine cho mục đích UI thuần túy.
+  - **Sự kiện Tự động hóa (Business Logic):** Các tác vụ như Lưu Form, Thanh toán, Gửi Email sẽ được xử lý độc quyền bởi **Logic Engine** (Backend) để đảm bảo bảo mật.
+- **Decision (Webhook vs System Hook):** Khẳng định vai trò của `[T1] Trigger Node`. Webhook (URL) dùng để nhận dữ liệu từ hệ thống bên ngoài (Stripe, Facebook) qua HTTP. System Hook (Internal Event) dùng cho các luồng xử lý siêu tốc trong cùng máy chủ (RAM), cấm dùng Webhook cho sự kiện nội bộ để tránh Network Overhead.
+- **Decision (Template Settings / Display Rules):** Khẳng định Popup toàn cục (Global Popups) không được hardcode vào Atomic Blocks. Chúng được quản lý dưới dạng **Smart Object (Template)**. Các "Điều kiện Kích Hoạt" (Delay, Scroll, Scope) sẽ được cấu hình bằng giao diện Nocode (Settings Panel) ở cấp độ Tài liệu. Compiler sẽ tự sinh mã Alpine.js cấu hình và nạp vào Global Listener. Lùi tiến độ tính năng này xuống Phase Theme Builder.
+
+## 2026-04-28 - 🟢 Brainstorm: Ska Scripts Library & Global Code Module
+- **Decision (Ska Scripts Library):** Thống nhất kiến trúc xây dựng Thư viện Code tập trung (Ska Scripts Library) dựa trên nền tảng Smart Object `app-site` hiện có. Cho phép người dùng lưu trữ các đoạn mã JS/CSS (như Alpine.store, Chart.js CDN, GA4) và cấu hình "Vị trí nạp" (Header/Footer/Inline) cùng "Phạm vi nạp" (Global/On-demand).
+- **Decision (Khối `ska-code` & Deduplication):** Thay thế khối Custom HTML thô sơ bằng khối `ska-code` chuyên dụng. Khối này hỗ trợ viết code nội tuyến (Inline) hoặc gọi code từ Thư Viện (Library Injection). Lõi hệ thống sẽ tự động gom mã (Harvesting) và chống lặp (Deduplication) để tối ưu tốc độ tải trang (Core Web Vitals).
+- **Decision (Post-MVP Deferral):** Chốt đưa tính năng Ska Scripts Library và khối `ska-code` vào lộ trình Post-MVP, tập trung ưu tiên hoàn thành lõi Logic Engine DAG MVP trước. Dùng giải pháp SkaFX nội suy tạm thời cho đến khi tính năng này ra mắt.
+
 ## 2026-04-28 - 🟢 Hợp Nhất & Tinh Gọn: 9 Core Primitives (Ska Logic Engine)
 - **Decision (Gộp Trigger Nodes):** Hủy bỏ `[T3] Action Click` và sáp nhập hoàn toàn vào `[T1] Trigger Node`. Chuyển đổi Trigger Node thành điểm vào (Entry Point) duy nhất với thuộc tính `Trigger Type` (Logic Trigger, Webhook, Cron). Quyết định này giúp bảo vệ tính "nguyên tử" (Primitive) tối đa, giảm thiểu phân mảnh Node.
 - **Decision (Bổ sung DB Query Node):** Chốt đưa `[D2] DB Query Node` vào Roadmap MVP (Ưu tiên P2). Node này chuyên trị việc đọc (Fetch), lọc (Where), và giới hạn (Limit) dữ liệu từ CSDL bảng phẳng (`ska_data_*`), bổ trợ sức mạnh truy vấn còn thiếu của `DB Action Node` (vốn chỉ chuyên Mutate). 

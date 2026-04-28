@@ -75,6 +75,14 @@ const NODE_TYPES = [
     icon: <ServerCog size={16} />,
     description: 'Run asynchronously',
     color: 'bg-purple-50 text-purple-700 border-purple-200'
+  },
+  {
+    type: 'ClientResponseNode',
+    backendClass: 'Ska_Logic_Client_Response',
+    label: 'Client Response',
+    icon: <span className="material-symbols-outlined text-[16px]">reply</span>,
+    description: 'Send UI commands (Toast/Modal)',
+    color: 'bg-teal-50 text-teal-700 border-teal-200'
   }
 ];
 
