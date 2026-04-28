@@ -19,9 +19,11 @@ import SetDataNode from './nodes/SetDataNode';
 import ConditionNode from './nodes/ConditionNode';
 import SwitchNode from './nodes/SwitchNode';
 import DBActionNode from './nodes/DBActionNode';
+import DBQueryNode from './nodes/DBQueryNode';
 import BaseNode from './nodes/BaseNode';
 import HttpRequestNode from './nodes/HttpRequestNode';
 import ClientResponseNode from './nodes/ClientResponseNode';
+import RenderTemplateNode from './nodes/RenderTemplateNode';
 import Sidebar from './components/Sidebar';
 import SettingsPanel from './components/SettingsPanel';
 
@@ -32,8 +34,10 @@ const nodeTypes = {
   ConditionNode: ConditionNode,
   SwitchNode: SwitchNode,
   DBActionNode: DBActionNode,
+  DBQueryNode: DBQueryNode,
   ApiNode: HttpRequestNode,
   ClientResponseNode: ClientResponseNode,
+  RenderTemplateNode: RenderTemplateNode,
   ErrorNode: (props) => <BaseNode {...props} icon={<AlertTriangle size={16} />} title="Catch Error" colorClass="bg-rose-50" borderClass="border-rose-200" headerClass="bg-rose-100 text-rose-800 border-rose-200" />,
   BackgroundNode: (props) => <BaseNode {...props} icon={<ServerCog size={16} />} title="Background Job" colorClass="bg-purple-50" borderClass="border-purple-200" headerClass="bg-purple-100 text-purple-800 border-purple-200" />
 };

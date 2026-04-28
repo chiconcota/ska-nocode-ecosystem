@@ -8,6 +8,15 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-04-28 - 🟢 Triển khai Render Template Node [R1]
+- **Decision (Render Template Node Decoupled Architecture):** Quyết định triển khai khối "Render Template" như một cỗ máy biên dịch mini (Pure Interpolation Primitive), sử dụng `preg_replace_callback` kết hợp với `SkaFX_Engine` để quét và nội suy các biến `{{ ... }}` vào bên trong khung HTML. Nhằm tách bạch khả năng truy vấn dữ liệu ra khỏi node render, Node đã được nâng cấp hỗ trợ 2 nguồn (Source Type): Lấy mã HTML mẫu từ bảng `ska_data_sys_organisms` dựa theo `organism_id`, hoặc lấy toàn bộ cấu trúc HTML được truyền vào dạng chuỗi/biến qua thuộc tính `raw_template` (ví dụ từ DB Query Node).
+- **Decision (Template Output Variable):** Kết quả HTML sau khi được nội suy sẽ được lưu thẳng vào Payload thông qua một biến cấu hình (mặc định là `payload.rendered_template`). Dữ liệu này sẽ làm mồi để cấp cho các Node tiếp theo, ví dụ như đưa vào `ClientResponseNode` để hiển thị Modal chứa dữ liệu động, hoặc cấu thành nội dung thư gửi tự động qua email.
+
+## 2026-04-28 - 🟢 Mở Rộng SkaFX Engine & Chốt DB Query Node
+- **Decision (SkaFX Array Properties & Built-in functions):** Quyết định mở rộng 문법 (Syntax) của SkaFX Engine để hỗ trợ trực tiếp các tính năng thao tác mảng. Bổ sung khả năng đọc thuộc tính độ dài `.length` (Ví dụ: `[array.length]`) và hàm built-in `LIST_COL(array, 'col_name', 'separator')` giúp người dùng Nocode có thể đếm số lượng bản ghi hoặc xuất chuỗi danh sách một cách dễ dàng mà không cần dùng Node "Code" hay vòng lặp phức tạp.
+- **Decision (SkaFX Smart Fallback Prefix):** Bổ sung thuật toán thông minh tự động dọn dẹp (sanitize) tiền tố `payload.` nếu người dùng Nocode nhập nhầm vào ô biến (Ví dụ: nhập `payload.ho_ten` thay vì `ho_ten`). Giúp giảm thiểu lỗi gãy luồng Logic do sai sót đánh máy cơ bản, nâng cao tính Human-Centric cho Logic Engine.
+- **Decision (DB Query Node Logging):** Tích hợp tự động in truy vấn SQL (`error_log`) vào `Ska_Logic_DB_Query` để phục vụ Debugging. Node DB Query chính thức hoàn thiện, sẵn sàng đóng vai trò Read/Fetch dữ liệu động từ Database trong luồng tự động hóa.
+
 ## 2026-04-28 - 🟢 Brainstorm: Phân rã Trigger Frontend (Alpine) & Backend (Logic Engine)
 - **Decision (Frontend vs Backend Trigger Boundary):** Thống nhất và phân rạch ròi ranh giới xử lý sự kiện:
   - **Sự kiện Giao diện (UI Interactions):** Các tác vụ như mở Popup sau 10s, cuộn chuột, bật tắt Modal BẮT BUỘC xử lý bằng **Alpine.js** (Ska Design Engine) tại trình duyệt (Frontend) để đảm bảo tốc độ Zero-latency và không làm quá tải Server. Tuyệt đối không dùng Logic Engine cho mục đích UI thuần túy.

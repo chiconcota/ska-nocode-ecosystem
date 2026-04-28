@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "app_name": "Ska email Data",
+  "app_icon": "dashicons-database",
+  "objects": [
+    {
+      "slug": "sys_organisms",
+      "label": "System Organisms",
+      "icon": "dashicons-media-code",
+      "fields": [
+        {
+          "name": "id",
+          "label": "Organism ID",
+          "type": "text",
+          "options": ""
+        },
+        {
+          "name": "name",
+          "label": "Tên Template",
+          "type": "text",
+          "options": ""
+        },
+        {
+          "name": "html_content",
+          "label": "Mã HTML (Content)",
+          "type": "long_text",
+          "options": ""
+        }
+      ]
+    }
+  ]
+}
