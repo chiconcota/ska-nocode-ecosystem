@@ -8,6 +8,29 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-04-28 - 🟢 Hợp Nhất & Tinh Gọn: 9 Core Primitives (Ska Logic Engine)
+- **Decision (Gộp Trigger Nodes):** Hủy bỏ `[T3] Action Click` và sáp nhập hoàn toàn vào `[T1] Trigger Node`. Chuyển đổi Trigger Node thành điểm vào (Entry Point) duy nhất với thuộc tính `Trigger Type` (Logic Trigger, Webhook, Cron). Quyết định này giúp bảo vệ tính "nguyên tử" (Primitive) tối đa, giảm thiểu phân mảnh Node.
+- **Decision (Bổ sung DB Query Node):** Chốt đưa `[D2] DB Query Node` vào Roadmap MVP (Ưu tiên P2). Node này chuyên trị việc đọc (Fetch), lọc (Where), và giới hạn (Limit) dữ liệu từ CSDL bảng phẳng (`ska_data_*`), bổ trợ sức mạnh truy vấn còn thiếu của `DB Action Node` (vốn chỉ chuyên Mutate). 
+- **Decision (Tài liệu Kiến trúc Chuẩn):** Phát hành tài liệu đặc tả `primitive-nodes.md` làm Source of Truth duy nhất cho toàn bộ 9 Hạt cơ bản, loại bỏ hoàn toàn các ý tưởng về Compound/Composite Node trong giai đoạn MVP hiện tại.
+
+## 2026-04-28 - 🟢 Tối ưu Hóa Global State & Sự kiện cục bộ (Alpine.store)
+- **Decision (Alpine.store Local State):** Áp dụng kiến trúc Single Source Of Truth với `Alpine.store` để thiết kế các nút "Local Pop-up" hoặc "Toggle UI" (không gọi API Backend). Tách biệt hoàn toàn tính năng UI Response khỏi luồng AJAX Logic Engine để đạt độ trễ 0ms (Zero-Latency).
+- **Decision (Bắt buộc Khai báo x-data):** Rút kinh nghiệm quan trọng từ phiên bản Alpine.js v3: Bất kể một thẻ HTML nào muốn gọi `$store` thông qua `@click` hay `x-show`, bản thân nó hoặc thẻ cha trực tiếp BẮT BUỘC phải được khai báo `x-data` (có thể để trống). Đây là rule cứng của Alpine v3 để định danh một Component Node và bắt đầu lắng nghe directives.
+
+## 2026-04-27 - 🟢 Nâng cấp Ska Button: Hỗ trợ AJAX Trigger & Local UI Event
+- **Decision (Ska Button Action Types):** Tái cấu trúc thuộc tính `actionType` của khối Ska Button, hợp nhất tính năng gọi API và hiển thị Popup. Phân rã rành mạch thành 2 chế độ: `Trigger Workflow (AJAX)` và `Trigger Local UI Event`.
+- **Decision (Inline AlpineJS x-data):** Thay vì nạp một thư viện JS cồng kềnh để lắng nghe click cho Ska Button, áp dụng trực tiếp `x-data` và `@click.prevent` của AlpineJS để bắn Fetch API (`POST /wp-json/ska-logic/v1/submit`). Logic này xử lý cả trạng thái `loading` và tự động dispatch các lệnh UI (như Mở Modal, Hiện Toast) trả về từ Backend thông qua `window.dispatchEvent(new CustomEvent('ska-client-response'))`. Đối với Local UI Event, nút sẽ ném event trực tiếp mà không tốn chi phí gọi server.
+
+## 2026-04-27 - 🟢 Hoàn thành Frontend Builder Settings cho Client Response
+- **Decision (Client Response Settings UI):** Cập nhật `SettingsPanel.jsx` để thêm cấu hình thuộc tính nâng cao cho `ClientResponseNode` bao gồm Loại Phản hồi (Toast, Redirect, Modal, Fire Event) và Message/URL tương ứng, hỗ trợ nhập tĩnh hoặc SkaFX. UI giờ có thể biên dịch ra payload đúng chuẩn JSON.
+- **Decision (End-to-End Event Bus):** Chốt luồng sự kiện truyền từ Frontend (nút bấm độc lập `ska-action`) -> Logic Engine (Node xử lý dữ liệu và bắn sự kiện `_ska_events` xuống payload) -> Trình duyệt bắt được luồng `toast` và sinh thông báo thông qua Window Event Bus của `ska-core.js`.
+- **Decision (Merge Trigger Popup):** Hợp nhất tùy chọn `Trigger Popup` vào `Trigger Logic Workflow` trong khối `ska-button`. Nhờ có `ClientResponseNode` xử lý mở Modal từ phía Logic Engine, việc cấu hình popup trực tiếp trên nút bấm bị gỡ bỏ để đảm bảo luồng Logic Event Bus xuyên suốt và decoupled hoàn toàn.
+
+## 2026-04-27 - 🔴 Pivot Tối Thượng: Kiến Trúc 7 Hạt Cơ Bản (True Primitives)
+- **Decision (Khai tử các Node Lai / Composite MVP):** Chốt phương án hủy bỏ việc xây dựng các Node chức năng lai (như Node Gửi Mail, Node Tạo PDF, Node Hiện Pop-up) trong giai đoạn MVP. Dựa trên triết lý tách nhỏ tuyệt đối (Atomic), các chức năng này thực chất sẽ được ghép từ các Composite Nodes trong tương lai.
+- **Decision (7 True Primitives):** Khẳng định Lõi hệ thống Logic Engine MVP chỉ được phép duy trì đúng 7 Node nguyên thủy: (1) `Trigger`, (2) `Set Payload`, (3) `If/Else/Loop`, (4) `DB Action`, (5) `Raw HTTP Request`, (6) `Render Template` (Móc Smart Object & đắp dữ liệu HTML), và (7) `Client Response` (Trả tín hiệu JSON về trình duyệt để hiển thị Modal/Toast/Redirect).
+- **Decision (Render Template & Client Response):** Bổ sung 2 node mảnh ghép cuối cùng vào lộ trình. Tích hợp Hydration Engine vào `Render Template` để tạo mâm xôi (HTML) phục vụ Email/Pop-up. Quy hoạch gộp 3 node (Client Modal/Toast/Redirect) thành một node duy nhất là `Client Response`, làm cổng giao tiếp độc quyền với Alpine.js ở Frontend.
+
 ## 2026-04-27 - 🟢 Kiến Trúc Phân rã Client Action Nodes (Phản hồi UI)
 - **Decision (Bảo Vệ Tính Primitive của UI Response):** Thay vì tạo một Node "God Object" khổng lồ gánh mọi thao tác trình duyệt (Chuyển trang, Pop-up, Thông báo, Update Giỏ hàng) gây phá vỡ triệt để kiến trúc Primitive, chúng tôi quyết định băm nhỏ tính năng "UI Response" thành nhóm 3 Primitive Nodes độc lập: `[C1] Client Redirect` (Chuyển trang), `[C2] Client Notification` (Thông báo Toast/Alert), và `[C3] Client State` (Giao tiếp với Alpine.store để bật tắt Lightbox, Cập nhật giỏ hàng). Cơ chế này giúp giữ nguyên vòng đời Đơn nhiệm (Single Responsibility) của hệ thống DAG, ngăn chặn Spaghetti UI ở Backend.
 

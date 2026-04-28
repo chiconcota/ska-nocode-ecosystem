@@ -20,6 +20,7 @@ Thay vì làm các Node chức năng khổng lồ, hệ thống sẽ chỉ cung 
 
 ### 2.2. Nhóm Data & Giao thức (Ưu tiên P2)
 - [x] **[D1] DB CRUD Action Node (Ska Native):** Node thao tác CSDL với Ska Data Pro. (Tích hợp Schema UI, Auto-map fields, Data Picker, hỗ trợ Data Vector Batch Process để chống N+1).
+- [ ] **[D2] DB Query Node (Ska Native):** Node chuyên đọc/truy vấn CSDL (Fetch/Read). Hỗ trợ lọc (Where), sắp xếp (Sort), và giới hạn (Limit). Trả về Array of Objects vào Payload.
 - [x] **[U1] Context / JSON Node:** Parse, Stringify, Set Data (Gán biến qua SkaFX).
 - [x] **[I1] Raw HTTP Request Node:** Trình gọi API RESTful (Cấu hình Headers, Method, Payload) dùng chung cho mọi dịch vụ ngoài.
 
@@ -28,10 +29,9 @@ Thay vì làm các Node chức năng khổng lồ, hệ thống sẽ chỉ cung 
 - [ ] **[T2] Webhook & Cron Trigger:** Hỗ trợ nhận tải trọng và lên lịch.
 - [x] **[T3] Action Click / Custom Event:** Cho phép gắn Trigger vào bất kỳ một Nút bấm (Button) hoặc Thẻ (Div) nào trên Frontend thay vì bắt buộc dùng Form.
 
-### 2.4. Nhóm Client Action / Phản hồi UI (Tiền đề Smart Lightbox)
-- [ ] **[C1] Client Redirect Node:** Trả về lệnh chuyển hướng trang hoặc tải lại trang (Reload).
-- [ ] **[C2] Client Notification Node:** Trả về lệnh hiển thị thông báo (Toast/Alert) như Thành công/Thất bại ở góc màn hình.
-- [ ] **[C3] Client State Node:** Trả về lệnh cập nhật biến trong `Alpine.store` (Dùng để Mở Pop-up, Cập nhật Giỏ hàng, Đổi trạng thái UI mà không cần load trang).
+### 2.4. Nhóm Trình Diễn & Trả Về (Render Template & Client Response)
+- [ ] **[R1] Render Template Node:** Node sinh HTML động. Lấy Smart Object từ DB và đắp dữ liệu (Hydration) bằng Mustache để phục vụ gửi Email, tạo PDF, hoặc giao diện Pop-up.
+- [x] **[C1] Client Response Node:** Trả tín hiệu JSON về trình duyệt. Đảm nhiệm mọi tương tác UI ở Frontend bằng cách ném ra chỉ thị (Ví dụ: `{"action": "show_toast"}`, `{"action": "redirect"}`, `{"action": "open_modal"}`) cho Javascript xử lý.
 
 ### 2.5. Nhóm Pre-built Integration (Tương lai / Post-MVP)
 - [ ] **[N1] Notion Node:** Đóng gói sẵn kết nối API của Notion (Tự động chèn Authorization & Notion-Version).
@@ -53,6 +53,7 @@ Thay vì làm các Node chức năng khổng lồ, hệ thống sẽ chỉ cung 
 - [x] Xây dựng giao diện Setting Add Rules cho If/Else.
 - [x] Khởi tạo File Frontend React cho `DBActionNode` (CRUD).
 - [x] Hoàn thiện trải nghiệm UX/UI (Dynamic Submenus, Unified Dashboard Cards, chống tràn Settings Panel, sửa lỗi ESC đóng modal).
+- [x] Cập nhật Frontend Event Bus và Alpine.store để đón nhận Client Response từ Node.
 - [ ] Cập nhật `class-workflow-runner.php` thêm giới hạn đệ quy (`Circuit Breaker`).
 - [ ] Tích hợp tính năng Data Picker nâng cao (Gom nhóm theo App).
 - [x] Kiểm thử toàn diện DBActionNode (Insert/Update Record) kết hợp với If/Else và Set Data (Đã hoàn tất quy trình cuối).

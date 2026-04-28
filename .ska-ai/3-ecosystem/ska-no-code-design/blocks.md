@@ -35,8 +35,9 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
 
 #### 5. Ska Button (`ska-builder/button`)
 - **Attributes:** `text`, `url`, `tagName`, `tailwindClasses`, `customStyle`, `dynamic`, `logic`.
-  - **Action & Icon (2026-03-27):** Thêm `actionType` (link/submit/popup). Thêm nhóm quản lý thẻ con `hasIcon`, `iconName`, `iconPosition`, `iconClasses`.
-- **Render:** Ép kiểu Semantic Tag (`<a>` hoặc `<button>`) phụ thuộc thời gian thực vào biến `actionType`, tự động gỡ bỏ thuộc tính `tagName` lưu tĩnh để chặn lỗi chết link.
+- **Action & Icon (2026-04-27):** Rút gọn `actionType` còn `link`, `submit`, và `logic_api` (đã hợp nhất tính năng gọi Popup vào Logic Workflow thông qua Client Response Node). Nhóm Icon vẫn giữ nguyên.
+- **Alpine.js Local Event (2026-04-28):** Khi người dùng muốn kích hoạt sự kiện cục bộ thông qua Alpine.store (ví dụ: `@click="$store.appState.openModal()"`), nút bấm BẮT BUỘC phải được gắn thêm thuộc tính `x-data` để Alpine v3 nhận diện là một component và parse directives.
+- **Render:** Ép kiểu Semantic Tag (`<a>` hoặc `<button>`) phụ thuộc thời gian thực vào biến `actionType`. Hỗ trợ tự động tiêm class `ska-action-[workflow_id]` nếu nút sử dụng hành động Logic Workflow, mở đường kết nối ngầm với Logic Engine Event Bus.
 - **Isolation Fix (2026-03-21):** Di chuyển `get_block_wrapper_attributes()` từ lớp vỏ `div` vào thẻ `<a>` hoặc `<button>`. Xóa bỏ lỗi "Red Box" khi hover tràn khung.
 - **CSS Specificity (2026-03-27):** Gỡ bỏ class `wp-element-button` mang nợ CSS mặc định của theme WP (như nền đen). Tự tạo file `index.css` áp dụng lệnh `a.ska-button-block { text-decoration: none; }` có độ ưu tiên `0,1,1` để ép tắt dòng gạch chân mặc định của WP, nhưng khéo léo dùng bộ chọn để cho phép Tailwind override hoàn hảo các class dạng `underline` và `hover:underline`.
 
