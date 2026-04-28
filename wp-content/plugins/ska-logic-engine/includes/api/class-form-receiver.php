@@ -63,10 +63,22 @@ class Ska_Form_Receiver
             ]);
         }
 
+        $message = 'Nhiệm màu! Data đã lướt an toàn qua các bộ Node vào trúng Lớp Kho!';
+        
+        // Trích xuất thông báo từ ClientResponseNode (nếu có)
+        if (!empty($completed_payload['_ska_events'])) {
+            foreach ($completed_payload['_ska_events'] as $event) {
+                if (isset($event['type']) && $event['type'] === 'toast' && !empty($event['message'])) {
+                    $message = $event['message'];
+                    break;
+                }
+            }
+        }
+
         // 3. Phun Phản Hồi Về Cho Thẻ <Form> Ở Lớp Vỏ Giao Diện
         return rest_ensure_response([
             'success' => true,
-            'message' => 'Nhiệm màu! Data đã lướt an toàn qua các bộ Node vào trúng Lớp Kho!',
+            'message' => $message,
             'data' => $completed_payload
         ]);
     }

@@ -1,5 +1,5 @@
 # PROJECT MANAGER: LOGIC ENGINE WORKFLOW - AUTOMATION (DAG BUILDER)
-@status: 🟡 In Progress | @last_update: 2026-04-24 | @context: Tái cấu trúc UX/UI cho Ska Logic Engine theo chuẩn n8n/Blender (React Flow).
+@status: 🟡 In Progress | @last_update: 2026-04-28 | @context: Tái cấu trúc UX/UI cho Ska Logic Engine theo chuẩn n8n/Blender (React Flow).
 
 ---
 

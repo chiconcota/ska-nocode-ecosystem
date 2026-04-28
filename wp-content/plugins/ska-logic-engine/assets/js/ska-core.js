@@ -82,9 +82,6 @@ window.$ska = {
                 // Ném một tín hiệu global để ai muốn bắt thì bắt (Vd: Analytics)
                 el.dispatchEvent(new CustomEvent('ska-submit-success', { bubbles: true, detail: result }));
                 
-                // Hiển thị Toast Thành công
-                window.$ska.showToast('Gửi dữ liệu thành công!', 'success');
-                
                 return result;
             } else {
                 throw new Error(result.message || 'Lỗi chưa xác định từ máy chủ!');
@@ -148,6 +145,9 @@ window.$ska = {
             } 
             else if (evt.type === 'fire_event' && evt.event_name) {
                 window.dispatchEvent(new CustomEvent(evt.event_name, { detail: evt.payload || {} }));
+            }
+            else if (evt.type === 'toast' && evt.message) {
+                window.$ska.showToast(evt.message, evt.toast_type || 'success');
             }
         });
     },
@@ -224,6 +224,17 @@ document.addEventListener('click', function(e) {
     // Gắn ID tạm để submitForm nhận diện
     actionEl.dataset.logicId = workflowId;
     
+    // Lấy payload tĩnh nếu có
+    let payload = {};
+    const payloadStr = actionEl.getAttribute('data-ska-payload');
+    if (payloadStr) {
+        try {
+            payload = JSON.parse(payloadStr);
+        } catch(err) {
+            console.warn('Ska Core: Invalid JSON in data-ska-payload', err);
+        }
+    }
+    
     // Kích hoạt chu trình gọi Backend
-    window.$ska.submitForm(actionEl);
+    window.$ska.submitForm(actionEl, payload);
 });

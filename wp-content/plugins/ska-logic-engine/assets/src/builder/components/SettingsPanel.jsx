@@ -68,7 +68,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                 onChange={(e) => handleChange('triggerType', e.target.value)}
                 className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
               >
-                <option value="form_submit">Form Submit</option>
+                <option value="form_submit">Logic Trigger (AJAX / Form)</option>
                 <option value="webhook">Webhook URL</option>
                 <option value="cron">Schedule (Cron)</option>
               </select>
@@ -76,7 +76,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
             
             {(selectedNode.data.triggerType === 'form_submit' || !selectedNode.data.triggerType) && (
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Form ID / Action Hook</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Workflow ID / Action Hook</label>
                 <input 
                   type="text" 
                   value={selectedNode.data.workflowId || ''} 
@@ -84,7 +84,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                   className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                   placeholder="e.g. user_registration"
                 />
-                <p className="text-xs text-slate-500 mt-1">This ID must match your Frontend Form's action ID.</p>
+                <p className="text-xs text-slate-500 mt-1">This ID must match your Trigger Button or Form's action ID.</p>
               </div>
             )}
 
@@ -478,6 +478,92 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                   className="w-full text-xs p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono bg-slate-50 min-h-[100px]"
                   placeholder='{ "key": "{{payload.value}}" }'
                 />
+              </div>
+            )}
+          </div>
+        )}
+        
+        {selectedNode.type === 'ClientResponseNode' && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Response Type</label>
+              <select 
+                value={selectedNode.data.response_type || 'toast'} 
+                onChange={(e) => handleChange('response_type', e.target.value)}
+                className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+              >
+                <option value="toast">Show Toast Message</option>
+                <option value="redirect">Redirect / Navigate</option>
+                <option value="open_modal">Open Modal Popup</option>
+                <option value="fire_event">Fire Custom Event</option>
+              </select>
+            </div>
+
+            {selectedNode.data.response_type === 'redirect' && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Redirect URL</label>
+                <input 
+                  type="text" 
+                  value={selectedNode.data.url || ''} 
+                  onChange={(e) => handleChange('url', e.target.value)}
+                  className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
+                  placeholder="https://example.com/success"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">Hỗ trợ SkaFX (vd: [payload.next_url])</p>
+              </div>
+            )}
+
+            {selectedNode.data.response_type === 'open_modal' && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Modal ID</label>
+                <input 
+                  type="text" 
+                  value={selectedNode.data.modal_id || ''} 
+                  onChange={(e) => handleChange('modal_id', e.target.value)}
+                  className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
+                  placeholder="login_modal"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">ID của Modal Element (vd: my_modal)</p>
+              </div>
+            )}
+
+            {selectedNode.data.response_type === 'fire_event' && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Event Name</label>
+                <input 
+                  type="text" 
+                  value={selectedNode.data.event_name || ''} 
+                  onChange={(e) => handleChange('event_name', e.target.value)}
+                  className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
+                  placeholder="custom-success-event"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">Sẽ kích hoạt: window.dispatchEvent(...) với detail chứa toàn bộ payload.</p>
+              </div>
+            )}
+
+            {(!selectedNode.data.response_type || selectedNode.data.response_type === 'toast') && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Toast Message</label>
+                  <textarea 
+                    value={selectedNode.data.message || ''} 
+                    onChange={(e) => handleChange('message', e.target.value)}
+                    className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    placeholder="Thao tác thành công!"
+                  />
+                  <p className="text-[10px] text-slate-500 mt-1">Hỗ trợ SkaFX (vd: Cảm ơn [payload.name])</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Toast Type</label>
+                  <select 
+                    value={selectedNode.data.toast_type || 'success'} 
+                    onChange={(e) => handleChange('toast_type', e.target.value)}
+                    className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+                  >
+                    <option value="success">Thành công (Success)</option>
+                    <option value="error">Lỗi (Error)</option>
+                  </select>
+                </div>
               </div>
             )}
           </div>

@@ -189,6 +189,11 @@ function _registerSkaForm() {
                     this.status = 'success';
                     this.message = data.message || 'Gửi thành công!';
 
+                    // KÍCH HOẠT EVENT BUS - HỆ TUẦN HOÀN CHO PHÉP BACKEND RA LỆNH NGƯỢC LẠI FRONTEND
+                    if (data.data && data.data._ska_events && window.$ska && window.$ska.processEventBus) {
+                        window.$ska.processEventBus(data.data._ska_events);
+                    }
+
                     // Reset Form
                     Object.keys(this.fields).forEach((key) => {
                         this.fields[key] = Array.isArray(this.fields[key]) ? [] : '';
