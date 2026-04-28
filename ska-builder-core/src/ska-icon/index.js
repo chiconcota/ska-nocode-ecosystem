@@ -48,7 +48,8 @@ registerBlockType(metadata.name, {
 
         const blockProps = useBlockProps({
             className: `ska-icon-block wp-block-ska-builder-icon material-symbols-outlined ${tailwindClasses}`.trim(),
-            style: { ...parseStyle(customStyle), fontSize: 'inherit' }
+            style: { ...parseStyle(customStyle), fontSize: 'inherit' },
+            'aria-hidden': 'true'
         });
 
         // Modal: filter ALL_ICONS, gioi han 200 ket qua de tranh lag
@@ -80,7 +81,7 @@ registerBlockType(metadata.name, {
                             background: '#f0f0f0',
                             borderRadius: '6px',
                         }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '36px' }}>{iconName || 'star'}</span>
+                            <span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: '36px' }}>{iconName || 'star'}</span>
                             <div style={{ flex: 1 }}>
                                 <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{iconName || 'star'}</div>
                                 <div style={{ fontSize: '11px', color: '#757575' }}>Current Icon</div>
@@ -101,7 +102,7 @@ registerBlockType(metadata.name, {
                             onClick={() => setIsModalOpen(true)}
                             style={{ width: '100%', justifyContent: 'center', marginBottom: '8px' }}
                         >
-                            <span className="material-symbols-outlined" style={{ fontSize: '18px', marginRight: '6px' }}>apps</span>
+                            <span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: '18px', marginRight: '6px' }}>apps</span>
                             {__('Browse Icons', 'ska-builder-core')} ({ALL_ICONS.length})
                         </Button>
                     </PanelBody>
@@ -172,7 +173,7 @@ registerBlockType(metadata.name, {
                                     }}
                                     title={icon}
                                 >
-                                    <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>{icon}</span>
+                                    <span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: '24px' }}>{icon}</span>
                                     <span style={{
                                         fontSize: '9px',
                                         color: '#666',
