@@ -7,8 +7,10 @@ import {
   AlertTriangle, 
   ServerCog,
   Database,
+  Search,
   Mail,
-  Variable
+  Variable,
+  FileCode2
 } from 'lucide-react';
 
 const NODE_TYPES = [
@@ -35,6 +37,14 @@ const NODE_TYPES = [
     icon: <Database size={16} />,
     description: 'Read/Write to DB',
     color: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  },
+  {
+    type: 'DBQueryNode',
+    backendClass: 'Ska_Logic_DB_Query',
+    label: 'DB Query',
+    icon: <Search size={16} />,
+    description: 'Fetch from DB',
+    color: 'bg-cyan-50 text-cyan-700 border-cyan-200'
   },
   {
     type: 'ConditionNode',
@@ -83,6 +93,14 @@ const NODE_TYPES = [
     icon: <span className="material-symbols-outlined text-[16px]">reply</span>,
     description: 'Send UI commands (Toast/Modal)',
     color: 'bg-teal-50 text-teal-700 border-teal-200'
+  },
+  {
+    type: 'RenderTemplateNode',
+    backendClass: 'Ska_Logic_Render_Template',
+    label: 'Render Template',
+    icon: <FileCode2 size={16} />,
+    description: 'Nội suy dữ liệu vào HTML',
+    color: 'bg-sky-50 text-sky-700 border-sky-200'
   }
 ];
 

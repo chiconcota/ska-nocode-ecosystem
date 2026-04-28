@@ -389,6 +389,150 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
           </div>
         )}
 
+        {selectedNode.type === 'DBQueryNode' && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Bảng dữ liệu (Table)</label>
+              <TablePicker 
+                value={selectedNode.data.table || ''}
+                onChange={(val) => handleChange('table', val)}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Return Type</label>
+              <select 
+                value={selectedNode.data.returnType || 'multiple'} 
+                onChange={(e) => handleChange('returnType', e.target.value)}
+                className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none bg-white"
+              >
+                <option value="multiple">Nhiều dòng (Array)</option>
+                <option value="single">Một dòng (Object)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Where Conditions</label>
+              {(selectedNode.data.conditions || []).map((cond, index) => (
+                <div key={index} className="flex gap-2 items-start mb-2">
+                  <div className="flex-1 space-y-2">
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        value={cond.column || ''} 
+                        onChange={(e) => {
+                          const newConds = [...(selectedNode.data.conditions || [])];
+                          newConds[index] = { ...newConds[index], column: e.target.value };
+                          handleChange('conditions', newConds);
+                        }}
+                        className="w-1/2 text-xs p-1.5 border border-slate-300 rounded outline-none"
+                        placeholder="Column"
+                      />
+                      <select
+                        value={cond.operator || '='}
+                        onChange={(e) => {
+                          const newConds = [...(selectedNode.data.conditions || [])];
+                          newConds[index] = { ...newConds[index], operator: e.target.value };
+                          handleChange('conditions', newConds);
+                        }}
+                        className="w-1/2 text-xs p-1.5 border border-slate-300 rounded outline-none bg-white"
+                      >
+                        <option value="=">=</option>
+                        <option value="!=">!=</option>
+                        <option value=">">&gt;</option>
+                        <option value="<">&lt;</option>
+                        <option value=">=">&gt;=</option>
+                        <option value="<=">&lt;=</option>
+                        <option value="LIKE">LIKE</option>
+                        <option value="IN">IN</option>
+                      </select>
+                    </div>
+                    <input 
+                      type="text" 
+                      value={cond.value || ''} 
+                      onChange={(e) => {
+                        const newConds = [...(selectedNode.data.conditions || [])];
+                        newConds[index] = { ...newConds[index], value: e.target.value };
+                        handleChange('conditions', newConds);
+                      }}
+                      className="w-full text-xs p-1.5 border border-slate-300 rounded outline-none font-mono text-cyan-600 bg-slate-50"
+                      placeholder="Value or [payload.id]"
+                    />
+                  </div>
+                  <button 
+                    onClick={() => {
+                      const newConds = [...(selectedNode.data.conditions || [])];
+                      newConds.splice(index, 1);
+                      handleChange('conditions', newConds);
+                    }}
+                    className="p-1 text-slate-400 hover:text-red-500 rounded bg-slate-100 mt-1"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+              <button 
+                onClick={() => {
+                  const newConds = [...(selectedNode.data.conditions || []), { column: '', operator: '=', value: '' }];
+                  handleChange('conditions', newConds);
+                }}
+                className="w-full py-1.5 text-xs font-medium text-cyan-600 border border-cyan-200 rounded bg-cyan-50 hover:bg-cyan-100 transition-colors mt-1"
+              >
+                + Add Condition
+              </button>
+            </div>
+
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1">Order By</label>
+                <input 
+                  type="text" 
+                  value={selectedNode.data.orderBy || ''} 
+                  onChange={(e) => handleChange('orderBy', e.target.value)}
+                  className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                  placeholder="e.g. created_at"
+                />
+              </div>
+              <div className="w-24">
+                <label className="block text-sm font-medium text-slate-700 mb-1">Direction</label>
+                <select 
+                  value={selectedNode.data.orderDir || 'DESC'} 
+                  onChange={(e) => handleChange('orderDir', e.target.value)}
+                  className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none bg-white"
+                >
+                  <option value="DESC">DESC</option>
+                  <option value="ASC">ASC</option>
+                </select>
+              </div>
+            </div>
+
+            {selectedNode.data.returnType !== 'single' && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Limit</label>
+                <input 
+                  type="text" 
+                  value={selectedNode.data.limit || ''} 
+                  onChange={(e) => handleChange('limit', e.target.value)}
+                  className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                  placeholder="Number or [var]"
+                />
+              </div>
+            )}
+
+            <div className="border-t border-slate-200 pt-4 mt-4">
+              <label className="block text-sm font-medium text-slate-700 mb-1">Lưu kết quả vào (Result Variable)</label>
+              <input 
+                type="text" 
+                value={selectedNode.data.resultVar || ''} 
+                onChange={(e) => handleChange('resultVar', e.target.value)}
+                className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none font-mono"
+                placeholder="payload.query_results"
+              />
+              <p className="text-xs text-slate-500 mt-1">VD: <code>payload.users</code>. Dữ liệu sẽ được lưu vào biến này để các node sau sử dụng.</p>
+            </div>
+          </div>
+        )}
+
         {selectedNode.type === 'ApiNode' && (
           <div className="space-y-4">
             <div>
@@ -569,17 +713,56 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
           </div>
         )}
         
-        {/* Dynamic Fields Example for other node types */}
-        {selectedNode.type === 'DatabaseAction' && (
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Table Name</label>
-            <input 
-              type="text" 
-              value={selectedNode.data.tableName || ''} 
-              onChange={(e) => handleChange('tableName', e.target.value)}
-              className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              placeholder="e.ska_data_..."
-            />
+        {selectedNode.type === 'RenderTemplateNode' && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Nguồn Template (Source)</label>
+              <select 
+                value={selectedNode.data.source_type || 'system'} 
+                onChange={(e) => handleChange('source_type', e.target.value)}
+                className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none bg-white"
+              >
+                <option value="system">Từ System Organisms (Builder)</option>
+                <option value="raw">Từ Biến / Custom Text (Ska Data Pro)</option>
+              </select>
+            </div>
+
+            {(!selectedNode.data.source_type || selectedNode.data.source_type === 'system') ? (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Organism ID</label>
+                  <input 
+                    type="text" 
+                    value={selectedNode.data.organism_id || ''} 
+                    onChange={(e) => handleChange('organism_id', e.target.value)}
+                    className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-xs"
+                    placeholder="VD: org_12345 hoặc [payload.org_id]"
+                  />
+                  <p className="text-[10px] text-slate-500 mt-1">ID hoặc tên của template trong bảng ska_data_sys_organisms.</p>
+                </div>
+            ) : (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Dữ liệu HTML / Biến</label>
+                  <textarea 
+                    value={selectedNode.data.raw_template || ''} 
+                    onChange={(e) => handleChange('raw_template', e.target.value)}
+                    className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-xs min-h-[100px]"
+                    placeholder="Vd: {{ payload.db_result.html_content }}"
+                  />
+                  <p className="text-[10px] text-slate-500 mt-1">Sử dụng SkaFX &#123;&#123; biến &#125;&#125; để truyền nguyên cục HTML lấy từ DB Query Node vào đây.</p>
+                </div>
+            )}
+            
+            <div className="border-t border-slate-200 pt-4 mt-4">
+              <label className="block text-sm font-medium text-slate-700 mb-1">Lưu HTML vào biến (Result Var)</label>
+              <input 
+                type="text" 
+                value={selectedNode.data.result_var || 'payload.rendered_template'} 
+                onChange={(e) => handleChange('result_var', e.target.value)}
+                className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono"
+                placeholder="payload.rendered_template"
+              />
+              <p className="text-xs text-slate-500 mt-1">Dữ liệu HTML sau khi nội suy sẽ được lưu vào biến này.</p>
+            </div>
           </div>
         )}
       </div>

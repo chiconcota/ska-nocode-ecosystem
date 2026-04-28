@@ -63,6 +63,12 @@ class SkaFX_Evaluator {
             if ( $lower_name === 'false' ) return false;
             if ( $lower_name === 'null' ) return null;
 
+            // UX Cải tiến: Nếu user gõ `payload.xyz`, ta tự động cắt bỏ chữ `payload.` đi
+            // vì $this->row_context vốn dĩ chính là payload rồi.
+            if ( strpos( $var_name, 'payload.' ) === 0 ) {
+                $var_name = substr( $var_name, 8 );
+            }
+
             // Ưu tiên 1: Quét biến ảo trong RAM (VD: Lễ tân vừa gán `var tuoi = 18`)
             if ( array_key_exists( $var_name, $this->symbol_table ) ) {
                 return $this->symbol_table[ $var_name ];
@@ -81,6 +87,8 @@ class SkaFX_Evaluator {
                 foreach ( $keys as $key ) {
                     if ( is_array( $current ) && array_key_exists( $key, $current ) ) {
                         $current = $current[ $key ];
+                    } elseif ( $key === 'length' && (is_array( $current ) || $current instanceof \Countable) ) {
+                        $current = count( $current );
                     } else {
                         $found = false;
                         break;
@@ -194,6 +202,14 @@ class SkaFX_Evaluator {
                     return round( $arg_vals[0], $precision );
                 case 'IS_NULL':
                     return is_null( $arg_vals[0] );
+                case 'LIST_COL':
+                    // Cú pháp: LIST_COL( array_data, 'column_name', 'separator' )
+                    $arr = $arg_vals[0];
+                    if ( ! is_array( $arr ) ) return '';
+                    $col_name = isset( $arg_vals[1] ) ? $arg_vals[1] : 'id';
+                    $separator = isset( $arg_vals[2] ) ? $arg_vals[2] : ', ';
+                    $plucked = array_column( $arr, $col_name );
+                    return implode( $separator, $plucked );
                 default:
                     throw new SkaFX_Runtime_Error("Hàm không tồn tại trong từ điển SkaFX: " . $fn_name);
             }

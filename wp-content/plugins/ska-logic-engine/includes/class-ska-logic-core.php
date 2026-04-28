@@ -28,8 +28,10 @@ class Ska_Logic_Core {
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-condition.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-switch.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-db-action.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-db-query.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-http-request.php';
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-client-response.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-render-template.php';
         
         // 3. Đường ray Tàu Hỏa (Pipeline Runner & Async)
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/class-workflow-runner.php';
