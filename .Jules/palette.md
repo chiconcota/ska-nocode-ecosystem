@@ -1,0 +1,3 @@
+## 2024-05-18 - [Accessibility: Tailwind Panel Remove Button]
+**Learning:** In `TailwindPanel.js`, the "Remove class" button was an icon-only `<Button>` containing an `<svg>` with no accessible name. The Tailwind Active indicator used a Material Symbols ligature text `auto_awesome` which would be confusingly read by screen readers.
+**Action:** When adding ARIA labels to icon-only buttons, ensure inner SVG elements have `aria-hidden="true"` and `focusable="false"`. Also, for decorative Material Symbols ligatures, always add `aria-hidden="true"` to prevent screen readers from reading the ligature text aloud.
