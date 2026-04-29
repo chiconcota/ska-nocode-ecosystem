@@ -41,7 +41,7 @@ ska-ecosystem/ (mapped to app/public/)
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Stable (v1) |
 | **Ska No-Code Design** | `plugins/ska-no-code-design/`| Core Blocks, Tailwind JIT, Ska Molecule | 🟢 Stable Phase 3 |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, JSON Native Schema | 🟢 Stable Phase 3 |
-| **Ska Logic Engine** | `plugins/ska-logic-engine/`| Event Pipeline, SkaFX, Universal Binding | 🟡 In Progress (Phase 4.2) |
+| **Ska Logic Engine** | `plugins/ska-logic-engine/`| Event Pipeline, SkaFX, Universal Binding | 🟢 Stable (MVP Primitives) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API (JSON Export) | 🟢 Integrated |
 
 ## 5. SYSTEM CAPABILITIES (CHECKPOINTS - PHASES 1-3)
@@ -60,6 +60,8 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 
 ## 7. RECENT LOGS (LATEST)
 > *Các nhật ký từ Phase 1 và 2 đã được lưu trữ trong `.ska-ai/2-memory/archive/`. Chỉ giữ lại các cập nhật cốt lõi gần đây (Phase 3 -> Phase 4).*
+
+- **2026-04-29 - 🟢 E2E Testing MVP Primitives Hoàn Tất:** Xác thực thành công toàn bộ luồng tích hợp của DB Query Node và Render Template Node. Cơ chế Smart Fallback của SkaFX Engine phát huy tác dụng tối đa, cho phép Nocode User gọi biến tĩnh không cần tiền tố `payload.`. Gói lõi tự động hóa Ska Logic Engine (MVP) chính thức đóng băng (Stable) để chuyển hướng sang Phase 4: Thiết kế Ska Molecule.
 
 - **2026-04-28 - 🟢 Nâng cấp Render Template Node (Decoupled Architecture):** Chuyển đổi mô hình Render Template từ "Node tự truy vấn DB" sang mô hình "Cỗ máy nội suy thuần túy" (Pure Interpolation Primitive). Hỗ trợ nhận diện 2 nguồn Source Type: 1) System Organism ID. 2) Dữ liệu Raw Variable/Text truyền từ payload qua SkaFX. Giờ đây người dùng có thể tự do lấy HTML custom từ Ska Data Pro bằng DB Query Node, sau đó truyền vào Render Template để xử lý linh hoạt.
 - **2026-04-28 - 🟢 Hoàn thiện DB Query Node & Mở rộng SkaFX:** Triển khai thành công `[D2] DB Query Node` hỗ trợ truy vấn (Read) dữ liệu linh hoạt từ CSDL bảng phẳng với điều kiện động. Nâng cấp bộ máy nội suy SkaFX Engine: hỗ trợ thuộc tính đếm mảng `.length`, thêm hàm built-in `LIST_COL` trích xuất cột, và cơ chế Smart Fallback tự động dọn dẹp tiền tố `payload.` giúp tối ưu hóa UX Nocode.
