@@ -1,4 +1,4 @@
-# Quy Trình Kiểm Thử (End-to-End) Node DB Query trên Ska Logic Engine
+# [HOÀN THÀNH - 2026-04-29] Quy Trình Kiểm Thử (End-to-End) Node DB Query & Render Template
 
 ## Mục tiêu
 Sau khi hoàn thiện tính năng **DB Query Node**, quy trình này được tạo ra để:
