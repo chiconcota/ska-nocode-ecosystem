@@ -1,0 +1,3 @@
+## 2024-05-24 - Add aria-hidden to decorative material symbols
+**Learning:** Text-based icon ligatures (like `<span className="material-symbols-outlined">star</span>`) are often read aloud by screen readers as the underlying text (e.g., "star"). This causes confusing or redundant announcements for users relying on assistive technology when the icons are merely decorative or accompanied by visible text.
+**Action:** Always add `aria-hidden="true"` to elements rendering decorative text-based icon ligatures to ensure they are properly ignored by screen readers, preventing confusing accessibility experiences.
