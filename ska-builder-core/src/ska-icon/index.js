@@ -48,7 +48,8 @@ registerBlockType(metadata.name, {
 
         const blockProps = useBlockProps({
             className: `ska-icon-block wp-block-ska-builder-icon material-symbols-outlined ${tailwindClasses}`.trim(),
-            style: { ...parseStyle(customStyle), fontSize: 'inherit' }
+            style: { ...parseStyle(customStyle), fontSize: 'inherit' },
+            'aria-hidden': 'true'
         });
 
         // Modal: filter ALL_ICONS, gioi han 200 ket qua de tranh lag

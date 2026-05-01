@@ -1,0 +1,3 @@
+## 2024-03-21 - Hide decorative Material Symbols from screen readers
+**Learning:** Material Symbols ligatures (e.g., `<span className="material-symbols-outlined">star</span>`) are often read aloud by screen readers as their literal text content ("star"). When these icons are purely decorative, this creates confusing or redundant announcements for screen reader users.
+**Action:** When using Material Symbols ligatures for decorative purposes (like in the Icon or Button blocks), always add `aria-hidden="true"` to the `<span>` element to ensure screen readers ignore the ligature text.
