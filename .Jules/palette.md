@@ -1,0 +1,3 @@
+## 2024-05-19 - Ensure Decorative Material Symbols Ligatures are Hidden from Screen Readers
+**Learning:** This application heavily utilizes Google Material Symbols with ligatures (e.g., `<span className="material-symbols-outlined">auto_awesome</span>`). When missing `aria-hidden="true"`, screen readers will confusingly read out the raw ligature text ("auto awesome") instead of interpreting it as a decorative icon.
+**Action:** When adding or encountering Material Symbols ligatures acting as decorative icons, always ensure they include `aria-hidden="true"` to provide a clean screen reader experience.
