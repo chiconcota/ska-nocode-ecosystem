@@ -1,0 +1,3 @@
+## 2024-05-24 - Material Symbols Accessibility Improvements
+**Learning:** Screen readers announce ligature text (e.g., "star", "auto_awesome") used in Material Symbols if `aria-hidden="true"` is omitted. Furthermore, icon-only buttons with embedded SVG icons require `aria-label` on the `<button>` and both `aria-hidden="true"` and `focusable="false"` on the inner `<svg>` element to prevent redundant or confusing announcements.
+**Action:** Always add `aria-hidden="true"` to spans displaying Material Symbols ligatures. Ensure icon-only buttons have descriptive `aria-label` attributes and that their inner SVGs are explicitly hidden from screen readers and keyboard focus.
