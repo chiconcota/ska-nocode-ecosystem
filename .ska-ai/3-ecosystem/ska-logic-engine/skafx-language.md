@@ -20,6 +20,7 @@ Cú pháp của SkaFX được thiết kế tương đồng với **Excel** và 
 Trong kiến trúc Smart Object, dữ liệu từ Cơ sở dữ liệu (Database MySQL) BẮT BUỘC phải được đặt trong **Dấu Ngoặc Vuông `[]`**.
 - **Tuyệt đối địa chỉ (`[app.table.field]`):** Bao gồm Tên App, Tên Bảng, và Tên Cột (VD: `[clinic.doctors.name]`, `[clinic.doctors.rating]`). Điều này giúp phân biệt rõ ràng nếu hệ thống có nhiều khối ứng dụng khác nhau.
 - **Tương đối địa chỉ (`[table.field]` hoặc `[field]`):** Nếu tham chiếu ở ngữ cảnh tĩnh thì tự động lấy bảng hiện tại dựa trên Ngữ Cảnh URL (Ví dụ ID record hiện hành).
+- **Biến Ngữ Cảnh Hệ Thống (`$variable`):** Hỗ trợ các định danh bắt đầu bằng ký tự `$` dành riêng cho các biến hệ thống hoặc biến ngữ cảnh vòng lặp (Ví dụ: `[$item.price]`, `[$index]`).
 
 ### 2.2. Kiểu Dữ Liệu Hằng Số (Literals)
 - **Chuỗi văn bản (String):** Dùng nháy kép hoặc nháy đơn. VD: `"Xin chào"`, `'ABC'`, `""` (Chuỗi rỗng).

@@ -24,6 +24,7 @@ import BaseNode from './nodes/BaseNode';
 import HttpRequestNode from './nodes/HttpRequestNode';
 import ClientResponseNode from './nodes/ClientResponseNode';
 import RenderTemplateNode from './nodes/RenderTemplateNode';
+import IteratorNode from './nodes/IteratorNode';
 import Sidebar from './components/Sidebar';
 import SettingsPanel from './components/SettingsPanel';
 
@@ -38,6 +39,7 @@ const nodeTypes = {
   ApiNode: HttpRequestNode,
   ClientResponseNode: ClientResponseNode,
   RenderTemplateNode: RenderTemplateNode,
+  IteratorNode: IteratorNode,
   ErrorNode: (props) => <BaseNode {...props} icon={<AlertTriangle size={16} />} title="Catch Error" colorClass="bg-rose-50" borderClass="border-rose-200" headerClass="bg-rose-100 text-rose-800 border-rose-200" />,
   BackgroundNode: (props) => <BaseNode {...props} icon={<ServerCog size={16} />} title="Background Job" colorClass="bg-purple-50" borderClass="border-purple-200" headerClass="bg-purple-100 text-purple-800 border-purple-200" />
 };
@@ -98,6 +100,25 @@ function DnDFlow() {
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
+  // Helper: find if a flow-coordinate point is inside any IteratorNode
+  const findParentIterator = useCallback((flowPos, currentNodes, excludeId) => {
+    return currentNodes.find((n) => {
+      if (n.type !== 'IteratorNode') return false;
+      if (n.id === excludeId) return false;
+      const w = n.measured?.width ?? n.width ?? 280; // Default width for Iterator
+      const h = n.measured?.height ?? n.height ?? 180; // Default height for Iterator
+      
+      // Slight padding to make it easier to drop inside
+      const padding = 10;
+      return (
+        flowPos.x >= n.position.x - padding &&
+        flowPos.x <= n.position.x + w + padding &&
+        flowPos.y >= n.position.y - padding &&
+        flowPos.y <= n.position.y + h + padding
+      );
+    });
+  }, []);
+
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -124,11 +145,86 @@ function DnDFlow() {
         data: { label: label },
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      setNodes((nds) => {
+        // Check if drop position is inside an IteratorNode
+        const parent = findParentIterator(position, nds, newNode.id);
+        if (parent && type !== 'IteratorNode') {
+          // Convert absolute position to relative (inside parent)
+          newNode.position = {
+            x: position.x - parent.position.x,
+            y: position.y - parent.position.y,
+          };
+          newNode.parentId = parent.id;
+          newNode.extent = 'parent';
+
+          // Auto-connect to previous child if exists
+          const children = nds.filter(n => n.parentId === parent.id);
+          if (children.length > 0) {
+            const lastChild = children[children.length - 1];
+            setEdges((eds) => addEdge({ 
+              id: `e-${lastChild.id}-${newNode.id}`,
+              source: lastChild.id, 
+              target: newNode.id, 
+              animated: true 
+            }, eds));
+          }
+        }
+        return nds.concat(newNode);
+      });
       setSelectedNodeId(newNode.id); // Auto-select on drop
     },
-    [screenToFlowPosition, setNodes]
+    [screenToFlowPosition, setNodes, setEdges, findParentIterator]
   );
+
+  // When a node stops being dragged, check if it landed inside/outside an Iterator
+  const onNodeDragStop = useCallback((_event, draggedNode) => {
+    if (draggedNode.type === 'IteratorNode') return; // Don't nest iterators
+
+    setNodes((nds) => {
+      // Get the dragged node's absolute position
+      const dn = nds.find((n) => n.id === draggedNode.id);
+      if (!dn) return nds;
+
+      let absPos = { ...dn.position };
+      // If it already has a parent, convert to absolute first
+      if (dn.parentId) {
+        const oldParent = nds.find((n) => n.id === dn.parentId);
+        if (oldParent) {
+          absPos = {
+            x: dn.position.x + oldParent.position.x,
+            y: dn.position.y + oldParent.position.y,
+          };
+        }
+      }
+
+      const newParent = findParentIterator(absPos, nds, dn.id);
+
+      if (newParent) {
+        // Dropped inside an Iterator → attach
+        if (dn.parentId === newParent.id) return nds; // Already parented, no change
+        return nds.map((n) => {
+          if (n.id !== dn.id) return n;
+          return {
+            ...n,
+            position: {
+              x: absPos.x - newParent.position.x,
+              y: absPos.y - newParent.position.y,
+            },
+            parentId: newParent.id,
+            extent: 'parent',
+          };
+        });
+      } else {
+        // Dropped outside → detach from any parent
+        if (!dn.parentId) return nds; // Already free, no change
+        return nds.map((n) => {
+          if (n.id !== dn.id) return n;
+          const { parentId, extent, ...rest } = n;
+          return { ...rest, position: absPos };
+        });
+      }
+    });
+  }, [setNodes, findParentIterator]);
 
   const onNodeClick = useCallback((event, node) => {
     setSelectedNodeId(node.id);
@@ -142,7 +238,48 @@ function DnDFlow() {
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === id) {
-          return { ...node, data: newData };
+          const updatedNode = { ...node };
+          const cleanData = { ...newData };
+          
+          if (cleanData._parentNodeUpdate !== undefined) {
+            const newParentId = cleanData._parentNodeUpdate;
+            const oldParentId = node.parentId;
+
+            if (newParentId !== oldParentId) {
+              // Get absolute position of the node before change
+              let absX = node.position.x;
+              let absY = node.position.y;
+              if (oldParentId) {
+                const oldParent = nds.find(n => n.id === oldParentId);
+                if (oldParent) {
+                  absX += oldParent.position.x;
+                  absY += oldParent.position.y;
+                }
+              }
+
+              if (newParentId === '') {
+                // To Absolute
+                updatedNode.position = { x: absX, y: absY };
+                delete updatedNode.parentId;
+                delete updatedNode.extent;
+              } else {
+                // To Relative
+                const newParent = nds.find(n => n.id === newParentId);
+                if (newParent) {
+                  updatedNode.position = {
+                    x: absX - newParent.position.x,
+                    y: absY - newParent.position.y
+                  };
+                  updatedNode.parentId = newParentId;
+                  updatedNode.extent = 'parent';
+                }
+              }
+            }
+            delete cleanData._parentNodeUpdate;
+          }
+          
+          updatedNode.data = cleanData;
+          return updatedNode;
         }
         return node;
       })
@@ -170,6 +307,7 @@ function DnDFlow() {
           onDrop={onDrop}
           onDragOver={onDragOver}
           onNodeClick={onNodeClick}
+          onNodeDragStop={onNodeDragStop}
           onPaneClick={onPaneClick}
           nodeTypes={nodeTypes}
           fitView

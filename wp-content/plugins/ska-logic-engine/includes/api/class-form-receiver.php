@@ -55,6 +55,13 @@ class Ska_Form_Receiver
             ]);
         }
 
+        if ( isset($data['_debug_dump_graph']) ) {
+            return rest_ensure_response([
+                'success' => true,
+                'graph'   => $workflows[$form_id]['graph'] ?? []
+            ]);
+        }
+
         // 2.2 CHECK DỮ LIỆU ĐỔ VỠ TỪ NODE DATA ACTION (Bên Ska Data chối từ nhận Data)
         if (isset($completed_payload['_latest_insert']) && $completed_payload['_latest_insert']['result'] === false) {
             return rest_ensure_response([

@@ -92,6 +92,7 @@ registerBlockType(metadata.name, {
             'ska-builder/form',
             'ska-builder/input',
             'ska-builder/select',
+            'ska-builder/loop',
             'core/paragraph',
             'core/heading',
             'core/image'

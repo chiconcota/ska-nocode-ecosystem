@@ -49,24 +49,7 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
                         continue; // Bỏ qua nếu mapping rỗng (để Auto-map làm việc)
                     }
                     
-                    $resolved = \Ska\Logic\SkaFX\SkaFX_Engine::execute($expr, $payload);
-                    
-                    // Fallback thông minh:
-                    // 1. Nếu có lỗi cú pháp (ví dụ gõ 'khách lẻ' mà không bọc nháy kép)
-                    // 2. Hoặc kết quả là null VÀ chuỗi không chứa ngoặc vuông (gõ 'vip' -> thành tên biến, tìm ko thấy ra null)
-                    if ( isset($resolved['error']) || ($resolved['last_val'] === null && strpos($expr, '[') === false) ) {
-                        
-                        // Xử lý nội suy biến đơn giản như Template (VD: "Mã khách: [id]")
-                        $final_string = preg_replace_callback('/\[([a-zA-Z0-9_$.]+)\]/', function($matches) use ($payload) {
-                            $var_name = $matches[1];
-                            $res = \Ska\Logic\SkaFX\SkaFX_Engine::execute($var_name, $payload);
-                            return isset($res['last_val']) && !isset($res['error']) ? $res['last_val'] : '';
-                        }, $expr);
-                        
-                        $data_to_save[$col] = $final_string;
-                    } else {
-                        $data_to_save[$col] = $resolved['last_val'];
-                    }
+                    $data_to_save[$col] = $this->evaluate_field($expr, $payload);
                 }
             }
         }
@@ -89,8 +72,8 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
                 break;
 
             case 'update':
-                $resolved_record = \Ska\Logic\SkaFX\SkaFX_Engine::execute($recordIdExpr, $payload);
-                $record_id = $resolved_record['last_val'] ?? null;
+                $resolved_record = $this->evaluate_field($recordIdExpr, $payload);
+                $record_id = $resolved_record;
                 if (!empty($record_id) && !empty($data_to_save)) {
                     $result = $wpdb->update($table, $data_to_save, ['id' => $record_id]);
                     if ($result === false) {
@@ -104,8 +87,8 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
                 break;
 
             case 'delete':
-                $resolved_record = \Ska\Logic\SkaFX\SkaFX_Engine::execute($recordIdExpr, $payload);
-                $record_id = $resolved_record['last_val'] ?? null;
+                $resolved_record = $this->evaluate_field($recordIdExpr, $payload);
+                $record_id = $resolved_record;
                 if (!empty($record_id)) {
                     $result = $wpdb->delete($table, ['id' => $record_id]);
                     if ($result === false) {
@@ -121,6 +104,36 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
 
         // Node Action trả về payload và cổng main
         return ['payload' => $payload, 'port' => 'main'];
+    }
+
+    /**
+     * Helper để xử lý nội suy template hoặc biểu thức
+     */
+    private function evaluate_field($expr, $payload) {
+        if (empty($expr)) return '';
+
+        // Template {{ ... }}
+        if (strpos($expr, '{{') !== false) {
+            return preg_replace_callback('/\{\{\s*(.+?)\s*\}\}/', function($matches) use ($payload) {
+                $expression = trim($matches[1]);
+                $eval_result = \Ska\Logic\SkaFX\SkaFX_Engine::execute($expression, $payload);
+                return $eval_result['last_val'] ?? '';
+            }, $expr);
+        }
+
+        // Biểu thức trực tiếp
+        $resolved = \Ska\Logic\SkaFX\SkaFX_Engine::execute($expr, $payload);
+        
+        // Fallback cho [...]
+        if (isset($resolved['error']) || ($resolved['last_val'] === null && strpos($expr, '[') !== false)) {
+             return preg_replace_callback('/\[([a-zA-Z0-9_$.]+)\]/', function($matches) use ($payload) {
+                $var_name = $matches[1];
+                $res = \Ska\Logic\SkaFX\SkaFX_Engine::execute($var_name, $payload);
+                return $res['last_val'] ?? '';
+            }, $expr);
+        }
+
+        return $resolved['last_val'] ?? $expr;
     }
 }
 

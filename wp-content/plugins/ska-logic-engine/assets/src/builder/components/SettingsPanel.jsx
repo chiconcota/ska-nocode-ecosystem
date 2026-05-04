@@ -38,6 +38,25 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
           />
         </div>
         
+        {selectedNode.type !== 'TriggerNode' && (
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Parent Node (Iterator)</label>
+            <input 
+              type="text" 
+              value={selectedNode.parentId || selectedNode.parentNode || ''} 
+              onChange={(e) => {
+                onUpdateNode(selectedNode.id, {
+                  ...selectedNode.data,
+                  _parentNodeUpdate: e.target.value
+                });
+              }}
+              className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 outline-none font-mono"
+              placeholder="Tự động gán khi kéo vào Iterator"
+            />
+            <p className="text-[10px] text-slate-500 mt-1">Tự động gán khi kéo node vào Iterator. Xóa trắng để tháo ra.</p>
+          </div>
+        )}
+        
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Label</label>
           <input 
@@ -141,7 +160,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                       handleChange('assignments', newAssignments);
                     }}
                     className="w-full text-xs p-1.5 border border-slate-300 rounded outline-none font-mono text-blue-600 bg-slate-50"
-                    placeholder="Value or {{ expr }}"
+                    placeholder="Value (e.g. [a] + [b])"
                   />
                 </div>
                 <button 
@@ -156,6 +175,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                 </button>
               </div>
             ))}
+            <p className="text-[10px] text-slate-400 italic">Hint: Sử dụng [...] để tính toán hoặc {'{{ ... }}'} để nối chuỗi.</p>
             <button 
               onClick={() => {
                 const newAssignments = [...(selectedNode.data.assignments || []), { key: '', value: '' }];
@@ -762,6 +782,26 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                 placeholder="payload.rendered_template"
               />
               <p className="text-xs text-slate-500 mt-1">Dữ liệu HTML sau khi nội suy sẽ được lưu vào biến này.</p>
+            </div>
+          </div>
+        )}
+        
+        {selectedNode.type === 'IteratorNode' && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Array Source (Nguồn dữ liệu lặp)</label>
+              <input 
+                type="text" 
+                value={selectedNode.data.array_source || ''} 
+                onChange={(e) => handleChange('array_source', e.target.value)}
+                className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 outline-none font-mono"
+                placeholder="[payload.users_list]"
+              />
+              <p className="text-xs text-slate-500 mt-1">Biến chứa danh sách (Array). Bên trong Iterator sẽ có sẵn biến <code>[item]</code> và <code>[index]</code>.</p>
+            </div>
+            
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
+                <strong>Lưu ý:</strong> Để cấu hình các bước trong vòng lặp, hãy chọn một node khác và thay đổi `Parent Node` của nó thành ID của Iterator này.
             </div>
           </div>
         )}

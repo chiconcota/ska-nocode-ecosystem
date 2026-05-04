@@ -85,10 +85,25 @@ class SkaFX_Evaluator {
                 $current = $this->row_context;
                 $found = true;
                 foreach ( $keys as $key ) {
+                    // Cải tiến: Nếu là chuỗi JSON, tự động decode để truy cập sâu
+                    if ( is_string( $current ) && (strpos($current, '{') === 0 || strpos($current, '[') === 0) ) {
+                        $decoded = json_decode( $current, true );
+                        if ( json_last_error() === JSON_ERROR_NONE ) {
+                            $current = $decoded;
+                        }
+                    }
+
                     if ( is_array( $current ) && array_key_exists( $key, $current ) ) {
                         $current = $current[ $key ];
-                    } elseif ( $key === 'length' && (is_array( $current ) || $current instanceof \Countable) ) {
-                        $current = count( $current );
+                    } elseif ( $key === 'length' ) {
+                        if ( is_array( $current ) || $current instanceof \Countable ) {
+                            $current = count( $current );
+                        } elseif ( is_string( $current ) ) {
+                            $current = mb_strlen( $current );
+                        } else {
+                            $found = false;
+                            break;
+                        }
                     } else {
                         $found = false;
                         break;
@@ -151,11 +166,13 @@ class SkaFX_Evaluator {
             $right = $this->evaluate( $node->right );
 
             switch ( $node->operator ) {
-                case '+':  return $left + $right;
-                case '-':  return $left - $right;
-                case '*':  return $left * $right;
+                case '+':  return (float)$left + (float)$right;
+                case '-':  return (float)$left - (float)$right;
+                case '*':  return (float)$left * (float)$right;
                 // Chặn lỗi chia cho số 0
-                case '/':  return $right != 0 ? $left / $right : 0; 
+                case '/':  
+                    $r = (float)$right;
+                    return $r != 0 ? (float)$left / $r : 0; 
                 // Cú pháp gõ 1 dấu = vẫn coi là phép so sánh theo chuẩn Nocode
                 case '=':  
                 case '==': return $left == $right; 

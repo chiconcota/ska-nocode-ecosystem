@@ -84,7 +84,7 @@ class SkaFX_Lexer {
             }
 
             // 6. Quét Mã Nhận Diện (Identifiers/Hàm/Keywords)
-            if ( preg_match( '/[a-zA-Z_]/', $char ) ) {
+            if ( preg_match( '/[a-zA-Z_$]/', $char ) ) {
                 $tokens[] = $this->consume_identifier();
                 continue;
             }

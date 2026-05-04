@@ -44,7 +44,7 @@ class Ska_Dynamic_Content {
         }
 
         // Bỏ qua nếu không phải Block của nhà Ska
-        if ( strpos( $block['blockName'], 'ska-builder/' ) !== 0 ) {
+        if ( empty( $block['blockName'] ) || strpos( $block['blockName'], 'ska-builder/' ) !== 0 ) {
             return $block_content;
         }
 

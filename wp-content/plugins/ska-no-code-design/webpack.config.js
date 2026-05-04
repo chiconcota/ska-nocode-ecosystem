@@ -17,6 +17,7 @@ module.exports = {
         'ska-input/index': path.resolve(process.cwd(), 'src/ska-input', 'index.js'),
         'ska-select/index': path.resolve(process.cwd(), 'src/ska-select', 'index.js'),
         'ska-organism-ref/index': path.resolve(process.cwd(), 'src/ska-organism-ref', 'index.js'),
+        'ska-loop/index': path.resolve(process.cwd(), 'src/ska-loop', 'index.js'),
         'extensions': path.resolve(process.cwd(), 'src/extensions/html-attributes.js'),
     },
     output: {

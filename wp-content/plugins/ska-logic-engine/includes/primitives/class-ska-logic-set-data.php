@@ -4,35 +4,39 @@ defined( 'ABSPATH' ) || exit;
 class Ska_Logic_Set_Data implements Ska_Logic_Node {
 
     public function execute( $payload, $config ) {
-        if ( ! isset( $config['assignments'] ) || ! is_array( $config['assignments'] ) ) {
-            return $payload; // Hoặc `return ['payload' => $payload, 'port' => 'main'];` nếu theo chuẩn mới, nhưng DAG tự bắt reference payload rồi.
+        $assignments = $config['assignments'] ?? [];
+        if ( ! is_array( $assignments ) ) {
+            return [ 'payload' => $payload, 'port' => 'main' ];
         }
 
-        foreach ( $config['assignments'] as $assignment ) {
-            if ( empty( $assignment['key'] ) ) {
-                continue;
-            }
-
-            $key   = sanitize_text_field( $assignment['key'] );
+        foreach ( $assignments as $assignment ) {
+            $key   = $assignment['key'] ?? '';
             $value = $assignment['value'] ?? '';
 
-            // Nếu giá trị có chứa biểu thức SkaFX
-            if ( strpos( $value, '{{' ) !== false ) {
+            if ( empty( $key ) ) continue;
+
+            $final_value = $value;
+
+            // Smart Evaluation: Tự động nhận diện biểu thức hoặc Template
+            $is_template = ( strpos( $value, '{{' ) !== false );
+            $is_expression = ( strpos( $value, '[' ) !== false || preg_match('/[+\-*\/]/', $value) );
+
+            if ( $is_template || $is_expression ) {
                 try {
-                    // Extract expression from {{ ... }}
-                    $expression = trim(str_replace(['{{', '}}'], '', $value));
-                    $eval_result = \Ska\Logic\SkaFX\SkaFX_Engine::execute( $expression, $payload );
-                    $final_value = $eval_result['last_val'] ?? null;
-                } catch ( Exception $e ) {
-                    // Nếu lỗi parse, lưu giá trị nguyên thuỷ hoặc bỏ qua
-                    $final_value = null;
-                    error_log( 'SkaFX Eval Error in Set Data Node: ' . $e->getMessage() );
+                    // Nếu là template {{ ... }}, trích xuất lõi
+                    $expr = $value;
+                    if ( $is_template ) {
+                        $expr = trim(str_replace(['{{', '}}'], '', $value));
+                    }
+                    
+                    $eval_result = \Ska\Logic\SkaFX\SkaFX_Engine::execute( $expr, $payload );
+                    $final_value = $eval_result['last_val'] ?? $value;
+                } catch ( \Exception $e ) {
+                    error_log( 'Ska Logic Set Data: Lỗi evaluate - ' . $e->getMessage() );
+                    // Fallback giữ nguyên value gốc
                 }
-            } else {
-                $final_value = $value;
             }
 
-            // Gán/Ghi đè giá trị vào mảng payload
             $payload[ $key ] = $final_value;
         }
 

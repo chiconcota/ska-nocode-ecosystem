@@ -99,12 +99,37 @@ class Ska_Workflow_Runner {
 
         if ( ! $current_node ) return;
 
+        // Bỏ qua các Node con đã thuộc về Iterator (chúng được chạy nội bộ bởi JIT Pipeline)
+        $parent_id = $current_node['parentId'] ?? ( $current_node['parentNode'] ?? '' );
+        if ( ! empty( $parent_id ) ) {
+            // Xác minh parent_id có thực sự là Iterator không (tránh lỗi rác React Flow cũ lưu lại parentNode ảo)
+            $is_iterator_child = false;
+            foreach ( $nodes as $p_node ) {
+                if ( isset($p_node['id']) && $p_node['id'] === $parent_id ) {
+                    if ( ($p_node['type'] ?? '') === 'IteratorNode' || strpos(strtolower($p_node['class'] ?? ''), 'iterator') !== false ) {
+                        $is_iterator_child = true;
+                    }
+                    break;
+                }
+            }
+            if ( $is_iterator_child ) {
+                error_log( "Ska_Workflow_Runner: SKIP child node {$current_node_id} (parent={$parent_id})" );
+                return;
+            }
+        }
+
+        error_log( "Ska_Workflow_Runner: EXEC node {$current_node_id} | type=" . ($current_node['type'] ?? '?') . " | class=" . ($current_node['class'] ?? 'none') );
+
         $port = 'main'; // Cổng mặc định
         
         // Thực thi Logic Node (Ngoại trừ UI Node ko có class xử lý Backend)
         if ( isset( $current_node['class'] ) && class_exists( $current_node['class'] ) ) {
             $instance = new $current_node['class']();
             if ( $instance instanceof Ska_Logic_Node ) {
+                if ( method_exists( $instance, 'set_graph_context' ) ) {
+                    $instance->set_graph_context( $graph, $current_node_id, $workflow_id );
+                }
+                
                 $node_config = $current_node['data'] ?? ($current_node['config'] ?? []);
                 $result = $instance->execute( $payload, $node_config );
                 if ( is_array($result) && isset($result['payload']) && isset($result['port']) ) {
