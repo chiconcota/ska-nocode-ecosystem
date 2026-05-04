@@ -10,7 +10,8 @@ import {
   Search,
   Mail,
   Variable,
-  FileCode2
+  FileCode2,
+  Repeat
 } from 'lucide-react';
 
 const NODE_TYPES = [
@@ -63,6 +64,14 @@ const NODE_TYPES = [
     color: 'bg-purple-50 text-purple-700 border-purple-200'
   },
   {
+    type: 'IteratorNode',
+    backendClass: 'Ska_Logic_Iterator',
+    label: 'Iterator / Loop',
+    icon: <Repeat size={16} />,
+    description: 'Loop over items',
+    color: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200'
+  },
+  {
     type: 'ApiNode',
     backendClass: 'Ska_Logic_Http_Request',
     label: 'HTTP Request',
@@ -76,7 +85,8 @@ const NODE_TYPES = [
     label: 'Catch Error',
     icon: <AlertTriangle size={16} />,
     description: 'Handle exceptions',
-    color: 'bg-rose-50 text-rose-700 border-rose-200'
+    color: 'bg-slate-50 text-slate-400 border-slate-200',
+    disabled: true
   },
   {
     type: 'BackgroundNode',
@@ -84,7 +94,8 @@ const NODE_TYPES = [
     label: 'Background Job',
     icon: <ServerCog size={16} />,
     description: 'Run asynchronously',
-    color: 'bg-purple-50 text-purple-700 border-purple-200'
+    color: 'bg-slate-50 text-slate-400 border-slate-200',
+    disabled: true
   },
   {
     type: 'ClientResponseNode',
@@ -128,10 +139,13 @@ export default function Sidebar() {
         {NODE_TYPES.map((node) => (
           <div
             key={node.type}
-            className={`p-3 border rounded-lg cursor-grab hover:shadow-md transition-shadow ${node.color}`}
-            onDragStart={(event) => onDragStart(event, node)}
-            draggable
+            className={`p-3 border rounded-lg transition-shadow relative ${node.disabled ? 'cursor-not-allowed opacity-60 grayscale' : 'cursor-grab hover:shadow-md'} ${node.color}`}
+            onDragStart={(event) => !node.disabled && onDragStart(event, node)}
+            draggable={!node.disabled}
           >
+            {node.disabled && (
+              <span className="absolute top-2 right-2 text-[8px] bg-slate-200 text-slate-500 px-1 rounded uppercase font-bold">Soon</span>
+            )}
             <div className="flex items-center gap-2 font-medium text-sm mb-1">
               {node.icon}
               {node.label}

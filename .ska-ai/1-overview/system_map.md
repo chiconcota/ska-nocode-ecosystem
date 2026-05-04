@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v1.0.0)
-@status: STABLE PHASE 3 DONE | @last_update: 2026-04-20
+@status: STABLE PHASE 3 DONE | @last_update: 2026-04-30
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core (Host) + PHP 8.2+
@@ -61,6 +61,9 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 ## 7. RECENT LOGS (LATEST)
 > *Các nhật ký từ Phase 1 và 2 đã được lưu trữ trong `.ska-ai/2-memory/archive/`. Chỉ giữ lại các cập nhật cốt lõi gần đây (Phase 3 -> Phase 4).*
 
+- **2026-05-04 - 🟢 Nâng cấp Ska Loop (Structural Container):** Khai tử kiến trúc dàn trang "Ghost Block" phụ thuộc CSS hack của Ska Query Loop. Chuyển đổi hoàn toàn block này thành một Layout Container độc lập, tích hợp TailwindPanel để người dùng tự do điều khiển Flex/Grid. Thiết lập một thẻ div bọc ngoài chuẩn mực để đồng bộ hoá 100% cấu trúc DOM giữa Editor và Frontend.
+- **2026-04-30 - 🟢 Chuyển giao Phase 4 (Theme Builder - Loop Block):** Chính thức đóng hồ sơ Phase 3 sau khi ổn định bộ 9 Primitives. Bắt đầu triển khai giao diện React cho Ska Loop Block. Thiết lập Implementation Plan cho UI Inspector và cơ chế Slot Repeater.
+- **2026-04-29 - 🟢 Hoàn tất Iterator/Loop Node (Group Node Architecture):** Triển khai thành công tính năng xử lý vòng lặp mảng cho Ska Logic Engine. Khác với thiết kế các node nối tiếp thông thường, Iterator sử dụng kiến trúc Parent/Group Node trên React Flow. Các node con được đặt bên trong sẽ được biên dịch JIT (Just-In-Time) bằng thuật toán Topological Sorting để tạo thành chuỗi thực thi tuyến tính trong mỗi vòng lặp. Cung cấp sẵn các biến ngữ cảnh (`$item`, `$index`, `$first`, `$last`) giúp người dùng dễ dàng thao tác với dữ liệu danh sách mà không vi phạm nguyên tắc Circuit Breaker.
 - **2026-04-29 - 🟢 E2E Testing MVP Primitives Hoàn Tất:** Xác thực thành công toàn bộ luồng tích hợp của DB Query Node và Render Template Node. Cơ chế Smart Fallback của SkaFX Engine phát huy tác dụng tối đa, cho phép Nocode User gọi biến tĩnh không cần tiền tố `payload.`. Gói lõi tự động hóa Ska Logic Engine (MVP) chính thức đóng băng (Stable) để chuyển hướng sang Phase 4: Thiết kế Ska Molecule.
 
 - **2026-04-28 - 🟢 Nâng cấp Render Template Node (Decoupled Architecture):** Chuyển đổi mô hình Render Template từ "Node tự truy vấn DB" sang mô hình "Cỗ máy nội suy thuần túy" (Pure Interpolation Primitive). Hỗ trợ nhận diện 2 nguồn Source Type: 1) System Organism ID. 2) Dữ liệu Raw Variable/Text truyền từ payload qua SkaFX. Giờ đây người dùng có thể tự do lấy HTML custom từ Ska Data Pro bằng DB Query Node, sau đó truyền vào Render Template để xử lý linh hoạt.

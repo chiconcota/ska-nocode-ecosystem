@@ -156,11 +156,12 @@ window.$ska = {
      * Hiển thị thông báo Toast
      */
     showToast: (message, type = 'success') => {
+        console.log(`[Ska UI] ShowToast: "${message}" (${type})`);
         const toast = document.createElement('div');
         toast.className = `ska-toast ska-toast-${type}`;
         toast.style.cssText = `
             position: fixed;
-            bottom: 20px;
+            top: 20px;
             right: 20px;
             padding: 12px 24px;
             border-radius: 8px;
@@ -168,9 +169,9 @@ window.$ska = {
             font-family: sans-serif;
             font-size: 14px;
             font-weight: 600;
-            z-index: 999999;
+            z-index: 99999999;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            transform: translateY(100px);
+            transform: translateY(-100px);
             opacity: 0;
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             background: ${type === 'success' ? '#10b981' : '#ef4444'};
@@ -193,7 +194,7 @@ window.$ska = {
 
         // Animate out
         setTimeout(() => {
-            toast.style.transform = 'translateY(100px)';
+            toast.style.transform = 'translateY(-100px)';
             toast.style.opacity = '0';
             setTimeout(() => toast.remove(), 400);
         }, 3000);

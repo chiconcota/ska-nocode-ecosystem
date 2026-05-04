@@ -19,10 +19,11 @@ $limit        = isset( $attributes['limit'] ) ? absint( $attributes['limit'] ) :
 $slots        = isset( $attributes['slots'] ) && is_array( $attributes['slots'] ) ? $attributes['slots'] : [];
 
 if ( empty( $source_table ) ) {
-    if ( is_admin() ) {
-        return '<div class="components-placeholder"><div class="components-placeholder__label">Ska Query Loop</div><div class="components-placeholder__fieldset">Vui lòng chọn bảng nguồn (Source Table) trong Inspector.</div></div>';
+    if ( is_admin() || ( defined('REST_REQUEST') && REST_REQUEST && isset($_REQUEST['context']) && $_REQUEST['context'] === 'edit' ) ) {
+        echo '<div class="components-placeholder"><div class="components-placeholder__label">Ska Query Loop</div><div class="components-placeholder__fieldset">Vui lòng chọn bảng nguồn (Source Table) trong Inspector.</div></div>';
+        return;
     }
-    return '';
+    return;
 }
 
 // 1. Thu thập ID và Bulk Load
@@ -34,10 +35,11 @@ foreach ( $slots as $slot ) {
 }
 
 if ( empty( $organism_ids ) ) {
-    if ( is_admin() ) {
-        return '<div class="components-placeholder"><div class="components-placeholder__label">Ska Query Loop</div><div class="components-placeholder__fieldset">Vui lòng thiết lập ít nhất 1 Slot (Organism ID).</div></div>';
+    if ( is_admin() || ( defined('REST_REQUEST') && REST_REQUEST && isset($_REQUEST['context']) && $_REQUEST['context'] === 'edit' ) ) {
+        echo '<div class="components-placeholder"><div class="components-placeholder__label">Ska Query Loop</div><div class="components-placeholder__fieldset">Vui lòng thiết lập ít nhất 1 Slot (Organism ID).</div></div>';
+        return;
     }
-    return '';
+    return;
 }
 
 // Lấy mảng [id => raw_html]
@@ -61,8 +63,9 @@ $compile_filter = function( $block_content, $block ) {
         if ( ! empty( $matches[1] ) ) {
             $var_name = $matches[1][0]; 
             
-            // Đào lỗ vào Text Block
-            if ( $block['blockName'] === 'ska-builder/text' ) {
+            // Đào lỗ vào Text Block (Hỗ trợ đa dạng block văn bản)
+            $text_blocks = ['ska-builder/text', 'ska-builder/heading', 'core/paragraph', 'core/heading'];
+            if ( in_array( $block['blockName'], $text_blocks ) ) {
                  $block_content = preg_replace( '/(<[a-zA-Z0-9]+[^>]*>)(.*?)(<\/[a-zA-Z0-9]+>\s*)$/s', '${1}{{' . $var_name . '}}${3}', $block_content );
             }
             // Mở rộng sau: Đào lỗ cho Image (src), Link (href)...
@@ -74,13 +77,32 @@ $compile_filter = function( $block_content, $block ) {
 // Bật bộ lọc Compile
 add_filter( 'render_block', $compile_filter, 10, 2 );
 
+global $ska_rendering_organisms;
+if ( ! isset( $ska_rendering_organisms ) ) {
+    $ska_rendering_organisms = [];
+}
+
 foreach ( $bulk_html as $org_id => $raw_html ) {
+    if ( isset( $ska_rendering_organisms[ $org_id ] ) ) {
+        $compiled_templates[ $org_id ] = '<div style="color:red; padding:10px; border:1px solid red;">Error: Lặp vô hạn (Infinite Loop) phát hiện tại Symbol/Organism ID: ' . esc_html($org_id) . '</div>';
+        continue;
+    }
+    
+    $ska_rendering_organisms[ $org_id ] = true;
+    
     $blocks = parse_blocks( $raw_html );
     $html_output = '';
     foreach ( $blocks as $b ) {
         $html_output .= render_block( $b );
     }
     $compiled_templates[ $org_id ] = $html_output;
+    
+    unset( $ska_rendering_organisms[ $org_id ] );
+}
+
+if ( empty( $compiled_templates ) ) {
+    error_log('Ska Loop: Return early 5 - Empty compiled_templates');
+    return;
 }
 
 // Tắt bộ lọc Compile, bật lại bộ lọc cũ
@@ -92,12 +114,24 @@ if ( class_exists( '\Ska_Dynamic_Content' ) ) {
 
 // 3. Lấy dữ liệu thực từ Data Pro (Sử dụng bảng phẳng)
 if ( ! class_exists( '\Ska\Data\Core\Data_Fetcher' ) ) {
-    return 'Lỗi: Ska Data Pro chưa được kích hoạt.';
+    echo 'Lỗi: Ska Data Pro chưa được kích hoạt.';
+    return;
 }
 
-$rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $source_table, [], $limit );
+global $wpdb;
+$actual_table_name = $source_table;
+if ( strpos( $actual_table_name, $wpdb->prefix ) !== 0 ) {
+    $actual_table_name = $wpdb->prefix . ltrim( $actual_table_name, '_' );
+}
+
+$rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $actual_table_name, [], $limit );
 if ( empty( $rows ) ) {
-    return '<!-- Ska Loop: No data found -->';
+    if ( is_admin() || ( defined('REST_REQUEST') && REST_REQUEST && isset($_REQUEST['context']) && $_REQUEST['context'] === 'edit' ) ) {
+        echo '<div class="components-placeholder"><div class="components-placeholder__label">Ska Query Loop</div><div class="components-placeholder__fieldset">Bảng dữ liệu "' . esc_html($actual_table_name) . '" hiện chưa có dữ liệu nào. (No rows found).</div></div>';
+        return;
+    }
+    echo '<!-- Ska Loop: No data found -->';
+    return;
 }
 
 // 4. Vòng Lặp Phân Giải Siêu Tốc
@@ -129,7 +163,7 @@ foreach ( $rows as $index => $row ) {
         $condition = trim( $slot['condition'] ?? '' );
         
         // Nếu không có condition, coi như Default Slot (luôn khớp)
-        if ( empty( $condition ) || $condition === 'default' ) {
+        if ( empty( trim( $condition ) ) || trim( $condition ) === 'default' ) {
             $matched_template_html = $compiled_templates[ $org_id ];
             break;
         }
@@ -137,6 +171,7 @@ foreach ( $rows as $index => $row ) {
         // Tính toán bằng SkaFX
         if ( class_exists( '\Ska\Logic\SkaFX\SkaFX_Engine' ) ) {
             try {
+                error_log( "SkaFX Context Condition Debug: " . var_export($condition, true) );
                 $result = \Ska\Logic\SkaFX\SkaFX_Engine::execute( $condition, $context );
                 // Nếu phép tính trả về TRUE, khớp Slot này
                 if ( isset( $result['last_val'] ) && $result['last_val'] === true ) {
@@ -151,30 +186,38 @@ foreach ( $rows as $index => $row ) {
 
     // Cắm dữ liệu (Hydration) vào Khuôn
     if ( ! empty( $matched_template_html ) ) {
-        $hydrated_html = preg_replace_callback( '/\{\{\s*([a-zA-Z0-9_\.\$]+)\s*\}\}/', function( $matches ) use ( $context, $source_table ) {
-            $key_path = $matches[1]; // Vd: `name` hoặc `doctors.name`
+        // Hỗ trợ cả {{ variable }} và [variable]
+        $hydrated_html = preg_replace_callback( '/\{\{\s*([a-zA-Z0-9_\.\$]+)\s*\}\}|\[\s*([a-zA-Z0-9_\.\$]+)\s*\]/', function( $matches ) use ( $context ) {
+            // Biến nằm ở group 1 (nếu dùng {{}}) hoặc group 2 (nếu dùng [])
+            $raw_key = ! empty( $matches[1] ) ? trim( $matches[1] ) : trim( $matches[2] );
             
-            // Xử lý tách bảng (nếu có)
-            if ( strpos( $key_path, $source_table . '.' ) === 0 ) {
-                $key_path = str_replace( $source_table . '.', '', $key_path );
+            // Tách mảng theo dấu chấm. Data Binding có thể trả về: app_test_loop_block.bang_bac_si.name
+            // Cột trong bảng phẳng chỉ lưu là: name. Nên ta sẽ lấy phần tử cuối cùng.
+            $parts = explode( '.', $raw_key );
+            $field_name = end( $parts );
+            
+            if ( isset( $context[ $field_name ] ) ) {
+                return esc_html( (string) $context[ $field_name ] );
             }
             
-            if ( isset( $context[ $key_path ] ) ) {
-                return esc_html( (string) $context[ $key_path ] );
-            }
-            return '';
+            // Nếu không tìm thấy dữ liệu, trả về lại nguyên gốc để User biết lỗi
+            return $matches[0];
         }, $matched_template_html );
 
         $final_html .= $hydrated_html;
     }
 }
 
-// Bọc wrapper
-$wrapper_classes = 'ska-loop-wrapper';
-if ( ! empty( $attributes['className'] ) ) {
-    $wrapper_classes .= ' ' . esc_attr( $attributes['className'] );
-}
+$tailwind_classes = isset( $attributes['tailwindClasses'] ) ? esc_attr( $attributes['tailwindClasses'] ) : '';
 
-echo '<div class="' . $wrapper_classes . '">';
-echo $final_html;
-echo '</div>';
+$output = '<div class="wp-block-ska-builder-loop ska-loop-wrapper ' . $tailwind_classes . '">';
+$output .= $final_html;
+$output .= '</div>';
+
+// DUMP HTML để debug
+$upload_dir = wp_upload_dir();
+$debug_file = $upload_dir['basedir'] . '/ska-data/debug_loop_render.html';
+@file_put_contents($debug_file, $output);
+
+echo $output;
+return;

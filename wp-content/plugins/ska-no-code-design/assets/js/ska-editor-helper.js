@@ -106,9 +106,6 @@
              */
             .wp-block-ska-builder-video .block-editor-inner-blocks,
             .wp-block-ska-builder-video .block-editor-block-list__layout {
-                display: contents !important;
-            }
-
             /* 
              * CORE/HTML SVG WRAPPER FIX:
              * When SVG code is mapped to core/html, the .wp-block-html wrapper breaks Flex/Grid positioning 

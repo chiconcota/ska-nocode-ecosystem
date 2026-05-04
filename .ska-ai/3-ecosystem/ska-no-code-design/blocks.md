@@ -71,9 +71,10 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
   - **Logic Modal:** Modal Popup độc lập xử lý state bật / tắt với hiệu ứng `x-transition`.
 
 #### 11. Ska Loop (`ska-builder/loop`)
-- **Role:** Vòng lặp hiển thị dữ liệu động (Data Loop) với Zero N+1 Queries.
+- **Role:** Vòng lặp hiển thị dữ liệu động (Data Loop) với Zero N+1 Queries. Chuyển đổi từ kiến trúc "Ghost Block" sang "Structural Container" (2026-05-04) để trực tiếp đóng vai trò như một wrapper dàn trang Flex/Grid.
 - **Backend Architecture (2026-04-22):** Sử dụng cơ chế Bulk Loading thông qua `Organisms_API::get_bulk_html` để load hàng loạt template HTML của Organism. Áp dụng Hydration Engine tốc độ cao bằng `preg_replace_callback` để đắp Data (Flat Tables) vào cặp thẻ Mustache `{{key}}`. Không được query SQL bên trong vòng lặp.
 - **Condition Matching:** Sử dụng `SkaLogicEngine::evaluate` (SkaFX) để quét và quyết định Slot hiển thị. Hỗ trợ biến hệ thống có tiền tố `$` như `$index`, `$first`, `$last` thông qua bộ từ vựng SkaFX Lexer đã cập nhật.
+- **Tailwind Integration (2026-05-04):** Bổ sung thuộc tính `tailwindClasses`, tích hợp `<TailwindPanel>` vào Sidebar và ép Editor/Frontend cùng dùng chung một lớp bọc thẻ `<div class="wp-block-ska-builder-loop ska-loop-wrapper [TAILWIND]">` duy nhất để sửa dứt điểm lỗi mất Layout khi kéo thả ngang dọc.
 
 ## 3. Cấu trúc thư mục
 - `init.php`: Đăng ký các block.

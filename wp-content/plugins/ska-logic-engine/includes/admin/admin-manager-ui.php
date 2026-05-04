@@ -34,7 +34,7 @@ $workflows = get_option('ska_logic_simple_workflows', []);
             </thead>
             <tbody>
                 <?php foreach($workflows as $wf_id => $wf_data): 
-                    $node_count = isset($wf_data['graph']) && is_array($wf_data['graph']) ? count($wf_data['graph']) : 0;
+                    $node_count = isset($wf_data['graph']['nodes']) && is_array($wf_data['graph']['nodes']) ? count($wf_data['graph']['nodes']) : 0;
                 ?>
                 <tr style="border-bottom: 1px solid #f1f5f9;">
                     <td style="padding: 16px; vertical-align: middle;">

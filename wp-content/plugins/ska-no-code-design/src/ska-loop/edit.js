@@ -1,16 +1,161 @@
-import { useBlockProps } from '@wordpress/block-editor';
-import { Placeholder } from '@wordpress/components';
-
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, TextControl, SelectControl, Button, Placeholder } from '@wordpress/components';
+import { useState, useEffect, useMemo } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import ServerSideRender from '@wordpress/server-side-render';
+import { TailwindPanel } from '../components/TailwindPanel.js';
 export default function Edit( { attributes, setAttributes } ) {
-	const blockProps = useBlockProps();
+    const { sourceTable, limit, slots, tailwindClasses = '' } = attributes;
+    const [organisms, setOrganisms] = useState([]);
+    
+    // Load organisms for dropdown from global cache
+    useEffect(() => {
+        const data = window.skaOrganismsCache || {};
+        const options = Object.values(data).map(org => ({
+            label: org.name || org.id,
+            value: org.id
+        }));
+        setOrganisms([
+            { label: __('Chọn Symbol...', 'ska-no-code-design'), value: '' },
+            ...options
+        ]);
+    }, []);
 
-	return (
-		<div { ...blockProps }>
-			<Placeholder
-                icon="update"
-                label="Ska Query Loop"
-                instructions="Giao diện React (Frontend) sẽ được xây dựng ở Phase tiếp theo. Hiện tại Backend Core đã sẵn sàng render."
-            />
-		</div>
-	);
+    const tableOptions = useMemo(() => {
+        const opts = [{ label: '-- Chọn Bảng Dữ Liệu --', value: '' }];
+        if (window.skaDataDictionary) {
+            Object.keys(window.skaDataDictionary).forEach(key => {
+                const table = window.skaDataDictionary[key];
+                const val = key.replace(/^wp_/, '');
+                const labelName = table.__table_info ? table.__table_info.name : val;
+                opts.push({ label: `${labelName} (${val})`, value: val });
+            });
+        }
+        if (sourceTable && !opts.find(o => o.value === sourceTable)) {
+            opts.push({ label: `[Custom] ${sourceTable}`, value: sourceTable });
+        }
+        return opts;
+    }, [sourceTable]);
+
+    const blockProps = useBlockProps();
+
+    const addSlot = () => {
+        const newSlots = [...(slots || []), { organismId: '', condition: '' }];
+        setAttributes({ slots: newSlots });
+    };
+
+    const removeSlot = (indexToRemove) => {
+        const newSlots = slots.filter((_, index) => index !== indexToRemove);
+        setAttributes({ slots: newSlots });
+    };
+
+    const updateSlot = (index, key, value) => {
+        const newSlots = [...slots];
+        // Ensure organismId is always a string to satisfy block.json strict schema validation
+        const finalValue = key === 'organismId' ? String(value) : value;
+        newSlots[index] = { ...newSlots[index], [key]: finalValue };
+        setAttributes({ slots: newSlots });
+    };
+
+    const hasValidConfig = sourceTable && slots && slots.length > 0 && slots.some(s => s.organismId);
+
+    return (
+        <div { ...blockProps }>
+            <InspectorControls>
+                <PanelBody title={__('Cấu hình dữ liệu', 'ska-no-code-design')} initialOpen={true}>
+                    {window.skaDataDictionary ? (
+                        <SelectControl
+                            label={__('Source Table (Bảng phẳng)', 'ska-no-code-design')}
+                            value={sourceTable}
+                            options={tableOptions}
+                            onChange={(val) => setAttributes({ sourceTable: val })}
+                            help={__('Chọn bảng dữ liệu được cung cấp bởi Ska Data Pro', 'ska-no-code-design')}
+                        />
+                    ) : (
+                        <TextControl
+                            label={__('Source Table (Bảng phẳng)', 'ska-no-code-design')}
+                            value={sourceTable}
+                            onChange={(val) => setAttributes({ sourceTable: val })}
+                            help={__('Ví dụ: ska_data_doctors', 'ska-no-code-design')}
+                        />
+                    )}
+                    <TextControl
+                        label={__('Giới hạn (Limit)', 'ska-no-code-design')}
+                        type="number"
+                        value={limit}
+                        onChange={(val) => setAttributes({ limit: parseInt(val, 10) || 10 })}
+                        min={1}
+                        max={100}
+                    />
+                </PanelBody>
+
+                <PanelBody title={__('Điều kiện hiển thị (Slots)', 'ska-no-code-design')} initialOpen={true}>
+                    {slots && slots.map((slot, index) => (
+                        <div key={index} style={{ marginBottom: '16px', padding: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', backgroundColor: '#f8fafc' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                <strong style={{ fontSize: '13px' }}>Slot #{index + 1}</strong>
+                                <Button 
+                                    isDestructive 
+                                    isSmall 
+                                    icon="trash" 
+                                    onClick={() => removeSlot(index)}
+                                    label={__('Xóa Slot', 'ska-no-code-design')}
+                                />
+                            </div>
+                            
+                            <SelectControl
+                                label={__('Chọn Symbol', 'ska-no-code-design')}
+                                value={slot.organismId}
+                                options={organisms.length > 0 ? organisms : [{label: slot.organismId ? slot.organismId : __('Chọn Symbol...', 'ska-no-code-design'), value: slot.organismId || ''}]}
+                                onChange={(val) => updateSlot(index, 'organismId', val)}
+                            />
+                            
+                            <TextControl
+                                label={__('Điều kiện (SkaFX)', 'ska-no-code-design')}
+                                value={slot.condition}
+                                onChange={(val) => updateSlot(index, 'condition', val)}
+                                help={__('Để trống hoặc gõ "default" nếu là mặc định. Vd: $index == 0', 'ska-no-code-design')}
+                            />
+                        </div>
+                    ))}
+                    
+                    <Button 
+                        variant="secondary" 
+                        onClick={addSlot}
+                        style={{ width: '100%', justifyContent: 'center', marginTop: '8px' }}
+                    >
+                        {__('+ Thêm Slot Mới', 'ska-no-code-design')}
+                    </Button>
+                </PanelBody>
+
+                <TailwindPanel
+                    className={tailwindClasses || ''}
+                    setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses })}
+                />
+            </InspectorControls>
+
+            {hasValidConfig ? (
+                <div className="ska-loop-editor-wrapper" style={{ pointerEvents: 'none', display: 'contents' }}>
+                    <ServerSideRender
+                        block="ska-builder/loop"
+                        attributes={{ sourceTable, limit, slots, tailwindClasses }}
+                        httpMethod="POST"
+                    />
+                </div>
+            ) : (
+                <Placeholder
+                    icon="update"
+                    label={__('Ska Query Loop', 'ska-no-code-design')}
+                    instructions={__('Vui lòng thiết lập Bảng Nguồn (Source Table) và ít nhất 1 Slot để hiển thị dữ liệu.', 'ska-no-code-design')}
+                >
+                    <div style={{ textAlign: 'left', width: '100%', marginTop: '16px' }}>
+                        <ul style={{ listStyle: 'disc', paddingLeft: '20px', fontSize: '13px', color: '#475569' }}>
+                            <li>Bảng nguồn hiện tại: <strong>{sourceTable || 'Chưa có'}</strong></li>
+                            <li>Số lượng Slot: <strong>{slots ? slots.length : 0}</strong></li>
+                        </ul>
+                    </div>
+                </Placeholder>
+            )}
+        </div>
+    );
 }

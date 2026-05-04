@@ -146,7 +146,7 @@ add_action( 'wp_enqueue_scripts', 'ska_builder_core_register_frontend_engine' );
  * The zero-overhead Engine: only loads Alpine when x- attributes are used.
  */
 function ska_builder_render_html_attributes( $block_content, $block ) {
-    if ( strpos( $block['blockName'], 'ska-builder/' ) === 0 && ! empty( $block['attrs']['htmlAttributes'] ) && is_array( $block['attrs']['htmlAttributes'] ) ) {
+    if ( ! empty( $block['blockName'] ) && strpos( $block['blockName'], 'ska-builder/' ) === 0 && ! empty( $block['attrs']['htmlAttributes'] ) && is_array( $block['attrs']['htmlAttributes'] ) ) {
         $html_attrs = '';
         $has_alpine = false;
         

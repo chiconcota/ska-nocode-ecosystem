@@ -141,6 +141,39 @@ class Style_Manager {
 				}
 			}
 
+			// Recursive for Ska Loop Slots
+			if ( $block['blockName'] === 'ska-builder/loop' && ! empty( $block['attrs']['slots'] ) && is_array( $block['attrs']['slots'] ) ) {
+				$upload_dir = wp_upload_dir();
+				$cache_file = trailingslashit( $upload_dir['basedir'] ) . 'ska-data/organisms.json';
+				
+				$organisms = array();
+				if ( class_exists( '\Ska_System_Framework\System_Cache' ) ) {
+					$organisms = \Ska_System_Framework\System_Cache::get_instance()->get_system_data( 'organisms' );
+				} elseif ( file_exists( $cache_file ) ) {
+					$file_contents = file_get_contents( $cache_file );
+					if ( ! empty( $file_contents ) ) {
+						$decoded = json_decode( $file_contents, true );
+						if ( is_array( $decoded ) ) {
+							$organisms = $decoded;
+						}
+					}
+				}
+
+				if ( is_array( $organisms ) ) {
+					foreach ( $block['attrs']['slots'] as $slot ) {
+						if ( ! empty( $slot['organismId'] ) ) {
+							foreach ( $organisms as $org ) {
+								if ( isset( $org['id'] ) && (string) $org['id'] === (string) $slot['organismId'] && ! empty( $org['html_content'] ) ) {
+									$ref_blocks = parse_blocks( $org['html_content'] );
+									$this->extract_block_classes( $ref_blocks, $classes );
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+
 			// Extract from HTML Attributes (Support for Alpine.js x-transition classes)
 			if ( ! empty( $block['attrs']['htmlAttributes'] ) && is_array( $block['attrs']['htmlAttributes'] ) ) {
 				foreach ( $block['attrs']['htmlAttributes'] as $attr ) {
