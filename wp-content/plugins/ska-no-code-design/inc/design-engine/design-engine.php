@@ -53,3 +53,10 @@ require_once SKA_DESIGN_ENGINE_PATH . 'functions.php';
 if ( class_exists( 'Ska\\Builder\\Design\\Core' ) ) {
 	\Ska\Builder\Design\Core::instance();
 }
+
+// Initialize Theme Builder Components (with Graceful Fallback).
+if ( class_exists( 'Ska\\Builder\\Design\\Ska_Template_Router' ) && class_exists( '\\Ska_System_Framework\\Dependency_Manager' ) ) {
+    if ( \Ska_System_Framework\Dependency_Manager::is_theme_builder_supported() ) {
+        \Ska\Builder\Design\Ska_Template_Router::instance();
+    }
+}

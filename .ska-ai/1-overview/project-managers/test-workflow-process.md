@@ -200,7 +200,7 @@ Sau khi hoàn thiện toàn bộ tầng **Backend PHP** và **React Inspector UI
 
 ### Bước 1: Khởi tạo Schema Dữ liệu (Ska Data Pro - Vai trò Super Admin)
 - **Thao tác:** Sử dụng tính năng Smart Object để định nghĩa cấu trúc bảng phẳng `ska_data_doctors`.
-- **Cấu hình Cột:** Khai báo các cột dữ liệu như `name` (Tên bác sĩ), `specialty` (Chuyên khoa), `experience` (Số năm kinh nghiệm). *Lưu ý: Chỉ tạo Schema rỗng, không nhập dữ liệu bằng tay trong Database.*
+- **Cấu hình Cột:** Khai báo các cột dữ liệu như `name` (Tên bác sĩ), `specialty` (Chuyên khoa), `Experience` (Số năm kinh nghiệm). *Lưu ý: Chỉ tạo Schema rỗng, không nhập dữ liệu bằng tay trong Database.*
 
 ### Bước 1.5 (Trung gian): Thu thập dữ liệu qua Form (Vai trò Admin/User)
 - **Thao tác:** Xây dựng một biểu mẫu (Form) nhập liệu đơn giản trên Frontend hoặc Dashboard.
@@ -208,30 +208,39 @@ Sau khi hoàn thiện toàn bộ tầng **Backend PHP** và **React Inspector UI
   - `Trigger`: Khi Form Submit.
   - `DB Action Node`: Hành động `Insert`, lưu dữ liệu từ Form vào bảng `ska_data_doctors`.
   - `Client Response Node`: Thông báo "Đã thêm bác sĩ thành công".
-- **Thực thi:** Người dùng truy cập Form và nhập 3 bác sĩ mẫu. Bước này xác minh luồng dữ liệu chảy xuyên suốt từ Giao diện Form ➡️ Logic Engine ➡️ Bảng phẳng.
+- **Thực thi:** Người dùng truy cập Form và nhập 4 bác sĩ mẫu (Trong đó cố tình nhập 1 bác sĩ có kinh nghiệm >= 10 năm, 2 bác sĩ < 10 năm, và 1 bác sĩ đã bị đánh dấu nghỉ việc `Status == 'Inactive'`). Bước này xác minh luồng dữ liệu chảy xuyên suốt từ Giao diện Form ➡️ Logic Engine ➡️ Bảng phẳng.
 
-### Bước 2: Thiết kế Khuôn mẫu (Ska Symbol - Vai trò Designer)
+### Bước 2: Thiết kế Khuôn mẫu đa dạng (Ska Symbol - Vai trò Designer)
 - **Thao tác:** Chuyển sang phần **Ska Symbols** (hoặc tạo một nháp mới).
-- **Thiết kế:** 
+- **Thiết kế Khuôn mẫu 1 (Thẻ Chuẩn):** 
   - Kéo một khối `Ska Container` làm thẻ bao bọc (Card).
   - Kéo khối `Ska Text` làm Tên bác sĩ. Gắn Data Binding (Dynamic Content) cho Text này là `[name]`.
   - Kéo khối `Ska Text` làm Chuyên khoa. Gắn Data Binding là `[specialty]`.
-- **Lưu lại:** Đặt tên là `Thẻ Bác Sĩ Chuẩn` (Ghi nhớ Organism ID, giả sử là `15`).
+  - **Lưu lại:** Đặt tên là `Thẻ Bác Sĩ Chuẩn` (Ghi nhớ Organism ID, giả sử là `15`).
+- **Thiết kế Khuôn mẫu 2 (Thẻ VIP/Chuyên gia):** 
+  - Nhân bản "Thẻ Chuẩn", đổi màu nền Card sang màu vàng nhạt (VIP).
+  - Bổ sung một `Ska Text` nổi bật: "⭐ Chuyên Gia Trưởng Khoa ⭐".
+  - **Lưu lại:** Đặt tên là `Thẻ Bác Sĩ Chuyên Gia` (Ghi nhớ Organism ID, giả sử là `16`).
 
-### Bước 3: Cấu hình khối Ska Loop Block trên trang Frontend
+### Bước 3: Cấu hình khối Ska Loop Block đa Slot trên trang Frontend
 - **Thao tác:** Mở một Trang mới (Pages), kéo thả khối **Ska Query Loop** vào.
 - **Cấu hình trên Inspector (Bảng bên phải):**
   - **Source Table:** Nhập `ska_data_doctors`
   - **Limit:** Nhập `10`
-  - **Thêm Slot Mới:**
-    - **Organism ID:** Chọn `Thẻ Bác Sĩ Chuẩn` (ID 15) từ danh sách thả xuống.
-    - **Condition:** Bỏ trống hoặc gõ `default`.
+  - **Cấu hình Đa Slot (Slot Repeater) dựa trên điều kiện:**
+    - **Thêm Slot 1 (Ưu tiên Thẻ VIP):**
+      - **Organism ID:** Chọn `Thẻ Bác Sĩ Chuyên Gia` (ID 16) từ danh sách.
+      - **Condition (SkaFX):** Nhập `$item.Experience >= 5
+    - **Thêm Slot 2 (Ưu tiên Thẻ Chuẩn):**
+      - **Organism ID:** Chọn `Thẻ Bác Sĩ Chuẩn` (ID 15) từ danh sách.
+      - **Condition (SkaFX):** Nhập `$item.Experience < 5
 - **Kiểm tra Editor:** 
-  - Đợi khoảng 1-2 giây, Editor phải xuất hiện **Live Preview** của 3 bác sĩ đã tạo ở Bước 1. Các thẻ văn bản hiện đúng dữ liệu thật, không phải chữ "Hello World".
+  - Đợi khoảng 1-2 giây, Editor xuất hiện **Live Preview** của 3 bác sĩ (1 VIP, 2 Chuẩn). Bác sĩ thứ 4 (Inactive) đã bị ẩn hoàn toàn khỏi danh sách.
+  - **Kết quả mong đợi:** Database vẫn Query đủ dữ liệu (Limit 10). Tuy nhiên, cơ chế Slot Routing sẽ đánh giá điều kiện SkaFX cho từng dòng. Dòng nào không thỏa mãn điều kiện của bất kỳ Slot nào sẽ bị loại bỏ khỏi DOM (không render HTML).
 
 ### Bước 4: Kiểm chứng Frontend và Tốc độ (Zero N+1)
 - **Thao tác:** Bấm Lưu trang và mở xem trang trên Frontend (Chế độ ẩn danh).
 > **✅ Pass khi:** 
-> - Ngoài Frontend hiển thị chính xác danh sách 3 bác sĩ với giao diện thẻ (Card) chuẩn chỉnh.
-> - Cài công cụ `Query Monitor` (Plugin WordPress) để xem số lượng truy vấn DB: Tổng số truy vấn phải cực thấp (chỉ tốn đúng 1 Query lấy HTML và 1 Query truy vấn bảng `ska_data_doctors`). Không có bất kỳ truy vấn nào bị phát sinh thêm trong quá trình vòng lặp (Chứng tỏ Zero N+1 hoạt động hoàn hảo).
+> - Ngoài Frontend hiển thị chính xác danh sách 3 bác sĩ (Thẻ Chuẩn và Thẻ VIP xen kẽ). Bác sĩ thứ 4 (nghỉ việc) **biến mất hoàn toàn** khỏi mã nguồn HTML (Không render).
+> - Cài công cụ `Query Monitor` (Plugin WordPress) để xem số lượng truy vấn DB: Tổng số truy vấn phải cực thấp (chỉ tốn đúng 1 Query lấy HTML của 2 khuôn mẫu và 1 Query truy vấn bảng `ska_data_doctors`). Không có bất kỳ truy vấn nào bị phát sinh thêm trong quá trình vòng lặp (Chứng tỏ Zero N+1 hoạt động hoàn hảo).
 > - Tính năng Data Binding chuyển đổi `[name]` thành dữ liệu thật chính xác qua cơ chế Hydration.

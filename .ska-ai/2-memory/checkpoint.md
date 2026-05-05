@@ -1,17 +1,17 @@
 # SYSTEM CHECKPOINT
 
-**Thời điểm lưu:** 2026-04-29 (End Session)
+**Thời điểm lưu:** 2026-05-04 (End Session - Kiến Trúc Smart Virtual Wrapper)
 
 ## 1. Trạng thái hiện tại
-- **[HOÀN TẤT]** Đã kiểm thử E2E thành công luồng tích hợp **DB Query Node** và **Render Template Node** (cả chế độ System và Raw Variable).
-- **[XÁC THỰC]** Tính năng **SkaFX Smart Fallback** (tự động cắt bỏ tiền tố `payload.`) hoạt động mượt mà trên thực tế, mang lại trải nghiệm tối ưu cho End-user No-code.
-- Toàn bộ 9 khối Core Primitives của Logic Engine chính thức **Ổn định (Stable)**.
-- Gói lõi tự động hóa (Logic Engine MVP) đã sẵn sàng, không phát hiện rò rỉ dữ liệu hay lỗi pipeline.
+- **[NGHIÊN CỨU] Kiến trúc Theme Builder vs App Builder:** Phân tích các rủi ro của Output Buffering, xung đột FSE. Thống nhất định hướng "Smart Virtual Wrapper" (Tách rời lũy tiến).
+- **[TÀI LIỆU HÓA]** Đã lưu trữ các "tử huyệt" kỹ thuật và hướng đi vào file `.ska-ai/2-memory/chua-quyet-dinh-duoc.md`.
 
 ## 2. Nhiệm vụ phiên tiếp theo (Handover)
-- **Thiết kế & Giao diện (Phase 4):** Bắt đầu phát triển hệ thống UI tĩnh và động, xây dựng các cấu trúc UI phức tạp (Tabs, Accordion, Multi-step Form) sử dụng tiêu chuẩn **Ska Molecule** và **Alpine.js**.
-- Triển khai **Ska Scripts Library** (Thư viện lưu trữ JS/CSS tập trung) để xóa sổ các khối Custom HTML rời rạc, làm tiền đề cho Theme Builder.
+- **Cài đặt virtual-wrapper.php:** Bắt đầu cài đặt mã nguồn cho `Smart Virtual Wrapper` và nâng cấp `Ska_Template_Router` nếu người dùng quyết định chốt hướng đi App Builder/Theme Builder lai.
+- **Kiểm tra tương thích Blocks:** Test các Blocks cũ xem có bị lệch Layout khi nằm trong Ska Query Loop (với kiến trúc Structural Container mới).
+- **Phát triển Skapine Engine:** Bắt đầu cơ chế Mocking cho Alpine.js bên trong Iframe của Editor.
 
 ## 3. Các files liên đới dự kiến (Phiên sau)
-- Các file liên quan đến cấu trúc Block Component (`Ska No-code Design`).
-- Hạ tầng Alpine.js Store và Global Modals.
+- `wp-content/plugins/ska-no-code-design/src/ska-loop/` (Testing frontend & editor)
+- `wp-content/plugins/ska-no-code-design/inc/template-router/virtual-wrapper.php` (Triển khai Smart Virtual Wrapper)
+- `wp-content/plugins/ska-no-code-design/assets/js/ska-editor-helper.js` (Skapine Preview Engine)

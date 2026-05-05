@@ -73,10 +73,16 @@ class SkaFX_Evaluator {
             if ( array_key_exists( $var_name, $this->symbol_table ) ) {
                 return $this->symbol_table[ $var_name ];
             }
+            foreach ( $this->symbol_table as $k => $v ) {
+                if ( strtolower( $k ) === strtolower( $var_name ) ) return $v;
+            }
 
             // Ưu tiên 2: Quét mảng dữ liệu Dòng nội khu (Tự nhận diện `[nam_kinh_nghiem]`)
             if ( array_key_exists( $var_name, $this->row_context ) ) {
                 return $this->row_context[ $var_name ];
+            }
+            foreach ( $this->row_context as $k => $v ) {
+                if ( strtolower( $k ) === strtolower( $var_name ) ) return $v;
             }
 
             // Ưu tiên 2.5: Quét mảng dữ liệu Dòng nội khu hỗ trợ Dot Notation (VD: `trigger.nam_sinh` hoặc `form.ten`)
@@ -93,17 +99,32 @@ class SkaFX_Evaluator {
                         }
                     }
 
-                    if ( is_array( $current ) && array_key_exists( $key, $current ) ) {
-                        $current = $current[ $key ];
-                    } elseif ( $key === 'length' ) {
-                        if ( is_array( $current ) || $current instanceof \Countable ) {
-                            $current = count( $current );
-                        } elseif ( is_string( $current ) ) {
-                            $current = mb_strlen( $current );
+                    if ( is_array( $current ) ) {
+                        if ( array_key_exists( $key, $current ) ) {
+                            $current = $current[ $key ];
                         } else {
-                            $found = false;
-                            break;
+                            // Case-insensitive fallback
+                            $found_key = false;
+                            foreach ( $current as $k => $v ) {
+                                if ( strtolower( $k ) === strtolower( $key ) ) {
+                                    $current = $v;
+                                    $found_key = true;
+                                    break;
+                                }
+                            }
+                            if ( ! $found_key ) {
+                                if ( $key === 'length' ) {
+                                    $current = count( $current );
+                                } else {
+                                    $found = false;
+                                    break;
+                                }
+                            }
                         }
+                    } elseif ( $key === 'length' && (is_array( $current ) || $current instanceof \Countable) ) {
+                        $current = count( $current );
+                    } elseif ( $key === 'length' && is_string( $current ) ) {
+                        $current = mb_strlen( $current );
                     } else {
                         $found = false;
                         break;

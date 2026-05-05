@@ -43,26 +43,29 @@ add_action( 'init', 'ska_builder_core_register_blocks' );
  * Register custom block category for Ska Atomic blocks.
  */
 function ska_no_code_design_block_categories( $categories, $post ) {
-	return array_merge(
+	$ska_categories = array(
 		array(
-			array(
-				'slug'  => 'ska-atomic',
-				'title' => __( 'Ska Atomic', 'ska-no-code-design' ),
-				'icon'  => 'admin-customizer',
-			),
-			array(
-				'slug'  => 'ska-molecules',
-				'title' => __( 'Ska Molecules', 'ska-no-code-design' ),
-				'icon'  => 'networking',
-			),
-			array(
-				'slug'  => 'ska-organisms',
-				'title' => __( 'Ska Organisms', 'ska-no-code-design' ),
-				'icon'  => 'superhero',
-			),
+			'slug'  => 'ska-atomic',
+			'title' => __( 'Ska Atomic', 'ska-no-code-design' ),
+			'icon'  => 'admin-customizer',
 		),
-		$categories
+		array(
+			'slug'  => 'ska-molecules',
+			'title' => __( 'Ska Molecules', 'ska-no-code-design' ),
+			'icon'  => 'networking',
+		),
 	);
+
+    // Graceful Fallback: Only show Organisms category if Ska Data Pro is active
+    if ( class_exists( '\Ska_System_Framework\Dependency_Manager' ) && \Ska_System_Framework\Dependency_Manager::is_data_pro_active() ) {
+        $ska_categories[] = array(
+            'slug'  => 'ska-organisms',
+            'title' => __( 'Ska Organisms', 'ska-no-code-design' ),
+            'icon'  => 'superhero',
+        );
+    }
+
+	return array_merge( $ska_categories, $categories );
 }
 add_filter( 'block_categories_all', 'ska_no_code_design_block_categories', 10, 2 );
 
@@ -81,16 +84,21 @@ function ska_builder_core_enqueue_extensions() {
             true
         );
 
-        // Preload organisms cache into JS window object
-        $organisms_cache_file = WP_CONTENT_DIR . '/uploads/ska-data/organisms.json';
+        // Preload organisms cache into JS window object (Conditionally via Graceful Fallback)
         $organisms_data = array();
-        if ( file_exists( $organisms_cache_file ) ) {
-            $json = file_get_contents( $organisms_cache_file );
-            $data = json_decode( $json, true );
-            if ( is_array( $data ) ) {
-                $organisms_data = $data;
+        
+        // Only load if Ska Data Pro is active
+        if ( class_exists( '\Ska_System_Framework\Dependency_Manager' ) && \Ska_System_Framework\Dependency_Manager::is_data_pro_active() ) {
+            $organisms_cache_file = WP_CONTENT_DIR . '/uploads/ska-data/organisms.json';
+            if ( file_exists( $organisms_cache_file ) ) {
+                $json = file_get_contents( $organisms_cache_file );
+                $data = json_decode( $json, true );
+                if ( is_array( $data ) ) {
+                    $organisms_data = $data;
+                }
             }
         }
+        
         wp_localize_script( 'ska-builder-extensions', 'skaOrganismsCache', $organisms_data );
 
         $ska_data_dict = get_option( 'ska_data_dictionary', array() );
