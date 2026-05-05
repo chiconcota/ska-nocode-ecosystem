@@ -56,11 +56,12 @@ class Style_Manager {
 	 */
 	private function extract_block_classes( $blocks, &$classes ) {
 		foreach ( $blocks as $block ) {
-			// 1. Check for className or tailwindClasses attribute
-			$block_tailwind_classes = $block['attrs']['tailwindClasses'] ?? $block['attrs']['className'] ?? '';
-			if ( ! empty( $block_tailwind_classes ) ) {
-				$block_classes = explode( ' ', $block_tailwind_classes );
-				$classes       = array_merge( $classes, $block_classes );
+			// 1. Check for className and tailwindClasses attributes
+			if ( ! empty( $block['attrs']['tailwindClasses'] ) ) {
+				$classes = array_merge( $classes, explode( ' ', $block['attrs']['tailwindClasses'] ) );
+			}
+			if ( ! empty( $block['attrs']['className'] ) ) {
+				$classes = array_merge( $classes, explode( ' ', $block['attrs']['className'] ) );
 			}
 
             // 2. Scan SPECIFIC attributes for Tailwind-like strings

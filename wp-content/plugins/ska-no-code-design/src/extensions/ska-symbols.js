@@ -9,8 +9,9 @@ import { select } from '@wordpress/data';
 
 const withOrganismSaveButton = createHigherOrderComponent((BlockEdit) => {
     return (props) => {
-        // Chỉ áp dụng cho các block của Ska Builder
-        if (!props.name || !props.name.startsWith('ska-builder/')) {
+        // Chỉ áp dụng cho các block của Ska Builder và khi Ska Data Pro đang active
+        const isDataProActive = window.skaEditorConfig?.isDataProActive ?? true;
+        if (!props.name || !props.name.startsWith('ska-builder/') || !isDataProActive) {
             return <BlockEdit {...props} />;
         }
 

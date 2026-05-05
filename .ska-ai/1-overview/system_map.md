@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v1.0.0)
-@status: STABLE PHASE 3 DONE | @last_update: 2026-04-30
+@status: STABLE PHASE 3 DONE | @last_update: 2026-05-04
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core (Host) + PHP 8.2+
@@ -61,6 +61,8 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 ## 7. RECENT LOGS (LATEST)
 > *Các nhật ký từ Phase 1 và 2 đã được lưu trữ trong `.ska-ai/2-memory/archive/`. Chỉ giữ lại các cập nhật cốt lõi gần đây (Phase 3 -> Phase 4).*
 
+- **2026-05-04 - 🟢 Thiết kế Kiến trúc Smart Virtual Wrapper:** Quyết định giải pháp "Tách rời lũy tiến" (Progressive Decoupling) để trung hòa chức năng Theme Builder và App Builder. Xây dựng nền tảng `virtual-wrapper.php` thay thế hoàn toàn cấu trúc DOM của Theme cũ khi cần xây App độc lập. Lưu lại chi tiết nghiên cứu mâu thuẫn vào `chua-quyet-dinh-duoc.md` để triển khai trong Phase 4.
+- **2026-05-04 - 🟢 Tối ưu Hóa Hệ thống & Fix Lỗi Ska Loop Conditional Rendering:** Nâng cấp Design Engine (`class-style-manager.php`) để sửa lỗi bỏ sót class `responsive` và `pseudo-class` bằng cơ chế merge class thông minh. Bổ sung cơ chế *Case-Insensitive Resolution* cho SkaFX, và tối ưu đánh giá logic *Truthy* (`1`, `"1"`, `true`) cho Ska Loop nhằm chống rớt dữ liệu trong mọi trường hợp Boolean Database. Dọn dẹp sạch debug code giúp Loop Block chạy siêu tốc trên Production.
 - **2026-05-04 - 🟢 Nâng cấp Ska Loop (Structural Container):** Khai tử kiến trúc dàn trang "Ghost Block" phụ thuộc CSS hack của Ska Query Loop. Chuyển đổi hoàn toàn block này thành một Layout Container độc lập, tích hợp TailwindPanel để người dùng tự do điều khiển Flex/Grid. Thiết lập một thẻ div bọc ngoài chuẩn mực để đồng bộ hoá 100% cấu trúc DOM giữa Editor và Frontend.
 - **2026-04-30 - 🟢 Chuyển giao Phase 4 (Theme Builder - Loop Block):** Chính thức đóng hồ sơ Phase 3 sau khi ổn định bộ 9 Primitives. Bắt đầu triển khai giao diện React cho Ska Loop Block. Thiết lập Implementation Plan cho UI Inspector và cơ chế Slot Repeater.
 - **2026-04-29 - 🟢 Hoàn tất Iterator/Loop Node (Group Node Architecture):** Triển khai thành công tính năng xử lý vòng lặp mảng cho Ska Logic Engine. Khác với thiết kế các node nối tiếp thông thường, Iterator sử dụng kiến trúc Parent/Group Node trên React Flow. Các node con được đặt bên trong sẽ được biên dịch JIT (Just-In-Time) bằng thuật toán Topological Sorting để tạo thành chuỗi thực thi tuyến tính trong mỗi vòng lặp. Cung cấp sẵn các biến ngữ cảnh (`$item`, `$index`, `$first`, `$last`) giúp người dùng dễ dàng thao tác với dữ liệu danh sách mà không vi phạm nguyên tắc Circuit Breaker.

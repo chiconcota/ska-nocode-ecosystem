@@ -1,5 +1,5 @@
 # PROJECT MANAGER: SKA LOOP BLOCK (KHỐI VÒNG LẶP VẠN NĂNG)
-@status: 🟢 Active | @last_update: 2026-04-30 | @context: Bóc tách từ Phase 4 để quản lý độc lập tiến độ khối vòng lặp dữ liệu và Zero N+1 Queries.
+@status: 🟢 Active | @last_update: 2026-05-04 | @context: Bóc tách từ Phase 4 để quản lý độc lập tiến độ khối vòng lặp dữ liệu và Zero N+1 Queries.
 
 ---
 
@@ -17,6 +17,7 @@
 - [x] **Bulk Load (Zero N+1):** Triển khai API lấy hàng loạt HTML (`Organisms_API::get_bulk_html`) để lấy trước toàn bộ Symbol Template trước khi vòng lặp diễn ra.
 - [x] **Hydration Engine:** Xây dựng cơ chế render siêu tốc đắp dữ liệu từ Flat Table vào HTML bằng biểu thức Mustache `{{key}}` kết hợp `preg_replace_callback`. Không dùng cơ chế nối chuỗi string thủ công.
 - [x] **SkaFX Token Upgrade:** Nâng cấp cỗ máy `Lexer` của Ska Logic Engine để nhận dạng các biến hệ thống đặc thù của vòng lặp (như `$index`, `$first`, `$last`, `$even`, `$odd`).
+- [x] **Conditional Rendering Fixes (2026-05-04):** Tối ưu cơ chế đánh giá logic Truthy (`1/0/true/false`) cho Ska Loop kết hợp Case-Insensitive Variable Resolution nhằm chống rớt dữ liệu trong vòng lặp. Dọn dẹp debug mode cho Production.
 
 ### 2.2. Giao Diện Biên Tập (React Editor / Inspector) - [HOÀN THÀNH 🟢]
 - [x] Xây dựng UI Component để người dùng Nocode chọn Bảng Nguồn (Source Table).
@@ -24,9 +25,10 @@
 - [x] Đồng bộ trực quan dữ liệu vòng lặp vào Editor (Live preview mảng ảo).
 - [x] **Layout Container (2026-05-04):** Tích hợp TailwindPanel, gỡ bỏ Ghost Block CSS Hacks, định danh lại Ska Loop là một thành phần Container độc lập có khả năng flex/grid tự do.
 
-### 2.3. Tương tác Frontend (Ska Molecule Binding) - [ĐANG CHỜ 🟡]
-- [ ] Tích hợp Ska Query Loop kết nối với Ska Dynamic Content để biên dịch các biến nhúng `{{...}}` ngoài giao diện thực.
-- [ ] **[PENDING TEST]** Chạy bài test diện rộng: Kết hợp Bảng Data (Bác sĩ) + Vòng Lặp + Ska Select Inspector (Vừa xong trước lúc Pivot) để kiểm chứng tốc độ render mảng dữ liệu.
+### 2.3. Tương tác Frontend (Ska Molecule Binding) - [HOÀN THÀNH 🟢]
+- [x] Tích hợp Ska Query Loop kết nối với Ska Dynamic Content để biên dịch các biến nhúng `{{...}}` ngoài giao diện thực.
+- [x] **[TEST PASSED]** Chạy bài test diện rộng: Kết hợp Bảng Data (Bác sĩ) + Vòng Lặp + Ska Select Inspector để kiểm chứng tốc độ render mảng dữ liệu.
+- [x] Tiến hành **Post-Deployment Testing**: Kiểm tra xem các block cũ trong Loop có bị ảnh hưởng khi chuyển đổi từ Ghost Block sang Wrapper hay không. Tối ưu Style Engine để bảo tồn Responsive Utilities (`sm:`, `md:`).
 
 ---
 

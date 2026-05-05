@@ -8,6 +8,18 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-05-04 - 🟢 Tái định hình Kiến trúc: Theme Builder vs App Builder
+- **Decision (Smart Virtual Wrapper Architecture):** Thống nhất lộ trình "Tách rời lũy tiến" (Progressive Decoupling) để giải quyết xung đột giữa Theme Builder (phụ thuộc WordPress header/footer) và App Builder (cần toàn quyền kiểm soát DOM). Hệ thống sẽ cung cấp chế độ lai: nếu dùng làm Website Builder, nó tiêm Hook vào Theme hiện tại; nếu dùng làm App Builder, nó sử dụng `virtual-wrapper.php` (Priority 99 trên `template_include`) để bypass Theme cũ hoàn toàn. Quyết định này bảo vệ khả năng tương thích của WooCommerce trong khi vẫn cho phép xây dựng Web App sạch sẽ.
+- **Decision (Khước từ Output Buffering):** Quyết định không sử dụng kỹ thuật Output Buffering (`ob_start` trong `get_header`) để xóa CSS của Theme cũ do rủi ro Memory Leak, xung đột Caching/Minify và không tương thích với Block Themes (FSE).
+
+---
+## 2026-05-04 - 🟢 Tối ưu Hóa Hệ thống & Fix Lỗi Ska Loop Conditional Rendering
+- **Decision (Tailwind JIT Class Merging):** Cập nhật cơ chế trích xuất Class trong `Style_Manager::scan_post_classes` để luôn **Merge** (kết hợp) cả 2 thuộc tính `className` và `tailwindClasses`. Vá lỗi JIT Compiler vô tình bỏ sót các lớp tiện ích (responsive `sm:`, pseudo `hover:`) từ Gutenberg khi hai thuộc tính cùng tồn tại.
+- **Decision (Performance Cleanup):** Dọn dẹp (Cleanup) toàn bộ các lệnh in log debug (`error_log` và dump `debug_loop_render.html`) trong file `render.php` của Ska Loop nhằm tối ưu tốc độ render cho môi trường Production.
+- **Decision (SkaFX Case-Insensitive Variable Resolution):** Giải quyết dứt điểm lỗi hệ thống không hiểu biến do khác biệt viết hoa/viết thường giữa cấu trúc Database (`Experience`) và cách User nhập trên UI (`$item.experience`). Cập nhật lõi `SkaFX_Evaluator` để toàn bộ quá trình ánh xạ key (kể cả dùng Dot Notation như `$item.experience` hay Key Root như `[experience]`) đều tự động rà soát **case-insensitive (không phân biệt chữ hoa/chữ thường)** làm fallback an toàn.
+- **Decision (Ska Loop Truthy Condition Evaluation):** Cập nhật cơ chế đánh giá điều kiện trong vòng lặp `Ska Loop` (`render.php`). Chuyển từ kiểm tra bool khắt khe (`=== true`) sang kiểm tra "Truthy value" linh hoạt (Cho phép khớp nếu logic trả về `1`, `"1"`, `true` hoặc `"true"`). Sự thay đổi này bảo đảm Loop không bỏ sót dữ liệu khi user sử dụng các cột boolean trong MySQL (vốn lưu dưới dạng số nguyên `1/0`).
+
+---
 ## 2026-05-04 - 🟢 Refactor Kiến Trúc: Đưa Layout Engine vào Ska Query Loop
 - **Decision (Ska Loop as Structural Container):** Khai tử kiến trúc "Ghost Block" (phẳng hóa DOM bằng class `display: contents !important`) của Ska Query Loop. Do cơ chế bọc thẻ của Gutenberg (như `.block-editor-block-list__layout`) tạo ra quá nhiều thẻ div rác và cắt đứt luồng flex/grid từ cha xuống con, việc cố ép phẳng DOM gây lỗi dàn trang trong Editor dù chạy tốt trên Front-end. Quyết định: Chuyển đổi Ska Loop thành một **Structural Container** hoàn chỉnh.
 - **Decision (Tailwind Panel Integration):** Tích hợp `<TailwindPanel>` trực tiếp vào khối Loop, cấp cho nó thuộc tính `tailwindClasses`. Từ nay người dùng Nocode có thể thiết lập layout (Flex/Grid, Gap) trực tiếp ngay trên Loop Block. Đồng thời, hàm `render.php` của Loop được cập nhật để bọc nội dung bằng một thẻ wrapper chuẩn xác, đảm bảo 100% đồng bộ DOM cấu trúc giữa Editor và Frontend, triệt tiêu lỗi layout vỡ khung.

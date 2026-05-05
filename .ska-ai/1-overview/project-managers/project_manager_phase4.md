@@ -37,14 +37,14 @@
 - [x] Mảng Dropdown Menu, Offcanvas Slider, Standard Forms.
 - [x] Khởi tạo hệ sinh thái `Alpine.store('app')` để kết nối Global State chéo giữa các block riêng rẽ.
 - [x] React Inspector cho Ska Select: Bật tắt Dynamic Binding, Protective UX lọc bảng/cột và Template Auto-Generation (Zero N+1).
-- [ ] **Khủng hoảng UX - Pivot Nocode Form:** Nhận thấy việc bắt người dùng cấu hình thủ công các biến trạng thái (`fields.*`, `status.*`, `skaForm()`) trong Alpine là bất khả thi đối với non-coder. Yêu cầu thiết kế lại giải pháp "Abstraction Layer" (Ví dụ: Form Builder UI riêng hoặc Block Form tự động map attributes) nhằm tự động hoá quy trình kết nối Logic Engine.
+- [x] **Khủng hoảng UX - Pivot Nocode Form:** Nhận thấy việc bắt người dùng cấu hình thủ công các biến trạng thái (`fields.*`, `status.*`, `skaForm()`) trong Alpine là bất khả thi đối với non-coder. Yêu cầu thiết kế lại giải pháp "Abstraction Layer" (Ví dụ: Form Builder UI riêng hoặc Block Form tự động map attributes) nhằm tự động hoá quy trình kết nối Logic Engine.
 
 ### 2.3. Theme Builder & Khối Vòng Lặp Vạn Năng (Ska Query Loop)
 *Được tích hợp từ `project_manager_theme_builder.md` cũ.*
-- [ ] Lập cấu trúc Ghi đè Template (WordPress Template Router) từ Flat table (Header/Footer/Archive...).
-- [⏸️] **Khối Query Loop (Foreach / Map):** Đã bóc tách thành một chiến dịch riêng để theo dõi chi tiết. 
+- [x] Lập cấu trúc Ghi đè Template (WordPress Template Router) từ Flat table (Header/Footer/Archive...). (Đã chốt kiến trúc Smart Virtual Wrapper, chuẩn bị code)
+- [x] **Khối Query Loop (Foreach / Map):** Đã hoàn tất chiến dịch độc lập. 
   -> 👉 **Xem chi tiết tại:** `project_manager_ska_loop_block.md`
-- [⏸️] Tích hợp Ska Query Loop kết nối với Ska Dynamic Content (Biến nhúng `{{...}}`).
+- [x] Tích hợp Ska Query Loop kết nối với Ska Dynamic Content (Biến nhúng `{{...}}`).
 
 ### 2.4. Tính Năng UI Độc Lập / Mới Cập Nhật
 *Được trích xuất từ phần 'Tương lai' (3.3) của Phase 3.*

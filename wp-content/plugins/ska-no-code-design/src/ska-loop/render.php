@@ -148,7 +148,9 @@ foreach ( $rows as $index => $row ) {
         '$even'  => ( $index % 2 ) === 0,
         '$odd'   => ( $index % 2 ) !== 0,
         // Hỗ trợ cả prefix của bảng: [doctors.name]
-        $source_table => $row
+        $source_table => $row,
+        // Cung cấp biến $item chuẩn để dùng trong SkaFX Condition
+        '$item'  => $row
     ] );
 
     // Duyệt qua các slot để Match điều kiện
@@ -171,10 +173,18 @@ foreach ( $rows as $index => $row ) {
         // Tính toán bằng SkaFX
         if ( class_exists( '\Ska\Logic\SkaFX\SkaFX_Engine' ) ) {
             try {
-                error_log( "SkaFX Context Condition Debug: " . var_export($condition, true) );
                 $result = \Ska\Logic\SkaFX\SkaFX_Engine::execute( $condition, $context );
-                // Nếu phép tính trả về TRUE, khớp Slot này
-                if ( isset( $result['last_val'] ) && $result['last_val'] === true ) {
+                
+                // Nếu phép tính trả về giá trị truthy (true, 1, "1", "true"), khớp Slot này
+                $is_truthy = false;
+                if ( isset( $result['last_val'] ) ) {
+                    $val = $result['last_val'];
+                    if ( $val === true || $val === 1 || $val === '1' || strtolower((string)$val) === 'true' ) {
+                        $is_truthy = true;
+                    }
+                }
+                
+                if ( $is_truthy ) {
                     $matched_template_html = $compiled_templates[ $org_id ];
                     break;
                 }
@@ -213,11 +223,6 @@ $tailwind_classes = isset( $attributes['tailwindClasses'] ) ? esc_attr( $attribu
 $output = '<div class="wp-block-ska-builder-loop ska-loop-wrapper ' . $tailwind_classes . '">';
 $output .= $final_html;
 $output .= '</div>';
-
-// DUMP HTML để debug
-$upload_dir = wp_upload_dir();
-$debug_file = $upload_dir['basedir'] . '/ska-data/debug_loop_render.html';
-@file_put_contents($debug_file, $output);
 
 echo $output;
 return;
