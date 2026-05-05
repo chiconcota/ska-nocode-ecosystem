@@ -24,10 +24,16 @@ if ( $actionType === 'link' ) {
 // Robust Fallback: Check for non-empty tailwindClasses first, then fallback to className (legacy).
 $user_tailwindClasses = ! empty( $attributes['tailwindClasses'] ) ? $attributes['tailwindClasses'] : ( $attributes['className'] ?? '' );
 
-$wrapper_attributes = get_block_wrapper_attributes( array(
+$wrapper_attrs_array = array(
     'class' => 'ska-button-block ' . esc_attr( $user_tailwindClasses ),
     'style' => $attributes['customStyle'] ?? '',
-) );
+);
+
+if ( ! empty( $attributes['ariaLabel'] ) ) {
+    $wrapper_attrs_array['aria-label'] = esc_attr( $attributes['ariaLabel'] );
+}
+
+$wrapper_attributes = get_block_wrapper_attributes( $wrapper_attrs_array );
 
 if ( ! empty( $attributes['dynamic']['text_source'] ) && $attributes['dynamic']['text_source'] !== 'static' ) {
     $text = \Ska\Builder\Utils\Assets::get_dynamic_content( $attributes['dynamic'], 'text' );
@@ -47,13 +53,13 @@ $icon_class_attr = trim( 'material-symbols-outlined ' . esc_attr( $iconClasses )
 
 $inner_html = '';
 if ( $hasIcon && $iconPosition === 'left' && ! empty( $iconName ) ) {
-    $inner_html .= '<span class="' . $icon_class_attr . '">' . esc_html( $iconName ) . '</span>';
+    $inner_html .= '<span class="' . $icon_class_attr . '" aria-hidden="true">' . esc_html( $iconName ) . '</span>';
 }
 $inner_html .= ( $hasIcon && $iconPosition === 'left' && ! empty( $iconName ) && ! empty( $text ) ) ? ' ' : '';
 $inner_html .= esc_html( $text );
 $inner_html .= ( $hasIcon && $iconPosition === 'right' && ! empty( $iconName ) && ! empty( $text ) ) ? ' ' : '';
 if ( $hasIcon && $iconPosition === 'right' && ! empty( $iconName ) ) {
-    $inner_html .= '<span class="' . $icon_class_attr . '">' . esc_html( $iconName ) . '</span>';
+    $inner_html .= '<span class="' . $icon_class_attr . '" aria-hidden="true">' . esc_html( $iconName ) . '</span>';
 }
 
 if ( $tagName === 'button' ) {

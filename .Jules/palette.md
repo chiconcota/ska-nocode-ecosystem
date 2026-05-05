@@ -1,0 +1,3 @@
+## 2024-05-05 - Accessibility for Material Symbols Ligatures
+**Learning:** Material Symbols ligatures (e.g., `<span class="material-symbols-outlined">star</span>`) are read aloud by screen readers as the text content ("star"), which can be extremely confusing for users, especially in icon-only buttons or when used purely decoratively. The `ariaLabel` attribute was also missing from buttons, further degrading accessibility.
+**Action:** When using Material Symbols ligatures anywhere in the UI or blocks, always add `aria-hidden="true"` to the `<span>` tags. Additionally, always provide an optional `ariaLabel` setting for buttons so content creators can give screen readers a descriptive accessible name for icon-only or generic-text buttons.

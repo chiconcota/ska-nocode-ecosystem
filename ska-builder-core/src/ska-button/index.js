@@ -23,6 +23,7 @@ registerBlockType(metadata.name, {
             iconPosition = 'left',
             iconClasses = '',
             actionType = 'link',
+            ariaLabel = '',
             tailwindClasses = '', 
             className = '',
             dynamic = { text_source: 'static', text_key: '', url_source: 'static', url_key: '' }, 
@@ -112,6 +113,12 @@ registerBlockType(metadata.name, {
                                 />
                             </>
                         )}
+                        <TextControl
+                            label={__('ARIA Label', 'ska-builder-core')}
+                            value={ariaLabel}
+                            onChange={(val) => setAttributes({ ariaLabel: val })}
+                            help={__('Accessible name for screen readers, highly recommended for icon-only buttons.', 'ska-builder-core')}
+                        />
                     </PanelBody>
 
                     <PanelBody title={__('Icon Settings', 'ska-builder-core')} initialOpen={false}>
@@ -210,10 +217,11 @@ registerBlockType(metadata.name, {
                     href={Tag === 'a' ? url : undefined}
                     target={Tag === 'a' ? target : undefined}
                     type={actionType === 'submit' ? 'submit' : undefined}
+                    aria-label={ariaLabel || undefined}
                     onClick={(e) => e.preventDefault()}
                 >
                     {hasIcon && iconPosition === 'left' && (
-                        <span className={`material-symbols-outlined ${iconClasses}`.trim()}>{iconName}</span>
+                        <span className={`material-symbols-outlined ${iconClasses}`.trim()} aria-hidden="true">{iconName}</span>
                     )}
                     {dynamic.text_source === 'static' ? (
                         <RichText
@@ -229,7 +237,7 @@ registerBlockType(metadata.name, {
                         </span>
                     )}
                     {hasIcon && iconPosition === 'right' && (
-                        <span className={`material-symbols-outlined ${iconClasses}`.trim()}>{iconName}</span>
+                        <span className={`material-symbols-outlined ${iconClasses}`.trim()} aria-hidden="true">{iconName}</span>
                     )}
                 </Tag>
             </>
