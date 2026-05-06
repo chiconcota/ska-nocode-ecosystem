@@ -1,17 +1,20 @@
-# SYSTEM CHECKPOINT
+# CHECKPOINT (HANDOVER)
+@last_update: 2026-05-04
+@status: Sẵn sàng Code Implementation cho Ska Theme Builder
 
-**Thời điểm lưu:** 2026-05-04 (End Session - Kiến Trúc Smart Virtual Wrapper)
+## 1. TÌNH TRẠNG HIỆN TẠI (CURRENT STATE)
+- Kiến trúc Ska Theme Builder đã được chốt: **Smart Virtual Wrapper** kết hợp **Gutenberg as a Component Engine**. 
+- Quyết định loại bỏ sự phụ thuộc vào FSE của WordPress và `wp_postmeta`. Toàn bộ thao tác lưu trữ Theme Template (Header, Footer, Single) sẽ được thực hiện trực tiếp vào `ska_data_sys_organisms`.
+- Tài liệu kiến trúc `design-engine.md`, `system_map.md` và `decision-log.md` đã được cập nhật và đồng bộ 100%.
+- Đã xóa bỏ file `.ska-ai/2-memory/chua-quyet-dinh-duoc.md` theo chỉ đạo dọn dẹp.
 
-## 1. Trạng thái hiện tại
-- **[NGHIÊN CỨU] Kiến trúc Theme Builder vs App Builder:** Phân tích các rủi ro của Output Buffering, xung đột FSE. Thống nhất định hướng "Smart Virtual Wrapper" (Tách rời lũy tiến).
-- **[TÀI LIỆU HÓA]** Đã lưu trữ các "tử huyệt" kỹ thuật và hướng đi vào file `.ska-ai/2-memory/chua-quyet-dinh-duoc.md`.
+## 2. NHIỆM VỤ PHIÊN TỚI (NEXT SESSION TASKS)
+1. **Thiết lập Menu Admin:** Tạo `add_menu_page` (Ska Theme Panel) trong wp-admin.
+2. **Ska Theme Panel UI:** Bắt đầu code giao diện CRUD cho Template sử dụng **Alpine.js + Tailwind CSS** (tuyệt đối không dùng React cho UI quản lý này).
+3. **REST API & Data Binding:** Viết API endpoint để lấy và lưu dữ liệu Template vào bảng `ska_data_sys_organisms` (Schema `theme_templates`).
+4. **Isolated Editor Setup:** Thiết lập khung Iframe Editor dành riêng cho việc biên tập Template toàn màn hình.
 
-## 2. Nhiệm vụ phiên tiếp theo (Handover)
-- **Cài đặt virtual-wrapper.php:** Bắt đầu cài đặt mã nguồn cho `Smart Virtual Wrapper` và nâng cấp `Ska_Template_Router` nếu người dùng quyết định chốt hướng đi App Builder/Theme Builder lai.
-- **Kiểm tra tương thích Blocks:** Test các Blocks cũ xem có bị lệch Layout khi nằm trong Ska Query Loop (với kiến trúc Structural Container mới).
-- **Phát triển Skapine Engine:** Bắt đầu cơ chế Mocking cho Alpine.js bên trong Iframe của Editor.
-
-## 3. Các files liên đới dự kiến (Phiên sau)
-- `wp-content/plugins/ska-no-code-design/src/ska-loop/` (Testing frontend & editor)
-- `wp-content/plugins/ska-no-code-design/inc/template-router/virtual-wrapper.php` (Triển khai Smart Virtual Wrapper)
-- `wp-content/plugins/ska-no-code-design/assets/js/ska-editor-helper.js` (Skapine Preview Engine)
+## 3. LƯU Ý CHO AGENT (AGENT NOTES)
+- Bạn đang làm việc trong phân hệ `Ska No-code Design` (`app/public/wp-content/plugins/ska-no-code-design`).
+- Tuân thủ nguyên tắc Zero-Postmeta và Decoupled (Sử dụng Flat Tables).
+- Không được dùng `wp_postmeta` để lưu cấu hình.
