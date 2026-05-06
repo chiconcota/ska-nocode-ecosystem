@@ -10,8 +10,9 @@ $icon_name = $attributes['iconName'] ?? 'star';
 $user_tailwindClasses = ! empty( $attributes['tailwindClasses'] ) ? $attributes['tailwindClasses'] : ( $attributes['className'] ?? '' );
 
 $wrapper_attributes = get_block_wrapper_attributes( array(
-    'class' => 'ska-icon-block material-symbols-outlined ' . esc_attr( $user_tailwindClasses ),
-    'style' => $attributes['customStyle'] ?? '',
+    'class'       => 'ska-icon-block material-symbols-outlined ' . esc_attr( $user_tailwindClasses ),
+    'style'       => $attributes['customStyle'] ?? '',
+    'aria-hidden' => 'true',
 ) );
 
 if ( ! empty( $attributes['logic']['enabled'] ) ) {
