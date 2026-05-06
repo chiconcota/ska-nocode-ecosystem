@@ -41,7 +41,9 @@
 
 ### 2.3. Theme Builder & Khối Vòng Lặp Vạn Năng (Ska Query Loop)
 *Được tích hợp từ `project_manager_theme_builder.md` cũ.*
-- [x] Lập cấu trúc Ghi đè Template (WordPress Template Router) từ Flat table (Header/Footer/Archive...). (Đã chốt kiến trúc Smart Virtual Wrapper, chuẩn bị code)
+- [x] Lập cấu trúc Ghi đè Template (WordPress Template Router) từ Flat table (Header/Footer/Archive...). Đã chốt kiến trúc **Smart Virtual Wrapper** và loại bỏ FSE.
+- [ ] Thiết kế **Ska Theme Panel** (Dashboard quản lý Template) sử dụng Alpine.js + Tailwind CSS, lưu trữ qua API vào `ska_data_sys_organisms`.
+- [ ] Khởi tạo Isolated Editor (Iframe Gutenberg toàn màn hình) dành riêng cho việc biên tập Theme Template.
 - [x] **Khối Query Loop (Foreach / Map):** Đã hoàn tất chiến dịch độc lập. 
   -> 👉 **Xem chi tiết tại:** `project_manager_ska_loop_block.md`
 - [x] Tích hợp Ska Query Loop kết nối với Ska Dynamic Content (Biến nhúng `{{...}}`).

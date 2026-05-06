@@ -8,6 +8,12 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-05-04 - 🟢 Chốt Kiến Trúc Ska Theme Builder (The Ultimate Hybrid)
+- **Decision (Gutenberg as a Component Engine):** Quyết định loại bỏ hoàn toàn việc tích hợp sâu vào Full Site Editing (FSE) của WordPress do rủi ro "mất trí nhớ" khi tải dữ liệu, xung đột với hệ sinh thái WooCommerce và sự thiếu ổn định của FSE. Thay vào đó, thiết kế một **Ska Theme Panel** hoàn toàn độc lập (code bằng Alpine.js + Tailwind), đọc/ghi trực tiếp vào bảng phẳng `ska_data_sys_organisms`.
+- **Decision (Smart Virtual Wrapper & Template Routing):** Triển khai kiến trúc **Smart Virtual Wrapper** để trung hòa giữa Website Builder và App Builder. Sử dụng hook `template_include` (Priority 99) để đánh chặn luồng render của WordPress. Trình Editor sẽ được chạy trong một Isolated Iframe toàn màn hình, cách ly với cơ chế lưu trữ của WP, đảm bảo dữ liệu Template (Header, Footer, Single...) được lưu dưới dạng Component trong Flat Tables.
+- **Decision (Zero-Postmeta Policy Enforcement):** TUYỆT ĐỐI không tạo Custom Post Type (CPT) hay lưu trữ Template trong `wp_posts`/`wp_postmeta`. Mọi thao tác CRUD Template chỉ được phép giao tiếp thông qua REST API tới `ska_data_sys_organisms`.
+
+---
 ## 2026-05-04 - 🟢 Tái định hình Kiến trúc: Theme Builder vs App Builder
 - **Decision (Smart Virtual Wrapper Architecture):** Thống nhất lộ trình "Tách rời lũy tiến" (Progressive Decoupling) để giải quyết xung đột giữa Theme Builder (phụ thuộc WordPress header/footer) và App Builder (cần toàn quyền kiểm soát DOM). Hệ thống sẽ cung cấp chế độ lai: nếu dùng làm Website Builder, nó tiêm Hook vào Theme hiện tại; nếu dùng làm App Builder, nó sử dụng `virtual-wrapper.php` (Priority 99 trên `template_include`) để bypass Theme cũ hoàn toàn. Quyết định này bảo vệ khả năng tương thích của WooCommerce trong khi vẫn cho phép xây dựng Web App sạch sẽ.
 - **Decision (Khước từ Output Buffering):** Quyết định không sử dụng kỹ thuật Output Buffering (`ob_start` trong `get_header`) để xóa CSS của Theme cũ do rủi ro Memory Leak, xung đột Caching/Minify và không tương thích với Block Themes (FSE).
