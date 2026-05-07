@@ -45,6 +45,11 @@ function ska_no_code_design_init() {
     require_once SKA_DESIGN_PATH . 'inc/design-engine/class-design-tokens-ui.php';
     require_once SKA_DESIGN_PATH . 'inc/design-engine/class-organisms-api.php';
     require_once SKA_DESIGN_PATH . 'inc/design-engine/class-organism-editor.php';
+    require_once SKA_DESIGN_PATH . 'inc/design-engine/class-design-workspace-ui.php';
+    
+    // Theme Builder
+    require_once SKA_DESIGN_PATH . 'inc/theme-builder/class-ska-theme-builder.php';
+
     if ( class_exists( '\Ska\Design\Api\Design_Tokens_API' ) ) {
         \Ska\Design\Api\Design_Tokens_API::get_instance();
     }
@@ -54,8 +59,15 @@ function ska_no_code_design_init() {
     if ( class_exists( '\Ska\Design\Admin\Design_Tokens_UI' ) ) {
         \Ska\Design\Admin\Design_Tokens_UI::get_instance();
     }
+    if ( class_exists( '\Ska\Design\Admin\Design_Workspace_UI' ) ) {
+        \Ska\Design\Admin\Design_Workspace_UI::get_instance();
+    }
     if ( class_exists( '\Ska\Builder\Design\Organism_Editor' ) ) {
         \Ska\Builder\Design\Organism_Editor::instance();
+    }
+    if ( class_exists( '\Ska_No_Code_Design\Theme_Builder\Ska_Theme_Builder' ) ) {
+        $theme_builder = new \Ska_No_Code_Design\Theme_Builder\Ska_Theme_Builder();
+        $theme_builder->init();
     }
 
 	// 4. Blocks System

@@ -46,6 +46,9 @@ class Organism_Editor {
 		// Clean up the UI inside iframe
 		add_action( 'admin_head', array( $this, 'inject_iframe_styles' ), 999 );
         add_action( 'admin_footer', array( $this, 'inject_iframe_js' ), 999 );
+		
+		// Register Editor Wrapper Menu
+		add_action( 'admin_menu', array( $this, 'register_menu' ), 30 );
 	}
 
 	/**
@@ -66,6 +69,136 @@ class Organism_Editor {
 			'rewrite'             => false,
 			'capability_type'     => 'post',
 		) );
+	}
+
+	/**
+	 * Register the hidden submenu page for the Editor Wrapper
+	 */
+	public function register_menu() {
+		add_submenu_page(
+			'null', // Hidden
+			'Organism Editor',
+			'Organism Editor',
+			'manage_options',
+			'ska-organism-editor',
+			array( $this, 'render_editor_wrapper' )
+		);
+	}
+
+	/**
+	 * Render the full-screen Editor Wrapper
+	 */
+	public function render_editor_wrapper() {
+		$organism_id = isset( $_GET['organism_id'] ) ? absint( $_GET['organism_id'] ) : 0;
+
+		if ( ! $organism_id ) {
+			echo '<div class="wrap"><h2>Lỗi: Không tìm thấy Organism ID.</h2></div>';
+			return;
+		}
+
+		// Ensure Organism dummy post exists
+		$dummy_post_id = get_option( 'ska_organism_dummy_post_id' );
+		if ( ! $dummy_post_id ) {
+			echo '<div class="wrap"><h2>Lỗi: Chưa khởi tạo Dummy Post. Vui lòng quay lại Dashboard.</h2></div>';
+			return;
+		}
+
+		// Fetch organism info
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'ska_data_sys_organisms';
+		$organism = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$table_name} WHERE id = %d", $organism_id ) );
+
+		if ( ! $organism ) {
+			echo '<div class="wrap"><h2>Lỗi: Organism không tồn tại.</h2></div>';
+			return;
+		}
+
+		// URL for iframe
+		$iframe_url = admin_url( sprintf( 'post.php?post=%d&action=edit&ska_iframe=1&edit_organism=%d', $dummy_post_id, $organism_id ) );
+		$back_url   = admin_url( 'admin.php?page=ska-design-workspace' );
+		?>
+		<style>
+			#wpadminbar { display: none !important; }
+			#adminmenumain { display: none !important; }
+			#wpcontent { margin-left: 0 !important; padding-left: 0 !important; }
+			html.wp-toolbar { padding-top: 0 !important; }
+			#wpfooter { display: none !important; }
+		</style>
+		
+		<div class="ska-organism-editor-wrapper bg-slate-100 h-screen w-full flex flex-col -ml-5 -mt-2 overflow-hidden" x-data="organismEditorData()">
+			<!-- Topbar -->
+			<div class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4 shadow-sm z-10 shrink-0">
+				<div class="flex items-center gap-3">
+					<a href="<?php echo esc_url( $back_url ); ?>" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors cursor-pointer text-decoration-none">
+						<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+					</a>
+					<div class="h-6 w-px bg-slate-200 mx-1"></div>
+					<div>
+						<h1 class="m-0 text-sm font-bold text-slate-800 flex items-center gap-2">
+							<?php echo esc_html( $organism->name ); ?>
+							<span class="bg-pink-100 text-pink-700 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">
+								SYMBOL
+							</span>
+						</h1>
+					</div>
+				</div>
+
+				<div class="flex items-center gap-3">
+					<div x-show="isSaving" x-transition class="flex items-center gap-2 text-sm text-slate-500 font-medium" style="display: none;">
+						<span class="material-symbols-outlined text-[16px] animate-spin">sync</span>
+						Đang lưu...
+					</div>
+					<div x-show="saved" x-transition class="flex items-center gap-2 text-sm text-emerald-600 font-medium bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100" style="display: none;">
+						<span class="material-symbols-outlined text-[16px]">check_circle</span>
+						Đã lưu
+					</div>
+				</div>
+			</div>
+
+			<!-- Editor Iframe -->
+			<div class="flex-1 w-full relative bg-slate-50">
+				<div x-show="loading" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 z-20">
+					<span class="material-symbols-outlined text-4xl text-pink-500 animate-spin mb-3">data_usage</span>
+					<span class="text-slate-500 font-medium text-sm">Đang tải Editor...</span>
+				</div>
+				<iframe 
+					src="<?php echo esc_url( $iframe_url ); ?>" 
+					class="w-full h-full border-0" 
+					@load="loading = false"
+					id="ska-editor-iframe">
+				</iframe>
+			</div>
+		</div>
+
+		<script>
+		document.addEventListener('alpine:init', () => {
+			Alpine.data('organismEditorData', () => ({
+				loading: true,
+				isSaving: false,
+				saved: false,
+				saveTimeout: null,
+
+				init() {
+					window.addEventListener('message', (event) => {
+						if (event.data && event.data.type === 'SKA_ORGANISM_SAVED') {
+							this.isSaving = false;
+							this.saved = true;
+							
+							if (this.saveTimeout) clearTimeout(this.saveTimeout);
+							
+							this.saveTimeout = setTimeout(() => {
+								this.saved = false;
+							}, 3000);
+						} else if (event.data && event.data.type === 'SKA_ORGANISM_SAVING') {
+							this.isSaving = true;
+							this.saved = false;
+						}
+					});
+				}
+			}));
+		});
+		</script>
+		<?php
 	}
 
 	/**
@@ -126,6 +259,49 @@ class Organism_Editor {
 
 		$organism = $rows[0];
 		$html_content = isset( $organism['html_content'] ) ? $organism['html_content'] : '';
+
+        // Tương thích ngược: Nếu organism cũ chỉ có json_content nhưng không có html_content
+        if ( empty( $html_content ) && ! empty( $organism['json_content'] ) ) {
+            $blocks_array = json_decode( $organism['json_content'], true );
+            
+            if ( is_array( $blocks_array ) ) {
+                // Client-side block json structure might need to be converted to server-side array
+                // before serialize_blocks can process it.
+                $client_blocks = isset( $blocks_array['clientId'] ) ? [ $blocks_array ] : $blocks_array;
+                $server_blocks = [];
+                
+                // Helper closure to convert block format
+                $convert_block = function( $cb ) use ( &$convert_block ) {
+                    if ( ! is_array( $cb ) ) return null;
+                    $sb = [
+                        'blockName'    => $cb['name'] ?? null,
+                        'attrs'        => $cb['attributes'] ?? [],
+                        'innerBlocks'  => [],
+                        'innerHTML'    => '',
+                        'innerContent' => []
+                    ];
+                    if ( isset( $cb['innerBlocks'] ) && is_array( $cb['innerBlocks'] ) ) {
+                        foreach ( $cb['innerBlocks'] as $child ) {
+                            $conv = $convert_block( $child );
+                            if ( $conv ) {
+                                $sb['innerBlocks'][] = $conv;
+                                $sb['innerContent'][] = null;
+                            }
+                        }
+                    }
+                    return $sb;
+                };
+
+                foreach ( $client_blocks as $cb ) {
+                    $conv = $convert_block( $cb );
+                    if ( $conv ) {
+                        $server_blocks[] = $conv;
+                    }
+                }
+
+                $html_content = serialize_blocks( $server_blocks );
+            }
+        }
 
 		// Inject into response
 		$data = $response->get_data();
