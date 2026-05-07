@@ -38,6 +38,8 @@ class Ska_Design_Dashboard_Integration {
                         <a href="<?php echo esc_url( admin_url( 'admin.php?page=ska-design-workspace' ) ); ?>" class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline">Mở Trình thiết kế</a>
                         <span class="text-slate-300">|</span>
                         <a href="<?php echo esc_url( admin_url( 'admin.php?page=ska-design-tokens' ) ); ?>" class="text-slate-600 hover:text-slate-900">Brand, Font & Theme Options</a>
+                        <span class="text-slate-300">|</span>
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=ska-theme-builder' ) ); ?>" class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline">Theme Builder</a>
                     <?php else : ?>
                         <span class="text-slate-400 font-medium flex items-center gap-1 cursor-not-allowed" title="Yêu cầu kích hoạt Ska Data Pro & Ska Logic Engine">
                             <span class="material-symbols-outlined text-[16px]">lock</span> Mở Trình thiết kế
@@ -45,6 +47,10 @@ class Ska_Design_Dashboard_Integration {
                         <span class="text-slate-300">|</span>
                         <span class="text-slate-400 flex items-center gap-1 cursor-not-allowed" title="Yêu cầu kích hoạt Ska Data Pro & Ska Logic Engine">
                             <span class="material-symbols-outlined text-[16px]">lock</span> Brand, Font & Theme Options
+                        </span>
+                        <span class="text-slate-300">|</span>
+                        <span class="text-slate-400 flex items-center gap-1 cursor-not-allowed" title="Yêu cầu kích hoạt Ska Data Pro & Ska Logic Engine">
+                            <span class="material-symbols-outlined text-[16px]">lock</span> Theme Builder
                         </span>
                     <?php endif; ?>
                 </div>

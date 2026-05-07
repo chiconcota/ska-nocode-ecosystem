@@ -1,0 +1,182 @@
+<?php
+/**
+ * Ska Theme Builder REST API Controller
+ *
+ * @package Ska_No_Code_Design\Theme_Builder
+ */
+
+namespace Ska_No_Code_Design\Theme_Builder;
+
+defined( 'ABSPATH' ) || exit;
+
+class Ska_Theme_Builder_API {
+
+	/**
+	 * Instance of the class
+	 */
+	private static $instance = null;
+
+	/**
+	 * Get instance
+	 */
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Constructor
+	 */
+	private function __construct() {
+		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+	}
+
+	/**
+	 * Register REST routes
+	 */
+	public function register_routes() {
+		$namespace = 'ska-builder/v1';
+		$base      = 'theme-templates';
+
+		register_rest_route(
+			$namespace,
+			'/' . $base,
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_templates' ),
+					'permission_callback' => array( $this, 'check_permission' ),
+				),
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'save_template' ),
+					'permission_callback' => array( $this, 'check_permission' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$namespace,
+			'/' . $base . '/(?P<id>[\d]+)',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'delete_template' ),
+					'permission_callback' => array( $this, 'check_permission' ),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Check permission
+	 */
+	public function check_permission() {
+		return current_user_can( 'manage_options' );
+	}
+
+	/**
+	 * Get all theme templates
+	 */
+	public function get_templates() {
+		if ( ! class_exists( '\Ska\Data\Core\Data_Fetcher' ) ) {
+			return new \WP_Error( 'missing_dependency', 'Ska Data Pro is not active', array( 'status' => 500 ) );
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'ska_data_sys_theme_templates';
+
+		// Query templates
+		$results = $wpdb->get_results( "SELECT * FROM {$table_name} ORDER BY id DESC", ARRAY_A );
+
+		$templates = array();
+		if ( ! empty( $results ) ) {
+			foreach ( $results as $row ) {
+				$templates[] = array(
+					'id'          => (int) $row['id'],
+					'title'       => $row['name'],
+					'location'    => $row['location'],
+					'organism_id' => (int) $row['organism_id'],
+					'conditions'  => $row['conditions'], // Chuỗi JSON chứa điều kiện hiển thị
+				);
+			}
+		}
+
+		return rest_ensure_response( $templates );
+	}
+
+	/**
+	 * Save a theme template
+	 */
+	public function save_template( \WP_REST_Request $request ) {
+		if ( ! class_exists( '\Ska\Data\Core\Data_Fetcher' ) ) {
+			return new \WP_Error( 'missing_dependency', 'Ska Data Pro is not active', array( 'status' => 500 ) );
+		}
+
+		$body = $request->get_json_params();
+
+		if ( empty( $body ) || empty( $body['title'] ) || empty( $body['location'] ) ) {
+			return new \WP_Error( 'invalid_data', 'Thiếu dữ liệu bắt buộc (title hoặc location)', array( 'status' => 400 ) );
+		}
+
+		$table_name = 'ska_data_sys_theme_templates';
+		$id         = isset( $body['id'] ) ? absint( $body['id'] ) : 0;
+
+		$record_data = array(
+			'name'        => sanitize_text_field( $body['title'] ),
+			'location'    => sanitize_text_field( $body['location'] ),
+			'organism_id' => isset( $body['organism_id'] ) ? absint( $body['organism_id'] ) : 0,
+			'conditions'  => isset( $body['conditions'] ) ? wp_unslash( $body['conditions'] ) : '{}',
+		);
+
+		if ( $id > 0 ) {
+			$record_data['id'] = $id;
+		}
+
+		// Insert/Update using Ska Data Pro Filter Pipeline
+		$result = apply_filters( 'ska_data_insert_record', false, $record_data, $table_name );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		if ( ! $id && $result ) {
+			$id = $result; // new ID
+		} elseif ( ! $result ) {
+			return new \WP_Error( 'db_error', 'Không thể lưu bản ghi vào database.', array( 'status' => 500 ) );
+		}
+
+		return rest_ensure_response( array(
+			'success' => true,
+			'message' => 'Lưu Theme Template thành công.',
+			'id'      => $id,
+		) );
+	}
+
+	/**
+	 * Delete a theme template
+	 */
+	public function delete_template( \WP_REST_Request $request ) {
+		$id = $request->get_param( 'id' );
+
+		if ( empty( $id ) ) {
+			return new \WP_Error( 'invalid_id', 'ID không hợp lệ.', array( 'status' => 400 ) );
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'ska_data_sys_theme_templates';
+
+		$deleted = $wpdb->delete( $table_name, array( 'id' => $id ), array( '%d' ) );
+
+		if ( false === $deleted ) {
+			return new \WP_Error( 'db_error', 'Không thể xóa bản ghi.', array( 'status' => 500 ) );
+		}
+
+		return rest_ensure_response( array(
+			'success' => true,
+			'message' => 'Xóa Theme Template thành công.',
+		) );
+	}
+}
