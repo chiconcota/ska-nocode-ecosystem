@@ -14,6 +14,11 @@
 - **Decision (Zero-Postmeta Policy Enforcement):** TUYỆT ĐỐI không tạo Custom Post Type (CPT) hay lưu trữ Template trong `wp_posts`/`wp_postmeta`. Mọi thao tác CRUD Template chỉ được phép giao tiếp thông qua REST API tới `ska_data_sys_organisms`.
 
 ---
+## 2026-05-07 - 🟢 Phân tách Lộ trình Theme Builder (Dual-Table)
+- **Decision (Project Management):** Quyết định tách riêng tiến trình phát triển của `Ska Theme Builder` ra file `project_manager_theme_builder.md` nhằm theo dõi sát sao 4 Milestones chính: Admin UI, Isolated Editor, Smart Virtual Wrapper, và Display Conditions.
+- **Decision (Dual-Table Schema):** Khẳng định chiến lược lưu trữ kép. `ska_data_sys_theme_templates` sẽ giữ Metadata và cấu hình điều kiện hiển thị, trong khi `ska_data_sys_organisms` sẽ giữ payload nội dung thô (HTML/JSON).
+
+---
 ## 2026-05-04 - 🟢 Tái định hình Kiến trúc: Theme Builder vs App Builder
 - **Decision (Smart Virtual Wrapper Architecture):** Thống nhất lộ trình "Tách rời lũy tiến" (Progressive Decoupling) để giải quyết xung đột giữa Theme Builder (phụ thuộc WordPress header/footer) và App Builder (cần toàn quyền kiểm soát DOM). Hệ thống sẽ cung cấp chế độ lai: nếu dùng làm Website Builder, nó tiêm Hook vào Theme hiện tại; nếu dùng làm App Builder, nó sử dụng `virtual-wrapper.php` (Priority 99 trên `template_include`) để bypass Theme cũ hoàn toàn. Quyết định này bảo vệ khả năng tương thích của WooCommerce trong khi vẫn cho phép xây dựng Web App sạch sẽ.
 - **Decision (Khước từ Output Buffering):** Quyết định không sử dụng kỹ thuật Output Buffering (`ob_start` trong `get_header`) để xóa CSS của Theme cũ do rủi ro Memory Leak, xung đột Caching/Minify và không tương thích với Block Themes (FSE).
