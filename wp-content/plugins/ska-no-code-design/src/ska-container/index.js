@@ -9,11 +9,12 @@ import { __ } from '@wordpress/i18n';
 import metadata from './block.json';
 import { TailwindPanel } from '../components/TailwindPanel.js';
 import { splitTailwindClasses } from '../utils/tailwind-utils.js';
+import { SkaLinkControl } from '../components/SkaLinkControl.js';
 
 registerBlockType(metadata.name, {
     edit: (props) => {
         const { attributes, setAttributes } = props;
-        const { tagName = 'div', tailwindClasses = '', className = '', logic = { enabled: false, key: '', operator: '==', value: '' }, isSkaForm = false, formActionId = '', usePersist = false, templateLock = 'false' } = attributes;
+        const { tagName = 'div', tailwindClasses = '', className = '', logic = { enabled: false, key: '', operator: '==', value: '' }, isSkaForm = false, formActionId = '', usePersist = false, templateLock = 'false', link = { url: '', target: '_self', dynamic: { source: 'static', key: '' } } } = attributes;
 
         const { useEffect } = wp.element;
         useEffect(() => {
@@ -139,7 +140,12 @@ registerBlockType(metadata.name, {
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
                     />
 
-
+                    <PanelBody title={__('Link Settings', 'ska-builder-core')} initialOpen={false}>
+                        <SkaLinkControl
+                            link={link}
+                            onChange={(newLink) => setAttributes({ link: newLink })}
+                        />
+                    </PanelBody>
                     {tagName === 'form' && (
                         <PanelBody title={__('⚡ Ska Form Engine', 'ska-builder-core')} initialOpen={true}>
                             <ToggleControl

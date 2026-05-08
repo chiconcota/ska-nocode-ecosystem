@@ -6,11 +6,12 @@ import { __ } from '@wordpress/i18n';
 import metadata from './block.json';
 import { TailwindPanel } from '../components/TailwindPanel.js';
 import { splitTailwindClasses } from '../utils/tailwind-utils.js';
+import { SkaLinkControl } from '../components/SkaLinkControl.js';
 
 registerBlockType(metadata.name, {
     edit: (props) => {
         const { attributes, setAttributes } = props;
-        const { url, alt, id, tailwindClasses = '', className = '', dynamic = { source: 'static', key: '' }, logic = { enabled: false, key: '', operator: '==', value: '' } } = attributes;
+        const { url, alt, id, tailwindClasses = '', className = '', dynamic = { source: 'static', key: '' }, logic = { enabled: false, key: '', operator: '==', value: '' }, link = { url: '', target: '_self', dynamic: { source: 'static', key: '' } } } = attributes;
 
         const { useEffect } = wp.element;
         useEffect(() => {
@@ -87,6 +88,13 @@ registerBlockType(metadata.name, {
                         className={tailwindClasses || ''}
                         setClassName={(allClasses) => setAttributes({ tailwindClasses: allClasses, className: '' })}
                     />
+
+                    <PanelBody title={__('Link Settings', 'ska-builder-core')} initialOpen={false}>
+                        <SkaLinkControl
+                            link={link}
+                            onChange={(newLink) => setAttributes({ link: newLink })}
+                        />
+                    </PanelBody>
 
                     </InspectorControls>
 

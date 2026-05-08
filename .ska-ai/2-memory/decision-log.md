@@ -8,6 +8,12 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-05-08 - 🟢 Triển khai Inline Dynamic Links (Ska Link Engine Milestone 3)
+- **Decision (RichText Format Registration):** Áp dụng cơ chế đăng ký định dạng tùy chỉnh (`registerFormatType`) cho `RichText` để tích hợp `SkaLinkControl` trực tiếp vào thanh công cụ nội tuyến của Gutenberg. Quyết định này giúp giải quyết bài toán chèn link động vào từng từ/cụm từ bên trong một khối văn bản lớn (`ska-text`, `ska-list-item`) mà không làm gãy cấu trúc block.
+- **Decision (Inline Link Backend Parser):** Triển khai hàm `resolve_inline_links` sử dụng Regular Expression để bóc tách và giải mã các thẻ `<a>` chứa thuộc tính `data-dynamic-source` và `data-dynamic-key` ngay trong phase render (SSR). Việc bóc tách diễn ra ở server giúp loại bỏ hoàn toàn mã JS dư thừa ở client, bảo toàn tiêu chuẩn Flat DOM và Zero N+1 Queries.
+- **Decision (Data attributes mapping):** Gói gọn dữ liệu cấu hình link động vào các data attributes (`data-dynamic-source`, `data-dynamic-key`, `data-fallback`) trên thẻ `<a>` ở mode Editor để trình parser backend dễ dàng nhận diện và nội suy thành thẻ link hoàn chỉnh có chứa URL hoặc Mustache tags (`{{key}}`).
+
+---
 ## 2026-05-08 - 🟢 Kiến Trúc Ska Link Engine (Dynamic Data Resolving)
 - **Decision (Server-Side Link Resolving):** Quyết định loại bỏ giải pháp dùng `onclick` window.location.href (Client-side) cho các khối có chứa link để bảo vệ tuyệt đối chuẩn SEO (Search Engine Optimization) và khả năng mở link trong tab mới. Mọi thẻ mang URL (`<a>`) sẽ được xử lý ở Backend (Phase Render).
 - **Decision (SkaLinkControl & Dynamic Source):** Ra mắt component React lõi `SkaLinkControl` tại Block Inspector. Cung cấp UX chọn Link tĩnh hoặc Link động. Link động hỗ trợ nguồn System (Home, Admin, Current Post) và nguồn Loop (Trích xuất từ bảng dữ liệu). 

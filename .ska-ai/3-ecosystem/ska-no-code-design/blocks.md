@@ -102,8 +102,10 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
 ## 6. Kiến trúc Link Engine & Dynamic Data (2026-05-08)
 - **Decoupled Link Strategy:** Loại bỏ onclick redirect, chuyển qua chuẩn `<a>` tag rendering từ Server-side. Đảm bảo SEO 100%.
 - **SkaLinkControl (React Component):** Component lõi dùng cho Inspector Panel. Cho phép nhập Text Link tĩnh hoặc gọi dữ liệu Động từ nguồn (System, Loop).
-- **Dynamic_Data (PHP Utility):** Xử lý chuyển đổi link attribute trên Server (trong các file `render.php`). Giải quyết 3 trường hợp:
+- **Inline Dynamic Link (RichText):** Đăng ký custom format `ska/dynamic-link` lên thanh Toolbar của văn bản (ska-text, ska-list-item) để chèn liên kết động ở mức ký tự/từ ngữ. Sử dụng lại chung `SkaLinkControl` UI Popover.
+- **Dynamic_Data (PHP Utility):** Xử lý chuyển đổi link attribute trên Server (trong các file `render.php`). Giải quyết 3 trường hợp tĩnh và động:
   - `static`: Xuất trực tiếp URL.
   - `system`: Xử lý thành hàm hệ thống WP (VD: `home_url()`, `get_permalink()`).
   - `loop`: Xuất ra format Mustache `{{key}}` để Engine `Ska Loop` tiến hành preg_replace tự động. Tương thích 100% với Hydration Pipeline.
+  - **Inline Parser:** Sử dụng Regex (`resolve_inline_links`) tại SSR để quét chuỗi HTML, lấy URL/Mustache tiêm vào thuộc tính `href` của thẻ `<a>` và tự động loại bỏ các data attribute dư thừa (`data-dynamic-source`, v.v.).
 - **Quy tắc Frontend Flat DOM:** Dữ liệu URL động phải được giải quyết và tiêm vào thuộc tính `href` của thẻ gốc trước khi buffer được trả về. Mọi hook liên quan phải chạy ở Phase Render.

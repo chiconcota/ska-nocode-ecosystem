@@ -76,6 +76,17 @@
                 "operator": "==",
                 "value": ""
             }
+        },
+        "link": {
+            "type": "object",
+            "default": {
+                "url": "",
+                "target": "_self",
+                "dynamic": {
+                    "source": "static",
+                    "key": ""
+                }
+            }
         }
     },
     "supports": {

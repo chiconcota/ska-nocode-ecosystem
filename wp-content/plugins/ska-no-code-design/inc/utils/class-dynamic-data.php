@@ -88,4 +88,59 @@ class Dynamic_Data {
 
         return '[' . esc_html($source) . ':' . esc_html($key) . ']';
     }
+
+    /**
+     * Parse content and resolve inline dynamic links (e.g., from RichText).
+     * 
+     * @param string $content The block content.
+     * @return string The content with resolved inline links.
+     */
+    public static function resolve_inline_links( $content ) {
+        if ( strpos( $content, 'data-dynamic-source' ) === false ) {
+            return $content;
+        }
+
+        return preg_replace_callback( '/<a\s+([^>]*?)>/i', function( $matches ) {
+            $tag_attrs = $matches[1];
+            
+            if ( preg_match( '/data-dynamic-source="([^"]+)"/i', $tag_attrs, $source_match ) ) {
+                $source = $source_match[1];
+                $key = '';
+                if ( preg_match( '/data-dynamic-key="([^"]*)"/i', $tag_attrs, $key_match ) ) {
+                    $key = $key_match[1];
+                }
+                
+                $url = '';
+                if ( preg_match( '/href="([^"]*)"/i', $tag_attrs, $url_match ) ) {
+                    $url = $url_match[1];
+                }
+
+                $link_attr = [
+                    'url'     => $url,
+                    'dynamic' => [
+                        'source' => $source,
+                        'key'    => $key
+                    ]
+                ];
+
+                $resolved_url = self::resolve_dynamic_link( $link_attr );
+                
+                if ( ! empty( $resolved_url ) ) {
+                    if ( preg_match( '/href="([^"]*)"/i', $tag_attrs ) ) {
+                        $tag_attrs = preg_replace( '/href="([^"]*)"/i', 'href="' . esc_attr($resolved_url) . '"', $tag_attrs );
+                    } else {
+                        $tag_attrs .= ' href="' . esc_attr($resolved_url) . '"';
+                    }
+                }
+
+                // Clean up data attributes
+                $tag_attrs = preg_replace( '/\s*data-dynamic-source="[^"]*"/i', '', $tag_attrs );
+                $tag_attrs = preg_replace( '/\s*data-dynamic-key="[^"]*"/i', '', $tag_attrs );
+                
+                return '<a ' . trim($tag_attrs) . '>';
+            }
+            
+            return $matches[0];
+        }, $content );
+    }
 }
