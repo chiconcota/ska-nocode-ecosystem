@@ -16,6 +16,9 @@ import './ska-symbols';
 // Kéo thả Ska Symbols ra Frontend (Thư viện)
 import './ska-inserter';
 
+// Ska Dynamic Link for RichText
+import './ska-link-format';
+
 /**
  * 1. Add `htmlAttributes` to all Ska blocks schema
  */

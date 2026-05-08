@@ -9,12 +9,23 @@ $image_url = $attributes['imageUrl'] ?? $attributes['url'] ?? '';
 $aspect_ratio = $attributes['aspectRatio'] ?? 'aspect-square';
 $object_fit = $attributes['objectFit'] ?? 'object-cover';
 
-// Robust Fallback: Check for non-empty tailwindClasses first, then fallback to className (legacy).
 $user_tailwindClasses = ! empty( $attributes['tailwindClasses'] ) ? $attributes['tailwindClasses'] : ( $attributes['className'] ?? '' );
+
+$link_url = '';
+$link_target = '';
+if ( ! empty( $attributes['link'] ) ) {
+    $link_url = \Ska\Builder\Utils\Dynamic_Data::resolve_dynamic_link( $attributes['link'] );
+    $link_target = ! empty( $attributes['link']['target'] ) ? ' target="' . esc_attr( $attributes['link']['target'] ) . '"' : '';
+}
+
+$base_classes = 'ska-image-block overflow-hidden relative ' . esc_attr( $aspect_ratio );
+if ( ! empty( $link_url ) && strpos( $user_tailwindClasses, 'block' ) === false && strpos( $user_tailwindClasses, 'flex' ) === false && strpos( $user_tailwindClasses, 'grid' ) === false && strpos( $user_tailwindClasses, 'hidden' ) === false ) {
+    $base_classes .= ' block';
+}
 
 // Determine final classes for both the wrapper and the image
 $wrapper_attributes = get_block_wrapper_attributes( array(
-    'class' => 'ska-image-block overflow-hidden relative ' . esc_attr( $aspect_ratio ) . ' ' . esc_attr( $user_tailwindClasses ),
+    'class' => $base_classes . ' ' . esc_attr( $user_tailwindClasses ),
 ) );
 
 $img_attributes = sprintf(
@@ -44,11 +55,14 @@ if ( ! empty( $attributes['dynamic']['source'] ) && $attributes['dynamic']['sour
 
 $custom_style = ! empty( $attributes['customStyle'] ) ? ' style="' . esc_attr( $attributes['customStyle'] ) . '"' : '';
 
+$wrapper_tag = ! empty( $link_url ) ? 'a' : 'div';
+$link_attrs  = ! empty( $link_url ) ? ' href="' . esc_attr( $link_url ) . '"' . $link_target : '';
+
 // 5. Render HTML
-echo '<div ' . $wrapper_attributes . $custom_style . '>';
+echo '<' . $wrapper_tag . ' ' . $wrapper_attributes . $custom_style . $link_attrs . '>';
 if ( ! empty( $image_url ) ) {
     echo     '<img ' . $img_attributes . $src . $alt . ' />';
 } else {
     echo     '<div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">Icon Image</div>';
 }
-echo '</div>';
+echo '</' . $wrapper_tag . '>';

@@ -1,20 +1,19 @@
 # CHECKPOINT (HANDOVER)
 @last_update: 2026-05-08
-@status: Tích hợp Link Engine vào các Core Blocks (Milestone 2)
+@status: Sẵn sàng Kiểm thử E2E (Link Engine) & Bắt đầu Ska Molecules (Phase 4.5)
 
 ## 1. TÌNH TRẠNG HIỆN TẠI (CURRENT STATE)
-- **Theme Builder (Phase 4):** Đã tạm dừng (`PAUSED`) để ưu tiên Link Engine.
-- **Link Engine (Milestone 1):** Đã hoàn thành.
-  - Khởi tạo tiện ích PHP `Dynamic_Data` để phân giải URL (Tĩnh, System, Loop).
-  - Xây dựng component React `SkaLinkControl` tại Block Inspector.
-  - Quyết định kiến trúc: Mọi Link sẽ được xuất thành thẻ `<a>` ở Backend (Server-Side Rendering) để bảo đảm SEO. Hỗ trợ Loop Hydration qua định dạng Mustache `{{key}}`.
+- **Link Engine (Milestone 1, 2, 3):** Đã HOÀN THÀNH.
+  - Tích hợp `SkaLinkControl` thành công trên tất cả Core Blocks.
+  - Tích hợp thành công Inline Dynamic Link qua định dạng `ska/dynamic-link` và trình phân giải `resolve_inline_links` bằng Regex.
+  - Xuất bản tài liệu `test-workflow-process.md` phục vụ việc kiểm thử Frontend.
+- **Theme Builder & Ska Molecules (Phase 4):** Đang chờ chuyển giao. Hệ thống đã ổn định để sẵn sàng tích hợp các tính năng UI cao cấp dựa vào Alpine.js.
 
 ## 2. NHIỆM VỤ PHIÊN TỚI (NEXT SESSION TASKS)
-1. **Tích hợp Block Panel:** Đưa `SkaLinkControl` vào Inspector Panel của các block: `ska-image`, `ska-button`, `ska-container`, `ska-text`.
-2. **Cập nhật Render Logic:** Chỉnh sửa file `render.php` của các block trên để kiểm tra `attributes.link` và bọc thẻ `<a>` (với target, dynamic resolving từ `Dynamic_Data`) thay vì HTML thông thường. Đảm bảo tuân thủ nguyên tắc "Flat DOM".
-3. **Inline Dynamic Link:** Triển khai Custom Format Type cho RichText của `ska-text` để chèn link động vào nội dung text.
+1. **QA & E2E Testing:** Chạy kiểm thử thủ công/Tự động theo tài liệu `.ska-ai/1-overview/project-managers/test-workflow-process.md`. Đảm bảo Output HTML chuẩn thẻ `<a>`, URL được Hydrate mượt mà với Ska Loop (Zero N+1 Query).
+2. **Khởi động Ska Molecules:** Tiến hành triển khai Tabs, Accordion, Dropdown,... dựa trên cấu trúc Template Lock của `ska-builder/container`. Tích hợp Native với `Alpine.store` như đã thiết kế.
 
 ## 3. LƯU Ý CHO AGENT (AGENT NOTES)
-- Bạn đang làm việc trong phân hệ **Ska No-code Design** (Link Engine).
-- Xem kỹ cấu trúc object lưu trữ link (được ghi trong `blocks.md`) và logic hiện tại trong `project_manager_link_engine.md`.
-- File theo dõi công việc hiện tại là `.ska-ai/1-overview/project-managers/task.md`.
+- Bạn đang làm việc trong phân hệ **Ska No-code Design** (Phase 4).
+- Luôn kiểm tra `project_manager_link_engine.md` và `test-workflow-process.md` để nắm quy trình kiểm thử trước khi chuyển hẳn sang Molecule.
+- Dữ liệu lịch sử quyết định nằm tại `decision-log.md`.

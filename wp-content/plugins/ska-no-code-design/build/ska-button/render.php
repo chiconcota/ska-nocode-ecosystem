@@ -5,8 +5,20 @@
 defined( 'ABSPATH' ) || exit;
 
 $text         = $attributes['text'] ?? '';
-$url          = $attributes['url'] ?? '#';
-$target       = $attributes['target'] ?? '_self';
+$url          = '#';
+$target       = '_self';
+
+if ( ! empty( $attributes['link'] ) && ( ! empty( $attributes['link']['url'] ) || ( ! empty( $attributes['link']['dynamic']['source'] ) && $attributes['link']['dynamic']['source'] !== 'static' ) ) ) {
+    $url    = \Ska\Builder\Utils\Dynamic_Data::resolve_dynamic_link( $attributes['link'] ) ?: '#';
+    $target = ! empty( $attributes['link']['target'] ) ? $attributes['link']['target'] : '_self';
+} else {
+    $url    = $attributes['url'] ?? '#';
+    $target = $attributes['target'] ?? '_self';
+    if ( ! empty( $attributes['dynamic']['url_source'] ) && $attributes['dynamic']['url_source'] !== 'static' ) {
+        // Fallback dynamic resolve
+        $url = \Ska\Builder\Utils\Assets::get_dynamic_content( $attributes['dynamic'], 'url' );
+    }
+}
 $tagName      = $attributes['tagName'] ?? 'a';
 $hasIcon      = ! empty( $attributes['hasIcon'] ) ? $attributes['hasIcon'] : false;
 $iconName     = $attributes['iconName'] ?? '';
@@ -40,9 +52,7 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 if ( ! empty( $attributes['dynamic']['text_source'] ) && $attributes['dynamic']['text_source'] !== 'static' ) {
     $text = \Ska\Builder\Utils\Assets::get_dynamic_content( $attributes['dynamic'], 'text' );
 }
-if ( ! empty( $attributes['dynamic']['url_source'] ) && $attributes['dynamic']['url_source'] !== 'static' ) {
-    $url = \Ska\Builder\Utils\Assets::get_dynamic_content( $attributes['dynamic'], 'url' );
-}
+// URL resolving is now handled at the top of the file.
 
 if ( ! empty( $attributes['logic']['enabled'] ) ) {
     $engine = \Ska\Builder\Logic\Core::instance();

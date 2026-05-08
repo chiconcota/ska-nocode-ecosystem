@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import metadata from './block.json';
 import { TailwindPanel } from '../components/TailwindPanel.js';
 import { splitTailwindClasses } from '../utils/tailwind-utils.js';
+import { SkaLinkControl } from '../components/SkaLinkControl.js';
 
 registerBlockType(metadata.name, {
     edit: (props) => {
@@ -28,7 +29,8 @@ registerBlockType(metadata.name, {
             tailwindClasses = '', 
             className = '',
             dynamic = { text_source: 'static', text_key: '', url_source: 'static', url_key: '' }, 
-            logic = { enabled: false, key: '', operator: '==', value: '' }
+            logic = { enabled: false, key: '', operator: '==', value: '' },
+            link = { url: '', target: '_self', dynamic: { source: 'static', key: '' } }
         } = attributes;
 
         const { useEffect } = wp.element;
@@ -39,7 +41,23 @@ registerBlockType(metadata.name, {
             } else if (className) {
                 setAttributes({ className: '' });
             }
-        }, []);const fullClasses = (tailwindClasses + ' ' + className).trim();
+
+            // Auto-migrate old url to link object
+            if (url && url !== '#' && !link.url) {
+                setAttributes({
+                    link: {
+                        url: url,
+                        target: target || '_self',
+                        dynamic: {
+                            source: dynamic.url_source || 'static',
+                            key: dynamic.url_key || ''
+                        }
+                    }
+                });
+            }
+        }, []);
+        
+        const fullClasses = (tailwindClasses + ' ' + className).trim();
 
         const blockProps = useBlockProps({
             className: `ska-button-block wp-block-ska-builder-button ${fullClasses}`.trim()});
@@ -75,22 +93,12 @@ registerBlockType(metadata.name, {
                             }}
                         />
                         {actionType === 'link' && (
-                            <>
-                                <TextControl
-                                    label={__('Link URL', 'ska-builder-core')}
-                                    value={url}
-                                    onChange={(val) => setAttributes({ url: val })}
+                            <div style={{ marginTop: '15px' }}>
+                                <SkaLinkControl
+                                    link={link}
+                                    onChange={(newLink) => setAttributes({ link: newLink })}
                                 />
-                                <SelectControl
-                                    label={__('Target', 'ska-builder-core')}
-                                    value={target}
-                                    options={[
-                                        { label: 'Same Window (_self)', value: '_self' },
-                                        { label: 'New Window (_blank)', value: '_blank' }
-                                    ]}
-                                    onChange={(val) => setAttributes({ target: val })}
-                                />
-                            </>
+                            </div>
                         )}
                         {actionType === 'submit' && (
                             <>
@@ -160,8 +168,8 @@ registerBlockType(metadata.name, {
 
                 <Tag 
                     {...blockProps}
-                    href={Tag === 'a' ? url : undefined}
-                    target={Tag === 'a' ? target : undefined}
+                    href={Tag === 'a' ? (link.dynamic.source === 'static' ? link.url : '#dynamic-link') : undefined}
+                    target={Tag === 'a' ? link.target : undefined}
                     type={actionType === 'submit' ? 'submit' : undefined}
                     name={actionType === 'submit' && fieldName ? fieldName : undefined}
                     value={actionType === 'submit' && fieldValue ? fieldValue : undefined}

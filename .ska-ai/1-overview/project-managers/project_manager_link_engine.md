@@ -1,5 +1,5 @@
 # PROJECT MANAGER: SKA LINK ENGINE
-@status: IN PROGRESS | @phase: 4.5 (Interruption) | @focus: Dynamic Links & Hyperlink Architecture
+@status: MILESTONES 1, 2 & 3 COMPLETED | @phase: 4.5 (Interruption) | @focus: Dynamic Links & Hyperlink Architecture
 
 ## 1. TỔNG QUAN (OVERVIEW)
 Ska Link Engine là hệ thống cho phép chèn liên kết (Links) vào các phần tử giao diện của Ska Builder. Để đảm bảo trải nghiệm No-code toàn diện và hỗ trợ kiến trúc dữ liệu động (Dynamic Data), hệ thống Link được chia làm 2 cơ chế hoạt động song song:
@@ -29,21 +29,22 @@ Hệ thống bắt buộc phải hỗ trợ **Dynamic Link**, cho phép lấy UR
 
 ### Milestone 1: Core Backend & UI Component (Block-Level)
 *Xây dựng tiện ích phân giải PHP và giao diện Inspector React dùng chung cho các Block.*
-- [ ] Tạo file `inc/utils/class-dynamic-data.php` chứa hàm `resolve_dynamic_link()` và `get_dynamic_content()`.
-- [ ] Import `Dynamic_Data` vào `ska-no-code-design.php`.
-- [ ] Xây dựng Component React `SkaLinkControl.js` (Ô nhập URL, Nút Toggle Target, Nút bật/tắt chế độ Dynamic, Dropdown chọn Nguồn dữ liệu).
+- [x] Tạo file `inc/utils/class-dynamic-data.php` chứa hàm `resolve_dynamic_link()` và `get_dynamic_content()`.
+- [x] Import `Dynamic_Data` vào `ska-no-code-design.php`.
+- [x] Xây dựng Component React `SkaLinkControl.js` (Ô nhập URL, Nút Toggle Target, Nút bật/tắt chế độ Dynamic, Dropdown chọn Nguồn dữ liệu).
 
 ### Milestone 2: Tích hợp Block-Level Link vào Core Blocks
 *Áp dụng `SkaLinkControl` vào Panel và xử lý thẻ HTML đầu ra cho các Block cốt lõi.*
-- [ ] **Ska Image:** Update `block.json`, thêm Panel, update `render.php` bọc thẻ `<a>` ngoài thẻ `<img>`.
-- [ ] **Ska Button:** Update `block.json`, thêm Panel, update `render.php` đổi `<button>` thành `<a>`.
-- [ ] **Ska Container:** Update `block.json`, thêm Panel, update `render.php` đổi `tagName` thành `<a>` nếu có URL.
+- [x] **Ska Image:** Update `block.json`, thêm Panel, update `render.php` bọc thẻ `<a>` ngoài thẻ `<img>`.
+- [x] **Ska Button:** Update `block.json`, thêm Panel, update `render.php` đổi `<button>` thành `<a>`.
+- [x] **Ska Container:** Update `block.json`, thêm Panel, update `render.php` đổi `tagName` thành `<a>` nếu có URL.
 
 ### Milestone 3: Inline Dynamic Link (Toolbar Format)
 *Mở rộng thanh Toolbar của RichText để chèn link động vào văn bản.*
-- [ ] Khởi tạo Custom Format Type `ska-builder/dynamic-link` bằng `registerFormatType`.
-- [ ] Xây dựng UI Popover cho nút Link trên Toolbar (Gồm các tuỳ chọn tương tự `SkaLinkControl`).
-- [ ] Xử lý lưu format thành HTML tag: `<a href="{{dynamic_key}}" target="_blank">Text</a>`.
+- [x] Khởi tạo Custom Format Type `ska/dynamic-link` bằng `registerFormatType` tại `extensions/html-attributes.js`.
+- [x] Xây dựng UI Popover cho nút Link trên Toolbar sử dụng lại `SkaLinkControl`.
+- [x] Thiết lập Parser `resolve_inline_links()` tại `Dynamic_Data` để dịch các tag `<a>` sinh ra từ format thành thẻ link thực tại SSR.
+- [x] Cập nhật các block (vd: `ska-text`, `ska-list-item`) để chạy hàm nội suy inline.
 
 ### Milestone 4: Kiểm thử (E2E Testing)
 *Đảm bảo hệ thống Link tương thích hoàn toàn với Ska Loop.*
@@ -59,4 +60,4 @@ Hệ thống bắt buộc phải hỗ trợ **Dynamic Link**, cho phép lấy UR
 3. **Decoupled Hydration:** Để Dynamic Link tương thích với Ska Loop, PHP Render Engine chỉ cần xuất ra href chứa `{{tên_biến}}`, hệ thống Loop sẽ tự động bắt regex và bơm dữ liệu.
 
 ---
-**[Cập nhật gần nhất]**: Bắt đầu Milestone 1: Khởi tạo Backend Class và React Component `SkaLinkControl`.
+**[Cập nhật gần nhất]**: Hoàn thành Milestone 1, 2 và 3. Hệ thống Link Engine (Block-Level và Inline Dynamic Link) đã được tích hợp đầy đủ. Sẵn sàng cho kiểm thử E2E (Milestone 4).
