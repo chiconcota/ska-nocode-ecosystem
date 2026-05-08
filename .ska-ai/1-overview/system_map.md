@@ -50,6 +50,7 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 - **Ska Data Pro (Flat Tables First):** Xóa xổ hoàn toàn rác EAV (`wp_postmeta`). Hệ thống DB quản trị bởi Schema Manager độc lập, có sức mạnh xử lý Rollup (Lookup Virtualization), Heuristic Filters, Auto-Prefix, và xuất nhập dưới dạng **Smart Object Blueprint (JSON)**.
 - **Ska Logic Engine (The Trinity):** Kiến trúc Event-Driven kết nối Vỏ (UI), Nhân (Logic), Kho (Data). Đã trang bị ngôn ngữ biểu thức **SkaFX DSL** (AST Evaluator) phục vụ Universal Dynamic Binding (Hiển thị có điều kiện & Inner Text nội suy) ngay trong thiết kế kéo thả. Mọi thao tác form đều tuân thủ nguyên lý Nonce chặt chẽ và Data Healing thông minh.
 - **Skapine Engine (Ska Molecule):** Nhúng sâu thư viện Alpine.js directives (`x-data`, `x-bind`, event listeners) cùng với Tailwind JIT lên Gutenberg Editor, đảm bảo live-preview mọi thao tác tương tác giao diện.
+- **Ska Link Engine (Dynamic URI Resolving):** Hệ thống phân giải URL toàn diện (Tĩnh, System, Loop) với cơ chế bảo vệ SEO qua Server-Side Rendering thẻ `<a>`. Tương thích tuyệt đối với Ska Loop Engine bằng cơ chế xuất định dạng Mustache `{{key}}` để hydrate ở runtime, duy trì nguyên tắc Zero N+1 Queries.
 
 ## 6. GLOBAL CONSTRAINTS (FOR AI)
 1. **Micro-Ecosystem Boundary:** Plugins DO NOT call each other's classes directly. They communicate exclusively via WP `do_action` and `apply_filters`.
