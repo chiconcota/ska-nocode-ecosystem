@@ -72,16 +72,16 @@ class Ska_Virtual_Wrapper {
 			$location = 'archive';
 		}
 
-		if ( empty( $location ) ) {
-			return $template;
-		}
+		$matched_template = ! empty( $location ) ? $this->get_matched_template( $location ) : null;
+		$matched_header   = $this->get_matched_template( 'header' );
+		$matched_footer   = $this->get_matched_template( 'footer' );
+		$matched_app      = $this->get_matched_template( 'app_layout' );
 
-		$matched_template = $this->get_matched_template( $location );
-
-		if ( ! empty( $matched_template ) && ! empty( $matched_template['organism_id'] ) ) {
-			// We have a matched template! Use our Virtual Template wrapper.
+		// If ANY of these parts exist, we take over the rendering with our Virtual Wrapper
+		if ( ! empty( $matched_template ) || ! empty( $matched_header ) || ! empty( $matched_footer ) || ! empty( $matched_app ) ) {
+			// We have at least one matched template! Use our Virtual Template wrapper.
 			global $ska_current_template_id;
-			$ska_current_template_id = $matched_template['id'];
+			$ska_current_template_id = ! empty( $matched_template ) ? $matched_template['id'] : 0;
 
 			$custom_template = plugin_dir_path( __FILE__ ) . 'templates/virtual-template.php';
 			
@@ -119,15 +119,15 @@ class Ska_Virtual_Wrapper {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ska_data_sys_theme_templates';
 
-		// Lấy tất cả templates của location này
-		$templates = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE location = %s ORDER BY id DESC", $location ), ARRAY_A );
+		// Chỉ lấy các template đang Active (is_active = 1)
+		$templates = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE location = %s AND is_active = 1 ORDER BY id DESC", $location ), ARRAY_A );
 
 		if ( empty( $templates ) ) {
 			return null;
 		}
 
 		// Simple Condition Matching Logic
-		// TODO: Implement advanced condition parsing (e.g. check JSON for specific post_type, URL, user_role)
+		// TODO: (Milestone 4) Implement advanced condition parsing for custom & app_layout routing
 		// For now, we just return the most recently created template that matches the location
 		// Defaulting to "Toàn trang" behavior if conditions are empty.
 		
@@ -162,11 +162,11 @@ class Ska_Virtual_Wrapper {
 			global $wpdb;
 			$org_table = $wpdb->prefix . 'ska_data_sys_organisms';
 			$html = $wpdb->get_var( $wpdb->prepare( "SELECT html_content FROM {$org_table} WHERE id = %d", $organism_id ) );
-			return $html ? $html : '';
+			return $html ? do_blocks( $html ) : '';
 		}
 
 		$html_array = \Ska\Design\Api\Organisms_API::get_bulk_html( array( $organism_id ) );
-		return isset( $html_array[ $organism_id ] ) ? $html_array[ $organism_id ] : '';
+		return isset( $html_array[ $organism_id ] ) ? do_blocks( $html_array[ $organism_id ] ) : '';
 	}
 
 	/**
@@ -207,6 +207,16 @@ $wrapper = \Ska_No_Code_Design\Theme_Builder\Ska_Virtual_Wrapper::get_instance()
 		// 2. Render Main Route Content (Single, Archive, 404)
 		if ( ! empty( $ska_current_template_id ) ) {
 			$wrapper->render_template_by_id( $ska_current_template_id );
+		} else {
+			// Fallback: Render default content if no main template is defined
+			echo \'<div class="ska-container mx-auto p-4">\';
+			if ( have_posts() ) {
+				while ( have_posts() ) {
+					the_post();
+					the_content();
+				}
+			}
+			echo \'</div>\';
 		}
 		?>
 	</main>

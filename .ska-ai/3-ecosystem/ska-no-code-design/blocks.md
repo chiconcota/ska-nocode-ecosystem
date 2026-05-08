@@ -88,3 +88,22 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
 - **Build Sync:** Bắt buộc chạy `npm run sync` sau mỗi lần sửa logic PHP trong `src/` để cập nhật file sang `build/`.
 - **TailwindPanel:** Luôn truyền `tailwindClasses` vào component `TailwindPanel`. Callback chỉ nhận 1 param (allClasses).
 - **useInnerBlocksProps Pattern (2026-03-26):** Khi block cần InnerBlocks, sử dụng `useInnerBlocksProps(blockProps, { allowedBlocks, ... })` thay vì `<InnerBlocks>`. Pattern: `<Tag {...innerBlocksProps} />` thay vì `<Tag {...blockProps}><InnerBlocks .../></Tag>`.
+
+## 5. Ghi chú triển khai
+- **Attribute Migration (2026-03-21):** Chuyển đổi toàn bộ Block sang sử dụng `tailwindClasses` thay vì `className`. Điều này ngăn chặn Gutenberg tự ý can thiệp vào CSS của block thông qua thẻ wrapper.
+- **Atomic Button Reset (2026-03-21):** Tự động inject CSS Reset cho thẻ `button` trong vùng `.ska-builder` để xóa border và background mặc định của trình duyệt.
+- **CSS Reset Scoping (2026-03-28 Critical):** TẤT CẢ JIT resets (block-gap, button, link) phải scope bằng `[class*='wp-block-ska-builder']` — KHÔNG ĐƯỢC dùng `body.ska-builder` trực tiếp vì sẽ phá layout blog/archive page dùng theme mặc định.
+- **Link Reset (2026-03-28):** `a { text-decoration: none; color: inherit; }` trong scope Ska blocks để chống WordPress defau- **Hybrid Source Architecture:** Sử dụng PHP Core để pre-generate CSS cho brand colors.
+- **Inline Style Support:** Thuộc tính `customStyle` cho phép bảo toàn và hiển thị các style "cứng" (background-image).
+- **Locale Independence:** Sử dụng `number_format( $val, 3, '.', '' )` trong PHP.
+- **Style Scanning:** `Style_Manager` ưu tiên quét từ `tailwindClasses`, sau đó là `className`, `customStyle` và nội dung HTML.
+- **🔧 Planned Refactor:** Tách file compiler (>500 dòng) thành: `compiler` + `config` + `color-registry`.
+
+## 6. Kiến trúc Link Engine & Dynamic Data (2026-05-08)
+- **Decoupled Link Strategy:** Loại bỏ onclick redirect, chuyển qua chuẩn `<a>` tag rendering từ Server-side. Đảm bảo SEO 100%.
+- **SkaLinkControl (React Component):** Component lõi dùng cho Inspector Panel. Cho phép nhập Text Link tĩnh hoặc gọi dữ liệu Động từ nguồn (System, Loop).
+- **Dynamic_Data (PHP Utility):** Xử lý chuyển đổi link attribute trên Server (trong các file `render.php`). Giải quyết 3 trường hợp:
+  - `static`: Xuất trực tiếp URL.
+  - `system`: Xử lý thành hàm hệ thống WP (VD: `home_url()`, `get_permalink()`).
+  - `loop`: Xuất ra format Mustache `{{key}}` để Engine `Ska Loop` tiến hành preg_replace tự động. Tương thích 100% với Hydration Pipeline.
+- **Quy tắc Frontend Flat DOM:** Dữ liệu URL động phải được giải quyết và tiêm vào thuộc tính `href` của thẻ gốc trước khi buffer được trả về. Mọi hook liên quan phải chạy ở Phase Render.

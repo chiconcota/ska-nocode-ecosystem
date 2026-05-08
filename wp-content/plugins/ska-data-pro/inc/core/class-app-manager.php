@@ -114,7 +114,8 @@ class App_Manager {
 	public static function maybe_create_system_tables() {
 		$migrated_sys = get_option( 'ska_data_sys_tables_migrated', false );
 		if ( $migrated_sys ) {
-			return;
+			// Tạm thời bỏ return để ép hệ thống quét lại dictionary và tạo bảng theme_templates
+			// return;
 		}
 
 		$dictionary = get_option( 'ska_data_dictionary', array() );
@@ -135,25 +136,104 @@ class App_Manager {
 		$changed = false;
 
 		// 1. Organisms Blocks
-		if ( ! isset( $dictionary[ $table_organisms ] ) ) {
+		$table_organisms_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_organisms ) );
+		if ( $table_organisms_exists !== $table_organisms ) {
+			// Nếu chưa có bảng trong MySQL thì tạo mới hoàn toàn
 			$db_engine->create_custom_table( 'organisms', 'dashicons-layout', self::SYSTEM_APP );
 			$db_engine->add_column( $table_organisms, 'Name', 'short_text' );
+			$db_engine->add_column( $table_organisms, 'Title', 'short_text' );
+			$db_engine->add_column( $table_organisms, 'Block_Name', 'short_text' );
 			$db_engine->add_column( $table_organisms, 'JSON_Content', 'long_text' );
+			$db_engine->add_column( $table_organisms, 'HTML_Content', 'long_text' );
 			$changed = true;
 		}
+
+		// Luôn đảm bảo Dictionary có mặt
+		if ( ! isset( $dictionary[ $table_organisms ] ) ) {
+			$dictionary[ $table_organisms ] = array();
+		}
+		if ( ! isset( $dictionary[ $table_organisms ]['__table_info'] ) ) {
+			$dictionary[ $table_organisms ]['__table_info'] = array(
+				'name' => 'Sys Organisms',
+				'icon' => 'dashicons-layout',
+				'app_id' => self::SYSTEM_APP
+			);
+			$changed = true;
+		}
+		// Phục hồi Metadata các cột nếu bị mất
+		$org_cols = array(
+			'name' => array('label' => 'Name', 'type' => 'short_text', 'options' => ''),
+			'title' => array('label' => 'Title', 'type' => 'short_text', 'options' => ''),
+			'block_name' => array('label' => 'Block_Name', 'type' => 'short_text', 'options' => ''),
+			'json_content' => array('label' => 'JSON_Content', 'type' => 'long_text', 'options' => ''),
+			'html_content' => array('label' => 'HTML_Content', 'type' => 'long_text', 'options' => '')
+		);
+		foreach ( $org_cols as $col_slug => $col_data ) {
+			if ( ! isset( $dictionary[ $table_organisms ][ $col_slug ] ) ) {
+				$dictionary[ $table_organisms ][ $col_slug ] = $col_data;
+				$changed = true;
+			}
+		}
+
+		// Cập nhật ngay vào Database nếu có thay đổi
+		if ( $changed ) {
+			update_option( 'ska_data_dictionary', $dictionary );
+			$changed = false;
+		}
+
+		// Tải lại dictionary mới nhất sau mỗi bước (phòng trường hợp db_engine thay đổi trực tiếp Database)
+		$dictionary = get_option( 'ska_data_dictionary', array() );
 
 		// 2. Theme Templates
-		if ( ! isset( $dictionary[ $table_templates ] ) ) {
+		$table_templates_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_templates ) );
+		if ( $table_templates_exists !== $table_templates ) {
+			// Nếu chưa có bảng trong MySQL thì tạo mới hoàn toàn
 			$db_engine->create_custom_table( 'theme_templates', 'dashicons-admin-appearance', self::SYSTEM_APP );
 			$db_engine->add_column( $table_templates, 'Name', 'short_text' );
-			$db_engine->add_column( $table_templates, 'Location', 'select', 'header, footer, single, archive, 404' );
-			$db_engine->add_column( $table_templates, 'Organism_ID', 'number' ); 
+			$db_engine->add_column( $table_templates, 'Location', 'select', 'header, footer, single, archive, 404, app_layout, custom' );
+			$db_engine->add_column( $table_templates, 'Organism_ID', 'number' );
 			$db_engine->add_column( $table_templates, 'Conditions', 'long_text' );
+			$db_engine->add_column( $table_templates, 'Is Active', 'boolean' );
 			$changed = true;
 		}
 
-		// 3. Presets
-		if ( ! isset( $dictionary[ $table_presets ] ) ) {
+		// Luôn đảm bảo Dictionary có mặt
+		if ( ! isset( $dictionary[ $table_templates ] ) ) {
+			$dictionary[ $table_templates ] = array();
+		}
+		if ( ! isset( $dictionary[ $table_templates ]['__table_info'] ) ) {
+			$dictionary[ $table_templates ]['__table_info'] = array(
+				'name' => 'Theme Templates',
+				'icon' => 'dashicons-admin-appearance',
+				'app_id' => self::SYSTEM_APP
+			);
+			$changed = true;
+		}
+		// Phục hồi Metadata các cột nếu bị mất
+		$tpl_cols = array(
+			'name' => array('label' => 'Name', 'type' => 'short_text', 'options' => ''),
+			'location' => array('label' => 'Location', 'type' => 'select', 'options' => 'header, footer, single, archive, 404, app_layout, custom'),
+			'organism_id' => array('label' => 'Organism_ID', 'type' => 'number', 'options' => ''),
+			'conditions' => array('label' => 'Conditions', 'type' => 'long_text', 'options' => ''),
+			'is_active' => array('label' => 'Is Active', 'type' => 'boolean', 'options' => '')
+		);
+		foreach ( $tpl_cols as $col_slug => $col_data ) {
+			if ( ! isset( $dictionary[ $table_templates ][ $col_slug ] ) ) {
+				$dictionary[ $table_templates ][ $col_slug ] = $col_data;
+				$changed = true;
+			}
+		}
+
+		// Cập nhật ngay vào Database nếu có thay đổi
+		if ( $changed ) {
+			update_option( 'ska_data_dictionary', $dictionary );
+			$changed = false;
+		}
+
+		// 3. Design Tokens (Presets)
+		$table_presets_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_presets ) );
+		if ( $table_presets_exists !== $table_presets ) {
+			// Nếu chưa có bảng trong MySQL thì tạo mới hoàn toàn
 			$db_engine->create_custom_table( 'presets', 'dashicons-art', self::SYSTEM_APP );
 			$db_engine->add_column( $table_presets, 'Name', 'short_text' );
 			$db_engine->add_column( $table_presets, 'Type', 'select', 'colors, typography, spacing, shadows' );
@@ -161,8 +241,39 @@ class App_Manager {
 			$changed = true;
 		}
 
+		// Luôn đảm bảo Dictionary có mặt
+		if ( ! isset( $dictionary[ $table_presets ] ) ) {
+			$dictionary[ $table_presets ] = array();
+		}
+		if ( ! isset( $dictionary[ $table_presets ]['__table_info'] ) ) {
+			$dictionary[ $table_presets ]['__table_info'] = array(
+				'name' => 'Design Tokens',
+				'icon' => 'dashicons-art',
+				'app_id' => self::SYSTEM_APP
+			);
+			$changed = true;
+		}
+		// Phục hồi Metadata các cột nếu bị mất
+		$preset_cols = array(
+			'name' => array('label' => 'Name', 'type' => 'short_text', 'options' => ''),
+			'type' => array('label' => 'Type', 'type' => 'select', 'options' => 'colors, typography, spacing, shadows'),
+			'json_content' => array('label' => 'JSON_Content', 'type' => 'long_text', 'options' => '')
+		);
+		foreach ( $preset_cols as $col_slug => $col_data ) {
+			if ( ! isset( $dictionary[ $table_presets ][ $col_slug ] ) ) {
+				$dictionary[ $table_presets ][ $col_slug ] = $col_data;
+				$changed = true;
+			}
+		}
+
+		// Cập nhật ngay vào Database nếu có thay đổi
 		if ( $changed ) {
-			// Cập nhật Dictionary (Ghi đè Label hiển thị tiếng Việt đẹp cho bảng)
+			update_option( 'ska_data_dictionary', $dictionary );
+			$changed = false;
+		}
+
+		// ... (các bước sau sẽ dùng dictionary hiện tại)
+		if ( $changed || true ) { // trigger the next block anyway to ensure names
 			$dictionary = get_option( 'ska_data_dictionary', array() );
 			if ( isset( $dictionary[ $table_organisms ] ) ) {
 				$dictionary[ $table_organisms ]['__table_info']['name'] = 'Organisms Blocks';
@@ -173,6 +284,29 @@ class App_Manager {
 			if ( isset( $dictionary[ $table_presets ] ) ) {
 				$dictionary[ $table_presets ]['__table_info']['name'] = 'Design Tokens (Presets)';
 			}
+			update_option( 'ska_data_dictionary', $dictionary );
+		}
+
+		// Đảm bảo các bảng hệ thống luôn nằm đúng chỗ (Site Management)
+		$sys_table_updates = false;
+		$system_tables = array(
+			$table_organisms => array( 'name' => 'Sys Organisms', 'icon' => 'dashicons-layout' ),
+			$table_templates => array( 'name' => 'Theme Templates', 'icon' => 'dashicons-admin-appearance' ),
+			$table_presets   => array( 'name' => 'Design Tokens', 'icon' => 'dashicons-admin-customizer' )
+		);
+
+		foreach ( $system_tables as $tb_name => $tb_config ) {
+			if ( isset( $dictionary[ $tb_name ]['__table_info'] ) ) {
+				if ( $dictionary[ $tb_name ]['__table_info']['app_id'] !== self::SYSTEM_APP ) {
+					$dictionary[ $tb_name ]['__table_info']['app_id'] = self::SYSTEM_APP;
+					$dictionary[ $tb_name ]['__table_info']['name'] = $tb_config['name'];
+					$dictionary[ $tb_name ]['__table_info']['icon'] = $tb_config['icon'];
+					$sys_table_updates = true;
+				}
+			}
+		}
+
+		if ( $sys_table_updates ) {
 			update_option( 'ska_data_dictionary', $dictionary );
 		}
 

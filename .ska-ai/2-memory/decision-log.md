@@ -8,6 +8,12 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-05-08 - 🟢 Kiến Trúc Ska Link Engine (Dynamic Data Resolving)
+- **Decision (Server-Side Link Resolving):** Quyết định loại bỏ giải pháp dùng `onclick` window.location.href (Client-side) cho các khối có chứa link để bảo vệ tuyệt đối chuẩn SEO (Search Engine Optimization) và khả năng mở link trong tab mới. Mọi thẻ mang URL (`<a>`) sẽ được xử lý ở Backend (Phase Render).
+- **Decision (SkaLinkControl & Dynamic Source):** Ra mắt component React lõi `SkaLinkControl` tại Block Inspector. Cung cấp UX chọn Link tĩnh hoặc Link động. Link động hỗ trợ nguồn System (Home, Admin, Current Post) và nguồn Loop (Trích xuất từ bảng dữ liệu). 
+- **Decision (Loop Hydration Compatibility):** Thay vì tự truy vấn SQL, thuộc tính Link Động nguồn Loop sẽ được tiện ích `Dynamic_Data` xuất ra dưới định dạng Mustache `{{key}}`. Sau đó, `Ska Loop Engine` sẽ sử dụng kỹ thuật preg_replace gốc để hydrate URL cùng lúc với các dữ liệu Text khác, triệt tiêu Over-engineering và bảo toàn Zero N+1 Queries.
+
+---
 ## 2026-05-04 - 🟢 Chốt Kiến Trúc Ska Theme Builder (The Ultimate Hybrid)
 - **Decision (Gutenberg as a Component Engine):** Quyết định loại bỏ hoàn toàn việc tích hợp sâu vào Full Site Editing (FSE) của WordPress do rủi ro "mất trí nhớ" khi tải dữ liệu, xung đột với hệ sinh thái WooCommerce và sự thiếu ổn định của FSE. Thay vào đó, thiết kế một **Ska Theme Panel** hoàn toàn độc lập (code bằng Alpine.js + Tailwind), đọc/ghi trực tiếp vào bảng phẳng `ska_data_sys_organisms`.
 - **Decision (Smart Virtual Wrapper & Template Routing):** Triển khai kiến trúc **Smart Virtual Wrapper** để trung hòa giữa Website Builder và App Builder. Sử dụng hook `template_include` (Priority 99) để đánh chặn luồng render của WordPress. Trình Editor sẽ được chạy trong một Isolated Iframe toàn màn hình, cách ly với cơ chế lưu trữ của WP, đảm bảo dữ liệu Template (Header, Footer, Single...) được lưu dưới dạng Component trong Flat Tables.

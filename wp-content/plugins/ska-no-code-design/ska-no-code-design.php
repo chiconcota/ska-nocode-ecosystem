@@ -24,6 +24,7 @@ require_once SKA_DESIGN_PATH . 'inc/ska-system-framework/init.php';
 function ska_no_code_design_init() {
 	// 0. Utilities
 	require_once SKA_DESIGN_PATH . 'inc/utils/class-assets.php';
+	require_once SKA_DESIGN_PATH . 'inc/utils/class-dynamic-data.php';
 
 	// 1. Data Engine
 	require_once SKA_DESIGN_PATH . 'inc/data-engine/data-engine.php';

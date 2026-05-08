@@ -36,10 +36,14 @@
                 <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all group flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-4">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md"
-                                  :class="getTabColorClass(template.type)">
-                                <span x-text="getTabName(template.type)"></span>
-                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md"
+                                      :class="getTabColorClass(template.location)">
+                                    <span x-text="getTabName(template.location)"></span>
+                                </span>
+                                <span x-show="template.is_active" class="text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-md bg-emerald-100 text-emerald-700">Active</span>
+                                <span x-show="!template.is_active" class="text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-md bg-slate-100 text-slate-500">Draft</span>
+                            </div>
                             
                             <!-- Context Menu -->
                             <div class="relative" x-data="{ openMenu: false }">
@@ -132,6 +136,15 @@
                         <textarea x-model="currentTemplate.conditions" rows="3" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all resize-none font-mono text-sm" placeholder='{"include": "all", "exclude": []}'></textarea>
                         <p class="text-xs text-slate-500 mt-1">Để trống mặc định sẽ hiển thị trên toàn trang.</p>
                     </div>
+
+                    <!-- Trạng thái Active -->
+                    <div class="flex items-center gap-3">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" x-model="currentTemplate.is_active" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                        </label>
+                        <span class="text-sm font-bold text-slate-700">Kích hoạt Template (Active)</span>
+                    </div>
                 </div>
 
                 <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-slate-50">
@@ -157,7 +170,9 @@ document.addEventListener('alpine:init', () => {
             { id: 'footer', name: 'Footer', icon: 'vertical_align_bottom' },
             { id: 'single', name: 'Single', icon: 'article' },
             { id: 'archive', name: 'Archive', icon: 'view_agenda' },
-            { id: '404', name: '404 Page', icon: 'error' }
+            { id: '404', name: '404 Page', icon: 'error' },
+            { id: 'app_layout', name: 'App Layout', icon: 'web' },
+            { id: 'custom', name: 'Custom Page', icon: 'layers' }
         ],
         activeTab: 'all',
         templates: [],
@@ -171,7 +186,8 @@ document.addEventListener('alpine:init', () => {
             title: '',
             location: 'header',
             organism_id: '',
-            conditions: ''
+            conditions: '',
+            is_active: 1
         },
 
         apiUrl: '<?php echo esc_url( rest_url( 'ska-builder/v1/theme-templates' ) ); ?>',
@@ -199,7 +215,9 @@ document.addEventListener('alpine:init', () => {
                 'footer': 'bg-purple-100 text-purple-700',
                 'single': 'bg-emerald-100 text-emerald-700',
                 'archive': 'bg-amber-100 text-amber-700',
-                '404': 'bg-rose-100 text-rose-700'
+                '404': 'bg-rose-100 text-rose-700',
+                'app_layout': 'bg-indigo-100 text-indigo-700',
+                'custom': 'bg-cyan-100 text-cyan-700'
             };
             return colors[locationId] || 'bg-slate-100 text-slate-700';
         },
@@ -251,7 +269,8 @@ document.addEventListener('alpine:init', () => {
                 title: '',
                 location: this.activeTab === 'all' ? 'header' : this.activeTab,
                 organism_id: '',
-                conditions: ''
+                conditions: '',
+                is_active: 1
             };
             this.isModalOpen = true;
         },

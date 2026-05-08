@@ -100,11 +100,15 @@ class Ska_Theme_Builder_API {
 					'location'    => $row['location'],
 					'organism_id' => (int) $row['organism_id'],
 					'conditions'  => $row['conditions'], // Chuỗi JSON chứa điều kiện hiển thị
+					'is_active'   => (int) $row['is_active'],
 				);
 			}
 		}
 
-		return rest_ensure_response( $templates );
+		return rest_ensure_response( array(
+			'success' => true,
+			'data'    => $templates,
+		) );
 	}
 
 	/**
@@ -129,6 +133,7 @@ class Ska_Theme_Builder_API {
 			'location'    => sanitize_text_field( $body['location'] ),
 			'organism_id' => isset( $body['organism_id'] ) ? absint( $body['organism_id'] ) : 0,
 			'conditions'  => isset( $body['conditions'] ) ? wp_unslash( $body['conditions'] ) : '{}',
+			'is_active'   => isset( $body['is_active'] ) ? (int) $body['is_active'] : 1,
 		);
 
 		if ( $id > 0 ) {
