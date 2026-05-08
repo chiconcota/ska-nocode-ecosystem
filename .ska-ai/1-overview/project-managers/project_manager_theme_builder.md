@@ -1,5 +1,5 @@
 # PROJECT MANAGER: SKA THEME BUILDER
-@status: IN PROGRESS | @phase: 4.3 | @focus: Smart Virtual Wrapper & Dual-Table Architecture
+@status: PAUSED (Tạm dừng để phát triển Hệ thống Link) | @phase: 4.3 | @focus: Smart Virtual Wrapper & Dual-Table Architecture
 
 ## 1. TỔNG QUAN (OVERVIEW)
 Ska Theme Builder là hệ thống quản trị và khởi tạo Giao diện Toàn cục (Global Templates: Header, Footer, Single, Archive, 404) của App Builder. 
@@ -22,15 +22,15 @@ Mục tiêu là **tách rời hoàn toàn khỏi FSE (Full Site Editing)** của
 - [x] Tạo `add_menu_page` (Ska Theme Panel) trong thư mục con `inc/theme-builder/` của `ska-no-code-design`.
 - [x] Code giao diện Admin Dashboard (CRUD) sử dụng Alpine.js (`workspace-panel.php` / `admin-panel.php`) & Tailwind CSS. Đảm bảo load đúng Asset.
 - [x] Nâng cấp/Cập nhật API `Organisms_API` để cho phép tạo symbol/template với payload JSON rỗng (Fix lỗi validation `empty()`).
-- [ ] Thiết lập Schema Builder cho `ska_data_sys_theme_templates` (các cột: id, name, location, conditions, organism_id, is_active).
-- [ ] Xây dựng REST API Endpoint cho CRUD Theme Templates. Đảm bảo lưu đúng cơ chế Dual-Table (Tạo template -> Liên kết với 1 Organism ID).
+- [x] Thiết lập Schema Builder cho `ska_data_sys_theme_templates` (các cột: id, name, location, conditions, organism_id, is_active).
+- [x] Xây dựng REST API Endpoint cho CRUD Theme Templates. Đảm bảo lưu đúng cơ chế Dual-Table (Tạo template -> Liên kết với 1 Organism ID).
 
 ### Milestone 2: Isolated Editor (Gutenberg Bypass)
 *Xây dựng môi trường biên tập kéo thả toàn màn hình cho Template, cách ly hoàn toàn với rác CSS/JS của WP Theme hiện tại.*
-- [ ] Khởi tạo luồng mở Iframe Editor khi nhấn nút "Edit" trên giao diện quản lý Template.
-- [ ] Cấu hình CPT ảo (`ska_template_draft` hoặc tận dụng `ska_organism_draft`) trong Iframe để không ghi rác vào `wp_posts`.
-- [ ] Đảm bảo cơ chế PostMessage Bridge hoạt động: Lưu trong Iframe -> Cập nhật ở cha -> Đóng Iframe.
-- [ ] Nạp JSON Cache & Hydration tức thời cho JIT Compiler để khi lưu Template xong, Preview có thể nhận CSS ngay lập tức.
+- [x] Khởi tạo luồng mở Iframe Editor khi nhấn nút "Edit" trên giao diện quản lý Template.
+- [x] Cấu hình CPT ảo (`ska_template_draft` hoặc tận dụng `ska_organism_draft`) trong Iframe để không ghi rác vào `wp_posts`.
+- [x] Đảm bảo cơ chế PostMessage Bridge hoạt động: Lưu trong Iframe -> Cập nhật ở cha -> Đóng Iframe.
+- [x] Nạp JSON Cache & Hydration tức thời cho JIT Compiler để khi lưu Template xong, Preview có thể nhận CSS ngay lập tức.
 
 ### Milestone 3: Smart Virtual Wrapper & Frontend Output
 *Can thiệp vào luồng Render của WordPress để xuất HTML của App thay thế cho Theme.*

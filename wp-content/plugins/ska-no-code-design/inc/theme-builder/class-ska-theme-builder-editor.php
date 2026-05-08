@@ -66,18 +66,43 @@ class Ska_Theme_Builder_Editor {
 			return;
 		}
 
-		// Fetch template info to show title
+		// Fetch theme template
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'ska_data_sys_organisms';
-		$template = $wpdb->get_row( $wpdb->prepare( "SELECT name, type FROM {$table_name} WHERE id = %d", $template_id ) );
+		$template_table = $wpdb->prefix . 'ska_data_sys_theme_templates';
+		$theme_template = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$template_table} WHERE id = %d", $template_id ) );
 
-		if ( ! $template ) {
-			echo '<div class="wrap"><h2>Lỗi: Template không tồn tại.</h2></div>';
+		if ( ! $theme_template ) {
+			echo '<div class="wrap"><h2>Lỗi: Theme Template không tồn tại.</h2></div>';
 			return;
 		}
 
-		// URL for iframe
-		$iframe_url = admin_url( sprintf( 'post.php?post=%d&action=edit&ska_iframe=1&edit_organism=%d', $dummy_post_id, $template_id ) );
+		$organism_id = (int) $theme_template->organism_id;
+
+		// Nếu template chưa có organism_id (chưa link tới thiết kế nào), tạo mới một organism tự động
+		if ( ! $organism_id ) {
+			$org_table = $wpdb->prefix . 'ska_data_sys_organisms';
+			$wpdb->insert(
+				$org_table,
+				array(
+					'name'         => $theme_template->name . ' (Design)',
+					'json_content' => '{}'
+				),
+				array( '%s', '%s' )
+			);
+			$organism_id = $wpdb->insert_id;
+
+			// Cập nhật lại Theme Template để liên kết với organism mới
+			$wpdb->update(
+				$template_table,
+				array( 'organism_id' => $organism_id ),
+				array( 'id' => $template_id ),
+				array( '%d' ),
+				array( '%d' )
+			);
+		}
+
+		// URL for iframe (Chỉnh sửa Organism, chứ không phải Theme Template)
+		$iframe_url = admin_url( sprintf( 'post.php?post=%d&action=edit&ska_iframe=1&edit_organism=%d', $dummy_post_id, $organism_id ) );
 		$back_url   = admin_url( 'admin.php?page=ska-theme-builder' );
 		?>
 		<style>
@@ -98,9 +123,9 @@ class Ska_Theme_Builder_Editor {
 					<div class="h-6 w-px bg-slate-200 mx-1"></div>
 					<div>
 						<h1 class="m-0 text-sm font-bold text-slate-800 flex items-center gap-2">
-							<?php echo esc_html( $template->name ); ?>
+							<?php echo esc_html( $theme_template->name ); ?>
 							<span class="bg-indigo-100 text-indigo-700 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">
-								<?php echo esc_html( str_replace('theme_', '', $template->type) ); ?>
+								<?php echo esc_html( $theme_template->location ); ?>
 							</span>
 						</h1>
 					</div>
