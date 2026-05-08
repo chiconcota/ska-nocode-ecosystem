@@ -1,21 +1,20 @@
 # CHECKPOINT (HANDOVER)
-@last_update: 2026-05-07
-@status: Chuẩn bị thiết kế Schema và API cho Ska Theme Builder (Dual-Table)
+@last_update: 2026-05-08
+@status: Tích hợp Link Engine vào các Core Blocks (Milestone 2)
 
 ## 1. TÌNH TRẠNG HIỆN TẠI (CURRENT STATE)
-- Đã khắc phục lỗi nạp Assets (Tailwind/Alpine) cho `Ska Theme Panel`.
-- Đã sửa lỗi API tạo Symbol với chuỗi rỗng (Fix `empty()` validation).
-- Đã tách lộ trình của Theme Builder ra một Project Manager riêng tại `.ska-ai/1-overview/project-managers/project_manager_theme_builder.md`.
-- Kiến trúc **Dual-Table** đã được chốt: `ska_data_sys_theme_templates` (lưu siêu dữ liệu, điều kiện) và `ska_data_sys_organisms` (lưu HTML/JSON thô).
+- **Theme Builder (Phase 4):** Đã tạm dừng (`PAUSED`) để ưu tiên Link Engine.
+- **Link Engine (Milestone 1):** Đã hoàn thành.
+  - Khởi tạo tiện ích PHP `Dynamic_Data` để phân giải URL (Tĩnh, System, Loop).
+  - Xây dựng component React `SkaLinkControl` tại Block Inspector.
+  - Quyết định kiến trúc: Mọi Link sẽ được xuất thành thẻ `<a>` ở Backend (Server-Side Rendering) để bảo đảm SEO. Hỗ trợ Loop Hydration qua định dạng Mustache `{{key}}`.
 
 ## 2. NHIỆM VỤ PHIÊN TỚI (NEXT SESSION TASKS)
-1. **Thiết lập Schema Builder:** Xây dựng bảng `ska_data_sys_theme_templates` thông qua hệ thống `Ska Data Pro` (có các cột: id, name, location, conditions, organism_id, is_active).
-2. **REST API Endpoint:** Viết API `POST / GET` cho CRUD Theme Templates. Đảm bảo luồng tạo Theme Template đồng thời liên kết sinh ra một bản ghi trong `ska_data_sys_organisms`.
-3. **Data Binding (UI):** Tích hợp UI Alpine.js của `Ska Theme Panel` (`workspace-panel.php`) để gọi API lưu dữ liệu.
-4. **Isolated Editor:** Thiết lập khung Iframe Editor dành riêng cho việc biên tập Template toàn màn hình.
+1. **Tích hợp Block Panel:** Đưa `SkaLinkControl` vào Inspector Panel của các block: `ska-image`, `ska-button`, `ska-container`, `ska-text`.
+2. **Cập nhật Render Logic:** Chỉnh sửa file `render.php` của các block trên để kiểm tra `attributes.link` và bọc thẻ `<a>` (với target, dynamic resolving từ `Dynamic_Data`) thay vì HTML thông thường. Đảm bảo tuân thủ nguyên tắc "Flat DOM".
+3. **Inline Dynamic Link:** Triển khai Custom Format Type cho RichText của `ska-text` để chèn link động vào nội dung text.
 
 ## 3. LƯU Ý CHO AGENT (AGENT NOTES)
-- Bạn đang làm việc trong phân hệ **Ska No-code Design** (Thư mục con: `inc/theme-builder/` và `inc/design-engine/`).
-- Tuân thủ nguyên tắc Zero-Postmeta. Tuyệt đối dùng Flat Tables (`ska_data_*`).
-- Đọc kỹ file `project_manager_theme_builder.md` trước khi bắt đầu code.
-
+- Bạn đang làm việc trong phân hệ **Ska No-code Design** (Link Engine).
+- Xem kỹ cấu trúc object lưu trữ link (được ghi trong `blocks.md`) và logic hiện tại trong `project_manager_link_engine.md`.
+- File theo dõi công việc hiện tại là `.ska-ai/1-overview/project-managers/task.md`.
