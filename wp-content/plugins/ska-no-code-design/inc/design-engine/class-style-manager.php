@@ -98,11 +98,11 @@ class Style_Manager {
             }
 
             // 3. Block-specific whitelists (Ensure core layout classes are ALWAYS compiled)
-            if ( strpos( $block['blockName'], 'ska-builder/' ) !== false ) {
+            if ( ! empty( $block['blockName'] ) && strpos( $block['blockName'], 'ska-builder/' ) !== false ) {
                 $classes = array_merge( $classes, array( 'relative', 'grid', 'flex', 'flex-col', 'gap-8' ) );
             }
 
-            if ( strpos( $block['blockName'], 'ska-builder/video' ) !== false ) {
+            if ( ! empty( $block['blockName'] ) && strpos( $block['blockName'], 'ska-builder/video' ) !== false ) {
                 $classes = array_merge( $classes, array( 'overflow-hidden', 'isolate', 'aspect-video', 'object-cover' ) );
             }
 
@@ -112,64 +112,21 @@ class Style_Manager {
 			}
 
 			// Recursive for Organism References
-			if ( $block['blockName'] === 'ska-builder/organism-ref' && ! empty( $block['attrs']['organismId'] ) ) {
-				$organism_id = $block['attrs']['organismId'];
-				
-				$upload_dir = wp_upload_dir();
-				$cache_file = trailingslashit( $upload_dir['basedir'] ) . 'ska-data/organisms.json';
-				
-				$organisms = array();
-				if ( class_exists( '\Ska_System_Framework\System_Cache' ) ) {
-					$organisms = \Ska_System_Framework\System_Cache::get_instance()->get_system_data( 'organisms' );
-				} elseif ( file_exists( $cache_file ) ) {
-					$file_contents = file_get_contents( $cache_file );
-					if ( ! empty( $file_contents ) ) {
-						$decoded = json_decode( $file_contents, true );
-						if ( is_array( $decoded ) ) {
-							$organisms = $decoded;
-						}
-					}
-				}
-
-				if ( is_array( $organisms ) ) {
-					foreach ( $organisms as $org ) {
-						if ( isset( $org['id'] ) && (string) $org['id'] === (string) $organism_id && ! empty( $org['html_content'] ) ) {
-							$ref_blocks = parse_blocks( $org['html_content'] );
-							$this->extract_block_classes( $ref_blocks, $classes );
-							break;
-						}
-					}
+			if ( ! empty( $block['blockName'] ) && $block['blockName'] === 'ska-builder/organism-ref' && ! empty( $block['attrs']['organismId'] ) ) {
+				$organism_classes_string = $this->scan_organism_classes( $block['attrs']['organismId'] );
+				if ( ! empty( $organism_classes_string ) ) {
+					$classes = array_merge( $classes, explode( ' ', $organism_classes_string ) );
 				}
 			}
 
 			// Recursive for Ska Loop Slots
-			if ( $block['blockName'] === 'ska-builder/loop' && ! empty( $block['attrs']['slots'] ) && is_array( $block['attrs']['slots'] ) ) {
-				$upload_dir = wp_upload_dir();
-				$cache_file = trailingslashit( $upload_dir['basedir'] ) . 'ska-data/organisms.json';
-				
-				$organisms = array();
-				if ( class_exists( '\Ska_System_Framework\System_Cache' ) ) {
-					$organisms = \Ska_System_Framework\System_Cache::get_instance()->get_system_data( 'organisms' );
-				} elseif ( file_exists( $cache_file ) ) {
-					$file_contents = file_get_contents( $cache_file );
-					if ( ! empty( $file_contents ) ) {
-						$decoded = json_decode( $file_contents, true );
-						if ( is_array( $decoded ) ) {
-							$organisms = $decoded;
-						}
-					}
-				}
-
-				if ( is_array( $organisms ) ) {
-					foreach ( $block['attrs']['slots'] as $slot ) {
-						if ( ! empty( $slot['organismId'] ) ) {
-							foreach ( $organisms as $org ) {
-								if ( isset( $org['id'] ) && (string) $org['id'] === (string) $slot['organismId'] && ! empty( $org['html_content'] ) ) {
-									$ref_blocks = parse_blocks( $org['html_content'] );
-									$this->extract_block_classes( $ref_blocks, $classes );
-									break;
-								}
-							}
+			if ( ! empty( $block['blockName'] ) && $block['blockName'] === 'ska-builder/loop' && ! empty( $block['attrs']['slots'] ) && is_array( $block['attrs']['slots'] ) ) {
+				foreach ( $block['attrs']['slots'] as $slot ) {
+					if ( ! empty( $slot['organismId'] ) ) {
+						// Recursively scan the organism and append classes
+						$org_classes_string = $this->scan_organism_classes( $slot['organismId'] );
+						if ( ! empty( $org_classes_string ) ) {
+							$classes = array_merge( $classes, explode( ' ', $org_classes_string ) );
 						}
 					}
 				}
@@ -213,6 +170,8 @@ class Style_Manager {
 		);
 	}
 
+	private $scanning_organisms = array();
+
 	/**
 	 * Scan organism content for Tailwind classes.
 	 *
@@ -220,6 +179,11 @@ class Style_Manager {
 	 * @return string Space-separated classes.
 	 */
 	public function scan_organism_classes( $organism_id ): string {
+		if ( isset( $this->scanning_organisms[ $organism_id ] ) ) {
+			return '';
+		}
+		$this->scanning_organisms[ $organism_id ] = true;
+
 		$upload_dir = wp_upload_dir();
 		$cache_file = trailingslashit( $upload_dir['basedir'] ) . 'ska-data/organisms.json';
 		
@@ -236,24 +200,28 @@ class Style_Manager {
 			}
 		}
 
-		// Fallback to DB if not in cache (sometimes Theme Builder might run before cache generation)
-		if ( empty( $organisms ) ) {
-			global $wpdb;
-			$table_name = $wpdb->prefix . 'ska_data_sys_organisms';
-			$html = $wpdb->get_var( $wpdb->prepare( "SELECT html_content FROM {$table_name} WHERE id = %d", $organism_id ) );
-			if ( $html ) {
-				$organisms[] = array( 'id' => $organism_id, 'html_content' => $html );
-			}
-		}
-
 		$classes = array();
+		$found_in_cache = false;
+		
 		if ( is_array( $organisms ) ) {
 			foreach ( $organisms as $org ) {
 				if ( isset( $org['id'] ) && (string) $org['id'] === (string) $organism_id && ! empty( $org['html_content'] ) ) {
 					$blocks = parse_blocks( $org['html_content'] );
 					$this->extract_block_classes( $blocks, $classes );
+					$found_in_cache = true;
 					break;
 				}
+			}
+		}
+
+		// Fallback to DB if not found in cache
+		if ( ! $found_in_cache ) {
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'ska_data_sys_organisms';
+			$html = $wpdb->get_var( $wpdb->prepare( "SELECT html_content FROM {$table_name} WHERE id = %d", $organism_id ) );
+			if ( $html ) {
+				$blocks = parse_blocks( $html );
+				$this->extract_block_classes( $blocks, $classes );
 			}
 		}
 

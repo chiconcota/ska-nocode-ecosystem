@@ -80,7 +80,7 @@ defined( 'ABSPATH' ) || exit;
         <div x-show="activeTab === 'typography'" style="display: none;" class="p-8 max-w-4xl mx-auto space-y-8 animate-[fade-in_0.3s_ease-out]">
             <div class="border-b border-slate-200 pb-5">
                 <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Kiểu chữ (Typography)</h2>
-                <p class="text-slate-500 mt-2">Đinh nghĩa Font chữ chính (Primary) và Font phụ (Secondary) lấy từ Google Fonts.</p>
+                <p class="text-slate-500 mt-2">Đinh nghĩa Font chữ chính (Primary) và Font phụ (Secondary) lấy từ Google Fonts hoặc Upload Font Tùy Chỉnh.</p>
             </div>
             
             <div class="space-y-6">
@@ -93,6 +93,20 @@ defined( 'ABSPATH' ) || exit;
                     <label class="block text-sm font-bold text-slate-700 mb-2">Secondary Font (Headings)</label>
                     <input type="text" x-model="formData.typography.secondary" placeholder="e.g. 'Outfit', sans-serif" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
                     <p class="text-xs text-slate-500 mt-2">Dùng cho các thẻ Tiêu đề H1, H2, H3...</p>
+                </div>
+                <!-- Custom Font Upload -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Custom Font Upload (.woff2)</label>
+                    <div class="flex gap-3">
+                        <input type="text" x-model="formData.typography.customFontUrl" placeholder="URL của file .woff2" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none bg-slate-50" readonly>
+                        <button @click.prevent="openMediaUploader" class="shrink-0 px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-900 transition border-0 cursor-pointer flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]">upload</span> Upload
+                        </button>
+                        <button x-show="formData.typography.customFontUrl" @click.prevent="formData.typography.customFontUrl = ''" class="shrink-0 px-4 py-2 bg-rose-100 text-rose-700 rounded-lg text-sm font-medium hover:bg-rose-200 transition border-0 cursor-pointer flex items-center gap-2">
+                            Xóa
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">Tải lên file font định dạng .woff2 để tích hợp trực tiếp vào Tailwind Compiler.</p>
                 </div>
             </div>
         </div>
@@ -216,7 +230,8 @@ function skaDesignTokensApp() {
             },
             typography: {
                 primary: 'Inter, sans-serif',
-                secondary: 'Outfit, sans-serif'
+                secondary: 'Outfit, sans-serif',
+                customFontUrl: ''
             },
             tokens: {
                 borderRadius: '8px',
@@ -240,6 +255,26 @@ function skaDesignTokensApp() {
 
         initApp() {
             this.fetchTokens();
+        },
+
+        openMediaUploader() {
+            let mediaUploader;
+            if (mediaUploader) {
+                mediaUploader.open();
+                return;
+            }
+            mediaUploader = wp.media({
+                title: 'Chọn Custom Font (.woff2)',
+                button: { text: 'Sử dụng Font này' },
+                multiple: false,
+                // Uncomment the line below if you want to restrict to woff2 only (requires WP mime type support for woff2)
+                // library: { type: 'font/woff2' } 
+            });
+            mediaUploader.on('select', () => {
+                const attachment = mediaUploader.state().get('selection').first().toJSON();
+                this.formData.typography.customFontUrl = attachment.url;
+            });
+            mediaUploader.open();
         },
 
         showToast(message, type = 'success') {

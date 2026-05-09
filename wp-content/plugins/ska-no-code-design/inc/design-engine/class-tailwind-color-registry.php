@@ -60,14 +60,41 @@ class Tailwind_Color_Registry {
 	}
 
 	/**
-	 * Lấy bảng màu tùy chỉnh từ Options API.
+	 * Lấy bảng màu tùy chỉnh từ Physical Cache (tokens.json) hoặc DB.
 	 *
 	 * @return array Associative array { 'primary' => '#0d46f2', ... }
 	 */
 	public static function get_custom_colors(): array {
-		$colors = get_option( 'ska_custom_colors', array() );
-		// FALLBACK: Đảm bảo JIT luôn có màu mặc định nếu Data Engine chưa lưu vào DB.
-		if ( empty( $colors ) || ! is_array( $colors ) ) {
+		$upload_dir = wp_upload_dir();
+		$cache_file = trailingslashit( $upload_dir['basedir'] ) . 'ska-data/tokens.json';
+		$colors = array();
+
+		// 1. Đọc từ Physical Cache
+		if ( file_exists( $cache_file ) ) {
+			$json_data = file_get_contents( $cache_file );
+			$tokens = json_decode( $json_data, true );
+			if ( isset( $tokens['colors'] ) && is_array( $tokens['colors'] ) ) {
+				$colors = $tokens['colors'];
+			}
+		}
+
+		// 2. Fallback: Nếu không có file cache, đọc từ Database
+		if ( empty( $colors ) ) {
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'ska_data_sys_presets';
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) === $table_name ) {
+				$row = $wpdb->get_row( $wpdb->prepare( "SELECT json_content FROM {$table_name} WHERE name = %s", 'Global Design Tokens' ), ARRAY_A );
+				if ( $row && ! empty( $row['json_content'] ) ) {
+					$tokens = json_decode( $row['json_content'], true );
+					if ( isset( $tokens['colors'] ) && is_array( $tokens['colors'] ) ) {
+						$colors = $tokens['colors'];
+					}
+				}
+			}
+		}
+
+		// 3. Fallback: Default colors
+		if ( empty( $colors ) ) {
 			$colors = array(
 				'primary'          => '#0d46f2',
 				'background-light' => '#f5f6f8',
@@ -76,6 +103,53 @@ class Tailwind_Color_Registry {
 			);
 		}
 		return $colors;
+	}
+
+	/**
+	 * Lấy thông tin Typography từ tokens.json
+	 */
+	public static function get_typography_config(): array {
+		$upload_dir = wp_upload_dir();
+		$cache_file = trailingslashit( $upload_dir['basedir'] ) . 'ska-data/tokens.json';
+		$typography = array(
+			'primary' => 'Inter, sans-serif',
+			'secondary' => 'Outfit, sans-serif',
+			'customFontUrl' => ''
+		);
+
+		if ( file_exists( $cache_file ) ) {
+			$json_data = file_get_contents( $cache_file );
+			$tokens = json_decode( $json_data, true );
+			if ( isset( $tokens['typography'] ) && is_array( $tokens['typography'] ) ) {
+				$typography = wp_parse_args( $tokens['typography'], $typography );
+			}
+		}
+
+		return $typography;
+	}
+
+	/**
+	 * Lấy thông tin Tokens cơ bản từ tokens.json (container width, border radius, v.v)
+	 */
+	public static function get_tokens_config(): array {
+		$upload_dir = wp_upload_dir();
+		$cache_file = trailingslashit( $upload_dir['basedir'] ) . 'ska-data/tokens.json';
+		$sys_tokens = array(
+			'borderRadius' => '8px',
+			'boxShadow' => 'none',
+			'containerWidth' => '1280px',
+			'transitionDuration' => '150ms'
+		);
+
+		if ( file_exists( $cache_file ) ) {
+			$json_data = file_get_contents( $cache_file );
+			$parsed = json_decode( $json_data, true );
+			if ( isset( $parsed['tokens'] ) && is_array( $parsed['tokens'] ) ) {
+				$sys_tokens = wp_parse_args( $parsed['tokens'], $sys_tokens );
+			}
+		}
+
+		return $sys_tokens;
 	}
 
 	/**

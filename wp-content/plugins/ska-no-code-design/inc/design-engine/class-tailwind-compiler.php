@@ -42,7 +42,7 @@ class Tailwind_Compiler {
 			return array( 'css' => '', 'unresolved' => array() );
 		}
 
-		$class_list = array_unique( array_filter( explode( ' ', $classes ) ) );
+		$class_list = array_unique( array_filter( preg_split( '/\s+/', $classes ) ) );
 		$compiled_css = Tailwind_Config::get_core_reset_css();
 		$unresolved   = array();
 
@@ -50,6 +50,12 @@ class Tailwind_Compiler {
 		$responsive_css = array();
 
 		foreach ( $class_list as $class ) {
+			// Skip internal Semantic/WordPress classes so they don't trigger unresolved/CDN
+			// Removed 'has-' and 'block-' because Tailwind uses has-[:checked] and similar
+			if ( preg_match('/^(wp-|ska-|is-|components-|editor-)/', $class) ) {
+				continue;
+			}
+
 			// Extract responsive prefix or pseudo-class if any
 			$prefix       = '';
 			$pseudo       = '';
@@ -244,7 +250,10 @@ class Tailwind_Compiler {
 			$mapped = $this->resolve_dimension( $value );
 			if ( $value === 'none' ) $mapped = 'none';
 			elseif ( $value === 'full' ) $mapped = '100%';
-			return $mapped ? "{$matches[1]}-{$prop}: {$mapped};" : null;
+			
+			if ( $mapped ) {
+				return "{$matches[1]}-{$prop}: {$mapped};";
+			}
 		}
 
 		// 4.1 Object Fit & Aspect Ratio
@@ -267,8 +276,17 @@ class Tailwind_Compiler {
 		if ( isset( Tailwind_Config::$shadow_map[ $class ] ) ) return Tailwind_Config::$shadow_map[ $class ];
 		if ( preg_match( '/^z-(\d+)$/', $class, $matches ) ) return "z-index: {$matches[1]};";
 		if ( $class === 'z-auto' ) return "z-index: auto;";
-		if ( $class === 'container' ) return "width: 100%; max-width: 1280px; margin-right: auto; margin-left: auto;";
+		if ( $class === 'container' || $class === 'ska-container' ) {
+			$tokens = Tailwind_Color_Registry::get_tokens_config();
+			$container_width = isset( $tokens['containerWidth'] ) ? $tokens['containerWidth'] : '1280px';
+			return "width: 100%; max-width: {$container_width}; margin-right: auto; margin-left: auto;";
+		}
 		if ( preg_match( '/^max-w-([a-z0-9]+)$/', $class, $matches ) ) {
+			if ( $matches[1] === '7xl' ) {
+				$tokens = Tailwind_Color_Registry::get_tokens_config();
+				$container_width = isset( $tokens['containerWidth'] ) ? $tokens['containerWidth'] : '1280px';
+				return "max-width: {$container_width};";
+			}
 			if ( isset( Tailwind_Config::$max_w_map[ $matches[1] ] ) ) return "max-width: " . Tailwind_Config::$max_w_map[ $matches[1] ] . ";";
 		}
 		if ( isset( Tailwind_Config::$margin_auto_map[ $class ] ) ) return Tailwind_Config::$margin_auto_map[ $class ];

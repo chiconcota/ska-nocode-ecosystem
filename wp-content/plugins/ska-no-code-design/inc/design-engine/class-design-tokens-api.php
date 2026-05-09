@@ -37,18 +37,10 @@ class Design_Tokens_API {
     }
 
     public function get_tokens( \WP_REST_Request $request ) {
-        if ( ! class_exists( 'Ska\Data\Core\Data_Fetcher' ) ) {
-            return new \WP_Error( 'missing_dependency', 'Ska Data Pro is not active', [ 'status' => 500 ] );
-        }
-
-        $table_name = 'ska_data_sys_presets';
-        $rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $table_name, [
-            'filter_field' => 'id',
-            'filter_val'   => 'design_tokens',
-            'filter_op'    => 'eq'
-        ], 1 );
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ska_data_sys_presets';
         
-        $tokens = ! empty( $rows ) ? $rows[0] : null;
+        $tokens = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE name = %s LIMIT 1", 'Global Design Tokens' ), ARRAY_A );
 
         if ( ! $tokens ) {
             // Default structure
@@ -63,9 +55,9 @@ class Design_Tokens_API {
                         'border'    => '#e2e8f0',
                     ],
                     'typography' => [
-                        'headingFont' => 'Inter, sans-serif',
-                        'bodyFont'    => 'Inter, sans-serif',
-                        'baseSize'    => '16px',
+                        'primary' => 'Inter, sans-serif',
+                        'secondary' => 'Outfit, sans-serif',
+                        'customFontUrl' => ''
                     ],
                     'tokens' => [
                         'borderRadius'       => '8px',
@@ -73,7 +65,13 @@ class Design_Tokens_API {
                         'containerWidth'     => '1280px',
                         'transitionDuration' => '150ms',
                     ],
-                    'components' => new \stdClass()
+                    'components' => [
+                        'button' => [
+                            'primary' => 'bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition',
+                            'secondary' => 'bg-slate-800 text-white hover:bg-slate-900 px-4 py-2 rounded focus:ring-2 focus:ring-offset-2 focus:ring-slate-800 transition',
+                            'outline' => 'bg-transparent border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-4 py-2 rounded focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition'
+                        ]
+                    ]
                 ]
             ] );
         }
@@ -86,45 +84,41 @@ class Design_Tokens_API {
     }
 
     public function save_tokens( \WP_REST_Request $request ) {
-        if ( ! class_exists( 'Ska\Data\Core\Data_Fetcher' ) ) {
-            return new \WP_Error( 'missing_dependency', 'Ska Data Pro is not active', [ 'status' => 500 ] );
-        }
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ska_data_sys_presets';
 
         $body = $request->get_json_params();
         if ( empty( $body ) ) {
             return new \WP_Error( 'invalid_data', 'No data provided', [ 'status' => 400 ] );
         }
 
-        // Validate nonce or let WP REST API handle it if using X-WP-Nonce
-        
-        $table_name = 'ska_data_sys_presets';
         $json_string = wp_json_encode( $body );
 
         // Check if exists
-        $rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $table_name, [
-            'filter_field' => 'id',
-            'filter_val'   => 'design_tokens',
-            'filter_op'    => 'eq'
-        ], 1 );
-        
-        $existing = ! empty( $rows ) ? $rows[0] : null;
-
-        // We use apply_filters to map data safely using Ska Data Pro's pipeline
-        $record_data = [
-            'id' => 'design_tokens',
-            'type' => 'design_tokens',
-            'name' => 'Global Design Tokens',
-            'json_content' => $json_string // Assuming 'json_content' column is a JSON or LONGTEXT field
-        ];
+        $existing = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE name = %s LIMIT 1", 'Global Design Tokens' ), ARRAY_A );
 
         if ( $existing ) {
-            $result = apply_filters( 'ska_data_update_record', false, $record_data, $table_name, [ 'id' => $existing['id'] ] );
+            $result = $wpdb->update(
+                $table_name,
+                [ 'json_content' => $json_string ],
+                [ 'id' => $existing['id'] ],
+                [ '%s' ],
+                [ '%d' ]
+            );
         } else {
-            $result = apply_filters( 'ska_data_insert_record', false, $record_data, $table_name );
+            $result = $wpdb->insert(
+                $table_name,
+                [
+                    'name' => 'Global Design Tokens',
+                    'type' => 'colors',
+                    'json_content' => $json_string
+                ],
+                [ '%s', '%s', '%s' ]
+            );
         }
 
-        if ( is_wp_error( $result ) ) {
-            return $result;
+        if ( false === $result ) {
+            return new \WP_Error( 'db_error', 'Không thể lưu vào CSDL', [ 'status' => 500 ] );
         }
 
         // Xuất file Physical Cache (Export Tokens)
