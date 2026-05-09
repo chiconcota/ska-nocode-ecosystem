@@ -277,8 +277,34 @@ class Tailwind_Config {
 	public static function get_core_reset_css(): string {
 		$css = "/* Ska Core Block Resets (Atomic Specificity) */\n";
 		
+		$typography = Tailwind_Color_Registry::get_typography_config();
+		$primary_font = wp_strip_all_tags( $typography['primary'] );
+		$secondary_font = wp_strip_all_tags( $typography['secondary'] );
+		$custom_font_url = esc_url( $typography['customFontUrl'] );
+		
+		if ( ! empty( $custom_font_url ) ) {
+			$css .= "@font-face {\n";
+			$css .= "  font-family: 'SkaCustomFont';\n";
+			$css .= "  src: url('{$custom_font_url}') format('woff2');\n";
+			$css .= "  font-weight: normal;\n";
+			$css .= "  font-style: normal;\n";
+			$css .= "  font-display: swap;\n";
+			$css .= "}\n";
+		}
+		
+		// Container width setup
+		$tokens = Tailwind_Color_Registry::get_tokens_config();
+		$container_width = isset( $tokens['containerWidth'] ) ? wp_strip_all_tags( $tokens['containerWidth'] ) : '1280px';
+
 		// 1. Global Typography Reset (Tailwind Standard) for Barebone Themes
-		$css .= "html body.ska-builder, .editor-styles-wrapper { font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; }\n";
+		$css .= ":root {\n";
+		$css .= "  --font-primary: {$primary_font};\n";
+		$css .= "  --font-secondary: {$secondary_font};\n";
+		$css .= "  --ska-container-width: {$container_width};\n";
+		$css .= "}\n";
+		$css .= "html body.ska-builder .ska-container, .editor-styles-wrapper .ska-container { width: 100%; max-width: var(--ska-container-width); margin-left: auto; margin-right: auto; }\n";
+		$css .= "html body.ska-builder, .editor-styles-wrapper { font-family: var(--font-primary), ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; }\n";
+		$css .= "html body.ska-builder h1, html body.ska-builder h2, html body.ska-builder h3, html body.ska-builder h4, html body.ska-builder h5, html body.ska-builder h6, .editor-styles-wrapper h1, .editor-styles-wrapper h2, .editor-styles-wrapper h3, .editor-styles-wrapper h4, .editor-styles-wrapper h5, .editor-styles-wrapper h6 { font-family: var(--font-secondary), ui-sans-serif, system-ui, sans-serif; }\n";
 
 		$prefixes = array(
 			"html body.ska-builder",
@@ -298,7 +324,8 @@ class Tailwind_Config {
 			return implode( ', ', $parts );
 		};
 
-		$css .= $build_rule( '' ) . " { --wp--style--block-gap: 0px; box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; margin: 0; }\n";
+		$css .= "html body.ska-builder *, html body.ska-builder ::before, html body.ska-builder ::after, .editor-styles-wrapper *, .editor-styles-wrapper ::before, .editor-styles-wrapper ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; }\n";
+		$css .= $build_rule( '' ) . " { --wp--style--block-gap: 0px; margin: 0; }\n";
 		$css .= $build_rule( 'button:not(:where(.components-button))' ) . " { border: 0; background: none; padding: 0; margin: 0; cursor: pointer; font-family: inherit; }\n";
 		$css .= $build_rule( 'a' ) . " { text-decoration: none; color: inherit; }\n";
 		$css .= $build_rule( 'a.underline' ) . " { text-decoration: underline; }\n";

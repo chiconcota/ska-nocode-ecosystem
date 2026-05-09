@@ -13,6 +13,11 @@
 - **Decision (Token Standardization):** Chốt quy chuẩn Token Hệ thống (Primary, Secondary, Surface, Text, Border). File Cache tĩnh `tokens.json` (do `Design_Tokens_API` xử lý) sẽ trở thành Nguồn sự thật duy nhất (Single Source of Truth) để cấp dữ liệu cho `Tailwind_Color_Registry`, đảm bảo Compiler nội suy mã màu CSS siêu tốc độ (N+0 Queries).
 
 ---
+## 2026-05-10 - 🟢 Cập Nhật Cơ Chế JIT CSS Scanner & Zero CDN Policy
+- **Decision (JIT Loop Scanner):** Quyết định nâng cấp cơ chế `Style_Manager::extract_block_classes` để đệ quy an toàn vào mảng `slots` của khối `ska-builder/loop`. Bổ sung điều kiện kiểm tra sự tồn tại của `$block['blockName']` để ngăn chặn lỗi cảnh báo PHP khi quét các phần tử thuần túy. Điều này đảm bảo mọi class Tailwind sinh ra từ giao diện vòng lặp đều được bắt giữ (capture) và biên dịch chính xác tại backend.
+- **Decision (Global Archive Class Scanning):** Khước từ phương án kích hoạt Tailwind CDN trên trang chủ để bảo vệ điểm số Core Web Vitals (Zero CDN Policy). Thay vào đó, hàm `inject_tailwind_cdn()` được nâng cấp logic: Thay vì quét `$post_id = get_the_ID()`, hệ thống sẽ tự động quét (scan) toàn bộ danh sách bài viết trong biến `$wp_query->posts` khi người dùng truy cập trang chủ, Archive hoặc Search. Phương án này trả lại tốc độ tải tĩnh 100% (SSR) cho toàn bộ Frontend mà không phụ thuộc script ngoài.
+
+---
 ## 2026-05-09 - 🟢 Hoàn thiện Cơ chế JIT CSS Injection & 404 Fallback (Ska Theme Builder Milestone 5)
 - **Decision (Active Organism CSS Injection):** Để giải quyết lỗi "CSS không render trên giao diện" cho các phần tử độc lập (Header, Footer) do cơ chế JIT mặc định chỉ quét post content hiện tại, chúng tôi thiết lập cơ chế **Active Organism Injection**. Biến toàn cục `$ska_active_theme_organisms` lưu trữ ID của các Organism được `Virtual Wrapper` gài vào (Hook Priority 99). `Tailwind JIT Compiler` sau đó sẽ lấy danh sách ID này để tự động chèn thêm CSS của các block/organism ngầm này trước khi render HTML cuối.
 - **Decision (404 Fallback Template):** Mở rộng tính năng điều hướng của `Virtual Wrapper` nhằm đánh chặn trạng thái `is_404()`. Triển khai File mẫu HTML tĩnh `404-template-demo.html` kèm Tailwind & Alpine.js, cho phép người dùng import linh hoạt vào giao diện mà không dính rác của Theme WP gốc, bảo vệ vòng đời thiết kế phẳng.

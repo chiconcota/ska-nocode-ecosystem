@@ -122,7 +122,7 @@
 ---
 
 ### Test Case 3: Kiểm thử Rule Builder (Điều kiện hiển thị phức tạp)
-**Trạng thái:** `[ ] Chờ kiểm thử`
+**Trạng thái:** `[X] Chờ kiểm thử`
 
 **Bước thực hiện:**
 1. Truy cập Theme Builder, tạo một Template mới tên "Promo Banner", Location: `Header`.
