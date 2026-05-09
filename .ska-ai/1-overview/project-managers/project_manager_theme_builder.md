@@ -34,17 +34,24 @@ Mục tiêu là **tách rời hoàn toàn khỏi FSE (Full Site Editing)** của
 
 ### Milestone 3: Smart Virtual Wrapper & Frontend Output
 *Can thiệp vào luồng Render của WordPress để xuất HTML của App thay thế cho Theme.*
-- [ ] Viết bộ lọc `template_include` (Priority 99) chặn việc WordPress gọi các file `header.php`, `footer.php`, `index.php` của theme đang kích hoạt.
-- [ ] Xây dựng `Ska_Template_Router`: 
+- [x] Viết bộ lọc `template_include` (Priority 99) chặn việc WordPress gọi các file `header.php`, `footer.php`, `index.php` của theme đang kích hoạt.
+- [x] Xây dựng `Ska_Template_Router`: 
   - Phân tích URL hiện tại (Is Home, Is Single Post, Is Archive).
   - Truy vấn `ska_data_sys_theme_templates` lấy Template đang "Active" tương ứng.
   - Lấy HTML từ `ska_data_sys_organisms` theo `organism_id`.
-- [ ] Render Output bằng cấu trúc `virtual-wrapper.php` (Đảm bảo chèn đủ `wp_head()` và `wp_footer()` cho các plugin khác hít thở).
+- [x] Render Output bằng cấu trúc `virtual-wrapper.php` (Đảm bảo chèn đủ `wp_head()` và `wp_footer()` cho các plugin khác hít thở).
 
 ### Milestone 4: Điều kiện hiển thị nâng cao (Display Conditions)
 *Hoàn thiện UI và Logic của các luật hiển thị phức tạp.*
-- [ ] Giao diện (Alpine.js): Form cấu hình Rule Builder (VD: Include -> Pages -> All, Exclude -> Post -> ID 15).
-- [ ] Backend: Xây dựng hàm `match_conditions($template_conditions)` trả về boolean kiểm tra xem Template hiện tại có hợp lệ để render ở URL/Page này không.
+- [x] Giao diện (Alpine.js): Form cấu hình Rule Builder (VD: Include -> Pages -> All, Exclude -> Post -> ID 15).
+- [x] Backend: Xây dựng hàm `match_conditions($template_conditions)` trả về boolean kiểm tra xem Template hiện tại có hợp lệ để render ở URL/Page này không.
+
+### Milestone 5: Kiểm thử & Bàn giao E2E (End-to-End)
+*Kiểm chứng toàn diện hệ thống Ska Theme Builder từ giao diện quản trị đến kết quả Frontend.*
+- [x] Xây dựng kịch bản kiểm thử (Test Cases) cho các trường hợp: tạo mới Template, chỉnh sửa nội dung trong Iframe, và cấu hình Rule.
+- [x] Kiểm tra khả năng đánh chặn của `Smart Virtual Wrapper` để render Header/Footer/Single mà không ảnh hưởng tới Plugin khác.
+- [x] Xác nhận luồng lưu trữ kép Dual-Table và Hydration cho JIT Compiler chạy mượt mà (Fixed CSS Injection logic during wp_head).
+- [x] Viết tài liệu bàn giao `test-workflow-process.md` dành cho hệ thống Theme Builder.
 
 ---
 
@@ -54,4 +61,4 @@ Mục tiêu là **tách rời hoàn toàn khỏi FSE (Full Site Editing)** của
 3. **Luôn hỏi trước khi phá Hook:** Khi can thiệp vào `template_include`, phải test kỹ với các trang không thuộc quyền quản lý của Ska Builder (VD: Trang wp-login hoặc wp-admin) để tránh crash hệ thống.
 
 ---
-**[Cập nhật gần nhất]**: Chuẩn bị thiết kế CSDL (Schema) và REST API cho Dual-Table (ska_data_sys_theme_templates) sau khi đã fix lỗi Asset Admin Panel.
+**[Cập nhật gần nhất]**: Đã hoàn thành toàn bộ hệ thống Ska Theme Builder, bao gồm Cấu trúc Dual-Table, Admin Dashboard, Smart Virtual Wrapper, Display Conditions, và fix thành công lỗi CSS JIT Injection ở Frontend. Dự án sẵn sàng bàn giao E2E và tiến sang Phase tiếp theo (Molecules/Components).

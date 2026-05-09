@@ -81,7 +81,24 @@ class Ska_Virtual_Wrapper {
 		if ( ! empty( $matched_template ) || ! empty( $matched_header ) || ! empty( $matched_footer ) || ! empty( $matched_app ) ) {
 			// We have at least one matched template! Use our Virtual Template wrapper.
 			global $ska_current_template_id;
+			global $ska_active_theme_organisms;
+			
 			$ska_current_template_id = ! empty( $matched_template ) ? $matched_template['id'] : 0;
+
+			// Register active organisms for JIT compiler scanning during wp_head
+			$ska_active_theme_organisms = array();
+			if ( ! empty( $matched_template ) && ! empty( $matched_template['organism_id'] ) ) {
+				$ska_active_theme_organisms[] = $matched_template['organism_id'];
+			}
+			if ( ! empty( $matched_header ) && ! empty( $matched_header['organism_id'] ) ) {
+				$ska_active_theme_organisms[] = $matched_header['organism_id'];
+			}
+			if ( ! empty( $matched_footer ) && ! empty( $matched_footer['organism_id'] ) ) {
+				$ska_active_theme_organisms[] = $matched_footer['organism_id'];
+			}
+			if ( ! empty( $matched_app ) && ! empty( $matched_app['organism_id'] ) ) {
+				$ska_active_theme_organisms[] = $matched_app['organism_id'];
+			}
 
 			$custom_template = plugin_dir_path( __FILE__ ) . 'templates/virtual-template.php';
 			
@@ -126,16 +143,12 @@ class Ska_Virtual_Wrapper {
 			return null;
 		}
 
-		// Simple Condition Matching Logic
-		// TODO: (Milestone 4) Implement advanced condition parsing for custom & app_layout routing
-		// For now, we just return the most recently created template that matches the location
-		// Defaulting to "Toàn trang" behavior if conditions are empty.
-		
+		// Evaluate advanced condition parsing
 		foreach ( $templates as $template ) {
 			$conditions_json = $template['conditions'];
 			
 			// If no conditions are set, it's a global template for this location
-			if ( empty( $conditions_json ) ) {
+			if ( empty( $conditions_json ) || trim( $conditions_json ) === '[]' ) {
 				return $template;
 			}
 
@@ -144,13 +157,77 @@ class Ska_Virtual_Wrapper {
 				return $template; // Fallback if invalid JSON
 			}
 
-			// Lógica kiểm tra conditions có thể mở rộng ở đây
-			// Ví dụ: kiểm tra is_page( $conditions['page_id'] )
-			// Tạm thời return luôn template đầu tiên (coi như match)
-			return $template;
+			$is_included      = false;
+			$is_excluded      = false;
+			$has_include_rule = false;
+
+			foreach ( $conditions as $rule_data ) {
+				$type = isset( $rule_data['type'] ) ? $rule_data['type'] : 'include';
+				
+				if ( 'include' === $type ) {
+					$has_include_rule = true;
+				}
+				
+				if ( $this->evaluate_rule( $rule_data ) ) {
+					if ( 'exclude' === $type ) {
+						$is_excluded = true;
+						break; // Once excluded, the template is rejected
+					} else {
+						$is_included = true;
+					}
+				}
+			}
+
+			// If the rules list only contains 'exclude' rules, it's implicitly included globally unless excluded
+			if ( ! $has_include_rule ) {
+				$is_included = true;
+			}
+
+			if ( $is_included && ! $is_excluded ) {
+				return $template;
+			}
 		}
 
 		return null;
+	}
+
+	/**
+	 * Evaluate a single display condition rule
+	 */
+	private function evaluate_rule( $rule_data ) {
+		if ( ! is_array( $rule_data ) || empty( $rule_data['rule'] ) ) {
+			return false;
+		}
+
+		$rule  = $rule_data['rule'];
+		$value = isset( $rule_data['value'] ) ? trim( $rule_data['value'] ) : '';
+
+		switch ( $rule ) {
+			case 'all':
+				return true;
+			case 'is_front_page':
+				return is_front_page() || is_home();
+			case 'is_archive':
+				return is_archive() || is_search();
+			case 'is_single':
+				return is_singular();
+			case 'post_type':
+				if ( empty( $value ) ) {
+					return is_singular();
+				}
+				return is_singular( $value ) || is_post_type_archive( $value );
+			case 'specific_post':
+				if ( empty( $value ) ) {
+					return false;
+				}
+				return is_singular() && ( (string) get_the_ID() === $value );
+			case 'is_404':
+				return is_404();
+			case 'is_search':
+				return is_search();
+		}
+
+		return false;
 	}
 
 	/**

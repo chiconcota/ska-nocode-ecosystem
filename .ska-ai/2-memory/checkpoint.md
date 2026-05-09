@@ -1,19 +1,23 @@
-# CHECKPOINT (HANDOVER)
-@last_update: 2026-05-08
-@status: Sẵn sàng Kiểm thử E2E (Link Engine) & Bắt đầu Ska Molecules (Phase 4.5)
+# CHECKPOINT: BÀN GIAO PHIÊN LÀM VIỆC (Phase 4.4)
+@date: 2026-05-10
+@status: Bắt đầu Milestone 1 của Theme Options & Design Tokens
 
-## 1. TÌNH TRẠNG HIỆN TẠI (CURRENT STATE)
-- **Link Engine (Milestone 1, 2, 3):** Đã HOÀN THÀNH.
-  - Tích hợp `SkaLinkControl` thành công trên tất cả Core Blocks.
-  - Tích hợp thành công Inline Dynamic Link qua định dạng `ska/dynamic-link` và trình phân giải `resolve_inline_links` bằng Regex.
-  - Xuất bản tài liệu `test-workflow-process.md` phục vụ việc kiểm thử Frontend.
-- **Theme Builder & Ska Molecules (Phase 4):** Đang chờ chuyển giao. Hệ thống đã ổn định để sẵn sàng tích hợp các tính năng UI cao cấp dựa vào Alpine.js.
+## 1. Trạng thái hiện tại
+- Đã khởi tạo File Quản lý Dự án cho Milestone mới tại: `.ska-ai/1-overview/project-managers/project_manager_theme_options.md`
+- Đã lập `Implementation Plan` chi tiết cho việc xây dựng tính năng Theme Options.
+- **Quyết định UX cốt lõi đã được trình lên User:** Thay vì làm trang cấu hình riêng, Hệ thống sẽ dùng giao diện Modal/Offcanvas (Alpine.js) móc trực tiếp vào Thẻ "Theme Options" của `Ska System Dashboard` (tại `ska_system_dashboard_extensions`).
+- **Quyết định Dữ liệu cốt lõi:** Thống nhất dùng chuẩn Token API (`primary`, `secondary`, `surface`, `text`, `border`) ghi vào `tokens.json` làm Nguồn Sự Thật Duy Nhất (Single Source of Truth) thay thế cho Options API lề mề cũ.
 
-## 2. NHIỆM VỤ PHIÊN TỚI (NEXT SESSION TASKS)
-1. **QA & E2E Testing:** Chạy kiểm thử thủ công/Tự động theo tài liệu `.ska-ai/1-overview/project-managers/test-workflow-process.md`. Đảm bảo Output HTML chuẩn thẻ `<a>`, URL được Hydrate mượt mà với Ska Loop (Zero N+1 Query).
-2. **Khởi động Ska Molecules:** Tiến hành triển khai Tabs, Accordion, Dropdown,... dựa trên cấu trúc Template Lock của `ska-builder/container`. Tích hợp Native với `Alpine.store` như đã thiết kế.
+## 2. Nhiệm vụ cho Agent phiên tiếp theo (Next Session)
+1. Bắt đầu viết Code cho `class-theme-options-ui.php` để tạo Giao diện thẻ Extension trên Dashboard.
+2. Xây dựng Form Modal bằng `Alpine.js` và `Tailwind` (trong thư mục `views/`) để người dùng có thể kéo màu, đổi Font.
+3. Call API REST (`/ska-design/v1/tokens`) bằng JS fetch thuần hoặc Alpine để Submit dữ liệu từ Modal.
+4. Điều chỉnh `class-tailwind-color-registry.php` để đọc data từ `tokens.json` thay vì gọi option cũ.
 
-## 3. LƯU Ý CHO AGENT (AGENT NOTES)
-- Bạn đang làm việc trong phân hệ **Ska No-code Design** (Phase 4).
-- Luôn kiểm tra `project_manager_link_engine.md` và `test-workflow-process.md` để nắm quy trình kiểm thử trước khi chuyển hẳn sang Molecule.
-- Dữ liệu lịch sử quyết định nằm tại `decision-log.md`.
+## 3. Các files cần chú ý (Context Load)
+- `c:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\inc\ska-system-framework\includes\class-framework-ui.php` (Để đăng ký thẻ Extension)
+- `c:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\inc\design-engine\class-design-tokens-api.php` (API lưu JSON)
+- `c:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\inc\design-engine\class-tailwind-color-registry.php` (Trình Compiler đọc JSON)
+
+---
+*Ghi chú: Lịch sử quyết định đã được cập nhật vào `decision-log.md` và Trạng thái đã được ghi vào `system_map.md`.*

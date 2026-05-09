@@ -48,9 +48,9 @@ Hệ thống bắt buộc phải hỗ trợ **Dynamic Link**, cho phép lấy UR
 
 ### Milestone 4: Kiểm thử (E2E Testing)
 *Đảm bảo hệ thống Link tương thích hoàn toàn với Ska Loop.*
-- [ ] Test Static Link trên Image/Container.
-- [ ] Test System Dynamic Link (Home URL) trên Button.
-- [ ] Test Loop Dynamic Link (Gắn URL vào biến vòng lặp) trên Inline Text và Block-Level Container.
+- [x] Test Static Link trên Image/Container.
+- [x] Test System Dynamic Link (Home URL) trên Button.
+- [x] Test Loop Dynamic Link (Gắn URL vào biến vòng lặp) trên Inline Text và Block-Level Container.
 
 ---
 

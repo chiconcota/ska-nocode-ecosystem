@@ -8,6 +8,17 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-05-10 - 🟢 Thiết lập Kiến Trúc Theme Options & Design Tokens (Phase 4.4)
+- **Decision (Theme Options Dashboard Extension):** Thay vì tạo mới một trang Admin riêng biệt cồng kềnh, cấu hình Theme Options sẽ được tích hợp vào `Ska System Dashboard` thông qua hook `ska_system_dashboard_extensions`. Giao diện cấu hình (Modal) sử dụng Alpine.js để đảm bảo trải nghiệm lưu trữ mượt mà (0ms delay), không load lại trang.
+- **Decision (Token Standardization):** Chốt quy chuẩn Token Hệ thống (Primary, Secondary, Surface, Text, Border). File Cache tĩnh `tokens.json` (do `Design_Tokens_API` xử lý) sẽ trở thành Nguồn sự thật duy nhất (Single Source of Truth) để cấp dữ liệu cho `Tailwind_Color_Registry`, đảm bảo Compiler nội suy mã màu CSS siêu tốc độ (N+0 Queries).
+
+---
+## 2026-05-09 - 🟢 Hoàn thiện Cơ chế JIT CSS Injection & 404 Fallback (Ska Theme Builder Milestone 5)
+- **Decision (Active Organism CSS Injection):** Để giải quyết lỗi "CSS không render trên giao diện" cho các phần tử độc lập (Header, Footer) do cơ chế JIT mặc định chỉ quét post content hiện tại, chúng tôi thiết lập cơ chế **Active Organism Injection**. Biến toàn cục `$ska_active_theme_organisms` lưu trữ ID của các Organism được `Virtual Wrapper` gài vào (Hook Priority 99). `Tailwind JIT Compiler` sau đó sẽ lấy danh sách ID này để tự động chèn thêm CSS của các block/organism ngầm này trước khi render HTML cuối.
+- **Decision (404 Fallback Template):** Mở rộng tính năng điều hướng của `Virtual Wrapper` nhằm đánh chặn trạng thái `is_404()`. Triển khai File mẫu HTML tĩnh `404-template-demo.html` kèm Tailwind & Alpine.js, cho phép người dùng import linh hoạt vào giao diện mà không dính rác của Theme WP gốc, bảo vệ vòng đời thiết kế phẳng.
+- **Decision (Theme Builder Stabilization):** Chính thức tuyên bố khép lại Phase 4.2 Ska Theme Builder. Cấu trúc Dual-Table kết hợp Iframe Editor Isolated và Virtual Wrapper (Frontend) đã chạy xuyên suốt và ổn định 100% trong bài kiểm tra E2E. Hệ thống sẵn sàng nhường chỗ cho Phase tiếp theo (Ska Molecules - UI Components).
+
+---
 ## 2026-05-08 - 🟢 Triển khai Inline Dynamic Links (Ska Link Engine Milestone 3)
 - **Decision (RichText Format Registration):** Áp dụng cơ chế đăng ký định dạng tùy chỉnh (`registerFormatType`) cho `RichText` để tích hợp `SkaLinkControl` trực tiếp vào thanh công cụ nội tuyến của Gutenberg. Quyết định này giúp giải quyết bài toán chèn link động vào từng từ/cụm từ bên trong một khối văn bản lớn (`ska-text`, `ska-list-item`) mà không làm gãy cấu trúc block.
 - **Decision (Inline Link Backend Parser):** Triển khai hàm `resolve_inline_links` sử dụng Regular Expression để bóc tách và giải mã các thẻ `<a>` chứa thuộc tính `data-dynamic-source` và `data-dynamic-key` ngay trong phase render (SSR). Việc bóc tách diễn ra ở server giúp loại bỏ hoàn toàn mã JS dư thừa ở client, bảo toàn tiêu chuẩn Flat DOM và Zero N+1 Queries.

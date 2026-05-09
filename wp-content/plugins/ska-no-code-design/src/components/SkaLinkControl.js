@@ -42,9 +42,17 @@ export const SkaLinkControl = ({ link, onChange }) => {
                 <div style={{ flex: 1 }}>
                     {!isDynamicMode ? (
                         <TextControl
+                            type="text"
                             value={url}
                             onChange={(val) => updateLink({ url: val })}
-                            placeholder="https://"
+                            onBlur={(e) => {
+                                let val = e.target.value.trim();
+                                // Auto-prefix https:// if it looks like a domain but lacks protocol/relative slashes
+                                if (val && !/^(https?:\/\/|ftp:\/\/|mailto:|tel:|\/|#|\?)/i.test(val) && val.includes('.')) {
+                                    updateLink({ url: 'https://' + val });
+                                }
+                            }}
+                            placeholder="https://... hoặc /path"
                             __nextHasNoMarginBottom
                         />
                     ) : (

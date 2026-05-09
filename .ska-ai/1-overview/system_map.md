@@ -39,7 +39,7 @@ ska-ecosystem/ (mapped to app/public/)
 | App Module | Path | Responsibilities | Status |
 | :--- | :--- | :--- | :--- |
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Stable (v1) |
-| **Ska No-Code Design** | `plugins/ska-no-code-design/`| Core Blocks, Tailwind JIT, Ska Molecule | 🟢 Stable Phase 3 |
+| **Ska No-Code Design** | `plugins/ska-no-code-design/`| Core Blocks, Tailwind JIT, Ska Molecule, Ska Theme Builder | 🟢 Stable Phase 4.2 |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, JSON Native Schema | 🟢 Stable Phase 3 |
 | **Ska Logic Engine** | `plugins/ska-logic-engine/`| Event Pipeline, SkaFX, Universal Binding | 🟢 Stable (MVP Primitives) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API (JSON Export) | 🟢 Integrated |
@@ -62,6 +62,8 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 ## 7. RECENT LOGS (LATEST)
 > *Các nhật ký từ Phase 1 và 2 đã được lưu trữ trong `.ska-ai/2-memory/archive/`. Chỉ giữ lại các cập nhật cốt lõi gần đây (Phase 3 -> Phase 4).*
 
+- **2026-05-10 - 🟡 Khởi động Phase 4.4 (Theme Options & Design Tokens):** Thiết lập Implementation Plan cho kiến trúc lưu trữ Token thông qua Bảng phẳng và Physical JSON Cache (`tokens.json`). Chuẩn bị xây dựng Giao diện cấu hình màu sắc/font chữ sử dụng Alpine.js Modal gắn liền với Ska System Dashboard, đảm bảo UX không load lại trang và tuân thủ Zero-Option API.
+- **2026-05-09 - 🟢 Hoàn thiện Cơ chế JIT CSS Injection & 404 Fallback (Ska Theme Builder Milestone 5):** Để giải quyết lỗi thiếu CSS cho các phần tử độc lập (Header, Footer), hệ thống sử dụng biến toàn cục `$ska_active_theme_organisms` lưu trữ ID của các Organism hoạt động thông qua `Virtual Wrapper`, giúp `Tailwind JIT Compiler` nhận diện và chèn CSS. Mở rộng điều hướng hỗ trợ 404 Fallback qua template mẫu tĩnh. Chính thức khép lại Phase 4.2 Ska Theme Builder với kiến trúc Dual-Table và Iframe Editor hoạt động ổn định.
 - **2026-05-08 - 🟢 Kiến Trúc Ska Link Engine & Inline Dynamic Links (Milestone 3):** Hoàn thiện hệ thống quản lý URL cho Ska Builder (SkaLinkControl + Dynamic_Data PHP Utility) cho 4 blocks lõi (`ska-image`, `ska-button`, `ska-container`, `ska-text`). Bổ sung Custom Format Type `ska/dynamic-link` cho RichText, cho phép chèn link động nội tuyến. Quyết định xử lý thẻ `<a>` ở phase Backend (Server-Side Rendering) với Regex (`resolve_inline_links`) và Flat DOM để bóc tách URL/Mustache tags từ `data-dynamic-source`/`data-dynamic-key` nhằm bảo đảm cấu trúc SEO thay vì redirect Client-Side. Tương thích tuyệt đối với Loop Engine qua định dạng Mustache `{{key}}`, duy trì tiêu chuẩn Zero N+1 Queries.
 - **2026-05-04 - 🟢 Thiết kế Kiến trúc Smart Virtual Wrapper:** Quyết định giải pháp "Tách rời lũy tiến" (Progressive Decoupling) để trung hòa chức năng Theme Builder và App Builder. Xây dựng nền tảng `virtual-wrapper.php` thay thế hoàn toàn cấu trúc DOM của Theme cũ khi cần xây App độc lập. Lưu lại chi tiết nghiên cứu mâu thuẫn vào `chua-quyet-dinh-duoc.md` để triển khai trong Phase 4.
 - **2026-05-04 - 🟢 Tối ưu Hóa Hệ thống & Fix Lỗi Ska Loop Conditional Rendering:** Nâng cấp Design Engine (`class-style-manager.php`) để sửa lỗi bỏ sót class `responsive` và `pseudo-class` bằng cơ chế merge class thông minh. Bổ sung cơ chế *Case-Insensitive Resolution* cho SkaFX, và tối ưu đánh giá logic *Truthy* (`1`, `"1"`, `true`) cho Ska Loop nhằm chống rớt dữ liệu trong mọi trường hợp Boolean Database. Dọn dẹp sạch debug code giúp Loop Block chạy siêu tốc trên Production.

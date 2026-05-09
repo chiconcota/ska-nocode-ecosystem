@@ -72,3 +72,78 @@
 
 ---
 *Ghi chú: Workflow này được tạo ra để đảm bảo chất lượng hệ thống (QA Phase). Khi thực hiện kiểm thử thành công, hãy đánh dấu check `[x]` vào các kịch bản trên và tiếp tục sang việc phát triển Ska Molecules thuộc Phase 4.*
+
+---
+
+# Workflow Kiểm thử E2E: Ska Theme Builder (Milestone 5)
+
+> [!NOTE]
+> Tài liệu này cung cấp quy trình kiểm thử hệ thống Theme Builder, bao gồm môi trường Isolated Iframe, cơ chế Dual-Table Storage, và khả năng đánh chặn luồng Render bằng Smart Virtual Wrapper.
+
+## Mục tiêu Kiểm thử (Objectives)
+1. **Isolated Editor & Dual-Table:** Đảm bảo việc tạo/chỉnh sửa template diễn ra độc lập trong Iframe và dữ liệu được phân luồng chính xác (Metadata lưu ở `ska_data_sys_theme_templates`, HTML lưu ở `ska_data_sys_organisms`). Không ghi rác vào `wp_posts`.
+2. **Smart Virtual Wrapper:** Đảm bảo hệ thống bắt đúng URL hiện tại để thay thế Header/Footer/Body của Theme mặc định bằng thiết kế của Builder.
+3. **Display Conditions (Rule Builder):** Đảm bảo backend parser đánh giá đúng các Rule Include/Exclude đối với môi trường thực tế (is_front_page, is_single...).
+
+---
+
+## 🧪 Các Kịch Bản Kiểm Thử (Test Cases)
+
+### Test Case 1: Tạo mới & Chỉnh sửa Template trong Iframe
+**Trạng thái:** `[x] Chờ kiểm thử`
+
+**Bước thực hiện:**
+1. Truy cập WP Admin -> Ska Builder -> Theme Builder.
+2. Bấm "Tạo Template Mới", đặt tên "Header Test", Location: `Header`, Conditions: Để trống (Mặc định toàn trang). Bấm Lưu.
+3. Bấm vào nút "Mở Editor" của template vừa tạo. Trình duyệt phải tải Iframe toàn màn hình.
+4. Kéo thả các block vào Editor (ví dụ: Container, Heading, Image), bấm Lưu trên thanh công cụ của Iframe.
+5. Kiểm tra Database (bảng `ska_data_sys_theme_templates` và `ska_data_sys_organisms`) xem ID có khớp và data có được ghi đúng không. Đảm bảo `wp_posts` không bị thêm record thừa nào ngoài những Draft tạm thời đã bị xóa (nếu có).
+
+**Kỳ vọng:**
+- Không lỗi JS Console trong quá trình PostMessage giữa cha và con.
+- `organism_id` trong bảng Template trỏ đúng vào record chứa HTML vừa thiết kế trong bảng Organism.
+
+---
+
+### Test Case 2: Đánh chặn giao diện bằng Smart Virtual Wrapper
+**Trạng thái:** `[x] Chờ kiểm thử`
+
+**Bước thực hiện:**
+1. Mở trang chủ (Front Page) của website ở giao diện Frontend (khi chưa đăng nhập).
+2. Kiểm tra Header/Footer hiện tại (nó sẽ là của theme Twenty Twenty-Four hoặc theme đang active).
+3. Đảm bảo Template "Header Test" (vừa tạo ở Test Case 1) đang ở trạng thái **Active**.
+4. Tải lại trang chủ.
+
+**Kỳ vọng:**
+- Header mặc định của Theme biến mất. Thay vào đó là thiết kế Header do bạn vừa kéo thả.
+- Footer hoặc Content (nếu chưa có Template tương ứng) vẫn render bình thường hoặc dùng fallback content.
+- Bật Query Monitor để đảm bảo Hook `template_include` (Priority 99) đang chạy và không bị lỗi.
+
+---
+
+### Test Case 3: Kiểm thử Rule Builder (Điều kiện hiển thị phức tạp)
+**Trạng thái:** `[ ] Chờ kiểm thử`
+
+**Bước thực hiện:**
+1. Truy cập Theme Builder, tạo một Template mới tên "Promo Banner", Location: `Header`.
+2. Mở "Sửa Settings" của Template này. Bấm Thêm Rule.
+3. Tạo 2 rules:
+   - `Include` -> `Trang chủ (Front Page)`
+   - `Exclude` -> `Kết quả tìm kiếm (Search)`
+4. Lưu Settings, mở Editor và thiết kế nội dung nổi bật cho template (ví dụ: Bảng chữ đỏ chót).
+5. Kích hoạt Template.
+
+**Kỳ vọng tại Frontend:**
+- Mở Trang chủ: Template "Promo Banner" xuất hiện.
+- Mở một Bài viết cụ thể (Single Post): "Promo Banner" **không** xuất hiện.
+- Thực hiện Search (VD: `/?s=test`): Mặc dù trang Search có thể là một dạng archive, nhưng vì có luật Exclude, banner **không** được xuất hiện.
+
+---
+
+## 🛠 Hướng dẫn Gỡ lỗi (Troubleshooting)
+
+| Dấu hiệu | Nguyên nhân có thể | Cách khắc phục |
+| :--- | :--- | :--- |
+| **Giao diện không đè được Theme cũ** | Theme hiện tại không dùng các hàm chuẩn của WP. | Đảm bảo Theme cũ vẫn đang gọi chuẩn xác `wp_head()`, `wp_footer()`, và sử dụng file `index.php` hoặc page templates chuẩn theo Hierarchy. Kiểm tra mảng `template_include` có bị plugin khác override ở priority > 99 không. |
+| **Condition hoạt động sai ở Trang chủ** | Nhầm lẫn giữa `is_front_page()` và `is_home()`. | Backend đã fix gom chung `is_front_page() OR is_home()` cho Rule Trang chủ. Tuy nhiên nếu dùng cấu hình static page, hãy kiểm tra lại Settings > Reading của WP. |
+| **Lưu xong Editor trắng trang** | JIT Compiler không lấy được HTML Cache. | Kiểm tra bảng `ska_data_sys_organisms`, trường `html_content` phải có dữ liệu. Check POST payload trong Network Tab của DevTools lúc bấm Lưu. |

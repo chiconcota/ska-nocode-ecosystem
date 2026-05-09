@@ -197,24 +197,31 @@ class Core {
 			return;
 		}
 
-        // 2. Frontend Context -> Local JIT Compilation (Production)
+        $classes_to_scan = '';
+
+        // 1. Frontend Context -> Local JIT Compilation (Production)
         $post_id = get_the_ID();
-        if ( ! $post_id ) {
-            return;
+        if ( $post_id ) {
+            $classes_to_scan .= $this->style_manager->scan_post_classes( $post_id ) . ' ';
         }
 
-        // Scan blocks for classes
-        $classes = $this->style_manager->scan_post_classes( $post_id );
+        // 2. Scan Theme Builder Organisms if Active
+        global $ska_active_theme_organisms;
+        if ( ! empty( $ska_active_theme_organisms ) && is_array( $ska_active_theme_organisms ) ) {
+            foreach ( $ska_active_theme_organisms as $org_id ) {
+                $classes_to_scan .= $this->style_manager->scan_organism_classes( $org_id ) . ' ';
+            }
+        }
         
-        if ( $classes ) {
+        if ( ! empty( trim( $classes_to_scan ) ) ) {
             // Compile classes to CSS
-            $result = $this->compiler->compile_classes( $classes );
+            $result = $this->compiler->compile_classes( $classes_to_scan );
             $css    = $result['css'];
             $unresolved = $result['unresolved'];
             
             // Output Compiled CSS
             if ( $css ) {
-                $scanned_debug = '/* Scanned Classes: ' . esc_html( implode( ', ', array_unique( array_filter( explode( ' ', $classes ) ) ) ) ) . ' */';
+                $scanned_debug = '/* Scanned Classes: ' . esc_html( implode( ', ', array_unique( array_filter( explode( ' ', $classes_to_scan ) ) ) ) ) . ' */';
                 echo "<style id='ska-jit-styles'>\n{$scanned_debug}\n{$css}\n</style>" . "\n";
             }
 

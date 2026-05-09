@@ -130,11 +130,50 @@
                         <p class="text-xs text-slate-500 mt-1">Chọn component từ Design Workspace để gán vào vị trí này.</p>
                     </div>
 
-                    <!-- Điều kiện (Conditions) -->
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1">Điều kiện hiển thị (JSON)</label>
-                        <textarea x-model="currentTemplate.conditions" rows="3" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all resize-none font-mono text-sm" placeholder='{"include": "all", "exclude": []}'></textarea>
-                        <p class="text-xs text-slate-500 mt-1">Để trống mặc định sẽ hiển thị trên toàn trang.</p>
+                    <!-- Điều kiện (Conditions) Rule Builder -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 m-0">Điều kiện hiển thị (Display Conditions)</label>
+                                <p class="text-[11px] text-slate-500 m-0 mt-0.5">Xác định nơi Template này được xuất hiện.</p>
+                            </div>
+                            <button @click.prevent="addRule()" class="text-xs bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-2 py-1.5 rounded-md font-bold border-0 cursor-pointer flex items-center gap-1 transition-colors">
+                                <span class="material-symbols-outlined text-[14px]">add</span> Thêm Rule
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <template x-for="(rule, index) in rules" :key="index">
+                                <div class="flex gap-2 items-start bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                                    <!-- Type (Include/Exclude) -->
+                                    <select x-model="rule.type" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm font-medium focus:border-indigo-500 outline-none w-28 bg-white" :class="rule.type === 'include' ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-rose-700 bg-rose-50 border-rose-200'">
+                                        <option value="include">Include</option>
+                                        <option value="exclude">Exclude</option>
+                                    </select>
+                                    
+                                    <!-- Rule (Condition) -->
+                                    <select x-model="rule.rule" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm focus:border-indigo-500 outline-none flex-1 bg-white">
+                                        <template x-for="opt in ruleOptions" :key="opt.value">
+                                            <option :value="opt.value" x-text="opt.label"></option>
+                                        </template>
+                                    </select>
+
+                                    <!-- Value (If needed) -->
+                                    <template x-if="['post_type', 'specific_post'].includes(rule.rule)">
+                                        <input type="text" x-model="rule.value" :placeholder="rule.rule === 'specific_post' ? 'ID (VD: 12)' : 'slug (VD: post, page)'" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm focus:border-indigo-500 outline-none w-36">
+                                    </template>
+                                    
+                                    <!-- Delete -->
+                                    <button @click.prevent="removeRule(index)" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 bg-transparent border-0 cursor-pointer p-1.5 rounded-md transition-colors flex-shrink-0">
+                                        <span class="material-symbols-outlined text-[18px]">close</span>
+                                    </button>
+                                </div>
+                            </template>
+                            
+                            <div x-show="rules.length === 0" class="text-center py-4 text-sm text-slate-500 italic bg-white rounded-lg border border-slate-200 border-dashed">
+                                Chưa có điều kiện nào. Template sẽ hiển thị theo Location mặc định.
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Trạng thái Active -->
@@ -189,6 +228,17 @@ document.addEventListener('alpine:init', () => {
             conditions: '',
             is_active: 1
         },
+        rules: [],
+        ruleOptions: [
+            { value: 'all', label: 'Toàn bộ trang (Entire Site)' },
+            { value: 'is_front_page', label: 'Trang chủ (Front Page)' },
+            { value: 'is_archive', label: 'Tất cả Lưu trữ (All Archives)' },
+            { value: 'is_single', label: 'Tất cả Bài viết/Trang (Singular)' },
+            { value: 'post_type', label: 'Theo Loại bài viết (Post Type)' },
+            { value: 'specific_post', label: 'Bài cụ thể (Post/Page ID)' },
+            { value: 'is_404', label: 'Trang lỗi (404)' },
+            { value: 'is_search', label: 'Kết quả tìm kiếm (Search)' }
+        ],
 
         apiUrl: '<?php echo esc_url( rest_url( 'ska-builder/v1/theme-templates' ) ); ?>',
         apiOrganismsUrl: '<?php echo esc_url( rest_url( 'ska-design/v1/organisms' ) ); ?>',
@@ -272,6 +322,7 @@ document.addEventListener('alpine:init', () => {
                 conditions: '',
                 is_active: 1
             };
+            this.rules = [{ type: 'include', rule: 'all', value: '' }];
             this.isModalOpen = true;
         },
 
@@ -280,6 +331,23 @@ document.addEventListener('alpine:init', () => {
             if (tmpl) {
                 this.modalMode = 'edit';
                 this.currentTemplate = { ...tmpl };
+                
+                try {
+                    let parsed = JSON.parse(this.currentTemplate.conditions || '[]');
+                    if (parsed && !Array.isArray(parsed)) {
+                        let newRules = [];
+                        if (parsed.include === 'all') newRules.push({ type: 'include', rule: 'all', value: '' });
+                        parsed = newRules;
+                    }
+                    this.rules = Array.isArray(parsed) ? parsed : [];
+                } catch(e) {
+                    this.rules = [];
+                }
+                
+                if (this.rules.length === 0) {
+                    this.rules.push({ type: 'include', rule: 'all', value: '' });
+                }
+
                 this.isModalOpen = true;
             }
         },
@@ -289,6 +357,8 @@ document.addEventListener('alpine:init', () => {
                 alert('Vui lòng nhập tên template.');
                 return;
             }
+
+            this.currentTemplate.conditions = JSON.stringify(this.rules);
 
             this.isLoading = true;
             
@@ -342,6 +412,14 @@ document.addEventListener('alpine:init', () => {
 
         closeModal() {
             this.isModalOpen = false;
+        },
+
+        addRule() {
+            this.rules.push({ type: 'include', rule: 'all', value: '' });
+        },
+
+        removeRule(index) {
+            this.rules.splice(index, 1);
         }
     }));
 });

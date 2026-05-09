@@ -214,6 +214,53 @@ class Style_Manager {
 	}
 
 	/**
+	 * Scan organism content for Tailwind classes.
+	 *
+	 * @param int|string $organism_id Organism ID to scan.
+	 * @return string Space-separated classes.
+	 */
+	public function scan_organism_classes( $organism_id ): string {
+		$upload_dir = wp_upload_dir();
+		$cache_file = trailingslashit( $upload_dir['basedir'] ) . 'ska-data/organisms.json';
+		
+		$organisms = array();
+		if ( class_exists( '\Ska_System_Framework\System_Cache' ) ) {
+			$organisms = \Ska_System_Framework\System_Cache::get_instance()->get_system_data( 'organisms' );
+		} elseif ( file_exists( $cache_file ) ) {
+			$file_contents = file_get_contents( $cache_file );
+			if ( ! empty( $file_contents ) ) {
+				$decoded = json_decode( $file_contents, true );
+				if ( is_array( $decoded ) ) {
+					$organisms = $decoded;
+				}
+			}
+		}
+
+		// Fallback to DB if not in cache (sometimes Theme Builder might run before cache generation)
+		if ( empty( $organisms ) ) {
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'ska_data_sys_organisms';
+			$html = $wpdb->get_var( $wpdb->prepare( "SELECT html_content FROM {$table_name} WHERE id = %d", $organism_id ) );
+			if ( $html ) {
+				$organisms[] = array( 'id' => $organism_id, 'html_content' => $html );
+			}
+		}
+
+		$classes = array();
+		if ( is_array( $organisms ) ) {
+			foreach ( $organisms as $org ) {
+				if ( isset( $org['id'] ) && (string) $org['id'] === (string) $organism_id && ! empty( $org['html_content'] ) ) {
+					$blocks = parse_blocks( $org['html_content'] );
+					$this->extract_block_classes( $blocks, $classes );
+					break;
+				}
+			}
+		}
+
+		return implode( ' ', array_unique( array_filter( $classes ) ) );
+	}
+
+	/**
 	 * Register Theme Config.
 	 *
 	 * @param array $config Config array to merge.
