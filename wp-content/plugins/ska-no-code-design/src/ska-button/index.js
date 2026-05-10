@@ -40,6 +40,11 @@ registerBlockType(metadata.name, {
                 setAttributes({ tailwindClasses: className, className: '' });
             } else if (className) {
                 setAttributes({ className: '' });
+            } else if (!tailwindClasses && !className) {
+                // Apply default design token if no classes exist (newly inserted block)
+                if (typeof window !== 'undefined' && window.skaDesignTokens?.components?.button?.primary) {
+                    setAttributes({ tailwindClasses: window.skaDesignTokens.components.button.primary });
+                }
             }
 
             // Auto-migrate old url to link object

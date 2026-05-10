@@ -103,6 +103,18 @@ function ska_builder_core_enqueue_extensions() {
 
         $ska_data_dict = get_option( 'ska_data_dictionary', array() );
         wp_localize_script( 'ska-builder-extensions', 'skaDataDictionary', $ska_data_dict );
+
+        // Preload Design Tokens Cache into JS window object
+        $tokens_data = array();
+        $tokens_cache_file = WP_CONTENT_DIR . '/uploads/ska-data/tokens.json';
+        if ( file_exists( $tokens_cache_file ) ) {
+            $json = file_get_contents( $tokens_cache_file );
+            $data = json_decode( $json, true );
+            if ( is_array( $data ) ) {
+                $tokens_data = $data;
+            }
+        }
+        wp_localize_script( 'ska-builder-extensions', 'skaDesignTokens', $tokens_data );
     }
 }
 add_action( 'enqueue_block_editor_assets', 'ska_builder_core_enqueue_extensions' );

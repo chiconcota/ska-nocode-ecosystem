@@ -109,6 +109,15 @@ class Core
     public function enqueue_design_assets()
     {
         wp_enqueue_style('material-symbols-outlined', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap', array(), '1.0.0');
+
+        // Enqueue Vanilla CSS Variables (Physical Cache)
+        $upload_dir = wp_upload_dir();
+        $tokens_css_path = trailingslashit($upload_dir['basedir']) . 'ska-data/tokens.css';
+        $tokens_css_url = trailingslashit($upload_dir['baseurl']) . 'ska-data/tokens.css';
+        
+        if (file_exists($tokens_css_path)) {
+            wp_enqueue_style('ska-design-tokens-vars', $tokens_css_url, array(), filemtime($tokens_css_path));
+        }
     }
 
     /**
@@ -244,19 +253,9 @@ class Core
                 echo "<style id='ska-jit-styles'>\n{$scanned_debug}\n{$css}\n</style>" . "\n";
             }
 
-            // HYBRID FALLBACK: If there are unresolved classes, inject CDN
+            // HYBRID FALLBACK: Removed per Zero CDN Policy.
             if (!empty($unresolved)) {
-                static $cdn_injected = false;
-                if (!$cdn_injected) {
-                    // Đọc containerWidth từ tokens để CDN cũng tôn trọng giá trị này
-                    $tokens = Tailwind_Color_Registry::get_tokens_config();
-                    $container_w = isset($tokens['containerWidth']) ? $tokens['containerWidth'] : '1280px';
-
-                    echo "<!-- Ska Hybrid Fallback: Unresolved classes (" . implode(', ', $unresolved) . ") -->\n";
-                    echo '<script src="https://cdn.tailwindcss.com"></script>' . "\n";
-                    echo '<script>tailwind.config = { important: false, corePlugins: { preflight: false }, theme: { extend: { maxWidth: { "7xl": "' . esc_js($container_w) . '" } } } }</script>' . "\n";
-                    $cdn_injected = true;
-                }
+                echo "<!-- Unresolved classes (Zero CDN Policy Active): " . esc_html(implode(', ', $unresolved)) . " -->\n";
             }
         }
     }

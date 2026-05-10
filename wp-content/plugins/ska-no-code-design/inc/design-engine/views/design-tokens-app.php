@@ -108,6 +108,23 @@ defined( 'ABSPATH' ) || exit;
                     </div>
                     <p class="text-xs text-slate-500 mt-2">Tải lên file font định dạng .woff2 để tích hợp trực tiếp vào Tailwind Compiler.</p>
                 </div>
+                
+                <!-- Typography Scale Presets -->
+                <div class="mt-8 border-t border-slate-200 pt-8">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Typography Scale Presets</h3>
+                    <div class="space-y-4">
+                        <template x-for="(val, key) in formData.typography_scale" :key="key">
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                                <div class="w-24 shrink-0">
+                                    <label class="block text-sm font-bold text-slate-700 capitalize" x-text="key"></label>
+                                </div>
+                                <div class="flex-1">
+                                    <textarea x-model="formData.typography_scale[key]" rows="1" class="w-full px-3 py-2 border border-slate-300 rounded text-sm text-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono resize-y"></textarea>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -198,6 +215,75 @@ defined( 'ABSPATH' ) || exit;
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Cards Presets -->
+                <h3 class="text-lg font-bold text-slate-800 m-0 border-0 p-0 mt-8">Cards Presets</h3>
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-1/4">Tên Preset</th>
+                                <th class="px-4 py-3 text-sm font-semibold text-slate-700">Tailwind Classes</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="px-4 py-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-bold uppercase">Default</span></td>
+                                <td class="px-4 py-4"><textarea x-model="formData.components.card.default" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-bold uppercase shadow-sm">Elevated</span></td>
+                                <td class="px-4 py-4"><textarea x-model="formData.components.card.elevated" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Inputs Presets -->
+                <h3 class="text-lg font-bold text-slate-800 m-0 border-0 p-0 mt-8">Inputs Presets</h3>
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-1/4">Tên Preset</th>
+                                <th class="px-4 py-3 text-sm font-semibold text-slate-700">Tailwind Classes</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="px-4 py-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-bold uppercase">Text Input</span></td>
+                                <td class="px-4 py-4"><textarea x-model="formData.components.input.text" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-bold uppercase">Label</span></td>
+                                <td class="px-4 py-4"><textarea x-model="formData.components.input.label" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Badges Presets -->
+                <h3 class="text-lg font-bold text-slate-800 m-0 border-0 p-0 mt-8">Badges & Chips</h3>
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-1/4">Tên Preset</th>
+                                <th class="px-4 py-3 text-sm font-semibold text-slate-700">Tailwind Classes</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="px-4 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded border border-green-400 text-xs font-bold uppercase">Status</span></td>
+                                <td class="px-4 py-4"><textarea x-model="formData.components.badge.status" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4"><span class="bg-gray-100 text-gray-800 px-2 py-1 rounded border border-gray-400 text-xs font-bold uppercase">Filter</span></td>
+                                <td class="px-4 py-4"><textarea x-model="formData.components.badge.filter" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -222,28 +308,55 @@ function skaDesignTokensApp() {
         ],
         formData: {
             colors: {
-                primary: '#4f46e5',
-                secondary: '#0f172a',
-                accent: '#0ea5e9',
-                background: '#f8fafc',
-                text: '#1e293b'
+                primary: '#3b82f6',
+                secondary: '#10b981',
+                tertiary: '#f59e0b',
+                surface: '#ffffff',
+                background: '#f9fafb',
+                text: '#111827',
+                border: '#e5e7eb',
+                success: '#10b981',
+                warning: '#f59e0b',
+                error: '#ef4444',
+                info: '#3b82f6'
             },
             typography: {
                 primary: 'Inter, sans-serif',
                 secondary: 'Outfit, sans-serif',
+                mono: 'IBM Plex Mono, monospace',
                 customFontUrl: ''
             },
+            typography_scale: {
+                h1: 'text-5xl font-bold tracking-tight leading-tight',
+                h2: 'text-4xl font-bold tracking-tight leading-tight',
+                h3: 'text-2xl font-semibold tracking-tight leading-snug',
+                h4: 'text-lg font-bold leading-relaxed',
+                p: 'text-base font-normal leading-relaxed',
+                small: 'text-sm font-normal leading-relaxed',
+            },
             tokens: {
-                borderRadius: '8px',
+                borderRadius: '6px',
                 boxShadow: 'none',
                 containerWidth: '1280px',
                 transitionDuration: '150ms'
             },
             components: {
                 button: {
-                    primary: 'bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition',
-                    secondary: 'bg-slate-800 text-white hover:bg-slate-900 px-4 py-2 rounded focus:ring-2 focus:ring-offset-2 focus:ring-slate-800 transition',
-                    outline: 'bg-transparent border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-4 py-2 rounded focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition'
+                    primary: 'bg-primary text-white hover:bg-blue-700 px-4 py-2 rounded-md font-semibold transition',
+                    secondary: 'bg-transparent border border-primary text-primary hover:bg-blue-50 px-4 py-2 rounded-md font-semibold transition',
+                    outline: 'bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-md font-semibold transition'
+                },
+                card: {
+                    default: 'bg-surface border border-gray-200 rounded-md p-4',
+                    elevated: 'bg-surface shadow-md rounded-md p-4'
+                },
+                input: {
+                    text: 'bg-surface border border-gray-200 text-gray-900 text-sm rounded-md focus:ring-primary focus:border-primary block w-full p-2.5',
+                    label: 'block mb-2 text-sm font-medium text-gray-900'
+                },
+                badge: {
+                    status: 'bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded border border-green-400',
+                    filter: 'bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded border border-gray-400 hover:bg-gray-200 cursor-pointer'
                 }
             }
         },
@@ -298,9 +411,13 @@ function skaDesignTokensApp() {
                          ...res.data,
                          colors: { ...this.formData.colors, ...(res.data.colors || {}) },
                          typography: { ...this.formData.typography, ...(res.data.typography || {}) },
+                         typography_scale: { ...this.formData.typography_scale, ...(res.data.typography_scale || {}) },
                          tokens: { ...this.formData.tokens, ...(res.data.tokens || {}) },
                          components: { 
-                             button: { ...this.formData.components.button, ...(res.data.components?.button || {}) } 
+                             button: { ...this.formData.components.button, ...(res.data.components?.button || {}) },
+                             card: { ...this.formData.components.card, ...(res.data.components?.card || {}) },
+                             input: { ...this.formData.components.input, ...(res.data.components?.input || {}) },
+                             badge: { ...this.formData.components.badge, ...(res.data.components?.badge || {}) }
                          }
                     };
                 }
