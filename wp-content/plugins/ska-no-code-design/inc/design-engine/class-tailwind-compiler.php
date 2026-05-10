@@ -353,6 +353,12 @@ class Tailwind_Compiler {
 			}
 			return "border-color: {$hex};";
 		}
+		if ( preg_match( '/^border-(white|black)\/([0-9]+)$/', $class, $matches ) ) {
+			$hex   = $matches[1] === 'white' ? '#ffffff' : '#000000';
+			$rgb   = Tailwind_Color_Registry::hex_to_rgb( $hex );
+			$alpha = round( intval( $matches[2] ) / 100, 2 );
+			return "border-color: rgba({$rgb}, {$alpha});";
+		}
 		if ( isset( Tailwind_Config::$border_basic_map[ $class ] ) ) return Tailwind_Config::$border_basic_map[ $class ];
 
 		// 6.6 Ring Width & Color
@@ -431,7 +437,7 @@ class Tailwind_Compiler {
 		if ( isset( Tailwind_Config::$grad_basic[ $class ] ) ) return Tailwind_Config::$grad_basic[ $class ];
 
 		// 6.12 Rounded
-		if ( preg_match( '/^rounded(-[a-z]+)?$/', $class, $matches ) ) {
+		if ( preg_match( '/^rounded(-[a-z0-9\-]+)?$/', $class, $matches ) ) {
 			$type = $matches[1] ?? '';
 			return isset( Tailwind_Config::$radius_map[ $type ] ) ? "border-radius: " . Tailwind_Config::$radius_map[ $type ] . ";" : null;
 		}

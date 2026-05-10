@@ -8,6 +8,14 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-05-11 - 🔴 Pivot Tối Thượng: Đập đi xây lại Design Tokens & Theme Options (3 Lớp)
+- **Decision (Khai tử Theme Options Patching):** Từ bỏ cách tiếp cận "chắp vá" hiện tại (cố nhét Theme Options vào Ska System Dashboard và hardcode chuỗi Tailwind class dài thòng vào UI). Cách làm này phá vỡ SSOT (Single Source of Truth) và đi ngược lại triết lý Design System chuyên nghiệp (ví dụ như hệ thống Metric Flow).
+- **Decision (Kiến Trúc 3 Lớp Design Engine):** Chốt phương án tái cấu trúc toàn diện theo 3 lớp:
+  - **Lớp 1 - Design Tokens Registry:** Đóng vai trò Cốt lõi (The Core), nhận JSON/Markdown design chuẩn W3C và xuất ra biến `--color`, `--font` trên Root CSS. Không phụ thuộc Tailwind.
+  - **Lớp 2 - Semantic Base Styling:** Giải quyết "Zero-config đẹp ngay" bằng cách cho phép JIT Compiler tự sinh các Global CSS rules (ví dụ: `h1 { @apply text-5xl font-bold text-primary; }`) để người dùng thả thẻ H1 là nhận style gốc, không cần bơm Utility Class.
+  - **Lớp 3 - Visual Tailwind Browser:** Đập bỏ ô text input thuần của Tailwind Panel trong Inspector. Xây dựng một UI trực quan (chọn màu dạng Color Swatch, chọn spacing theo bảng Base Unit) và tự động gắn các class Tailwind nhưng xài giá trị từ Token (Ví dụ: `text-primary` thay vì `text-red-500`).
+
+---
 ## 2026-05-10 - 🟢 Thiết lập Kiến Trúc Theme Options & Design Tokens (Phase 4.4)
 - **Decision (Theme Options Dashboard Extension):** Thay vì tạo mới một trang Admin riêng biệt cồng kềnh, cấu hình Theme Options sẽ được tích hợp vào `Ska System Dashboard` thông qua hook `ska_system_dashboard_extensions`. Giao diện cấu hình (Modal) sử dụng Alpine.js để đảm bảo trải nghiệm lưu trữ mượt mà (0ms delay), không load lại trang.
 - **Decision (Token Standardization):** Chốt quy chuẩn Token Hệ thống (Primary, Secondary, Surface, Text, Border). File Cache tĩnh `tokens.json` (do `Design_Tokens_API` xử lý) sẽ trở thành Nguồn sự thật duy nhất (Single Source of Truth) để cấp dữ liệu cho `Tailwind_Color_Registry`, đảm bảo Compiler nội suy mã màu CSS siêu tốc độ (N+0 Queries).

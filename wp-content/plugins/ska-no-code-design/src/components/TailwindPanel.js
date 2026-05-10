@@ -188,6 +188,32 @@ export const TailwindPanel = ({ className, setClassName }) => {
                 </div>
             </div>
 
+            {(() => {
+                const typographyScale = window.skaDesignTokens?.typography_scale || {};
+                if (Object.keys(typographyScale).length > 0) {
+                    return (
+                        <div style={{ marginBottom: '16px', background: '#f8fafc', padding: '12px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                            <h4 style={{ margin: '0 0 8px 0', fontSize: '12px', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>{__('Typography Presets', 'ska-builder-core')}</h4>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                                {Object.entries(typographyScale).map(([key, classes]) => (
+                                    <Button 
+                                        key={key}
+                                        isSecondary 
+                                        isSmall 
+                                        style={{ textTransform: 'uppercase', fontSize: '11px', background: 'white' }}
+                                        onClick={() => addClasses(classes)}
+                                        title={classes}
+                                    >
+                                        {key}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                }
+                return null;
+            })()}
+
             <div className="ska-tailwind-categories">
                 <CategorySection title="Ska Spacing" items={categories.spacing} />
                 <CategorySection title="Ska Typography" items={categories.typography} />

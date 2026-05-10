@@ -57,7 +57,11 @@
 - [ ] **Ska System Framework (Dashboard):** 
   - Hoàn thiện luồng API Request thật cho thẻ cấu hình Ska AI Architect.
   - Viết Hook cho 2 nút Danger Zone (Clear Context, Flush JIT Cache) ở góc của System Dashboard.
-  - Tích hợp Tab "Theme Options/Design Tokens" (Typography, Logo, Colors) map thẳng vào Smart Object `ska_system`.
+  - 🛑 TẠM DỪNG: Tích hợp Tab "Theme Options/Design Tokens" map thẳng vào Smart Object `ska_system` (Đã gỡ bỏ cách tiếp cận cũ).
+- [ ] 🌟 **Kiến trúc Design Engine Mới (3 Lớp):** (Mục tiêu của phiên tiếp theo)
+  - Lớp 1: Tokens Registry (Nhận file design.md, gen CSS Variables).
+  - Lớp 2: Semantic Base Styling (Gen css global cho thẻ HTML H1, H2, p).
+  - Lớp 3: Visual Tailwind Browser (Tạo UI trực quan chọn biến thay vì input text).
 
 ---
 
