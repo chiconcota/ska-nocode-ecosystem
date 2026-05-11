@@ -1,0 +1,3 @@
+## 2025-03-09 - Add aria-hidden to decorative Material Symbols ligatures
+**Learning:** Decorative icon fonts using ligatures (like `<span class="material-symbols-outlined">star</span>`) are often read aloud by screen readers as the literal text of the ligature (e.g., "star"). If these are decorative and redundant next to button text, or have adjacent alternative text, this creates a confusing experience.
+**Action:** Always add `aria-hidden="true"` and `focusable="false"` (if interactive) to `span` or `i` elements containing font icon ligatures (e.g., Material Symbols or Dashicons) to prevent screen readers from announcing the ligature text.
