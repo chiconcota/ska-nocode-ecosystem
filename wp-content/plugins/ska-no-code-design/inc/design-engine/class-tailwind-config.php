@@ -47,7 +47,7 @@ class Tailwind_Config {
 
 	public static $shadow_map = array(
 		'shadow-sm' => 'box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);',
-		'shadow'    => 'box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);',
+		'shadow'    => 'box-shadow: var(--ska-box-shadow, 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06));',
 		'shadow-md' => 'box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);',
 		'shadow-lg' => 'box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);',
 		'shadow-xl' => 'box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);',
@@ -226,7 +226,7 @@ class Tailwind_Config {
 	);
 
 	public static $radius_map = array(
-		''     => '0.25rem',
+		''     => 'var(--ska-border-radius, 0.25rem)',
 		'-sm'  => '0.125rem',
 		'-md'  => '0.375rem',
 		'-lg'  => '0.5rem',
@@ -249,11 +249,11 @@ class Tailwind_Config {
 	);
 
 	public static $transition_map = array(
-		'-all' => 'transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;',
-		'-colors' => 'transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;',
-		'-opacity' => 'transition-property: opacity; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;',
-		'-shadow' => 'transition-property: box-shadow; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;',
-		'-transform' => 'transition-property: transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;',
+		'-all' => 'transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: var(--ska-transition-duration, 150ms);',
+		'-colors' => 'transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: var(--ska-transition-duration, 150ms);',
+		'-opacity' => 'transition-property: opacity; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: var(--ska-transition-duration, 150ms);',
+		'-shadow' => 'transition-property: box-shadow; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: var(--ska-transition-duration, 150ms);',
+		'-transform' => 'transition-property: transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: var(--ska-transition-duration, 150ms);',
 	);
 
 	public static $ease_map = array(
@@ -295,14 +295,25 @@ class Tailwind_Config {
 		// Container width setup
 		$tokens = Tailwind_Color_Registry::get_tokens_config();
 		$container_width = isset( $tokens['containerWidth'] ) ? wp_strip_all_tags( $tokens['containerWidth'] ) : '1280px';
+		$block_gap = isset( $tokens['blockGap'] ) ? wp_strip_all_tags( $tokens['blockGap'] ) : '1.5rem';
+		$content_padding = isset( $tokens['contentPadding'] ) ? wp_strip_all_tags( $tokens['contentPadding'] ) : '1rem';
+		$border_radius = isset( $tokens['borderRadius'] ) ? wp_strip_all_tags( $tokens['borderRadius'] ) : '0.25rem';
+		$box_shadow = isset( $tokens['boxShadow'] ) ? wp_strip_all_tags( $tokens['boxShadow'] ) : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)';
+		$transition_duration = isset( $tokens['transitionDuration'] ) ? wp_strip_all_tags( $tokens['transitionDuration'] ) : '150ms';
 
 		// 1. Global Typography Reset (Tailwind Standard) for Barebone Themes
 		$css .= ":root {\n";
 		$css .= "  --font-primary: {$primary_font};\n";
 		$css .= "  --font-secondary: {$secondary_font};\n";
 		$css .= "  --ska-container-width: {$container_width};\n";
+		$css .= "  --ska-block-gap: {$block_gap};\n";
+		$css .= "  --ska-content-padding: {$content_padding};\n";
+		$css .= "  --ska-border-radius: {$border_radius};\n";
+		$css .= "  --ska-box-shadow: {$box_shadow};\n";
+		$css .= "  --ska-transition-duration: {$transition_duration};\n";
 		$css .= "}\n";
-		$css .= "html body.ska-builder .ska-container, .editor-styles-wrapper .ska-container { width: 100%; max-width: var(--ska-container-width); margin-left: auto; margin-right: auto; }\n";
+		$css .= "html body.ska-builder .ska-container, .editor-styles-wrapper .ska-container { width: 100%; max-width: var(--ska-container-width); margin-left: auto; margin-right: auto; padding: var(--ska-content-padding); }\n";
+		$css .= "html body.ska-builder .ska-container-block > * + *, .editor-styles-wrapper .ska-container-block > * + * { margin-top: var(--ska-block-gap); }\n";
 		$css .= "html body.ska-builder, .editor-styles-wrapper { font-family: var(--font-primary), ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; }\n";
 		$css .= "html body.ska-builder h1, html body.ska-builder h2, html body.ska-builder h3, html body.ska-builder h4, html body.ska-builder h5, html body.ska-builder h6, .editor-styles-wrapper h1, .editor-styles-wrapper h2, .editor-styles-wrapper h3, .editor-styles-wrapper h4, .editor-styles-wrapper h5, .editor-styles-wrapper h6 { font-family: var(--font-secondary), ui-sans-serif, system-ui, sans-serif; }\n";
 

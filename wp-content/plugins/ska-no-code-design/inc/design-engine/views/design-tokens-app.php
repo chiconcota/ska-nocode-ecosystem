@@ -33,7 +33,7 @@ defined( 'ABSPATH' ) || exit;
             
             <template x-for="tab in tabs" :key="tab.id">
                 <button 
-                    @click="activeTab = tab.id"
+                    @click="scrollTo(tab.id)"
                     class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors border-0 cursor-pointer"
                     :class="activeTab === tab.id ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 bg-transparent'">
                     <span class="material-symbols-outlined text-[20px]" x-text="tab.icon"></span>
@@ -51,10 +51,10 @@ defined( 'ABSPATH' ) || exit;
     </div>
     
     <!-- Main Content Area -->
-    <div class="flex-1 overflow-y-auto relative h-[calc(100vh-32px)]">
+    <div class="flex-1 overflow-y-auto relative h-[calc(100vh-32px)]" @scroll.passive="onScroll">
         
         <!-- Tab 1: Colors -->
-        <div x-show="activeTab === 'colors'" style="display: none;" class="p-8 max-w-4xl mx-auto space-y-8 animate-[fade-in_0.3s_ease-out]">
+        <div id="colors" class="p-8 max-w-4xl mx-auto space-y-8">
             <div class="border-b border-slate-200 pb-5">
                 <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Màu sắc (Colors)</h2>
                 <p class="text-slate-500 mt-2">Bảng màu hệ thống định nghĩa Brand Identity, được áp dụng tự động qua Tailwind.</p>
@@ -77,7 +77,7 @@ defined( 'ABSPATH' ) || exit;
         </div>
 
         <!-- Tab 2: Typography -->
-        <div x-show="activeTab === 'typography'" style="display: none;" class="p-8 max-w-4xl mx-auto space-y-8 animate-[fade-in_0.3s_ease-out]">
+        <div id="typography" class="p-8 max-w-4xl mx-auto space-y-8">
             <div class="border-b border-slate-200 pb-5">
                 <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Kiểu chữ (Typography)</h2>
                 <p class="text-slate-500 mt-2">Đinh nghĩa Font chữ chính (Primary) và Font phụ (Secondary) lấy từ Google Fonts hoặc Upload Font Tùy Chỉnh.</p>
@@ -129,7 +129,7 @@ defined( 'ABSPATH' ) || exit;
         </div>
 
         <!-- Tab 3: Spacing & Tokens -->
-        <div x-show="activeTab === 'spacing'" style="display: none;" class="p-8 max-w-4xl mx-auto space-y-8 animate-[fade-in_0.3s_ease-out]">
+        <div id="spacing" class="p-8 max-w-4xl mx-auto space-y-8">
             <div class="border-b border-slate-200 pb-5">
                 <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Advanced Tokens</h2>
                 <p class="text-slate-500 mt-2">Cấu hình Global Tokens cho Grid System cỡ lớn và UI Details.</p>
@@ -167,7 +167,7 @@ defined( 'ABSPATH' ) || exit;
                     <p class="text-xs text-slate-500 mt-2">Chiều rộng tựa giới hạn tối đa cho Layout App.</p>
                 </div>
 
-                <!-- Transition Speed -->
+                <!-- Base Transition Duration -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Base Transition Duration</label>
                     <select x-model="formData.tokens.transitionDuration" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
@@ -177,113 +177,67 @@ defined( 'ABSPATH' ) || exit;
                     </select>
                     <p class="text-xs text-slate-500 mt-2">Tốc độ chuẩn dùng cho Hover, Animation.</p>
                 </div>
+
+                <!-- Global Block Gap -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Global Block Gap</label>
+                    <input type="text" x-model="formData.tokens.blockGap" placeholder="e.g. 1.5rem or 24px" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
+                    <p class="text-xs text-slate-500 mt-2">Khoảng cách dọc mặc định giữa các khối (Block Gap).</p>
+                </div>
+
+                <!-- Global Content Padding -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Global Content Padding</label>
+                    <input type="text" x-model="formData.tokens.contentPadding" placeholder="e.g. 1rem or 16px" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
+                    <p class="text-xs text-slate-500 mt-2">Lề an toàn 2 bên trái/phải của nội dung (Content Padding).</p>
+                </div>
             </div>
         </div>
 
         <!-- Tab 4: Components -->
-        <div x-show="activeTab === 'components'" style="display: none;" class="p-8 max-w-4xl mx-auto space-y-8 animate-[fade-in_0.3s_ease-out]">
+        <div id="components" class="p-8 max-w-4xl mx-auto space-y-8">
             <div class="border-b border-slate-200 pb-5 flex justify-between items-end">
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Atomic Components</h2>
-                    <p class="text-slate-500 mt-2">Viết class Tailwind Utility để định hình presets cho các Components gốc.</p>
+                    <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">UI Presets</h2>
+                    <p class="text-slate-500 mt-2">Quản lý danh sách các UI Presets (như Button, Card, Badge). Có thể sử dụng lại trên Editor.</p>
                 </div>
+                <button @click="addComponentPreset()" class="px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-semibold transition border-0 cursor-pointer flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">add</span> Thêm Preset
+                </button>
             </div>
 
-            <div class="space-y-6">
-                <h3 class="text-lg font-bold text-slate-800 m-0 border-0 p-0">Buttons Presets</h3>
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-slate-50 border-b border-slate-200">
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 border-b border-slate-200">
+                        <tr>
+                            <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-1/4">Tên Preset</th>
+                            <th class="px-4 py-3 text-sm font-semibold text-slate-700">Tailwind Classes</th>
+                            <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-16 text-center">Xóa</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <template x-for="(preset, index) in formData.components" :key="index">
                             <tr>
-                                <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-1/4">Tên Preset</th>
-                                <th class="px-4 py-3 text-sm font-semibold text-slate-700">Tailwind Classes</th>
+                                <td class="px-4 py-4 align-top">
+                                    <input type="text" x-model="preset.name" class="w-full border border-slate-300 bg-slate-50 rounded p-1.5 text-sm focus:border-indigo-500 focus:bg-white outline-none font-bold text-slate-700" placeholder="e.g. Button Primary">
+                                </td>
+                                <td class="px-4 py-4">
+                                    <textarea x-model="preset.value" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono" placeholder="bg-blue-500 text-white..."></textarea>
+                                </td>
+                                <td class="px-4 py-4 text-center align-top">
+                                    <button @click="formData.components.splice(index, 1)" class="text-rose-400 hover:text-rose-600 transition bg-transparent border-0 cursor-pointer mt-2" title="Xóa Preset">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </button>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200">
-                            <tr>
-                                <td class="px-4 py-4"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold uppercase">Primary</span></td>
-                                <td class="px-4 py-4"><textarea x-model="formData.components.button.primary" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-bold uppercase">Secondary</span></td>
-                                <td class="px-4 py-4"><textarea x-model="formData.components.button.secondary" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-4"><span class="border border-slate-300 text-slate-700 px-2 py-1 rounded text-xs font-bold uppercase">Outline</span></td>
-                                <td class="px-4 py-4"><textarea x-model="formData.components.button.outline" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Cards Presets -->
-                <h3 class="text-lg font-bold text-slate-800 m-0 border-0 p-0 mt-8">Cards Presets</h3>
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-slate-50 border-b border-slate-200">
-                            <tr>
-                                <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-1/4">Tên Preset</th>
-                                <th class="px-4 py-3 text-sm font-semibold text-slate-700">Tailwind Classes</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200">
-                            <tr>
-                                <td class="px-4 py-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-bold uppercase">Default</span></td>
-                                <td class="px-4 py-4"><textarea x-model="formData.components.card.default" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-bold uppercase shadow-sm">Elevated</span></td>
-                                <td class="px-4 py-4"><textarea x-model="formData.components.card.elevated" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Inputs Presets -->
-                <h3 class="text-lg font-bold text-slate-800 m-0 border-0 p-0 mt-8">Inputs Presets</h3>
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-slate-50 border-b border-slate-200">
-                            <tr>
-                                <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-1/4">Tên Preset</th>
-                                <th class="px-4 py-3 text-sm font-semibold text-slate-700">Tailwind Classes</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200">
-                            <tr>
-                                <td class="px-4 py-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-bold uppercase">Text Input</span></td>
-                                <td class="px-4 py-4"><textarea x-model="formData.components.input.text" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-bold uppercase">Label</span></td>
-                                <td class="px-4 py-4"><textarea x-model="formData.components.input.label" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Badges Presets -->
-                <h3 class="text-lg font-bold text-slate-800 m-0 border-0 p-0 mt-8">Badges & Chips</h3>
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-slate-50 border-b border-slate-200">
-                            <tr>
-                                <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-1/4">Tên Preset</th>
-                                <th class="px-4 py-3 text-sm font-semibold text-slate-700">Tailwind Classes</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200">
-                            <tr>
-                                <td class="px-4 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded border border-green-400 text-xs font-bold uppercase">Status</span></td>
-                                <td class="px-4 py-4"><textarea x-model="formData.components.badge.status" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-4"><span class="bg-gray-100 text-gray-800 px-2 py-1 rounded border border-gray-400 text-xs font-bold uppercase">Filter</span></td>
-                                <td class="px-4 py-4"><textarea x-model="formData.components.badge.filter" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono"></textarea></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                        </template>
+                        <tr x-show="formData.components.length === 0">
+                            <td colspan="3" class="px-4 py-8 text-center text-slate-500 text-sm">
+                                Chưa có UI Preset nào. Hãy nhấn "Thêm Preset" để bắt đầu.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -338,27 +292,21 @@ function skaDesignTokensApp() {
                 borderRadius: '6px',
                 boxShadow: 'none',
                 containerWidth: '1280px',
-                transitionDuration: '150ms'
+                transitionDuration: '150ms',
+                blockGap: '1.5rem',
+                contentPadding: '1rem'
             },
-            components: {
-                button: {
-                    primary: 'bg-primary text-white hover:bg-blue-700 px-4 py-2 rounded-md font-semibold transition',
-                    secondary: 'bg-transparent border border-primary text-primary hover:bg-blue-50 px-4 py-2 rounded-md font-semibold transition',
-                    outline: 'bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-md font-semibold transition'
-                },
-                card: {
-                    default: 'bg-surface border border-gray-200 rounded-md p-4',
-                    elevated: 'bg-surface shadow-md rounded-md p-4'
-                },
-                input: {
-                    text: 'bg-surface border border-gray-200 text-gray-900 text-sm rounded-md focus:ring-primary focus:border-primary block w-full p-2.5',
-                    label: 'block mb-2 text-sm font-medium text-gray-900'
-                },
-                badge: {
-                    status: 'bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded border border-green-400',
-                    filter: 'bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded border border-gray-400 hover:bg-gray-200 cursor-pointer'
-                }
-            }
+            components: [
+                { name: 'Button Primary', value: 'bg-primary text-white hover:bg-blue-700 px-4 py-2 rounded-md font-semibold transition' },
+                { name: 'Button Secondary', value: 'bg-transparent border border-primary text-primary hover:bg-blue-50 px-4 py-2 rounded-md font-semibold transition' },
+                { name: 'Button Outline', value: 'bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-md font-semibold transition' },
+                { name: 'Card Default', value: 'bg-surface border border-gray-200 rounded-md p-4' },
+                { name: 'Card Elevated', value: 'bg-surface shadow-md rounded-md p-4' },
+                { name: 'Input Text', value: 'bg-surface border border-gray-200 text-gray-900 text-sm rounded-md focus:ring-primary focus:border-primary block w-full p-2.5' },
+                { name: 'Input Label', value: 'block mb-2 text-sm font-medium text-gray-900' },
+                { name: 'Badge Status', value: 'bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded border border-green-400' },
+                { name: 'Badge Filter', value: 'bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded border border-gray-400 hover:bg-gray-200 cursor-pointer' }
+            ]
         },
         toast: {
             show: false,
@@ -368,6 +316,39 @@ function skaDesignTokensApp() {
 
         initApp() {
             this.fetchTokens();
+        },
+
+        scrollTo(id) {
+            this.activeTab = id;
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        },
+
+        onScroll(e) {
+            const container = e.target;
+            const scrollPos = container.scrollTop;
+            
+            for (const tab of this.tabs) {
+                const el = document.getElementById(tab.id);
+                if (el) {
+                    const top = el.offsetTop - container.offsetTop;
+                    // Kích hoạt trạng thái Tab khi phần tử đến gần top (Offset 150px)
+                    if (scrollPos >= top - 150) {
+                        this.activeTab = tab.id;
+                    }
+                }
+            }
+        },
+
+        addComponentPreset() {
+            const newName = prompt('Nhập tên UI Preset mới (ví dụ: Button Primary, Hero Card...):');
+            if (!newName) return;
+            this.formData.components.push({
+                name: newName,
+                value: ''
+            });
         },
 
         openMediaUploader() {
@@ -413,12 +394,7 @@ function skaDesignTokensApp() {
                          typography: { ...this.formData.typography, ...(res.data.typography || {}) },
                          typography_scale: { ...this.formData.typography_scale, ...(res.data.typography_scale || {}) },
                          tokens: { ...this.formData.tokens, ...(res.data.tokens || {}) },
-                         components: { 
-                             button: { ...this.formData.components.button, ...(res.data.components?.button || {}) },
-                             card: { ...this.formData.components.card, ...(res.data.components?.card || {}) },
-                             input: { ...this.formData.components.input, ...(res.data.components?.input || {}) },
-                             badge: { ...this.formData.components.badge, ...(res.data.components?.badge || {}) }
-                         }
+                         components: (res.data.components && Array.isArray(res.data.components)) ? res.data.components : this.formData.components
                     };
                 }
             } catch (err) {

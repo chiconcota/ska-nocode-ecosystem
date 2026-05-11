@@ -236,8 +236,8 @@ class App_Manager {
 			// Nếu chưa có bảng trong MySQL thì tạo mới hoàn toàn
 			$db_engine->create_custom_table( 'presets', 'dashicons-art', self::SYSTEM_APP );
 			$db_engine->add_column( $table_presets, 'Name', 'short_text' );
-			$db_engine->add_column( $table_presets, 'Type', 'select', 'colors, typography, spacing, shadows' );
-			$db_engine->add_column( $table_presets, 'JSON_Content', 'long_text' );
+			$db_engine->add_column( $table_presets, 'Type', 'enum', 'token_color, token_font, token_spacing, token_radius, token_shadow, preset_typography, preset_component' );
+			$db_engine->add_column( $table_presets, 'Value', 'long_text' );
 			$changed = true;
 		}
 
@@ -256,8 +256,8 @@ class App_Manager {
 		// Phục hồi Metadata các cột nếu bị mất
 		$preset_cols = array(
 			'name' => array('label' => 'Name', 'type' => 'short_text', 'options' => ''),
-			'type' => array('label' => 'Type', 'type' => 'select', 'options' => 'colors, typography, spacing, shadows'),
-			'json_content' => array('label' => 'JSON_Content', 'type' => 'long_text', 'options' => '')
+			'type' => array('label' => 'Type', 'type' => 'enum', 'options' => 'token_color, token_font, token_spacing, token_radius, token_shadow, preset_typography, preset_component'),
+			'value' => array('label' => 'Value', 'type' => 'long_text', 'options' => '')
 		);
 		foreach ( $preset_cols as $col_slug => $col_data ) {
 			if ( ! isset( $dictionary[ $table_presets ][ $col_slug ] ) ) {

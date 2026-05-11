@@ -286,6 +286,17 @@ class Database_Engine
 			case 'select':
 				$mysql_type = 'VARCHAR(255)';
 				break;
+			case 'enum':
+				$opts = array_map('trim', explode(',', $options));
+				$safe_opts = array_map(function($val) {
+					return "'" . esc_sql($val) . "'";
+				}, array_filter($opts));
+				if (!empty($safe_opts)) {
+					$mysql_type = 'ENUM(' . implode(',', $safe_opts) . ')';
+				} else {
+					$mysql_type = 'VARCHAR(255)';
+				}
+				break;
 			case 'multi_select':
 			case 'relation':
 			case 'rollup':
@@ -379,6 +390,17 @@ class Database_Engine
 				break;
 			case 'select':
 				$mysql_type = 'VARCHAR(255)';
+				break;
+			case 'enum':
+				$opts = array_map('trim', explode(',', $options));
+				$safe_opts = array_map(function($val) {
+					return "'" . esc_sql($val) . "'";
+				}, array_filter($opts));
+				if (!empty($safe_opts)) {
+					$mysql_type = 'ENUM(' . implode(',', $safe_opts) . ')';
+				} else {
+					$mysql_type = 'VARCHAR(255)';
+				}
 				break;
 			case 'multi_select':
 			case 'relation':

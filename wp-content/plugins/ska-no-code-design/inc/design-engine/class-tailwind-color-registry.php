@@ -138,7 +138,9 @@ class Tailwind_Color_Registry {
 			'borderRadius' => '8px',
 			'boxShadow' => 'none',
 			'containerWidth' => '1280px',
-			'transitionDuration' => '150ms'
+			'transitionDuration' => '150ms',
+			'blockGap' => '1.5rem',
+			'contentPadding' => '1rem'
 		);
 
 		if ( file_exists( $cache_file ) ) {
