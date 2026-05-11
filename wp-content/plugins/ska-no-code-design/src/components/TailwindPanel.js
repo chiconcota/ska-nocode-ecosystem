@@ -55,17 +55,39 @@ export const TailwindPanel = ({ className, setClassName }) => {
     }, [className]);
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        e.stopPropagation();
+        if (e.key === 'Enter') {
             e.preventDefault();
             addClasses(inputValue);
         }
     };
 
-    const addClasses = (classesToAdd) => {
-        if (!classesToAdd.trim()) return;
+    const lookupPreset = (name) => {
+        const components = window.skaDesignTokens?.components;
+        if (!components) return null;
+        
+        const searchName = name.toLowerCase();
 
-        // Split by spaces to handle multiple pasted classes
-        const newClassesArray = classesToAdd.split(' ').filter(c => c.trim() !== '');
+        if (Array.isArray(components)) {
+            const preset = components.find(c => c.name && c.name.toLowerCase() === searchName);
+            return preset ? preset.value : null;
+        } else if (typeof components === 'object') {
+            const key = searchName.replace(/[-\s]+/g, '_');
+            return components[key] || null;
+        }
+
+        return null;
+    };
+
+    const addClasses = (classesToAdd) => {
+        if (!classesToAdd || !classesToAdd.trim()) return;
+
+        // Check if the input is a preset name
+        const presetClasses = lookupPreset(classesToAdd.trim());
+        const finalClassesString = presetClasses ? presetClasses : classesToAdd;
+
+        // Split by spaces or commas to handle multiple pasted classes
+        const newClassesArray = finalClassesString.split(/[\s,]+/).filter(c => c.trim() !== '');
 
         // Get current classes array
         let currentClassesArray = className ? className.split(' ').filter(c => c.trim() !== '') : [];
@@ -81,6 +103,22 @@ export const TailwindPanel = ({ className, setClassName }) => {
         const combined = currentClassesArray.join(' ');
         setClassName(combined, '');
         setInputValue('');
+    };
+
+    const handlePaste = (e) => {
+        // TextControl natively handles basic pastes but we want to intercept if it's a preset
+        let pastedText = '';
+        if (e.clipboardData && e.clipboardData.getData) {
+            pastedText = e.clipboardData.getData('text/plain') || e.clipboardData.getData('text');
+        } else if (window.clipboardData && window.clipboardData.getData) {
+            pastedText = window.clipboardData.getData('Text');
+        }
+
+        if (pastedText && lookupPreset(pastedText.trim())) {
+            e.preventDefault();
+            e.stopPropagation();
+            addClasses(pastedText);
+        }
     };
 
     const removeClass = (classToRemove) => {
@@ -162,6 +200,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
                         value={inputValue}
                         onChange={(val) => setInputValue(val)}
                         onKeyDown={handleKeyDown}
+                        onPaste={handlePaste}
                         placeholder={__('Add classes or utility...', 'ska-builder-core')}
                         style={{ flexGrow: 1 }}
                     />
@@ -188,31 +227,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
                 </div>
             </div>
 
-            {(() => {
-                const typographyScale = window.skaDesignTokens?.typography_scale || {};
-                if (Object.keys(typographyScale).length > 0) {
-                    return (
-                        <div style={{ marginBottom: '16px', background: '#f8fafc', padding: '12px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                            <h4 style={{ margin: '0 0 8px 0', fontSize: '12px', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>{__('Typography Presets', 'ska-builder-core')}</h4>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                                {Object.entries(typographyScale).map(([key, classes]) => (
-                                    <Button 
-                                        key={key}
-                                        isSecondary 
-                                        isSmall 
-                                        style={{ textTransform: 'uppercase', fontSize: '11px', background: 'white' }}
-                                        onClick={() => addClasses(classes)}
-                                        title={classes}
-                                    >
-                                        {key}
-                                    </Button>
-                                ))}
-                            </div>
-                        </div>
-                    );
-                }
-                return null;
-            })()}
+
 
             <div className="ska-tailwind-categories">
                 <CategorySection title="Ska Spacing" items={categories.spacing} />

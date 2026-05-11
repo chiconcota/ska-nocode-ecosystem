@@ -43,6 +43,7 @@ function ska_no_code_design_init() {
 
     // Design Tokens (Brand & Theme Options)
     require_once SKA_DESIGN_PATH . 'inc/design-engine/class-design-tokens-api.php';
+    require_once SKA_DESIGN_PATH . 'inc/design-engine/class-design-tokens-compiler.php';
     require_once SKA_DESIGN_PATH . 'inc/design-engine/class-design-tokens-ui.php';
     require_once SKA_DESIGN_PATH . 'inc/design-engine/class-organisms-api.php';
     require_once SKA_DESIGN_PATH . 'inc/design-engine/class-organism-editor.php';
@@ -53,6 +54,9 @@ function ska_no_code_design_init() {
 
     if ( class_exists( '\Ska\Design\Api\Design_Tokens_API' ) ) {
         \Ska\Design\Api\Design_Tokens_API::get_instance();
+    }
+    if ( class_exists( '\Ska\Design\Api\Design_Tokens_Compiler' ) ) {
+        \Ska\Design\Api\Design_Tokens_Compiler::get_instance();
     }
     if ( class_exists( '\Ska\Design\Api\Organisms_API' ) ) {
         \Ska\Design\Api\Organisms_API::get_instance();
@@ -79,3 +83,34 @@ function ska_no_code_design_init() {
 }
 
 add_action( 'plugins_loaded', 'ska_no_code_design_init' );
+
+// Tạm thời migrate Database Sys Presets
+add_action('admin_init', function() {
+    if ( ! get_option('ska_temp_fix_sys_presets_db_3', false) ) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ska_data_sys_presets';
+        
+        $wpdb->query("ALTER TABLE {$table} ADD COLUMN type VARCHAR(255) DEFAULT ''");
+        $wpdb->query("ALTER TABLE {$table} ADD COLUMN value LONGTEXT");
+        
+        $dict = get_option('ska_data_dictionary', []);
+        if (isset($dict[$table])) {
+            unset($dict[$table]['json_content']);
+            $dict[$table]['type'] = array(
+                'label' => 'Type', 
+                'type' => 'enum', 
+                'options' => 'token_color, token_font, token_spacing, token_radius, token_shadow, preset_typography, preset_component'
+            );
+            $dict[$table]['value'] = array(
+                'label' => 'Value', 
+                'type' => 'long_text', 
+                'options' => ''
+            );
+            update_option('ska_data_dictionary', $dict);
+        }
+        
+        $wpdb->query("ALTER TABLE {$table} DROP COLUMN json_content");
+        
+        update_option('ska_temp_fix_sys_presets_db_3', true);
+    }
+});

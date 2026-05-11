@@ -8,6 +8,17 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-05-12 - 🟢 Hoàn tất Phase 3 (Cải tiến Tailwind Panel UX)
+- **Decision (Pivot về Legacy Text Input):** Loại bỏ hoàn toàn `ClassChipInput` do gây đứt gãy trải nghiệm người dùng (UX) khi nhập liệu và xung đột phím tắt (space) với Gutenberg. Phục hồi giao diện nhập liệu "Text-based" truyền thống cho Tailwind Panel.
+- **Decision (Smart Paste & Preset Lookup):** Tích hợp trực tiếp bộ não phân giải Preset (Smart Paste Lookup) vào input gốc. Người dùng có thể copy/paste tên Preset (VD: "Button Primary") và hệ thống tự động phân giải thành class tiện ích nhờ kết nối với `window.skaDesignTokens`.
+- **Decision (Gutenberg Key Propagation):** Bổ sung `e.stopPropagation()` vào hàm xử lý phím để chống Gutenberg cướp phím Space, cho phép người dùng gõ class chuỗi dài liên tiếp bằng dấu cách tự do. Bỏ phần Typography Presets để giao diện gọn hơn.
+
+---
+## 2026-05-11 - 🟡 Khởi động Phase 3 & Hoàn tất Đồng bộ Design Tokens
+- **Decision (Phase 3 Visual Tailwind Browser):** Thiết lập Implementation Plan xây dựng `ClassChipInput` và `StylePopoverDrawer` thay thế giao diện nhập class Tailwind cơ bản bằng ô text. Chốt phương án ưu tiên hiệu năng: không dùng mảng Fuse.js phức tạp hay tìm kiếm Server-side, thay vào đó xây dựng Vanilla JS Filter UI Array trực tiếp ở Frontend của Inspector. 
+- **Decision (Phase 2 CamelCase Sync):** Xử lý dứt điểm mâu thuẫn Key Name (snake_case vs camelCase) giữa Frontend (Alpine.js State) và Backend (PHP Data Array). Toàn bộ Database của Theme Options và Tailwind JIT Compiler được nâng cấp để chấp nhận chuẩn `camelCase`, ngăn chặn rủi ro rớt dữ liệu (ví dụ: `containerWidth`). Hoàn tất 100% Phase 2 Design Tokens.
+
+---
 ## 2026-05-11 - 🔴 Pivot Tối Thượng: Đập đi xây lại Design Tokens & Theme Options (3 Lớp)
 - **Decision (Khai tử Theme Options Patching):** Từ bỏ cách tiếp cận "chắp vá" hiện tại (cố nhét Theme Options vào Ska System Dashboard và hardcode chuỗi Tailwind class dài thòng vào UI). Cách làm này phá vỡ SSOT (Single Source of Truth) và đi ngược lại triết lý Design System chuyên nghiệp (ví dụ như hệ thống Metric Flow).
 - **Decision (Kiến Trúc 3 Lớp Design Engine):** Chốt phương án tái cấu trúc toàn diện theo 3 lớp:
