@@ -54,11 +54,11 @@
 - [ ] **App Dashboards / Sub-Admin Portals:** Tạo Custom Post Type (`ska_portal`) giúp User dùng quyền Editor để tự thả các giao diện trang quản lý Khóa Học, Thành Viên ra Frontend Portal tách khỏi WordPress Admin xám xịt. *(Lưu ý Kiến trúc: Sử dụng kỹ thuật **Shadow CPT (Post Type Ảo)** kết hợp **Data Injection** qua Iframe để mang Full sức mạnh Gutenberg Editor ra Frontend Portal. Admin nhập liệu thoải mái, data vẫn lưu về Flat Table, không làm rác wp_posts).*
 - [ ] **Auto-Generated CRUD Portal:** Nâng cấp cho khối "App Portal" tích hợp với `Theme Builder`. Cho phép người dùng làm App Portal tự sinh Lưới danh sách.
 - [ ] **Role-Based Access Control (RBAC) cho Tầng Hiển thị:** Xử lý hệ thống phân quyền nâng cao (RBAC) để quyết định hiển thị Khối/Template cho từng nhóm đối tượng.
-- [ ] **Ska System Framework (Dashboard):** 
+- [x] **Ska System Framework (Dashboard):** 
   - Hoàn thiện luồng API Request thật cho thẻ cấu hình Ska AI Architect.
   - Viết Hook cho 2 nút Danger Zone (Clear Context, Flush JIT Cache) ở góc của System Dashboard.
   - 🛑 TẠM DỪNG: Tích hợp Tab "Theme Options/Design Tokens" map thẳng vào Smart Object `ska_system` (Đã gỡ bỏ cách tiếp cận cũ).
-- [ ] 🌟 **Kiến trúc Design Engine Mới (3 Lớp):** (Mục tiêu của phiên tiếp theo)
+- [x] 🌟 **Kiến trúc Design Engine Mới (3 Lớp):** (Đã hoàn thành ở Phase 3)
   - Lớp 1: Tokens Registry (Nhận file design.md, gen CSS Variables).
   - Lớp 2: Semantic Base Styling (Gen css global cho thẻ HTML H1, H2, p).
   - Lớp 3: Visual Tailwind Browser (Tạo UI trực quan chọn biến thay vì input text).
