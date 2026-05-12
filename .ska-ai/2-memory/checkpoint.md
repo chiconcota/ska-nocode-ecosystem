@@ -1,17 +1,20 @@
-# 📍 SKA BUILDER CHECKPOINT BÀN GIAO
+# 🛑 SKA BUILDER CHECKPOINT BÀN GIAO
 
 ## 1. Trạng thái hiện tại
-- Đã hoàn tất sửa lỗi (Token Merge Bug `snake_case` sang `camelCase`) để đảm bảo Global Content Padding lưu từ Database áp dụng chính xác xuống `--ska-sys-content-padding` ở Frontend.
-- Đã ROLLBACK toàn bộ giao diện `StylePopoverDrawer` về trạng thái Placeholder (🟡 TODO) do AI code trước khi có bản thiết kế UI/UX chính thức. Bảo vệ 100% trải nghiệm gõ Text nhanh/nhẹ nguyên bản.
+- Đã hoàn tất **Phase 3: Visual Tailwind Browser & JIT Sync** (Lớp 3 của Design Engine).
+- Đã đưa hệ thống Hybrid UX vào hoạt động ổn định (Sử dụng Legacy Text Input làm SSOT, StylePopoverDrawer làm tiện ích hỗ trợ nhanh).
+- Đã Archive toàn bộ các Project Manager hoàn tất (Theme Options, Design System, Logic/Link Engine cũ) vào thư mục `archive/` để giữ file hệ thống luôn Zero-Trash.
 
 ## 2. Nhiệm vụ cho phiên tiếp theo (Next Session)
-**Chủ đề:** Triển khai Visual Tailwind Browser (Phase 2 & 3).
-1. BẮT BUỘC: Đợi người dùng cung cấp thiết kế UI/UX hoặc chỉ thị rõ ràng trước khi code giao diện Popover/Drawer.
-2. Thiết kế giao diện hiển thị các nhóm Token (Colors, Typography, Spacing, Presets).
-3. Gắn Data Binding để click chọn class thì tự động `append` (cộng nối) vào ô Text Input, không cướp quyền gõ tay của người dùng.
+**Chủ đề:** Triển khai Dark Mode Thượng tầng (Phase 4)
+1. Kích hoạt cấu hình `darkMode: 'class'` trong Ska JIT Compiler.
+2. Xây dựng Block/Component "Dark Mode Switcher" (Nút bật/tắt Theme) sử dụng Alpine.js.
+3. Lưu trạng thái Dark/Light mode vào `localStorage` hoặc Alpine Global State.
+4. Gắn kết logic tự động thêm class `dark` vào thẻ `<html>`.
+5. Đảm bảo Dark Mode tương thích mượt mà với bộ Design Tokens (skaDesignTokens.colors) vừa mới xây dựng.
 
-## 3. Ngữ cảnh tệp tin đang mở (Đã lưu)
-- `project_manager_design_system.md`
+## 3. Ngữ cảnh tập tin đang mở (Đã lưu)
+- `project_manager_phase4.md`
 - `decision-log.md`
 - `system_map.md`
 - `design-engine.md`

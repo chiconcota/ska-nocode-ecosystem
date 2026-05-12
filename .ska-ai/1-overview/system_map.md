@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v1.0.0)
-@status: STABLE PHASE 2 | IN-PROGRESS PHASE 3 | @last_update: 2026-05-12
+@status: STABLE PHASE 3 | @last_update: 2026-05-12
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core (Host) + PHP 8.2+
@@ -46,7 +46,7 @@ ska-ecosystem/ (mapped to app/public/)
 
 ## 5. SYSTEM CAPABILITIES (CHECKPOINTS - PHASES 1-3)
 Dù chi tiết quyết định đã được lưu vào `archive/decision-log-phase-1-2.md`, đây là bản đồ năng lực (trạng thái) hệ thống đang sở hữu trước khi vào Phase 4:
-- **Ska Design Engine (JIT Tailwind v4 & Alpine.js):** Gói lõi xử lý Giao diện bao gồm Biên dịch CSS thời gian thực tại Local (JIT) và Quản lý State/Interaction trên Frontend (Ska Molecule/Alpine.js). Đã xử lý triệt để CSS Specificity Parity, Flat DOM, và chuyển hóa HTML sang Tailwind thông minh (`Ska Bridge`). Hỗ trợ mượt mà Pseudo-classes, Grid/Flex layout, Animation phức tạp.
+- **Ska Design Engine (JIT Tailwind v4 & Alpine.js):** Lõi xử lý Giao diện bao gồm Biên dịch CSS thời gian thực tại Local (JIT). Triển khai thành công **Visual Tailwind Browser** (Hybrid UX), tích hợp sâu Theme Colors (từ Tokens) với cơ chế Fallback an toàn (Standard Colors). Hỗ trợ inject Custom Class tùy ý và Overwrite UI Presets chống rác code.
 - **Ska Data Pro (Flat Tables First):** Xóa xổ hoàn toàn rác EAV (`wp_postmeta`). Hệ thống DB quản trị bởi Schema Manager độc lập, có sức mạnh xử lý Rollup (Lookup Virtualization), Heuristic Filters, Auto-Prefix, và xuất nhập dưới dạng **Smart Object Blueprint (JSON)**.
 - **Ska Logic Engine (The Trinity):** Kiến trúc Event-Driven kết nối Vỏ (UI), Nhân (Logic), Kho (Data). Đã trang bị ngôn ngữ biểu thức **SkaFX DSL** (AST Evaluator) phục vụ Universal Dynamic Binding (Hiển thị có điều kiện & Inner Text nội suy) ngay trong thiết kế kéo thả. Mọi thao tác form đều tuân thủ nguyên lý Nonce chặt chẽ và Data Healing thông minh.
 - **Skapine Engine (Ska Molecule):** Nhúng sâu thư viện Alpine.js directives (`x-data`, `x-bind`, event listeners) cùng với Tailwind JIT lên Gutenberg Editor, đảm bảo live-preview mọi thao tác tương tác giao diện.

@@ -264,7 +264,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
                         }}
                         onPointerDown={(e) => e.stopPropagation()}
                     >
-                        <StylePopoverDrawer onSelectPreset={addClasses} />
+                        <StylePopoverDrawer className={className} setClassName={setClassName} />
                         
                         <span
                             role="button"

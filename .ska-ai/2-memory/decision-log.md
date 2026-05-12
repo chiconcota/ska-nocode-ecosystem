@@ -8,12 +8,13 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
-## 2026-05-12 - 🟡 Thử nghiệm Tailwind Panel UX (Phase 3 in progress)
-- **Decision (Pivot về Legacy Text Input):** Khôi phục tạm thời giao diện nhập liệu "Text-based" truyền thống cho Tailwind Panel để tránh lỗi đứt gãy trải nghiệm người dùng (UX) khi nhập liệu và xung đột phím tắt (space) với Gutenberg.
-- **Decision (Smart Paste & Preset Lookup):** Tích hợp trực tiếp bộ não phân giải Preset (Smart Paste Lookup) vào input gốc. Người dùng có thể copy/paste tên Preset (VD: "Button Primary") và hệ thống tự động phân giải thành class tiện ích nhờ kết nối với `window.skaDesignTokens`.
-- **Decision (Gutenberg Key Propagation):** Bổ sung `e.stopPropagation()` vào hàm xử lý phím để chống Gutenberg cướp phím Space, cho phép người dùng gõ class chuỗi dài liên tiếp bằng dấu cách tự do. Bỏ phần Typography Presets để giao diện gọn hơn.
-- **Decision (Hybrid UX & Rollback):** Đã thử nghiệm cấu trúc Hybrid UX (Giao diện lai) qua `ClassChipInput` nhưng gây gãy UX gõ. Quyết định rollback giao diện `StylePopoverDrawer` về trạng thái placeholder, và chuyển trạng thái Phase 2 & Phase 3 về lại TODO (🟡). Hệ thống sẽ đợi bản thiết kế UI/UX chính thức trước khi triển khai Visual Browser, đồng thời bảo vệ 100% trải nghiệm gõ Text nhanh/nhẹ gốc của Editor.
-- **Decision (Token Merge Fix):** Sửa lỗi `wp_parse_args` trong `class-tailwind-color-registry.php` không ghi đè được các giá trị Padding/Block Gap từ Database do khác biệt chuẩn format (`snake_case` từ Cache JSON và `camelCase` của System Defaults). Vá lỗi bằng logic tự chuyển đổi key trước khi merge, giữ cho CSS sinh ra (như `--ska-sys-content-padding`) luôn khớp với giá trị người dùng lưu.
+## 2026-05-12 - 🟢 Hoàn tất Visual Tailwind Browser (Phase 3) & Hybrid UX
+- **Decision (Visual Browser Integration):** Tái khởi động Phase 3, chính thức triển khai `StylePopoverDrawer` đè lên giao diện `TailwindPanel`. Xây dựng cấu trúc UI trực quan phân loại Tokens (Theme Colors, Typography, v.v) với thanh search Vanilla JS Filter Array hiệu năng cao.
+- **Decision (Dynamic Theme Integration):** Móc nối `skaDesignTokens.colors` (dữ liệu Data Pro) vào Visual Browser, tự động sinh các Utility Colors (`bg-primary`, `text-primary`) kèm theo giao diện Color Swatch (vòng tròn màu) chuyên nghiệp để tăng trải nghiệm thiết kế.
+- **Decision (Fallback Color System):** Nếu người dùng không cấu hình Theme Options (`skaDesignTokens.colors` rỗng), hệ thống tự kích hoạt Fallback sang danh sách **Standard Colors** cơ bản của Tailwind (black, white, gray, red, blue...). Bảo vệ triệt để tính năng đổ màu cho người dùng độc lập.
+- **Decision (Custom Arbitrary Class Injection):** Xóa bỏ điểm "break flow" trong thiết kế bằng cách tích hợp trực tiếp khả năng thêm Custom/Arbitrary Classes (Ví dụ: `h-48`, `w-[500px]`) ngay tại ô Search của Visual Browser, hỗ trợ chia tách nhiều class bằng Space và xử lý phím Enter native.
+- **Decision (Overwrite vs Append Logic):** Chốt luồng dữ liệu 1 chiều từ Drawer về Input gốc. Quy tắc: **Append (Cộng dồn/Toggle)** đối với các Utility Classes thông thường, và **Overwrite (Ghi đè/Replace All)** đối với UI Presets (ví dụ Button Preset) để tránh rác class khi thao tác lặp lại. Tích hợp Snapshot state (Undo/Back) khôi phục UI block nếu user đổi ý muốn thoát.
+
 
 ---
 ## 2026-05-11 - 🟡 Khởi động Phase 3 & Hoàn tất Đồng bộ Design Tokens
