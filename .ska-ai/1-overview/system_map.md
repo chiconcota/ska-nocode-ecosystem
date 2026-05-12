@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v1.0.0)
-@status: STABLE PHASE 3 DONE | @last_update: 2026-05-04
+@status: STABLE PHASE 2 | IN-PROGRESS PHASE 3 | @last_update: 2026-05-12
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core (Host) + PHP 8.2+
@@ -62,7 +62,7 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 ## 7. RECENT LOGS (LATEST)
 > *Các nhật ký từ Phase 1 và 2 đã được lưu trữ trong `.ska-ai/2-memory/archive/`. Chỉ giữ lại các cập nhật cốt lõi gần đây (Phase 3 -> Phase 4).*
 
-- **2026-05-12 - 🟢 Cải tiến Tailwind Panel UX (Visual Tailwind Browser):** Phục hồi giao diện nhập liệu "Text-based" truyền thống cho Tailwind Panel, loại bỏ hoàn toàn `ClassChipInput` để tránh lỗi đứt gãy UX do Gutenberg chặn phím tắt. Tích hợp trực tiếp bộ não phân giải Preset (Smart Paste Lookup) vào input gốc. Bổ sung `e.stopPropagation()` để chống Gutenberg cướp phím Space, cho phép người dùng gõ class chuỗi dài liên tục bằng dấu cách. Loại bỏ phần "Typography Presets" theo yêu cầu để giao diện gọn gàng hơn. Hoàn tất Phase 3.
+- **2026-05-12 - 🟡 Quyết định Kiến trúc "Hybrid UX" và Rollback Visual Tailwind Browser:** Khai tử kế hoạch dùng `ClassChipInput` thay thế ô nhập text cũ do làm đứt gãy trải nghiệm gõ phím nhanh của power user. Đã thử nghiệm cấu trúc Hybrid UX qua `StylePopoverDrawer` nhưng quyết định rollback về trạng thái placeholder và chờ bản thiết kế UI/UX chính thức. Chuyển trạng thái Phase 2 & 3 về TODO (🟡). Đồng thời, đã sửa lỗi token merge (snake_case vs camelCase) để đảm bảo Padding/Block Gap lưu từ DB được áp dụng chính xác xuống `--ska-sys-content-padding` ở Frontend.
 - **2026-05-11 - 🟡 Khởi động Phase 3 (Visual Tailwind Browser):** Thiết lập Implementation Plan xây dựng `<ClassChipInput />` và `<StylePopoverDrawer />` cho Gutenberg Inspector, chuẩn bị giao diện override trực quan bằng Vanilla JS để tối ưu hiệu năng Frontend mà không phụ thuộc Fuse.js.
 - **2026-05-11 - 🟢 Hoàn tất Đồng bộ Design Tokens (Phase 2):** Cập nhật toàn bộ hệ thống API (`class-design-tokens-api.php`), Tailwind Compiler và giao diện Dashboard (`design-tokens-app.php`) để sử dụng chuẩn `camelCase` cho Token keys, đồng nhất với cấu trúc Frontend Alpine.js. Sửa dứt điểm lỗi mất dữ liệu containerWidth và lỗi khởi tạo UI Component Presets. Đóng hồ sơ Phase 2 (Design Tokens).
 - **2026-05-10 - 🟢 Cập Nhật Cơ Chế JIT CSS & Zero CDN Policy:** Phê duyệt bản thiết kế nâng cấp bộ `Style_Manager` và `class-core.php`. Quét toàn bộ các bài viết `$wp_query->posts` trên trang chủ và đệ quy vào trong `ska-builder/loop` để thu thập 100% class Tailwind. Chốt phương án loại bỏ hoàn toàn Tailwind CDN fallback trên Frontend để đạt tối ưu Core Web Vitals.

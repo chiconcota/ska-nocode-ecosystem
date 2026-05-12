@@ -147,7 +147,13 @@ class Tailwind_Color_Registry {
 			$json_data = file_get_contents( $cache_file );
 			$parsed = json_decode( $json_data, true );
 			if ( isset( $parsed['tokens'] ) && is_array( $parsed['tokens'] ) ) {
-				$sys_tokens = wp_parse_args( $parsed['tokens'], $sys_tokens );
+				// Convert snake_case keys from tokens.json to camelCase to match defaults
+				$camel_tokens = array();
+				foreach ( $parsed['tokens'] as $key => $val ) {
+					$camel_key = lcfirst( str_replace( ' ', '', ucwords( str_replace( array( '_', '-' ), ' ', $key ) ) ) );
+					$camel_tokens[ $camel_key ] = $val;
+				}
+				$sys_tokens = wp_parse_args( $camel_tokens, $sys_tokens );
 			}
 		}
 
