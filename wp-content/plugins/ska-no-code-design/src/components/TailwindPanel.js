@@ -1,10 +1,16 @@
-import { PanelBody, TextControl, Button, Icon, TextareaControl } from '@wordpress/components';
+import { PanelBody, TextControl, Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
+import apiFetch from '@wordpress/api-fetch';
 import { splitTailwindClasses } from '../utils/tailwind-utils.js';
+import { StylePopoverDrawer } from './StylePopoverDrawer';
 
 export const TailwindPanel = ({ className, setClassName }) => {
     const [inputValue, setInputValue] = useState('');
+    const [isSavingPreset, setIsSavingPreset] = useState(false);
+    const [presetName, setPresetName] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveError, setSaveError] = useState('');
     const [categories, setCategories] = useState({
         spacing: [],
         typography: [],
@@ -65,7 +71,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
     const lookupPreset = (name) => {
         const components = window.skaDesignTokens?.components;
         if (!components) return null;
-        
+
         const searchName = name.toLowerCase();
 
         if (Array.isArray(components)) {
@@ -129,6 +135,80 @@ export const TailwindPanel = ({ className, setClassName }) => {
         setClassName(combined, '');
     };
 
+    const copyAll = () => {
+        if (!className) return;
+        navigator.clipboard.writeText(className).then(() => {
+            alert(__('Classes copied to clipboard!', 'ska-builder-core'));
+        });
+    };
+
+    const handleSavePreset = async () => {
+        if (!presetName.trim() || !className) return;
+        
+        setIsSaving(true);
+        setSaveError('');
+
+        const newPreset = {
+            name: presetName.trim(),
+            value: className
+        };
+
+        try {
+            // Lấy dữ liệu mới nhất từ database để tránh ghi đè làm mất token cũ
+            const getRes = await apiFetch({
+                path: '/ska-design/v1/tokens',
+                method: 'GET'
+            });
+
+            let currentTokens = {};
+            if (getRes && getRes.success && getRes.data) {
+                currentTokens = getRes.data;
+            } else {
+                currentTokens = window.skaDesignTokens || {};
+            }
+
+            let currentComponents = currentTokens.components || [];
+            
+            // Ensure currentComponents is an array
+            if (!Array.isArray(currentComponents)) {
+                currentComponents = Object.values(currentComponents);
+            }
+            
+            // Prevent duplicate preset names
+            if (currentComponents.some(c => c.name && c.name.toLowerCase() === newPreset.name.toLowerCase())) {
+                setSaveError(__('Tên preset này đã tồn tại. Vui lòng chọn tên khác.', 'ska-builder-core'));
+                setIsSaving(false);
+                return;
+            }
+
+            const updatedData = {
+                ...currentTokens,
+                components: [...currentComponents, newPreset]
+            };
+
+            const postRes = await apiFetch({
+                path: '/ska-design/v1/tokens',
+                method: 'POST',
+                data: updatedData
+            });
+            
+            if (postRes && postRes.success) {
+                window.skaDesignTokens = updatedData;
+                setIsSavingPreset(false);
+                setPresetName('');
+                setSaveError('');
+                alert(__('Lưu Preset thành công!', 'ska-builder-core'));
+            } else {
+                setSaveError(postRes?.message || __('Lỗi không lưu được Preset.', 'ska-builder-core'));
+            }
+        } catch (err) {
+            console.error(err);
+            setSaveError(__('Lỗi mạng khi lưu Preset.', 'ska-builder-core'));
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const Tag = ({ value }) => (
         <span style={{
             display: 'inline-flex',
@@ -172,29 +252,69 @@ export const TailwindPanel = ({ className, setClassName }) => {
     return (
         <PanelBody
             title={(
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    {__('Ska Tailwind', 'ska-builder-core')}
-                    {hasClasses && (
-                        <span 
-                            className="material-symbols-outlined" 
-                            title={__('Tailwind Active', 'ska-builder-core')}
-                            style={{ 
-                                fontSize: '14px', 
-                                color: '#10b981', 
-                                textShadow: '0 0 5px rgba(16, 185, 129, 0.4)',
-                                lineHeight: '1',
-                                fontFamily: 'Material Symbols Outlined'
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {__('Ska Tailwind', 'ska-builder-core')}
+                    </div>
+                    <div 
+                        style={{ display: 'flex', gap: '4px', marginRight: '8px' }}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }}
+                        onPointerDown={(e) => e.stopPropagation()}
+                    >
+                        <StylePopoverDrawer onSelectPreset={addClasses} />
+                        
+                        <span
+                            role="button"
+                            onClick={copyAll}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '28px',
+                                height: '28px',
+                                border: '1px solid #e2e8f0',
+                                borderRadius: '2px',
+                                cursor: hasClasses ? 'pointer' : 'not-allowed',
+                                backgroundColor: '#fff',
+                                color: hasClasses ? '#475569' : '#cbd5e1'
                             }}
+                            title={__('Copy Classes', 'ska-builder-core')}
                         >
-                            auto_awesome
+                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>content_copy</span>
                         </span>
-                    )}
+
+                        <span
+                            role="button"
+                            onClick={() => {
+                                if (hasClasses) setIsSavingPreset(true);
+                            }}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '28px',
+                                height: '28px',
+                                border: '1px solid #e2e8f0',
+                                borderRadius: '2px',
+                                cursor: hasClasses ? 'pointer' : 'not-allowed',
+                                backgroundColor: '#fff',
+                                color: hasClasses ? '#475569' : '#cbd5e1'
+                            }}
+                            title={__('Save Preset', 'ska-builder-core')}
+                        >
+                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>save</span>
+                        </span>
+                    </div>
                 </div>
             )}
             initialOpen={true}
             style={{ borderLeft: 'none' }}
         >
             <div style={{ marginBottom: '16px' }}>
+
                 <div style={{ display: 'flex', gap: '8px' }}>
                     <TextControl
                         value={inputValue}
@@ -244,6 +364,53 @@ export const TailwindPanel = ({ className, setClassName }) => {
                 )}
             </div>
 
+            {isSavingPreset && (
+                <Modal
+                    title={__('Lưu UI Preset mới', 'ska-builder-core')}
+                    onRequestClose={() => {
+                        setIsSavingPreset(false);
+                        setSaveError('');
+                        setPresetName('');
+                    }}
+                    style={{ width: '400px' }}
+                >
+                    <div style={{ marginBottom: '16px' }}>
+                        <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '12px' }}>
+                            {__('Preset này sẽ gom các class hiện tại lại và bạn có thể tái sử dụng dễ dàng sau này. Hãy đặt tên dễ nhớ (vd: Button Primary).', 'ska-builder-core')}
+                        </p>
+                        
+                        {saveError && (
+                            <div style={{ padding: '8px 12px', backgroundColor: '#fef2f2', color: '#ef4444', border: '1px solid #fca5a5', borderRadius: '4px', marginBottom: '12px', fontSize: '13px' }}>
+                                {saveError}
+                            </div>
+                        )}
+
+                        <TextControl
+                            label={__('Tên Preset', 'ska-builder-core')}
+                            value={presetName}
+                            onChange={(val) => {
+                                setPresetName(val);
+                                setSaveError('');
+                            }}
+                            placeholder="e.g. Hero Button, Card Shadow..."
+                            disabled={isSaving}
+                        />
+
+                        <div style={{ marginTop: '12px', padding: '12px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
+                            <span style={{ fontSize: '12px', fontWeight: '500', color: '#64748b', display: 'block', marginBottom: '4px' }}>Classes included:</span>
+                            <code style={{ fontSize: '12px', color: '#0f172a', wordBreak: 'break-all' }}>{className}</code>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                        <Button isSecondary onClick={() => setIsSavingPreset(false)} disabled={isSaving}>
+                            {__('Hủy', 'ska-builder-core')}
+                        </Button>
+                        <Button isPrimary onClick={handleSavePreset} disabled={!presetName.trim() || isSaving}>
+                            {isSaving ? __('Đang lưu...', 'ska-builder-core') : __('Lưu Preset', 'ska-builder-core')}
+                        </Button>
+                    </div>
+                </Modal>
+            )}
 
         </PanelBody>
     );

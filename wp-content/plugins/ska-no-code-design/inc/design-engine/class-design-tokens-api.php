@@ -168,14 +168,23 @@ class Design_Tokens_API {
             // Xử lý section 'tokens'
             if ( isset( $body['tokens'] ) && is_array( $body['tokens'] ) ) {
                 foreach ( $body['tokens'] as $key => $val ) {
-                    $type = isset( $token_type_map[$key] ) ? $token_type_map[$key] : 'token_spacing';
+                    if ( ! isset( $token_type_map[$key] ) ) {
+                        continue; // Chỉ lưu các token hợp lệ để tránh rác/trùng lặp (vd: blockgap vs blockGap)
+                    }
+
+                    $type = $token_type_map[$key];
                     $name = ucwords( preg_replace( '/([a-z])([A-Z])/', '$1 $2', $key ) ); // Convert camelCase to Space Case
+                    
+                    // Fix: Chuẩn hóa giá trị, loại bỏ khoảng trắng thừa giữa số và đơn vị (vd: '0 px' -> '0px')
+                    $safe_val = is_string($val) ? trim($val) : wp_json_encode($val);
+                    $safe_val = preg_replace('/^([\d\.]+)\s+(px|rem|em|%|vh|vw|ms|s)$/i', '$1$2', $safe_val);
+
                     $wpdb->insert(
                         $table_name,
                         [
                             'name' => $name,
                             'type' => $type,
-                            'value' => is_string($val) ? $val : wp_json_encode($val)
+                            'value' => $safe_val
                         ],
                         [ '%s', '%s', '%s' ]
                     );

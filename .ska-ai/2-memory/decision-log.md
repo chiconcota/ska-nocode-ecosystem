@@ -8,10 +8,12 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
-## 2026-05-12 - 🟢 Hoàn tất Phase 3 (Cải tiến Tailwind Panel UX)
-- **Decision (Pivot về Legacy Text Input):** Loại bỏ hoàn toàn `ClassChipInput` do gây đứt gãy trải nghiệm người dùng (UX) khi nhập liệu và xung đột phím tắt (space) với Gutenberg. Phục hồi giao diện nhập liệu "Text-based" truyền thống cho Tailwind Panel.
+## 2026-05-12 - 🟡 Thử nghiệm Tailwind Panel UX (Phase 3 in progress)
+- **Decision (Pivot về Legacy Text Input):** Khôi phục tạm thời giao diện nhập liệu "Text-based" truyền thống cho Tailwind Panel để tránh lỗi đứt gãy trải nghiệm người dùng (UX) khi nhập liệu và xung đột phím tắt (space) với Gutenberg.
 - **Decision (Smart Paste & Preset Lookup):** Tích hợp trực tiếp bộ não phân giải Preset (Smart Paste Lookup) vào input gốc. Người dùng có thể copy/paste tên Preset (VD: "Button Primary") và hệ thống tự động phân giải thành class tiện ích nhờ kết nối với `window.skaDesignTokens`.
 - **Decision (Gutenberg Key Propagation):** Bổ sung `e.stopPropagation()` vào hàm xử lý phím để chống Gutenberg cướp phím Space, cho phép người dùng gõ class chuỗi dài liên tiếp bằng dấu cách tự do. Bỏ phần Typography Presets để giao diện gọn hơn.
+- **Decision (Hybrid UX & Rollback):** Đã thử nghiệm cấu trúc Hybrid UX (Giao diện lai) qua `ClassChipInput` nhưng gây gãy UX gõ. Quyết định rollback giao diện `StylePopoverDrawer` về trạng thái placeholder, và chuyển trạng thái Phase 2 & Phase 3 về lại TODO (🟡). Hệ thống sẽ đợi bản thiết kế UI/UX chính thức trước khi triển khai Visual Browser, đồng thời bảo vệ 100% trải nghiệm gõ Text nhanh/nhẹ gốc của Editor.
+- **Decision (Token Merge Fix):** Sửa lỗi `wp_parse_args` trong `class-tailwind-color-registry.php` không ghi đè được các giá trị Padding/Block Gap từ Database do khác biệt chuẩn format (`snake_case` từ Cache JSON và `camelCase` của System Defaults). Vá lỗi bằng logic tự chuyển đổi key trước khi merge, giữ cho CSS sinh ra (như `--ska-sys-content-padding`) luôn khớp với giá trị người dùng lưu.
 
 ---
 ## 2026-05-11 - 🟡 Khởi động Phase 3 & Hoàn tất Đồng bộ Design Tokens
