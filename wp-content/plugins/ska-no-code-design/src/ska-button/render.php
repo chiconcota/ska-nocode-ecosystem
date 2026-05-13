@@ -43,6 +43,8 @@ if ( $actionType === 'logic_api' ) {
         $user_tailwindClasses .= ' ska-action-' . sanitize_html_class( $workflow_id );
         // The event will be intercepted globally by ska-core.js (window.$ska.submitForm)
     }
+} elseif ( $actionType === 'theme_toggle' ) {
+    $alpine_attrs .= ' @click.prevent="$store.skaTheme.toggle()"';
 }
 
 $wrapper_attributes = get_block_wrapper_attributes( array(

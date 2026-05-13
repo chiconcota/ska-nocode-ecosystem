@@ -90,7 +90,8 @@ registerBlockType(metadata.name, {
                             options={[
                                 { label: 'Link URL', value: 'link' },
                                 { label: 'Submit Form', value: 'submit' },
-                                { label: 'Trigger Logic Workflow', value: 'logic_api' }
+                                { label: 'Trigger Logic Workflow', value: 'logic_api' },
+                                { label: 'Toggle Dark Mode', value: 'theme_toggle' }
                             ]}
                             onChange={(val) => {
                                 const newTagName = val === 'link' ? 'a' : 'button';

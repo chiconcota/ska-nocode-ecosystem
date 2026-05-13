@@ -53,26 +53,68 @@ defined( 'ABSPATH' ) || exit;
     <!-- Main Content Area -->
     <div class="flex-1 overflow-y-auto relative h-[calc(100vh-32px)]" @scroll.passive="onScroll">
         
-        <!-- Tab 1: Colors -->
+        <!-- Tab 1: Brand & Colors -->
         <div id="colors" class="p-8 max-w-4xl mx-auto space-y-8">
-            <div class="border-b border-slate-200 pb-5">
-                <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Màu sắc (Colors)</h2>
-                <p class="text-slate-500 mt-2">Bảng màu hệ thống định nghĩa Brand Identity, được áp dụng tự động qua Tailwind.</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Vòng lặp màu sắc cơ bản -->
-                <template x-for="(val, key) in formData.colors" :key="key">
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                        <div class="w-16 h-16 rounded-lg border border-slate-200 shadow-inner flex-shrink-0 relative overflow-hidden" :style="'background-color: ' + val">
-                            <input type="color" x-model="formData.colors[key]" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+            <!-- Brand Logo -->
+            <div class="space-y-6">
+                <div class="border-b border-slate-200 pb-5">
+                    <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Brand Identity</h2>
+                    <p class="text-slate-500 mt-2">Định nghĩa Logo và nhận diện thương hiệu chính thức của hệ thống.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Site Logo (Brand)</label>
+                    <div class="flex gap-4 items-start">
+                        <div class="w-32 h-32 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center bg-slate-50 overflow-hidden relative group">
+                            <img x-show="formData.brand.logoUrl" :src="formData.brand.logoUrl" class="max-w-full max-h-full object-contain" />
+                            <span x-show="!formData.brand.logoUrl" class="material-symbols-outlined text-[40px] text-slate-300">image</span>
+                            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                                <button @click.prevent="openLogoUploader" class="w-8 h-8 rounded-full bg-white text-slate-800 flex items-center justify-center border-0 cursor-pointer shadow-sm hover:scale-110 transition" title="Upload">
+                                    <span class="material-symbols-outlined text-[18px]">upload</span>
+                                </button>
+                                <button x-show="formData.brand.logoUrl" @click.prevent="formData.brand.logoUrl = ''" class="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center border-0 cursor-pointer shadow-sm hover:scale-110 transition" title="Remove">
+                                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex-1">
-                            <label class="block text-sm font-bold text-slate-700 capitalize mb-1" x-text="key"></label>
-                            <input type="text" x-model="formData.colors[key]" class="w-full px-3 py-1.5 border border-slate-300 rounded text-sm text-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none uppercase font-mono">
+                        <div class="flex-1 space-y-3">
+                            <input type="text" x-model="formData.brand.logoUrl" placeholder="URL của Logo" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none bg-slate-50" readonly>
+                            <p class="text-xs text-slate-500 leading-relaxed">Tải lên Logo chính của dự án. Logo này sẽ được xuất ra <code class="bg-slate-100 px-1 rounded text-slate-700">tokens.json</code> để Frontend dễ dàng hiển thị tự động mà không cần truy vấn Database của WordPress.</p>
                         </div>
                     </div>
-                </template>
+                </div>
+            </div>
+
+            <!-- Colors -->
+            <div class="space-y-6 pt-6 border-t border-slate-200">
+                <div class="pb-2 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Màu sắc (Colors)</h2>
+                        <p class="text-slate-500 mt-2">Bảng màu hệ thống định nghĩa Brand Identity, được áp dụng tự động qua Tailwind.</p>
+                    </div>
+                    <button @click="addColor()" class="px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-semibold transition border-0 cursor-pointer flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">add</span> Thêm Màu
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <template x-for="(color, index) in colorsList" :key="index">
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4 relative group">
+                            <!-- Xóa Màu -->
+                            <button @click="colorsList.splice(index, 1)" class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition border-0 cursor-pointer shadow-sm">
+                                <span class="material-symbols-outlined text-[14px]">close</span>
+                            </button>
+                            
+                            <div class="w-16 h-16 rounded-lg border border-slate-200 shadow-inner flex-shrink-0 relative overflow-hidden" :style="'background-color: ' + color.value">
+                                <input type="color" x-model="color.value" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                            </div>
+                            <div class="flex-1">
+                                <input type="text" x-model="color.key" placeholder="e.g. primary" class="block w-full text-sm font-bold text-slate-700 mb-1 bg-transparent border-0 border-b border-transparent hover:border-slate-300 focus:border-indigo-500 outline-none p-0">
+                                <input type="text" x-model="color.value" class="w-full px-3 py-1.5 border border-slate-300 rounded text-sm text-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none uppercase font-mono">
+                            </div>
+                        </div>
+                    </template>
+                </div>
             </div>
         </div>
 
@@ -255,12 +297,15 @@ function skaDesignTokensApp() {
         activeTab: 'colors',
         isSaving: false,
         tabs: [
-            { id: 'colors', name: 'Identity Colors', icon: 'palette' },
+            { id: 'colors', name: 'Brand & Colors', icon: 'palette' },
             { id: 'typography', name: 'Typography', icon: 'match_case' },
             { id: 'spacing', name: 'Advanced Tokens', icon: 'space_dashboard' },
             { id: 'components', name: 'UI Components', icon: 'interests' },
         ],
         formData: {
+            brand: {
+                logoUrl: ''
+            },
             colors: {
                 primary: '#3b82f6',
                 secondary: '#10b981',
@@ -308,6 +353,7 @@ function skaDesignTokensApp() {
                 { name: 'Badge Filter', value: 'bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded border border-gray-400 hover:bg-gray-200 cursor-pointer' }
             ]
         },
+        colorsList: [],
         toast: {
             show: false,
             message: '',
@@ -351,6 +397,28 @@ function skaDesignTokensApp() {
             });
         },
 
+        openLogoUploader() {
+            let mediaUploader;
+            if (mediaUploader) {
+                mediaUploader.open();
+                return;
+            }
+            mediaUploader = wp.media({
+                title: 'Chọn Logo Thương Hiệu',
+                button: { text: 'Sử dụng Logo này' },
+                multiple: false
+            });
+            mediaUploader.on('select', () => {
+                const attachment = mediaUploader.state().get('selection').first().toJSON();
+                this.formData.brand.logoUrl = attachment.url;
+            });
+            mediaUploader.open();
+        },
+
+        addColor() {
+            this.colorsList.push({ key: 'new-color', value: '#e2e8f0' });
+        },
+
         openMediaUploader() {
             let mediaUploader;
             if (mediaUploader) {
@@ -390,6 +458,7 @@ function skaDesignTokensApp() {
                     this.formData = {
                          ...this.formData,
                          ...res.data,
+                         brand: { ...this.formData.brand, ...(res.data.brand || {}) },
                          colors: { ...this.formData.colors, ...(res.data.colors || {}) },
                          typography: { ...this.formData.typography, ...(res.data.typography || {}) },
                          typography_scale: { ...this.formData.typography_scale, ...(res.data.typography_scale || {}) },
@@ -397,6 +466,9 @@ function skaDesignTokensApp() {
                          components: (res.data.components && Array.isArray(res.data.components)) ? res.data.components : this.formData.components
                     };
                 }
+                
+                // Cập nhật colorsList từ formData.colors
+                this.colorsList = Object.entries(this.formData.colors).map(([key, value]) => ({ key, value }));
             } catch (err) {
                 console.error('Failed to fetch tokens', err);
             }
@@ -404,6 +476,16 @@ function skaDesignTokensApp() {
 
         async saveTokens() {
             this.isSaving = true;
+
+            // Map colorsList trở lại formData.colors
+            this.formData.colors = {};
+            this.colorsList.forEach(color => {
+                if (color.key && color.key.trim() !== '') {
+                    // Normalize key
+                    const key = color.key.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+                    this.formData.colors[key] = color.value;
+                }
+            });
             try {
                 const response = await fetch('/wp-json/ska-design/v1/tokens', {
                     method: 'POST',

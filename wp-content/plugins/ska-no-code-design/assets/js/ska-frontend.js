@@ -239,7 +239,6 @@ function _registerSkaForm() {
             if (this.step > 1) this.step--;
         },
 
-        // === RESET THỦ CÔNG ===
         resetForm() {
             Object.keys(this.fields).forEach((key) => {
                 this.fields[key] = Array.isArray(this.fields[key]) ? [] : '';
@@ -252,11 +251,58 @@ function _registerSkaForm() {
     }));
 }
 
+/**
+ * Đăng ký skaTheme Store vào Alpine để quản lý Dark Mode.
+ */
+function _registerSkaTheme() {
+    if (!window.Alpine) return;
+    
+    // Sử dụng $persist nếu có, nếu không fallback về giá trị mặc định
+    const isDarkInit = typeof Alpine.$persist !== 'undefined' ? Alpine.$persist(false).as('ska_dark_mode') : false;
+
+    Alpine.store('skaTheme', {
+        isDark: isDarkInit,
+        init() {
+            this.applyTheme();
+            
+            // Theo dõi thay đổi từ storage ở tab khác nếu cần
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'ska_dark_mode') {
+                    try {
+                        this.isDark = JSON.parse(e.newValue);
+                        this.applyTheme();
+                    } catch (err) {}
+                }
+            });
+        },
+        toggle() {
+            this.isDark = !this.isDark;
+            this.applyTheme();
+            
+            // Fallback save nếu $persist không tồn tại
+            if (typeof Alpine.$persist === 'undefined') {
+                localStorage.setItem('ska_dark_mode', JSON.stringify(this.isDark));
+            }
+        },
+        applyTheme() {
+            if (this.isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+    });
+}
+
 // Script này load TRƯỚC Alpine.js (thứ tự enqueue trong render.php).
-// Khi Alpine load sau → phát alpine:init → hàm này hứng → đăng ký skaForm.
+// Khi Alpine load sau → phát alpine:init → hàm này hứng → đăng ký skaForm & skaTheme.
 // Fallback: Nếu Alpine đã load trước (edge-case HTML Attributes) → gọi trực tiếp.
 if (window.Alpine) {
     _registerSkaForm();
+    _registerSkaTheme();
 } else {
-    document.addEventListener('alpine:init', _registerSkaForm);
+    document.addEventListener('alpine:init', () => {
+        _registerSkaForm();
+        _registerSkaTheme();
+    });
 }
