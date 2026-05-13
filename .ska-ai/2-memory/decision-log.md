@@ -8,6 +8,17 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-05-13 - 🟢 Triển khai Dark Mode Engine (Ska Design System Phase 4.4)
+- **Decision (Zero-Trash Dark Mode Toggle):** Quyết định không tạo block mới rác cho nút đổi Dark Mode. Thay vào đó, nâng cấp `ska-button` hiện có, bổ sung tuỳ chọn "Toggle Dark Mode" (`theme_toggle`) trong Inspector. Khi kích hoạt, block sẽ tự động chèn `@click.prevent="$store.skaTheme.toggle()"` để tương tác với Alpine Store.
+- **Decision (Alpine.js State & Storage):** Thiết lập `Alpine.store('skaTheme')` quản lý trạng thái Dark Mode toàn cục (`isDark`), lưu trữ vào `localStorage` (`ska_dark_mode`) để duy trì trạng thái khi người dùng điều hướng qua các trang.
+- **Decision (Anti-FOUC Injection):** Triển khai một inline script bằng PHP (`wp_head`, priority 0) để đọc `localStorage` và áp dụng class `dark` vào thẻ `<html>` ngay trước khi DOM bắt đầu render. Kỹ thuật này triệt tiêu hoàn toàn hiện tượng nháy màn hình trắng (Flash of Unstyled Content - FOUC).
+- **Decision (JIT Compiler Integration):** Phê duyệt `Tailwind Compiler` hiện tại để xử lý modifier `dark:`, xuất ra CSS áp dụng scope chính xác.
+
+## 2026-05-12 - 🟢 Mở rộng Design Tokens & Brand Identity
+- **Decision (Brand Logo & Global Tokens):** Mở rộng hệ thống Design Tokens (Theme Options) cho phép lưu trữ và quản lý Brand Logo thông qua bảng phẳng `ska_data_sys_presets` (lưu dưới dạng `token_brand`). Tự động compile và xuất khẩu dữ liệu Brand ra file `/ska-data/tokens.json` làm Single Source of Truth (SSOT) cho Frontend.
+- **Decision (SkaFX Global Dynamic Resolver - Ý tưởng tương lai):** Đưa ra định hướng kiến trúc cho SkaFX để xử lý **Dynamic Content Injection** (Nội suy nội dung động). Cụ thể, cho phép người dùng Nocode gán trực tiếp tham chiếu hệ thống ngay trong CodeMirror (Ví dụ: thay URL bức ảnh thành `[app.brand.logo]` hoặc `[app.sitemanager.preset.value.id=31]`). Trình biên dịch SkaFX sẽ tự động phân giải (resolve) token này ra URL hoặc giá trị cuối cùng ở Backend/Frontend mà không cần thiết lập vòng lặp hay payload phức tạp. Tính năng này được đưa vào Backlog cho Phase 4.
+
+---
 ## 2026-05-12 - 🟢 Hoàn tất Visual Tailwind Browser (Phase 3) & Hybrid UX
 - **Decision (Visual Browser Integration):** Tái khởi động Phase 3, chính thức triển khai `StylePopoverDrawer` đè lên giao diện `TailwindPanel`. Xây dựng cấu trúc UI trực quan phân loại Tokens (Theme Colors, Typography, v.v) với thanh search Vanilla JS Filter Array hiệu năng cao.
 - **Decision (Dynamic Theme Integration):** Móc nối `skaDesignTokens.colors` (dữ liệu Data Pro) vào Visual Browser, tự động sinh các Utility Colors (`bg-primary`, `text-primary`) kèm theo giao diện Color Swatch (vòng tròn màu) chuyên nghiệp để tăng trải nghiệm thiết kế.

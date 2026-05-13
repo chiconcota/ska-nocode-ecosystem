@@ -40,6 +40,7 @@ class Design_Tokens_Compiler {
         $rows = $wpdb->get_results( "SELECT * FROM {$presets_table}", ARRAY_A );
 
         $data = [
+            'brand' => [],
             'colors' => [],
             'typography' => [],
             'typography_scale' => [],
@@ -58,6 +59,10 @@ class Design_Tokens_Compiler {
                 $key = sanitize_key( str_replace( '-', '_', sanitize_title( $name ) ) );
 
                 switch ( $type ) {
+                    case 'token_brand':
+                        $camel_key = lcfirst( str_replace( ' ', '', ucwords( str_replace( ['-', '_'], ' ', sanitize_title( $name ) ) ) ) );
+                        $data['brand'][$camel_key] = $val;
+                        break;
                     case 'token_color':
                         $data['colors'][$key] = $val;
                         break;

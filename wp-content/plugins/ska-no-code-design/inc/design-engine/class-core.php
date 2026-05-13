@@ -85,6 +85,9 @@ class Core
 
         // Force injection with high priority to ensure it comes after theme styles
         add_action('wp_head', array($this, 'inject_tailwind_cdn'), 999);
+        
+        // Anti-FOUC script for Dark Mode (Very high priority)
+        add_action('wp_head', array($this, 'inject_anti_fouc_script'), 0);
 
         // Architecture Scope: Add .ska-builder to body to enable JIT Scoped CSS
         add_filter('body_class', array($this, 'add_ska_builder_class'));
@@ -205,6 +208,27 @@ class Core
                 true
             );
         }
+    }
+
+    /**
+     * Inject Anti-FOUC script for Dark Mode.
+     */
+    public function inject_anti_fouc_script()
+    {
+        if (is_admin() || (defined('REST_REQUEST') && REST_REQUEST)) {
+            return;
+        }
+
+        echo "<script id='ska-anti-fouc'>
+            (function() {
+                try {
+                    var skaTheme = localStorage.getItem('ska_dark_mode');
+                    if (skaTheme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                    }
+                } catch (e) {}
+            })();
+        </script>\n";
     }
 
     /**

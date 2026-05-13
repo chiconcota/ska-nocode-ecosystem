@@ -61,6 +61,7 @@ class Tailwind_Compiler {
 			$pseudo       = '';
 			$group_prefix = '';
 			$custom_media = '';
+			$is_dark      = false;
 			$base_class   = $class;
 
 			if ( strpos( $class, ':' ) !== false ) {
@@ -72,6 +73,8 @@ class Tailwind_Compiler {
 				foreach ( $modifiers as $mod ) {
 					if ( isset( $media_queries[ $mod ] ) ) {
 						$prefix = $mod;
+					} elseif ( $mod === 'dark' ) {
+						$is_dark = true;
 					} elseif ( in_array( $mod, array( 'hover', 'focus', 'focus-within', 'focus-visible', 'active', 'disabled', 'checked', 'target', 'indeterminate', 'required', 'valid', 'invalid', 'read-only', 'empty', 'default', 'in-range', 'out-of-range', 'placeholder-shown', 'autofill' ) ) ) {
 						$pseudo .= ':' . $mod;
 					} elseif ( in_array( $mod, array( 'before', 'after', 'placeholder', 'first-letter', 'first-line', 'marker', 'selection', 'file', 'backdrop' ) ) ) {
@@ -132,11 +135,20 @@ class Tailwind_Compiler {
 					$css_rule = 'content: ""; ' . $css_rule;
 				}
 
+				$base_selector = 'html body.ska-builder';
+				$editor_base_selector = '.editor-styles-wrapper';
+
+				if ( $is_dark ) {
+					$base_selector = 'html.dark body.ska-builder';
+					// Also support standard WP dark mode class for the editor wrapper if needed. For now html.dark wrapper applies correctly.
+					$editor_base_selector = 'html.dark .editor-styles-wrapper';
+				}
+
 				if ( strpos( $css_rule, '&' ) === 0 ) {
-					$rule_body_ska = str_replace( '&', "html body.ska-builder {$group_prefix}.{$escaped_class}.{$escaped_class}{$selector_suffix}", $css_rule );
+					$rule_body_ska = str_replace( '&', "{$base_selector} {$group_prefix}.{$escaped_class}.{$escaped_class}{$selector_suffix}", $css_rule );
 					$full_rule = "{$rule_body_ska}";
 				} else {
-					$full_rule = "html body.ska-builder {$group_prefix}.{$escaped_class}.{$escaped_class}{$selector_suffix} { {$css_rule} }\n.editor-styles-wrapper {$group_prefix}.{$escaped_class}.{$escaped_class}{$selector_suffix} { {$css_rule} }";
+					$full_rule = "{$base_selector} {$group_prefix}.{$escaped_class}.{$escaped_class}{$selector_suffix} { {$css_rule} }\n{$editor_base_selector} {$group_prefix}.{$escaped_class}.{$escaped_class}{$selector_suffix} { {$css_rule} }";
 				}
 
 				if ( $custom_media ) {

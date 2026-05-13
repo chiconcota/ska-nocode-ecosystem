@@ -44,6 +44,7 @@ class Design_Tokens_API {
             $rows = $wpdb->get_results( "SELECT * FROM {$presets_table}", ARRAY_A );
 
             $data = [
+                'brand' => [],
                 'colors' => [],
                 'typography' => [],
                 'typography_scale' => [],
@@ -62,6 +63,10 @@ class Design_Tokens_API {
                     $key = sanitize_key( str_replace( '-', '_', sanitize_title( $name ) ) );
 
                     switch ( $type ) {
+                        case 'token_brand':
+                            $camel_key = lcfirst( str_replace( ' ', '', ucwords( str_replace( ['-', '_'], ' ', sanitize_title( $name ) ) ) ) );
+                            $data['brand'][$camel_key] = $val;
+                            break;
                         case 'token_color':
                             $data['colors'][$key] = $val;
                             break;
@@ -111,6 +116,7 @@ class Design_Tokens_API {
 
         // Mapping sections to types
         $section_type_map = [
+            'brand' => 'token_brand',
             'colors' => 'token_color',
             'typography' => 'token_font',
             'typography_scale' => 'preset_typography',
@@ -150,7 +156,11 @@ class Design_Tokens_API {
                         }
                     } else {
                         foreach ( $body[$section] as $key => $val ) {
-                            $name = ucfirst(str_replace(['_', '-'], ' ', $key));
+                            if ( $section === 'brand' ) {
+                                $name = ucwords( preg_replace( '/([a-z])([A-Z])/', '$1 $2', $key ) );
+                            } else {
+                                $name = ucfirst(str_replace(['_', '-'], ' ', $key));
+                            }
                             $wpdb->insert(
                                 $table_name,
                                 [
