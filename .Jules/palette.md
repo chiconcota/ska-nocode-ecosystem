@@ -1,0 +1,3 @@
+## 2025-05-13 - Material Symbols Ligature Accessibility
+**Learning:** Decorative icon spans using text ligatures (e.g. `<span className="material-symbols-outlined">star</span>`) are prone to being read aloud by screen readers confusingly as the literal ligature text ("star", "home").
+**Action:** When inserting decorative Material Symbols via ligatures, always add the attribute `aria-hidden="true"` to hide the underlying literal text from assistive technologies.
