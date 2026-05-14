@@ -28,6 +28,7 @@
             const tw = doc.defaultView.tailwind;
             if (tw && tw.config) {
                 tw.config.important = true;
+                tw.config.darkMode = 'class';
                 tw.config.corePlugins = { preflight: false };
                 tw.config.theme = { extend: { colors: customBrandColors } };
                 console.log("Ska Builder: Forcing Tailwind CDN Rebuild via Config Mutation");

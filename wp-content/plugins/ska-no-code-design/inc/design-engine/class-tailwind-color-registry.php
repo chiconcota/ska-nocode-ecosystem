@@ -106,6 +106,33 @@ class Tailwind_Color_Registry {
 	}
 
 	/**
+	 * Lấy bảng màu Dark Mode từ Physical Cache (tokens.json).
+	 *
+	 * @return array Associative array { 'primary' => '#60a5fa', ... }
+	 */
+	public static function get_custom_dark_colors(): array {
+		$upload_dir = wp_upload_dir();
+		$cache_file = trailingslashit( $upload_dir['basedir'] ) . 'ska-data/tokens.json';
+		$colors = array();
+
+		if ( file_exists( $cache_file ) ) {
+			$json_data = file_get_contents( $cache_file );
+			$tokens = json_decode( $json_data, true );
+			if ( isset( $tokens['darkColors'] ) && is_array( $tokens['darkColors'] ) ) {
+				$colors = $tokens['darkColors'];
+			}
+		}
+
+		if ( empty( $colors ) ) {
+			$colors = array(
+				'primary'    => '#60a5fa',
+				'background' => '#111827',
+			);
+		}
+		return $colors;
+	}
+
+	/**
 	 * Lấy thông tin Typography từ tokens.json
 	 */
 	public static function get_typography_config(): array {
@@ -167,10 +194,11 @@ class Tailwind_Color_Registry {
 	 * Hỗ trợ opacity modifier: bg-{name}/{opacity}
 	 *
 	 * @param string $class Tailwind class.
+	 * @param array|null $colors Mảng màu tùy chỉnh (tùy chọn)
 	 * @return string|null CSS rule hoặc null nếu không khớp.
 	 */
-	public static function resolve_custom_color( string $class ): ?string {
-		$custom_colors = self::get_custom_colors();
+	public static function resolve_custom_color( string $class, ?array $colors = null ): ?string {
+		$custom_colors = $colors ?? self::get_custom_colors();
 		if ( empty( $custom_colors ) ) {
 			return null;
 		}
@@ -234,15 +262,48 @@ class Tailwind_Color_Registry {
 			foreach ( $base_classes as $base ) {
 				$classes_to_compile = array( $base, "{$base}/20", "{$base}/50", "{$base}/80" );
 				foreach ( $classes_to_compile as $class ) {
-					$rule = self::resolve_custom_color( $class );
+					$rule = self::resolve_custom_color( $class, $custom_colors );
 					if ( $rule ) {
+						// Add !important to ensure it overrides Tailwind CDN's !important rule
+						$rule = str_replace( ';', ' !important;', $rule );
 						$escaped = str_replace( array( '/', '.' ), array( '\/', '\.' ), $class );
 						$css .= ".{$escaped} { {$rule} }\n";
 						$css .= "html body.ska-builder .{$escaped}.{$escaped} { {$rule} }\n";
+						$css .= ".editor-styles-wrapper .{$escaped}.{$escaped} { {$rule} }\n";
 					}
 				}
 			}
 		}
+
+		// Thêm CSS dành riêng cho chế độ Dark Mode từ Dark Colors
+		$custom_dark_colors = self::get_custom_dark_colors();
+		if ( ! empty( $custom_dark_colors ) ) {
+			foreach ( array_keys( $custom_dark_colors ) as $name ) {
+				$base_classes = array(
+					"bg-{$name}",
+					"text-{$name}",
+					"border-{$name}",
+					"shadow-{$name}",
+				);
+
+				foreach ( $base_classes as $base ) {
+					$classes_to_compile = array( $base, "{$base}/20", "{$base}/50", "{$base}/80" );
+					foreach ( $classes_to_compile as $class ) {
+						$rule = self::resolve_custom_color( $class, $custom_dark_colors );
+						if ( $rule ) {
+							// Add !important to ensure it overrides Tailwind CDN's !important rule
+							$rule = str_replace( ';', ' !important;', $rule );
+							$escaped = str_replace( array( '/', '.' ), array( '\/', '\.' ), $class );
+							$dark_escaped = "dark\\:{$escaped}";
+							$css .= ".dark .{$dark_escaped} { {$rule} }\n";
+							$css .= "html.dark body.ska-builder .{$dark_escaped}.{$dark_escaped} { {$rule} }\n";
+							$css .= "html.dark .editor-styles-wrapper .{$dark_escaped}.{$dark_escaped} { {$rule} }\n";
+						}
+					}
+				}
+			}
+		}
+
 		return $css;
 	}
 }

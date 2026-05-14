@@ -223,7 +223,7 @@ class Core
             (function() {
                 try {
                     var skaTheme = localStorage.getItem('ska_dark_mode');
-                    if (skaTheme === 'dark') {
+                    if (skaTheme === 'true') {
                         document.documentElement.classList.add('dark');
                     }
                 } catch (e) {}

@@ -46,6 +46,7 @@ class Design_Tokens_API {
             $data = [
                 'brand' => [],
                 'colors' => [],
+                'darkColors' => [],
                 'typography' => [],
                 'typography_scale' => [],
                 'tokens' => [],
@@ -69,6 +70,9 @@ class Design_Tokens_API {
                             break;
                         case 'token_color':
                             $data['colors'][$key] = $val;
+                            break;
+                        case 'token_dark_color':
+                            $data['darkColors'][$key] = $val;
                             break;
                         case 'token_font':
                             $data['typography'][$key] = $val;
@@ -118,6 +122,7 @@ class Design_Tokens_API {
         $section_type_map = [
             'brand' => 'token_brand',
             'colors' => 'token_color',
+            'darkColors' => 'token_dark_color',
             'typography' => 'token_font',
             'typography_scale' => 'preset_typography',
             'components' => 'preset_component'

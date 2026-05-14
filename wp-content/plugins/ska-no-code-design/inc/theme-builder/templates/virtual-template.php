@@ -18,7 +18,7 @@ $wrapper = \Ska_No_Code_Design\Theme_Builder\Ska_Virtual_Wrapper::get_instance()
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<?php wp_head(); ?>
 </head>
-<body <?php body_class( 'ska-builder ska-virtual-app' ); ?>>
+<body <?php body_class( 'ska-builder ska-virtual-app' ); ?> x-data>
 
 <?php wp_body_open(); ?>
 

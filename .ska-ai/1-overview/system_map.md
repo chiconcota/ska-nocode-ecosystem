@@ -39,7 +39,7 @@ ska-ecosystem/ (mapped to app/public/)
 | App Module | Path | Responsibilities | Status |
 | :--- | :--- | :--- | :--- |
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Nullify WP CSS, Blank Canvas | 🟢 Stable (v1) |
-| **Ska No-Code Design** | `plugins/ska-no-code-design/`| Core Blocks, Tailwind JIT, Ska Molecule, Ska Theme Builder | 🟢 Stable Phase 4.2 |
+| **Ska No-Code Design** | `plugins/ska-no-code-design/`| Core Blocks, Tailwind JIT, Ska Molecule, Ska Theme Builder | 🟢 Stable Phase 4.4 |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Flat Tables DB, JSON Native Schema | 🟢 Stable Phase 3 |
 | **Ska Logic Engine** | `plugins/ska-logic-engine/`| Event Pipeline, SkaFX, Universal Binding | 🟢 Stable (MVP Primitives) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API (JSON Export) | 🟢 Integrated |
@@ -115,3 +115,4 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 - **Ska Interactive Engine:** Cơ chế mô phỏng (Live preview) trạng thái của Alpine.js ngay bên trong Editor, biến JIT thành "React Virtual DOM của Tailwind", giúp Editor phản hồi "sống" với các hiệu ứng tương tác (xổ dropdown, chuyển form nội bộ) theo thời gian thực.
 - **🔴 [PENDING] Ska Logic Engine (Automation Platform):** Nâng cấp Logic Engine thành một nền tảng Automation với giao diện 2D Canvas Graph (giống n8n). Hỗ trợ kiến trúc DAG (Directed Acyclic Graph) để rẽ nhánh (Success/Error), đa dạng hóa Trigger (Webhook, Cron), chạy nền (Async Process), và đặc biệt hỗ trợ **AI JSON Blueprint Import** để AI thiết kế 100% logic tự động.
 - **🟢 [POST-MVP] Ska Scripts Library & `ska-code`:** Hệ thống quản lý mã nguồn JS/CSS tập trung và khối `ska-code` thông minh. Tích hợp cấu hình vị trí nạp (Header/Footer) và phạm vi nạp (Global/On-demand) thay thế hoàn toàn Custom HTML, tự động chống lặp (Deduplication).
+- **🔴 [PHASE 6] SkaWind JS (Editor JIT Compiler):** Xây dựng bộ biên dịch JIT thuần Vanilla JS chạy trực tiếp trên Editor để thay thế hoàn toàn Tailwind CDN. Đảm bảo đồng nhất 100% logic biên dịch CSS (bao gồm tính năng tráo mảng màu Dark Mode) giữa Editor và Frontend, tối ưu tốc độ Live Preview và loại bỏ sự phụ thuộc bên thứ 3.
