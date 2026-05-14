@@ -51,8 +51,8 @@
 ### 2.4. Tính Năng UI Độc Lập / Mới Cập Nhật
 *Được trích xuất từ phần 'Tương lai' (3.3) của Phase 3.*
 - [x] **Milestone 2 (Design Engine) - Dark Mode Thượng tầng:** Lập kế hoạch mang lại chức năng Dark Mode hoàn chỉnh (`darkMode: 'class'`), kết hợp Tailwind. Cần xây dựng Switcher / Toggle Block.
-- [ ] **App Dashboards / Sub-Admin Portals:** Tạo Custom Post Type (`ska_portal`) giúp User dùng quyền Editor để tự thả các giao diện trang quản lý Khóa Học, Thành Viên ra Frontend Portal tách khỏi WordPress Admin xám xịt. *(Lưu ý Kiến trúc: Sử dụng kỹ thuật **Shadow CPT (Post Type Ảo)** kết hợp **Data Injection** qua Iframe để mang Full sức mạnh Gutenberg Editor ra Frontend Portal. Admin nhập liệu thoải mái, data vẫn lưu về Flat Table, không làm rác wp_posts).*
-- [ ] **Auto-Generated CRUD Portal:** Nâng cấp cho khối "App Portal" tích hợp với `Theme Builder`. Cho phép người dùng làm App Portal tự sinh Lưới danh sách.
+- [ ] 🌟 **App Dashboards / Sub-Admin Portals (Phase 4.5):** Đã phân tách Kế hoạch Kiến trúc ra file riêng. -> 👉 **Xem chi tiết tại:** `project_manager_app_portal.md`
+- [ ] 🌟 **Auto-Generated CRUD Portal (Phase 4.6):** Đã phân tách Kiến trúc Macro Injector ra file riêng. -> 👉 **Xem chi tiết tại:** `project_manager_auto_crud.md`
 - [ ] **Role-Based Access Control (RBAC) cho Tầng Hiển thị:** Xử lý hệ thống phân quyền nâng cao (RBAC) để quyết định hiển thị Khối/Template cho từng nhóm đối tượng.
 - [x] **Ska System Framework (Dashboard):** 
   - Hoàn thiện luồng API Request thật cho thẻ cấu hình Ska AI Architect.
