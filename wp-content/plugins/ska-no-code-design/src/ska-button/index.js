@@ -30,7 +30,8 @@ registerBlockType(metadata.name, {
             className = '',
             dynamic = { text_source: 'static', text_key: '', url_source: 'static', url_key: '' }, 
             logic = { enabled: false, key: '', operator: '==', value: '' },
-            link = { url: '', target: '_self', dynamic: { source: 'static', key: '' } }
+            link = { url: '', target: '_self', dynamic: { source: 'static', key: '' } },
+            htmlAttributes = []
         } = attributes;
 
         const { useEffect } = wp.element;
@@ -95,7 +96,28 @@ registerBlockType(metadata.name, {
                             ]}
                             onChange={(val) => {
                                 const newTagName = val === 'link' ? 'a' : 'button';
-                                setAttributes({ actionType: val, tagName: newTagName });
+                                let newHtmlAttributes = [...htmlAttributes];
+                                
+                                if (val === 'theme_toggle') {
+                                    const hasThemeToggle = newHtmlAttributes.some(attr => attr.key === '@click.prevent' && attr.value === '$store.skaTheme.toggle()');
+                                    if (!hasThemeToggle) {
+                                        newHtmlAttributes.push({ key: '@click.prevent', value: '$store.skaTheme.toggle()' });
+                                    }
+                                    const hasXData = newHtmlAttributes.some(attr => attr.key === 'x-data');
+                                    if (!hasXData) {
+                                        newHtmlAttributes.push({ key: 'x-data', value: '' });
+                                    }
+                                } else if (actionType === 'theme_toggle') {
+                                    newHtmlAttributes = newHtmlAttributes.filter(attr => !((attr.key === '@click.prevent' || attr.key === '@click') && attr.value === '$store.skaTheme.toggle()'));
+                                    // Only remove x-data if its value is empty (auto-injected one)
+                                    newHtmlAttributes = newHtmlAttributes.filter(attr => !(attr.key === 'x-data' && attr.value === ''));
+                                }
+
+                                setAttributes({ 
+                                    actionType: val, 
+                                    tagName: newTagName,
+                                    htmlAttributes: newHtmlAttributes 
+                                });
                             }}
                         />
                         {actionType === 'link' && (

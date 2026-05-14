@@ -117,7 +117,7 @@ class Tailwind_Compiler {
 				$base_class  = substr( $base_class, 1 );
 			}
 
-			$css_rule = $this->resolve_class( $base_class );
+			$css_rule = $this->resolve_class( $base_class, $is_dark );
 
 			// Apply negation
 			if ( $is_negative && $css_rule ) {
@@ -186,9 +186,10 @@ class Tailwind_Compiler {
 	/**
 	 * Resolve a single Tailwind class to its CSS rule.
 	 */
-	private function resolve_class( $class ): ?string {
+	private function resolve_class( $class, $is_dark = false ): ?string {
 		// 0. Custom Brand Colors
-		$custom_result = Tailwind_Color_Registry::resolve_custom_color( $class );
+		$colors = $is_dark ? Tailwind_Color_Registry::get_custom_dark_colors() : null;
+		$custom_result = Tailwind_Color_Registry::resolve_custom_color( $class, $colors );
 		if ( $custom_result ) {
 			return $custom_result;
 		}

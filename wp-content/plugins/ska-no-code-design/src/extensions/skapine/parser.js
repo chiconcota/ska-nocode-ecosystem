@@ -106,6 +106,19 @@ function evaluateAst(node, context) {
             const prop = node.computed ? evaluateAst(node.property, context) : node.property.name;
             return obj[prop];
         }
+        case 'CallExpression': {
+            const callee = evaluateAst(node.callee, context);
+            const args = node.arguments.map(arg => evaluateAst(arg, context));
+            if (typeof callee === 'function') {
+                // If it's a member expression, we need the context (this binding)
+                if (node.callee.type === 'MemberExpression') {
+                    const obj = evaluateAst(node.callee.object, context);
+                    return callee.apply(obj, args);
+                }
+                return callee.apply(null, args);
+            }
+            throw new Error(`Cannot call non-function`);
+        }
         default:
             throw new Error(`Cú pháp chưa hỗ trợ: ${node.type}`);
     }

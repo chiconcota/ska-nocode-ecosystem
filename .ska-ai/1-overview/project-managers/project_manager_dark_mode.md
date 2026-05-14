@@ -1,5 +1,5 @@
 # PROJECT MANAGER: PHASE 4 - DARK MODE THƯỢNG TẦNG (DESIGN ENGINE)
-@status: 🟡 TODO | @last_update: 2026-05-13 | @context: Master Roadmap cho việc triển khai Dark Mode toàn diện bằng Tailwind JIT & Alpine.js
+@status: 🟢 COMPLETED | @last_update: 2026-05-13 | @context: Master Roadmap cho việc triển khai Dark Mode toàn diện bằng Tailwind JIT & Alpine.js
 
 ## 1. MỤC TIÊU CỐT LÕI (CORE GOALS)
 - **Tích hợp Dark Mode Native:** Kích hoạt chức năng Dark Mode (`darkMode: 'class'`) ở mức độ Compiler và Frontend để người dùng No-code có thể chuyển đổi giao diện dễ dàng.
@@ -23,8 +23,8 @@
 - [x] Triển khai một đoạn Script Inline siêu nhẹ gắn ở `<head>` để đọc `localStorage` và áp dụng class `dark` ngay lập tức (trước khi DOM render xong) nhằm ngăn chặn hiện tượng FOUC (Flash of Unstyled Content).
 
 ### 2.4. Khả năng Tương thích với Design Tokens
-- [ ] Bổ sung giao diện vào `Ska System Dashboard -> Theme Options` để người dùng có thể chọn màu riêng biệt cho chế độ Dark Mode (Ví dụ: `Dark Primary`, `Dark Background`).
-- [ ] Ánh xạ (Map) các giá trị Token này thành CSS Variables với tiền tố `--ska-sys-color-dark-*` và cập nhật JIT Registry.
+- [x] Bổ sung giao diện vào `Ska System Dashboard -> Theme Options` để người dùng có thể chọn màu riêng biệt cho chế độ Dark Mode (Ví dụ: `Dark Primary`, `Dark Background`).
+- [x] Ánh xạ (Map) các giá trị Token này thành CSS Variables với tiền tố `--ska-sys-color-dark-*` và cập nhật JIT Registry.
 
 ## 3. CÁC QUY TẮC BẢO VỆ (CONSTRAINTS)
 - ⚠️ **Zero-Latency Toggle:** Thao tác đổi chế độ Đen/Sáng phải là Instant (Tức thì) sử dụng Client-side JS, TUYỆT ĐỐI KHÔNG reload trang hoặc gọi AJAX về backend.

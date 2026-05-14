@@ -116,6 +116,38 @@ defined( 'ABSPATH' ) || exit;
                     </template>
                 </div>
             </div>
+
+            <!-- Dark Mode Colors -->
+            <div class="space-y-6 pt-6 border-t border-slate-200">
+                <div class="pb-2 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Màu sắc Dark Mode</h2>
+                        <p class="text-slate-500 mt-2">Các giá trị màu riêng cho Dark Mode. Bạn nên dùng các Key giống với Light Mode (VD: primary, background) để hệ thống có thể chuyển đổi mượt mà.</p>
+                    </div>
+                    <button @click="addDarkColor()" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-900 rounded-lg text-sm font-semibold transition border-0 cursor-pointer flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">add</span> Thêm Màu Tối
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <template x-for="(color, index) in darkColorsList" :key="index">
+                        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-sm flex items-center gap-4 relative group">
+                            <!-- Xóa Màu -->
+                            <button @click="darkColorsList.splice(index, 1)" class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition border-0 cursor-pointer shadow-sm">
+                                <span class="material-symbols-outlined text-[14px]">close</span>
+                            </button>
+                            
+                            <div class="w-16 h-16 rounded-lg border border-slate-600 shadow-inner flex-shrink-0 relative overflow-hidden" :style="'background-color: ' + color.value">
+                                <input type="color" x-model="color.value" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                            </div>
+                            <div class="flex-1">
+                                <input type="text" x-model="color.key" placeholder="e.g. primary" class="block w-full text-sm font-bold text-slate-200 mb-1 bg-transparent border-0 border-b border-transparent hover:border-slate-600 focus:border-indigo-400 outline-none p-0">
+                                <input type="text" x-model="color.value" class="w-full px-3 py-1.5 border border-slate-600 bg-slate-900 text-slate-300 rounded text-sm focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none uppercase font-mono">
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
         </div>
 
         <!-- Tab 2: Typography -->
@@ -319,6 +351,19 @@ function skaDesignTokensApp() {
                 error: '#ef4444',
                 info: '#3b82f6'
             },
+            darkColors: {
+                primary: '#60a5fa',
+                secondary: '#34d399',
+                tertiary: '#fbbf24',
+                surface: '#1f2937',
+                background: '#111827',
+                text: '#f9fafb',
+                border: '#374151',
+                success: '#34d399',
+                warning: '#fbbf24',
+                error: '#f87171',
+                info: '#60a5fa'
+            },
             typography: {
                 primary: 'Inter, sans-serif',
                 secondary: 'Outfit, sans-serif',
@@ -354,6 +399,7 @@ function skaDesignTokensApp() {
             ]
         },
         colorsList: [],
+        darkColorsList: [],
         toast: {
             show: false,
             message: '',
@@ -419,6 +465,10 @@ function skaDesignTokensApp() {
             this.colorsList.push({ key: 'new-color', value: '#e2e8f0' });
         },
 
+        addDarkColor() {
+            this.darkColorsList.push({ key: 'new-color', value: '#1e293b' });
+        },
+
         openMediaUploader() {
             let mediaUploader;
             if (mediaUploader) {
@@ -460,6 +510,7 @@ function skaDesignTokensApp() {
                          ...res.data,
                          brand: { ...this.formData.brand, ...(res.data.brand || {}) },
                          colors: { ...this.formData.colors, ...(res.data.colors || {}) },
+                         darkColors: { ...this.formData.darkColors, ...(res.data.darkColors || {}) },
                          typography: { ...this.formData.typography, ...(res.data.typography || {}) },
                          typography_scale: { ...this.formData.typography_scale, ...(res.data.typography_scale || {}) },
                          tokens: { ...this.formData.tokens, ...(res.data.tokens || {}) },
@@ -469,6 +520,7 @@ function skaDesignTokensApp() {
                 
                 // Cập nhật colorsList từ formData.colors
                 this.colorsList = Object.entries(this.formData.colors).map(([key, value]) => ({ key, value }));
+                this.darkColorsList = Object.entries(this.formData.darkColors).map(([key, value]) => ({ key, value }));
             } catch (err) {
                 console.error('Failed to fetch tokens', err);
             }
@@ -484,6 +536,14 @@ function skaDesignTokensApp() {
                     // Normalize key
                     const key = color.key.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
                     this.formData.colors[key] = color.value;
+                }
+            });
+            this.formData.darkColors = {};
+            this.darkColorsList.forEach(color => {
+                if (color.key && color.key.trim() !== '') {
+                    // Normalize key
+                    const key = color.key.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+                    this.formData.darkColors[key] = color.value;
                 }
             });
             try {

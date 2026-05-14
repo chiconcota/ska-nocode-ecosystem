@@ -147,3 +147,76 @@
 | **Giao diện không đè được Theme cũ** | Theme hiện tại không dùng các hàm chuẩn của WP. | Đảm bảo Theme cũ vẫn đang gọi chuẩn xác `wp_head()`, `wp_footer()`, và sử dụng file `index.php` hoặc page templates chuẩn theo Hierarchy. Kiểm tra mảng `template_include` có bị plugin khác override ở priority > 99 không. |
 | **Condition hoạt động sai ở Trang chủ** | Nhầm lẫn giữa `is_front_page()` và `is_home()`. | Backend đã fix gom chung `is_front_page() OR is_home()` cho Rule Trang chủ. Tuy nhiên nếu dùng cấu hình static page, hãy kiểm tra lại Settings > Reading của WP. |
 | **Lưu xong Editor trắng trang** | JIT Compiler không lấy được HTML Cache. | Kiểm tra bảng `ska_data_sys_organisms`, trường `html_content` phải có dữ liệu. Check POST payload trong Network Tab của DevTools lúc bấm Lưu. |
+
+---
+
+# Workflow Kiểm thử E2E: Ska Dark Mode Engine (Phase 4.4)
+
+> [!NOTE]
+> Tài liệu này cung cấp quy trình kiểm thử hệ thống Dark Mode Engine. Mục tiêu là đảm bảo khả năng chuyển đổi giao diện mượt mà (Alpine.js State), biên dịch CSS chính xác (Tailwind JIT), ghi nhớ trạng thái (localStorage) và đặc biệt là không bị nháy giao diện khi tải trang (Zero FOUC).
+
+## Mục tiêu Kiểm thử (Objectives)
+1. **State & CSS Compilation:** Nút Toggle thay đổi được state `$store.skaTheme.isDark` và JIT Compiler sinh đúng CSS cho class `dark:`.
+2. **Persistence & Anti-FOUC:** Trạng thái Dark Mode được lưu vào localStorage và phục hồi tức thì khi F5 trang mà không bị chớp sáng (FOUC).
+3. **Reactive UI:** Các thành phần UI có thể phản ứng (reactive) với state Dark Mode (ví dụ thay đổi icon sáng/tối).
+
+---
+
+## 🧪 Các Kịch Bản Kiểm Thử (Test Cases)
+
+### Test Case 1: Chuyển đổi Dark Mode cơ bản (Toggle & JIT CSS)
+**Trạng thái:** `[x] Đã kiểm thử thành công (Fixed FOUC Bug)`
+
+**Bước thực hiện (Gutenberg Editor):**
+1. Kéo thả một `ska-builder/container`. Thêm class Tailwind: `bg-white dark:bg-slate-900 transition-colors duration-300`.
+2. Bên trong container, thả một `ska-builder/text`. Thêm class: `text-slate-900 dark:text-white`. Nhập text "Chế độ nền tối".
+3. Thả thêm một `ska-builder/button` vào trong container. 
+4. Tại Inspector của Button, chọn tuỳ chọn hành động (Action) là **Toggle Dark Mode**.
+5. Nhấn Lưu/Update trang.
+6. Ra ngoài Frontend xem kết quả.
+
+**Kỳ vọng tại Frontend:**
+- Mặc định nền là trắng, chữ đen.
+- Nhấn vào nút Button, nền chuyển sang màu tối (`bg-slate-900`) và chữ chuyển sang màu trắng.
+- Kiểm tra mã nguồn (Inspect Element) thẻ `<html>` sẽ được tự động thêm/bớt class `dark`.
+- Thẻ `<style id='ska-jit-styles'>` phải chứa định nghĩa CSS cho `.dark .dark\:bg-slate-900` và `.dark .dark\:text-white`.
+
+---
+
+### Test Case 2: Lưu trữ LocalStorage & Chống FOUC (Anti-FOUC)
+**Trạng thái:** `[x] Đã kiểm thử thành công (Fixed FOUC Script Logic)`
+
+**Bước thực hiện:**
+1. Tiếp tục từ Test Case 1, đảm bảo giao diện đang ở trạng thái **Nền tối (Dark Mode = ON)**.
+2. Nhấn **F5 (Reload trang)**.
+3. Chú ý kỹ vào khoảnh khắc trang vừa tải xong (trước khi hình ảnh kịp load hết).
+
+**Kỳ vọng tại Frontend:**
+- Giao diện phải **hiển thị nền tối ngay lập tức** mà không có bất kỳ hiện tượng "nháy màn hình trắng" (FOUC - Flash of Unstyled Content) nào.
+- Mở DevTools -> Application -> Local Storage. Phải tồn tại biến `ska_dark_mode` với giá trị là `dark` hoặc `true`.
+- Kiểm tra mã nguồn (View Page Source): Phải thấy đoạn Script nội tuyến chống FOUC nằm ngay đầu thẻ `<head>`.
+
+---
+
+### Test Case 3: Nâng cao - Giao diện phản hồi (Conditional Rendering Icon)
+**Trạng thái:** `[x] Đã kiểm thử thành công (Verified by Browser Subagent)`
+
+**Bước thực hiện (Gutenberg Editor):**
+1. Thêm 2 khối `ska-builder/icon` vào giao diện:
+   - Icon 1 (Mặt Trời): Thêm HTML Attribute (Alpine) `x-show` với giá trị `!$store.skaTheme.isDark`.
+   - Icon 2 (Mặt Trăng): Thêm HTML Attribute (Alpine) `x-show` với giá trị `$store.skaTheme.isDark`.
+2. Lưu và ra Frontend kiểm tra.
+
+**Kỳ vọng tại Frontend:**
+- Ở chế độ Light Mode, chỉ có Icon Mặt Trời hiển thị.
+- Khi nhấn nút Toggle sang Dark Mode, Icon Mặt Trời biến mất và Icon Mặt Trăng xuất hiện ngay lập tức mà không cần load lại trang.
+
+---
+
+## 🛠 Hướng dẫn Gỡ lỗi (Troubleshooting)
+
+| Dấu hiệu | Nguyên nhân có thể | Cách khắc phục |
+| :--- | :--- | :--- |
+| **Bấm nút Toggle không có tác dụng** | JS Core hoặc Alpine Store chưa load đúng. | Kiểm tra console xem có lỗi `Alpine is not defined` hoặc biến `$store.skaTheme` bị undefined không. Chắc chắn script `ska-frontend.js` đã được nạp. |
+| **Thẻ `<html>` có class `dark` nhưng không đổi màu** | Tailwind JIT chưa quét và xuất mã CSS cho `dark:` | Kiểm tra lại Regex trong `class-style-manager.php`, đảm bảo nó hỗ trợ modifier có dấu hai chấm như `dark:bg-red-500`. |
+| **Bị nháy màn hình (FOUC) khi tải lại trang** | Inline Script chưa được đưa lên đủ cao trong thẻ `<head>`. | Kiểm tra `add_action('wp_head', ..., 0)` trong PHP để đảm bảo priority = 0 (xuất hiện sớm nhất). |

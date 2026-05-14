@@ -42,6 +42,7 @@ class Design_Tokens_Compiler {
         $data = [
             'brand' => [],
             'colors' => [],
+            'darkColors' => [],
             'typography' => [],
             'typography_scale' => [],
             'tokens' => [],
@@ -65,6 +66,9 @@ class Design_Tokens_Compiler {
                         break;
                     case 'token_color':
                         $data['colors'][$key] = $val;
+                        break;
+                    case 'token_dark_color':
+                        $data['darkColors'][$key] = $val;
                         break;
                     case 'token_font':
                         $data['typography'][$key] = $val;
@@ -132,7 +136,27 @@ class Design_Tokens_Compiler {
             }
         }
 
-        $css_content .= "}\n";
+        if ( ! empty( $data['darkColors'] ) ) {
+            foreach ( $data['darkColors'] as $key => $value ) {
+                if ( ! empty( $value ) ) {
+                    $css_content .= "  --ska-sys-color-dark-{$key}: {$value};\n";
+                }
+            }
+        }
+
+        $css_content .= "}\n\n";
+
+        // Generate .dark mappings
+        if ( ! empty( $data['darkColors'] ) ) {
+            $css_content .= "html.dark {\n";
+            foreach ( $data['darkColors'] as $key => $value ) {
+                if ( ! empty( $value ) ) {
+                    // Cập nhật giá trị biến Light Mode thành giá trị Dark Mode
+                    $css_content .= "  --ska-color-{$key}: var(--ska-sys-color-dark-{$key});\n";
+                }
+            }
+            $css_content .= "}\n";
+        }
 
         $css_file_path = $ska_dir . '/tokens.css';
         file_put_contents( $css_file_path, $css_content );

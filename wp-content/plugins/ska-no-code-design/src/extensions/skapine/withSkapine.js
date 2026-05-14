@@ -123,19 +123,18 @@ const SkapineEngineChild = ({ blockProps, BlockEdit, htmlAttributes, isPreviewMo
         
         if (onClickAttr) {
             console.log('Skapine clicked block:', {
-                name,
                 clickValue: onClickAttr.value,
                 hasUpdateState: !!updateState,
                 state
             });
             
+            e.stopPropagation();
+            e.preventDefault();
+            
+            // Xử lý logic gán (VD: open = !open) hoặc gọi hàm store
+            const result = evaluateExpression(onClickAttr.value, evalContext);
+            
             if (updateState) {
-                e.stopPropagation();
-                e.preventDefault();
-                
-                // Xử lý logic gán (VD: open = !open)
-                const result = evaluateExpression(onClickAttr.value, evalContext);
-                
                 if (result && result.type === 'DEEP_UPDATE') {
                     updateState(prev => ({...prev}));
                     if (window.SkapineStore) window.SkapineStore.notify();

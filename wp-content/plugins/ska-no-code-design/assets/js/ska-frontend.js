@@ -257,8 +257,18 @@ function _registerSkaForm() {
 function _registerSkaTheme() {
     if (!window.Alpine) return;
     
-    // Sử dụng $persist nếu có, nếu không fallback về giá trị mặc định
-    const isDarkInit = typeof Alpine.$persist !== 'undefined' ? Alpine.$persist(false).as('ska_dark_mode') : false;
+    // Sử dụng $persist nếu có, nếu không fallback đọc từ localStorage
+    let isDarkInit = false;
+    if (typeof Alpine.$persist !== 'undefined') {
+        isDarkInit = Alpine.$persist(false).as('ska_dark_mode');
+    } else {
+        try {
+            const stored = localStorage.getItem('ska_dark_mode');
+            if (stored !== null) {
+                isDarkInit = JSON.parse(stored);
+            }
+        } catch(e) {}
+    }
 
     Alpine.store('skaTheme', {
         isDark: isDarkInit,

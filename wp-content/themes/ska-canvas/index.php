@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<?php wp_head(); ?>
 </head>
-<body <?php body_class( 'ska-builder ska-canvas' ); ?>>
+<body <?php body_class( 'ska-builder ska-canvas' ); ?> x-data>
 
 <?php wp_body_open(); ?>
 

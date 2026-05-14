@@ -160,6 +160,7 @@ function ska_builder_core_register_frontend_engine() {
     // → Khi enqueue ska-alpine, nó sẽ kéo ska-frontend vào trước
 }
 add_action( 'wp_enqueue_scripts', 'ska_builder_core_register_frontend_engine' );
+add_action( 'admin_enqueue_scripts', 'ska_builder_core_register_frontend_engine' );
 
 /**
  * Render HTML Attributes & Alpine.js logic dynamically via PHP filter.
@@ -169,11 +170,15 @@ function ska_builder_render_html_attributes( $block_content, $block ) {
     if ( ! empty( $block['blockName'] ) && strpos( $block['blockName'], 'ska-builder/' ) === 0 && ! empty( $block['attrs']['htmlAttributes'] ) && is_array( $block['attrs']['htmlAttributes'] ) ) {
         $html_attrs = '';
         $has_alpine = false;
+        $has_x_data = false;
         
         foreach ( $block['attrs']['htmlAttributes'] as $attr ) {
             if ( ! empty( $attr['key'] ) ) {
                 if ( str_starts_with( $attr['key'], 'x-' ) || str_starts_with( $attr['key'], '@' ) ) {
                     $has_alpine = true;
+                }
+                if ( $attr['key'] === 'x-data' ) {
+                    $has_x_data = true;
                 }
                 $html_attrs .= ' ' . esc_attr( $attr['key'] ) . '="' . esc_attr( $attr['value'] ?? '' ) . '"';
             }
@@ -182,6 +187,10 @@ function ska_builder_render_html_attributes( $block_content, $block ) {
         // Zero-overhead enqueuing
         if ( $has_alpine ) {
             wp_enqueue_script( 'ska-alpine' );
+            if ( ! $has_x_data ) {
+                // Auto-inject x-data for Alpine v3 compliance if missing
+                $html_attrs .= ' x-data=""';
+            }
         }
 
         // Inject into the very first HTML opening tag
