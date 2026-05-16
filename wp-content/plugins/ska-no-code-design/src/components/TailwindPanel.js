@@ -257,8 +257,9 @@ export const TailwindPanel = ({ className, setClassName }) => {
                 isSmall
                 style={{ minWidth: 'auto', padding: '0', marginLeft: '4px', color: '#666' }}
                 onClick={() => removeClass(value)}
+                aria-label={__('Remove class', 'ska-builder-core')}
             >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                     <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
             </Button>
@@ -298,6 +299,14 @@ export const TailwindPanel = ({ className, setClassName }) => {
                         
                         <span
                             role="button"
+                            tabIndex={0}
+                            aria-label={__('Copy Classes', 'ska-builder-core')}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    copyAll(e);
+                                }
+                            }}
                             onPointerDown={copyAll}
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                             style={{
@@ -314,11 +323,20 @@ export const TailwindPanel = ({ className, setClassName }) => {
                             }}
                             title={__('Copy Classes', 'ska-builder-core')}
                         >
-                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>content_copy</span>
+                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }} aria-hidden="true">content_copy</span>
                         </span>
 
                         <span
                             role="button"
+                            tabIndex={0}
+                            aria-label={__('Save Preset', 'ska-builder-core')}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    if (hasClasses) setIsSavingPreset(true);
+                                }
+                            }}
                             onPointerDown={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -339,7 +357,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
                             }}
                             title={__('Save Preset', 'ska-builder-core')}
                         >
-                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>save</span>
+                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }} aria-hidden="true">save</span>
                         </span>
                     </div>
                 </div>
