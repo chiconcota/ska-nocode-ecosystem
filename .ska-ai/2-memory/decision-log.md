@@ -8,6 +8,19 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-05-16 - 🔴 Pivot: Chuyển dịch từ SPA App Portal sang Dedicated Pages
+- **Decision (Dedicated Page Architecture):** Phế bỏ hoàn toàn kiến trúc SPA (Single Page Application) sử dụng `x-show` cho App Portal. Thay vào đó, chuyển sang mô hình **Dedicated Page** (Định tuyến theo URL). Mỗi view (List, Detail, Create, Edit) sẽ là một Template riêng biệt (CPT `ska_theme_builder`). Điều này giúp tránh DOM phình to và rối rắm cho Nocode Admin.
+- **Decision (App Categorization - Virtual Folder):** Không tạo thêm Taxonomy để nhóm các trang của một App, nhằm tránh rác Database. Thay vào đó, sử dụng **Virtual Folder** (dựa trên metadata của template) để nhóm và lọc template theo App (ví dụ: LMS, CRM) trong giao diện Theme Builder.
+- **Decision (Dynamic Routing V2):** Nâng cấp bộ `Ska_App_Router` để hỗ trợ bắt route động (`/slug/` hoặc `/slug/{id}`). Hệ thống sẽ dispatch tới đúng Template dựa trên URL tham số thay vì dùng `/portal/{table}`.
+- **Decision (Gutenberg UI Scope Restriction):** Cập nhật `portal-visibility.js` để giới hạn Panel cài đặt hiển thị (Visibility Scope) chỉ xuất hiện trong CPT `ska_theme_builder`, tránh làm "rác" UI của các post/page thông thường.
+
+---
+## 2026-05-16 - 🔴 Pending: Kiến Trúc App Portal (Notion-like) & Data View
+- **Decision (Data View & Portal Routing):** Mở rộng Ska Data Pro để quản lý App Portals (Cấp URL, Security Role) trực tiếp từ Smart Object. Thiết lập chế độ Data View (Read-only hoặc CRUD) đi kèm tính năng Relation & Rollup tự động render Sub-table.
+- **Decision (Refine: Macro Pattern Injector thay vì Block Nguyên khối):** Thống nhất nút "Magic (Tự động tạo Template)" sẽ KHÔNG dùng một `Data View Block` đóng gói dạng hộp đen (Blackbox). Thay vào đó, nó sẽ kích hoạt **Macro Pattern Injector** của Theme Builder để tự động rải các khối Atomic (Ska Loop, Ska Text, Ska Button, Ska Modal) thành một bố cục hoàn chỉnh (Sidebar + Main Content). Bảo vệ tuyệt đối khả năng tinh chỉnh (Full Site Editing) cho End-User.
+- **Decision (Event-Driven Data Flow):** Các thao tác Submit/Update từ form Data View ở Frontend sẽ ngầm bắn ra Hook (ví dụ: `ska_data_updated`). Ska Logic Engine sẽ bổ sung Trigger Node "Table Listener" để "hứng" sự kiện này và bơm `Record_Data` vào biến Input cho các luồng tự động hóa (Gửi Email, API...).
+
+---
 ## 2026-05-13 - 🟢 Triển khai Dark Mode Engine (Ska Design System Phase 4.4)
 - **Decision (Zero-Trash Dark Mode Toggle):** Quyết định không tạo block mới rác cho nút đổi Dark Mode. Thay vào đó, nâng cấp `ska-button` hiện có, bổ sung tuỳ chọn "Toggle Dark Mode" (`theme_toggle`) trong Inspector. Khi kích hoạt, block sẽ tự động chèn `@click.prevent="$store.skaTheme.toggle()"` để tương tác với Alpine Store.
 - **Decision (Alpine.js State & Storage):** Thiết lập `Alpine.store('skaTheme')` quản lý trạng thái Dark Mode toàn cục (`isDark`), lưu trữ vào `localStorage` (`ska_dark_mode`) để duy trì trạng thái khi người dùng điều hướng qua các trang.

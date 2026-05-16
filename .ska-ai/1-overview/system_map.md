@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v1.0.0)
-@status: PLANNING PHASE 4.5 | @last_update: 2026-05-14
+@status: PIVOT TO DEDICATED PAGES (PHASE 4) | @last_update: 2026-05-16
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core (Host) + PHP 8.2+
@@ -62,6 +62,8 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 ## 7. RECENT LOGS (LATEST)
 > *Các nhật ký từ Phase 1 và 2 đã được lưu trữ trong `.ska-ai/2-memory/archive/`. Chỉ giữ lại các cập nhật cốt lõi gần đây (Phase 3 -> Phase 4).*
 
+- **2026-05-16 - 🔴 Pivot: Chuyển dịch từ SPA App Portal sang Dedicated Pages:** Phế bỏ hoàn toàn kiến trúc SPA (Single Page Application) sử dụng `x-show` cho App Portal để tránh rác DOM. Chuyển sang mô hình **Dedicated Page** (Định tuyến theo URL). Mỗi view (List, Detail, Create, Edit) sẽ là một Template riêng biệt (`ska_theme_builder`). Sử dụng **Virtual Folder** để phân nhóm template theo App (LMS, CRM...) trong Theme Builder thay vì dùng Taxonomy. Khởi động Phase 3 Nâng cấp `Ska_App_Router` hỗ trợ Dynamic Routing bắt URL tham số. Giới hạn hiển thị Panel Gutenberg `portal-visibility.js` chỉ xuất hiện trong CPT `ska_theme_builder`.
+
 - **2026-05-13 - 🟢 Triển khai Dark Mode Engine (Phase 4.4):** Nâng cấp hệ thống Ska Design Engine hỗ trợ Dark Mode hoàn chỉnh theo nguyên tắc Zero-Trash. Quản lý trạng thái qua Alpine.js store (`skaTheme`) và `localStorage`. Tích hợp tuỳ chọn chuyển đổi Dark Mode trực tiếp vào block `ska-button`. Sử dụng Script tiêm tại `wp_head` (priority 0) để chống FOUC tuyệt đối trên Frontend.
 - **2026-05-12 - 🟢 Mở rộng Design Tokens & Brand Identity:** Tích hợp quản lý Brand Logo thông qua thư viện Media của WP và nâng cấp bảng màu từ tĩnh sang mảng màu động (dynamic arrays). Người dùng có thể tự do thêm/xóa/sửa biến màu. Dữ liệu (Colors + Brand) được lưu vào `ska_data_sys_presets` và tự động xuất ra `tokens.json` làm SSOT. Khởi động khái niệm SkaFX Global Dynamic Resolver làm nền tảng phân giải token nội dung trong tương lai.
 - **2026-05-12 - 🟡 Quyết định Kiến trúc "Hybrid UX" và Rollback Visual Tailwind Browser:** Khai tử kế hoạch dùng `ClassChipInput` thay thế ô nhập text cũ do làm đứt gãy trải nghiệm gõ phím nhanh của power user. Đã thử nghiệm cấu trúc Hybrid UX qua `StylePopoverDrawer` nhưng quyết định rollback về trạng thái placeholder và chờ bản thiết kế UI/UX chính thức. Chuyển trạng thái Phase 2 & 3 về TODO (🟡). Đồng thời, đã sửa lỗi token merge (snake_case vs camelCase) để đảm bảo Padding/Block Gap lưu từ DB được áp dụng chính xác xuống `--ska-sys-content-padding` ở Frontend.
@@ -113,6 +115,7 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 - **Ska Symbols (Reusable Components):** Lưu lại các block phức tạp dưới dạng template/components độc lập và chèn vào cấu trúc bằng thuộc tính `refId` thay vì nhân bản HTML phình to. Tích hợp Component trực tiếp vào Inserter (+) của Gutenberg.
 - **Thư Viện Ska Molecules:** Phát triển các UI Components Nocode (Tabs, Accordion, Slider, Logic Modal) sử dụng Ska Universal Container kết hợp Alpine.js.
 - **Ska Interactive Engine:** Cơ chế mô phỏng (Live preview) trạng thái của Alpine.js ngay bên trong Editor, biến JIT thành "React Virtual DOM của Tailwind", giúp Editor phản hồi "sống" với các hiệu ứng tương tác (xổ dropdown, chuyển form nội bộ) theo thời gian thực.
+- **🔴 [PENDING] App Portals & Data View (Phase 4.5 & 4.6):** Xây dựng kiến trúc "Notion hóa". Ska Data Pro quản lý URL Routing & Security Role. Theme Builder dùng Macro Pattern Injector tự động sinh bố cục (Sidebar + Data View) bằng khối nguyên tử. Logic Engine lắng nghe event `ska_data_updated` để chạy Workflow.
 - **🔴 [PENDING] Ska Logic Engine (Automation Platform):** Nâng cấp Logic Engine thành một nền tảng Automation với giao diện 2D Canvas Graph (giống n8n). Hỗ trợ kiến trúc DAG (Directed Acyclic Graph) để rẽ nhánh (Success/Error), đa dạng hóa Trigger (Webhook, Cron), chạy nền (Async Process), và đặc biệt hỗ trợ **AI JSON Blueprint Import** để AI thiết kế 100% logic tự động.
 - **🟢 [POST-MVP] Ska Scripts Library & `ska-code`:** Hệ thống quản lý mã nguồn JS/CSS tập trung và khối `ska-code` thông minh. Tích hợp cấu hình vị trí nạp (Header/Footer) và phạm vi nạp (Global/On-demand) thay thế hoàn toàn Custom HTML, tự động chống lặp (Deduplication).
 - **🔴 [PHASE 6] SkaWind JS (Editor JIT Compiler):** Xây dựng bộ biên dịch JIT thuần Vanilla JS chạy trực tiếp trên Editor để thay thế hoàn toàn Tailwind CDN. Đảm bảo đồng nhất 100% logic biên dịch CSS (bao gồm tính năng tráo mảng màu Dark Mode) giữa Editor và Frontend, tối ưu tốc độ Live Preview và loại bỏ sự phụ thuộc bên thứ 3.
