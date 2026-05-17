@@ -8,8 +8,20 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
+## 2026-05-18 - 🟡 Pending: Kiến Trúc Redirect Cấp Độ App (App-Level Fallback)
+- **Decision (App-Level Redirect Fallback):** Thống nhất định hướng kiến trúc Redirect (chuyển hướng 302/301 khi truy cập trái phép) cho App Portal. Thay vì bắt buộc cấu hình lặp lại cho từng bảng (Table-level), hệ thống sẽ bổ sung cơ chế Kế thừa (Fallback): Ưu tiên cấu hình riêng của Table -> Trùng lặp sang cấu hình chung của App (Workspace) -> Cuối cùng fallback về `wp-login.php`. Quyết định này được đưa vào Log để lùi lịch triển khai sang **Giai đoạn Post-MVP** nhằm tối ưu hóa tính DRY (Don't Repeat Yourself) và quản trị tập trung, tránh làm chậm tiến độ lõi hiện hành.
+
+---
+## 2026-05-18 - 🟡 Pending: Kiến trúc Role-Based Access Control (RBAC) Tầng Hiển thị
+- **Decision (RBAC Deferral):** Quyết định tạm hoãn tính năng phân quyền hiển thị (RBAC - ẩn/hiện Block/Template dựa trên role người dùng) ở mức Theme Builder sang giai đoạn Post-MVP. Hiện tại Middleware (Data Pro & App Router) đã đủ sức bảo vệ an toàn luồng dữ liệu Backend (trả về 403 nếu không đủ quyền). Việc lùi RBAC UI giúp dồn toàn lực tập trung xây dựng tính năng lõi **Auto-Generated CRUD (Macro Injector)** mang tính "Wow factor" và giải quyết trực tiếp pain-point lớn nhất của người dùng No-code.
+
+---
+## 2026-05-17 - 🟢 Sửa lỗi App Portal Custom Redirect & Hoàn thiện Data Pipeline
+- **Decision (Frontend Build Pipeline Sync):** Xác nhận nguyên nhân lỗi App Portal Redirect trả về trang mặc định `wp_login_url()` là do thiếu bước biên dịch (build) bộ Javascript `schema.js` ở phía Frontend, khiến tham số `unauthorized_redirect_url` không được truyền về Backend để lưu vào Database. Đã tiến hành bổ sung `npm run build` vào quy trình để đồng bộ hoàn toàn cấu hình UI mới vào `admin-datagrid.bundle.js`.
+- **Decision (Middleware Enforcement):** Xác nhận lại kiến trúc `Ska_App_Router::enforce_security` hoạt động đúng 100%. Khi tham số `unauthorized_redirect_url` có mặt trong cấu hình Portal (`ska_data_dictionary`), hệ thống sẽ thực hiện redirect 302 chính xác và truyền kèm biến `?redirect_to=` tới trang Lead Page/Custom Page, thay vì fallback về trang đăng nhập WordPress. Lỗi đã được triệt tiêu hoàn toàn. Đã khởi tạo file hướng dẫn End-User QA tại `qa_workflow_phase5.md`.
+
+---
 ## 2026-05-17 - 🟢 Hoàn tất E2E Testing Dedicated Pages (Milestone 6) & Bugfix Deprecation
-- **Decision (PHP 8.1+ Block-Template Fallback Deprecation):** Đã phân tích và triệt tiêu cảnh báo `strpos(): Passing null` trong `wp_normalize_path` của lõi WordPress. Nguyên nhân là khi định tuyến `Ska_App_Router` vô hiệu hóa WP_Query (`$query->is_404 = false`), lõi WordPress sẽ rơi vào trường hợp fallback `get_index_template()` (bởi vì các cờ `is_page`, `is_single` đều đang false). Điều này khiến hệ thống Block Template nội bộ của WordPress nhận biến rỗng, đẩy `null` vào `wp_normalize_path`. Tuy nhiên, luồng thực thi vẫn được `Ska_Virtual_Wrapper` tiếp quản hoàn hảo và render ra HTML đúng. Quyết định: Cảnh báo này vô hại, dọn dẹp debug handler trong `wp-config.php` và giữ nguyên kiến trúc `short_circuit_wp_query` vì lợi ích Performance (không tốn DB query thừa). Hệ thống chính thức đạt độ Ổn định (Stable).
 
 ---
 ## 2026-05-16 - 🔴 Pivot: Chuyển dịch từ SPA App Portal sang Dedicated Pages & Tối Ưu Hiệu Năng

@@ -805,7 +805,8 @@ class Database_Engine
 			'active' => $active,
 			'slug' => $slug,
 			'roles' => isset($settings['roles']) && is_array($settings['roles']) ? array_map('sanitize_text_field', $settings['roles']) : array(),
-			'view_mode' => isset($settings['view_mode']) ? sanitize_text_field($settings['view_mode']) : 'readonly'
+			'view_mode' => isset($settings['view_mode']) ? sanitize_text_field($settings['view_mode']) : 'readonly',
+			'unauthorized_redirect_url' => isset($settings['unauthorized_redirect_url']) ? esc_url_raw($settings['unauthorized_redirect_url']) : ''
 		);
 
 		update_option('ska_data_dictionary', $dictionary);

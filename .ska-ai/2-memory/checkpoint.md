@@ -1,21 +1,21 @@
 # 🛑 SKA BUILDER CHECKPOINT BÀN GIAO
 
 ## 1. Trạng thái hiện tại (Đã hoàn thành)
-- Hoàn tất **Milestone 6 (E2E Testing Dedicated Pages)**. 
-- Ổn định cơ chế nội suy động (Dynamic Hydration) trong `Ska_Virtual_Wrapper` và `Ska_Loop` để hỗ trợ giải mã các biến trong URL, biến chứa dấu gạch ngang (VD: `[ten-khoa-hoc]`) và các biến URL-encoded (phục vụ liên kết trực tiếp từ Gutenberg Toolbar).
-- Nâng cấp `Data_Fetcher` hỗ trợ tự động đối chiếu `JSON_CONTAINS` cho các trường Khóa ngoại (Relation), giải quyết triệt để lỗi trang trắng.
-- Xác thực thành công luồng **Reverse Lookup** (Rollup dữ liệu) trên Frontend thông qua block `ska-loop`.
-- Xác nhận **Task 4.3 (DB Auto-Indexing)** đã được hoàn thành với Multi-Valued Index trên MySQL 8.0+. Hệ thống sẵn sàng với hiệu năng cao.
+- Hoàn tất **Sửa lỗi Portal Custom Redirect** ở Backend (`class-database-engine.php` và `class-admin-ajax.php`), đảm bảo trường `unauthorized_redirect_url` được lưu chính xác vào `ska_data_dictionary` và Middleware `enforce_security` hoạt động đúng.
+- Đã ghi nhận quyết định **Tạm hoãn (Defer) Kiến trúc Kế thừa Redirect (App-Level Fallback)** sang Post-MVP để giữ ổn định hệ thống hiện tại.
+- Đã ghi nhận quyết định **Tạm hoãn (Defer) RBAC Tầng Hiển thị** sang Post-MVP để dồn lực cho Phase 4.6 (Auto CRUD).
+- Đã cập nhật đầy đủ System Map, Decision Log, và Project Managers.
 
 ## 2. Nhiệm vụ cho phiên tiếp theo (Next Session)
 **Chủ đề:** Khởi động Phase 4.6 (Auto-Generated CRUD Portal).
-1. Xây dựng nền tảng tự động sinh các Form (Create/Update) và giao diện Read/Delete dựa trên cấu trúc (Dictionary) của `ska_data_*` tables.
-2. Thiết kế Macro Pattern Injector để tiêm form vào Editor mà không làm hỏng Atomic nodes.
-3. Liên kết với bộ Middleware bảo mật quyền truy cập (Auth Gates).
+1. Xây dựng nền tảng **Schema Fetcher** (API lấy danh sách cột của Smart Object từ Data Pro).
+2. Xây dựng **Macro Injector (React)** để rải các block nguyên tử (Atomic Blocks: `ska-text`, `ska-button`, `ska-modal`, `ska-form`) vào Editor dựa trên cấu trúc Schema mà không biến chúng thành Blackbox.
+3. Thiết lập Event-Driven Data Flow để bắn hook `ska_data_updated` và cấu hình Logic Engine Node `Table Listener` hứng sự kiện.
 
 ## 3. Ngữ cảnh tập tin đang thao tác
-- `.ska-ai/1-overview/project-managers/project_manager_dedicated_pages.md`
+- `.ska-ai/1-overview/project-managers/project_manager_auto_crud.md`
+- `.ska-ai/1-overview/project-managers/project_manager_phase4.md`
 - `.ska-ai/1-overview/system_map.md`
+- `.ska-ai/2-memory/decision-log.md`
 - `.ska-ai/2-memory/checkpoint.md`
-- `class-virtual-wrapper.php` và `ska-loop/render.php` (Đã xử lý regex)
-- `class-data-fetcher.php` (Đã xử lý JSON relation query)
+- `class-database-engine.php` (Đã fix lỗi lưu portal config)

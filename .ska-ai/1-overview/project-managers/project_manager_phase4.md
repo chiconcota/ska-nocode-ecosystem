@@ -51,7 +51,7 @@
 ### 2.4. Tính Năng UI Độc Lập / Mới Cập Nhật
 *Được trích xuất từ phần 'Tương lai' (3.3) của Phase 3.*
 - [x] **Milestone 2 (Design Engine) - Dark Mode Thượng tầng:** Lập kế hoạch mang lại chức năng Dark Mode hoàn chỉnh (`darkMode: 'class'`), kết hợp Tailwind. Cần xây dựng Switcher / Toggle Block.
-- [ ] 🌟 **App Dashboards / Sub-Admin Portals (Phase 4.5):** Đã phân tách Kế hoạch Kiến trúc ra file riêng. -> 👉 **Xem chi tiết tại:** `project_manager_app_portal.md`
+- [x] 🌟 **App Dashboards / Sub-Admin Portals (Phase 4.5):** Đã phân tách Kế hoạch Kiến trúc ra file riêng. -> 👉 **Xem chi tiết tại:** `project_manager_app_portal.md`
 - [ ] 🌟 **Auto-Generated CRUD Portal (Phase 4.6):** Đã phân tách Kiến trúc Macro Injector ra file riêng. -> 👉 **Xem chi tiết tại:** `project_manager_auto_crud.md`
 - [ ] **Role-Based Access Control (RBAC) cho Tầng Hiển thị:** Xử lý hệ thống phân quyền nâng cao (RBAC) để quyết định hiển thị Khối/Template cho từng nhóm đối tượng.
 - [x] **Ska System Framework (Dashboard):** 

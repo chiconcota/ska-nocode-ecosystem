@@ -112,8 +112,8 @@ class Ska_App_Router {
 			return;
 		}
 
-		// Security Check: Roles
-		$this->enforce_security( $portal_config['roles'] );
+		// Security Check: Roles & Custom Redirect
+		$this->enforce_security( $portal_config );
 
 		// If passed, store config in a global context for Virtual Wrapper and other components
 		global $ska_current_portal;
@@ -174,9 +174,11 @@ class Ska_App_Router {
 	/**
 	 * Enforce security based on allowed roles.
 	 * 
-	 * @param array|string $allowed_roles
+	 * @param array $portal_config
 	 */
-	private function enforce_security( $allowed_roles ) {
+	private function enforce_security( $portal_config ) {
+		$allowed_roles = isset( $portal_config['roles'] ) ? $portal_config['roles'] : array();
+
 		// Normalize roles to array
 		if ( is_string( $allowed_roles ) ) {
 			$allowed_roles = array_map( 'trim', explode( ',', $allowed_roles ) );
@@ -198,7 +200,16 @@ class Ska_App_Router {
 			// Not logged in -> Redirect to login page and return back to portal
 			global $wp;
 			$current_url = home_url( add_query_arg( array(), $wp->request ) );
-			$login_url   = apply_filters( 'ska_auth_redirect_url', wp_login_url( $current_url ) );
+
+			if ( ! empty( $portal_config['unauthorized_redirect_url'] ) ) {
+				$redirect_base = esc_url_raw( $portal_config['unauthorized_redirect_url'] );
+				$login_url = add_query_arg( 'redirect_to', urlencode( $current_url ), $redirect_base );
+			} else {
+				$login_url = wp_login_url( $current_url );
+			}
+			
+			$login_url = apply_filters( 'ska_auth_redirect_url', $login_url );
+			
 			wp_redirect( $login_url );
 			exit;
 		}
