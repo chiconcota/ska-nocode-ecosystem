@@ -41,7 +41,7 @@ if ( ! empty( $attributes['logic']['enabled'] ) ) {
 // === SKA FORM ENGINE & LINKS: Auto-Inject Alpine.js / Href ===
 $form_extra_attrs = '';
 if ( ! empty( $link_url ) ) {
-    $form_extra_attrs .= ' href="' . esc_url( $link_url ) . '"' . $link_target;
+    $form_extra_attrs .= ' href="' . \Ska\Builder\Utils\Dynamic_Data::safe_esc_url( $link_url ) . '"' . $link_target;
 }
 
 $is_ska_form      = ! empty( $attributes['isSkaForm'] );

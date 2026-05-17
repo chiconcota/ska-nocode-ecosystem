@@ -28,6 +28,14 @@ class Design_Workspace_UI {
         }
 
         wp_enqueue_script( 'tailwindcss', 'https://cdn.tailwindcss.com', [], null, false );
+        wp_add_inline_script( 'tailwindcss', '
+            window.tailwind = window.tailwind || {};
+            window.tailwind.config = {
+                corePlugins: {
+                    preflight: false,
+                }
+            };
+        ', 'before' );
         wp_enqueue_script( 'alpinejs', 'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js', [], null, true );
         wp_enqueue_style( 'material-icons', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200', [], null );
     }

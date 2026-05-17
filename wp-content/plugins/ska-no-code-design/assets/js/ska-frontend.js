@@ -304,15 +304,39 @@ function _registerSkaTheme() {
     });
 }
 
+/**
+ * Đăng ký skaPortal Store vào Alpine để quản lý Dữ liệu trang hiện tại (Current Page Data).
+ */
+function _registerSkaPortal() {
+    if (!window.Alpine) return;
+
+    Alpine.store('skaPortal', {
+        config: {},
+        columns: {},
+        currentData: null, // Dữ liệu của trang hiện tại (Mảng List hoặc Object Detail)
+        isLoading: false,
+        
+        init() {
+            if (window.SkaPortalContext) {
+                this.config = window.SkaPortalContext.portal || {};
+                this.columns = window.SkaPortalContext.columns || {};
+                this.currentData = window.SkaPortalContext.currentData || null;
+            }
+        }
+    });
+}
+
 // Script này load TRƯỚC Alpine.js (thứ tự enqueue trong render.php).
 // Khi Alpine load sau → phát alpine:init → hàm này hứng → đăng ký skaForm & skaTheme.
 // Fallback: Nếu Alpine đã load trước (edge-case HTML Attributes) → gọi trực tiếp.
 if (window.Alpine) {
     _registerSkaForm();
     _registerSkaTheme();
+    _registerSkaPortal();
 } else {
     document.addEventListener('alpine:init', () => {
         _registerSkaForm();
         _registerSkaTheme();
+        _registerSkaPortal();
     });
 }

@@ -167,22 +167,31 @@ add_action( 'admin_enqueue_scripts', 'ska_builder_core_register_frontend_engine'
  * The zero-overhead Engine: only loads Alpine when x- attributes are used.
  */
 function ska_builder_render_html_attributes( $block_content, $block ) {
-    if ( ! empty( $block['blockName'] ) && strpos( $block['blockName'], 'ska-builder/' ) === 0 && ! empty( $block['attrs']['htmlAttributes'] ) && is_array( $block['attrs']['htmlAttributes'] ) ) {
+    if ( ! empty( $block['blockName'] ) && strpos( $block['blockName'], 'ska-builder/' ) === 0 ) {
         $html_attrs = '';
         $has_alpine = false;
         $has_x_data = false;
+        $has_x_show = false;
         
-        foreach ( $block['attrs']['htmlAttributes'] as $attr ) {
-            if ( ! empty( $attr['key'] ) ) {
-                if ( str_starts_with( $attr['key'], 'x-' ) || str_starts_with( $attr['key'], '@' ) ) {
-                    $has_alpine = true;
+        if ( ! empty( $block['attrs']['htmlAttributes'] ) && is_array( $block['attrs']['htmlAttributes'] ) ) {
+            foreach ( $block['attrs']['htmlAttributes'] as $attr ) {
+                if ( ! empty( $attr['key'] ) ) {
+                    if ( str_starts_with( $attr['key'], 'x-' ) || str_starts_with( $attr['key'], '@' ) ) {
+                        $has_alpine = true;
+                    }
+                    if ( $attr['key'] === 'x-data' ) {
+                        $has_x_data = true;
+                    }
+                    if ( $attr['key'] === 'x-show' ) {
+                        $has_x_show = true;
+                    }
+                    $html_attrs .= ' ' . esc_attr( $attr['key'] ) . '="' . esc_attr( $attr['value'] ?? '' ) . '"';
                 }
-                if ( $attr['key'] === 'x-data' ) {
-                    $has_x_data = true;
-                }
-                $html_attrs .= ' ' . esc_attr( $attr['key'] ) . '="' . esc_attr( $attr['value'] ?? '' ) . '"';
             }
         }
+        
+        // Portal Visibility logic removed.
+
         
         // Zero-overhead enqueuing
         if ( $has_alpine ) {

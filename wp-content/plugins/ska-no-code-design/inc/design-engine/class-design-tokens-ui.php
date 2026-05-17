@@ -22,7 +22,7 @@ class Design_Tokens_UI {
         // Thay vì null, add_submenu_page vào một slug không tồn tại sẽ ẩn menu (cách 1)
         // Hoặc add vào ska-system-dashboard nhưng dùng CSS ẩn đi. Cách xịn nhất WordPress là parent_slug = null.
         add_submenu_page(
-            null, // Ẩn khỏi sidebar
+            '', // Ẩn khỏi sidebar
             __( 'Brand, Font & Theme Options', 'ska-no-code-design' ),
             __( 'Design Tokens', 'ska-no-code-design' ),
             'manage_options',

@@ -65,17 +65,66 @@ class Data_Fetcher {
 
 		$limit = absint( $limit );
 		
+		// Phân trang
+		$page   = isset( $args['page'] ) ? max( 1, absint( $args['page'] ) ) : 1;
+		$offset = ( $page - 1 ) * $limit;
+		
 		$where_sql = "1=1";
 		$prepare_values = array();
 
 		// 1. FILTER: Lọc dữ liệu
 		if ( ! empty( $args['filter_field'] ) && isset( $args['filter_val'] ) && $args['filter_val'] !== '' ) {
 			$filter_field = sanitize_key( $args['filter_field'] );
-			$filter_op    = ! empty( $args['filter_op'] ) ? sanitize_text_field( $args['filter_op'] ) : 'like';
+			$filter_op    = ! empty( $args['filter_op'] ) ? strtolower( sanitize_text_field( $args['filter_op'] ) ) : 'like';
 			
-			if ( $filter_op === 'eq' ) {
-				$where_sql .= " AND `{$filter_field}` = %s";
+			if ( $filter_op === 'eq' || $filter_op === '=' ) {
+				$val = $args['filter_val'];
+				if ( is_numeric( $val ) ) {
+					// Hỗ trợ tự động fallback sang JSON_CONTAINS nếu dữ liệu là Relation (lưu dạng mảng JSON)
+					$where_sql .= " AND ( `{$filter_field}` = %s OR (JSON_VALID(`{$filter_field}`) AND (JSON_CONTAINS(`{$filter_field}`, %s, '$') OR JSON_CONTAINS(`{$filter_field}`, %s, '$'))) )";
+					$prepare_values[] = $val;
+					$prepare_values[] = wp_json_encode( (int) $val );
+					$prepare_values[] = wp_json_encode( (string) $val );
+				} else {
+					$where_sql .= " AND `{$filter_field}` = %s";
+					$prepare_values[] = $val;
+				}
+			} elseif ( $filter_op === '!=' ) {
+				$where_sql .= " AND `{$filter_field}` != %s";
 				$prepare_values[] = $args['filter_val'];
+			} elseif ( $filter_op === '>' ) {
+				$where_sql .= " AND `{$filter_field}` > %s";
+				$prepare_values[] = $args['filter_val'];
+			} elseif ( $filter_op === '>=' ) {
+				$where_sql .= " AND `{$filter_field}` >= %s";
+				$prepare_values[] = $args['filter_val'];
+			} elseif ( $filter_op === '<' ) {
+				$where_sql .= " AND `{$filter_field}` < %s";
+				$prepare_values[] = $args['filter_val'];
+			} elseif ( $filter_op === '<=' ) {
+				$where_sql .= " AND `{$filter_field}` <= %s";
+				$prepare_values[] = $args['filter_val'];
+			} elseif ( $filter_op === 'in' ) {
+				$in_vals = is_array( $args['filter_val'] ) ? $args['filter_val'] : array_map( 'trim', explode( ',', $args['filter_val'] ) );
+				$placeholders = array_fill( 0, count( $in_vals ), '%s' );
+				$where_sql .= " AND `{$filter_field}` IN (" . implode( ',', $placeholders ) . ")";
+				foreach ( $in_vals as $v ) {
+					$prepare_values[] = $v;
+				}
+			} elseif ( $filter_op === 'json_contains' ) {
+				$val_str = (string) $args['filter_val'];
+				$val_json = wp_json_encode( $val_str );
+				if ( is_numeric( $val_str ) ) {
+					// Hỗ trợ mảng lưu số [1] hoặc chuỗi ["1"]
+					$where_sql .= " AND ( (JSON_VALID(`{$filter_field}`) AND (JSON_CONTAINS(`{$filter_field}`, %s, '$') OR JSON_CONTAINS(`{$filter_field}`, %s, '$'))) OR FIND_IN_SET(%s, REPLACE(`{$filter_field}`, ' ', '')) > 0 )";
+					$prepare_values[] = $val_str;
+					$prepare_values[] = $val_json;
+					$prepare_values[] = $val_str;
+				} else {
+					$where_sql .= " AND ( (JSON_VALID(`{$filter_field}`) AND JSON_CONTAINS(`{$filter_field}`, %s, '$')) OR FIND_IN_SET(%s, REPLACE(`{$filter_field}`, ' ', '')) > 0 )";
+					$prepare_values[] = $val_json;
+					$prepare_values[] = $val_str; // Cho FIND_IN_SET
+				}
 			} else {
 				$where_sql .= " AND `{$filter_field}` LIKE %s";
 				$prepare_values[] = '%' . $wpdb->esc_like( $args['filter_val'] ) . '%';
@@ -101,7 +150,7 @@ class Data_Fetcher {
 			$orderby_sql = "ORDER BY " . implode( ", ", $order_parts );
 		}
 		
-		$sql = "SELECT * FROM `{$table_name}` WHERE {$where_sql} {$orderby_sql} LIMIT {$limit}";
+		$sql = "SELECT * FROM `{$table_name}` WHERE {$where_sql} {$orderby_sql} LIMIT {$limit} OFFSET {$offset}";
 
 		if ( ! empty( $prepare_values ) ) {
 			$final_sql = $wpdb->prepare( $sql, $prepare_values );
@@ -112,6 +161,83 @@ class Data_Fetcher {
 		
 		$rows = $rows ? self::enrich_relations( $table_name, $rows ) : array();
 		return $rows ? self::enrich_rollups( $table_name, $rows ) : array();
+	}
+
+	/**
+	 * Đếm tổng số lượng dòng (phục vụ phân trang)
+	 *
+	 * @param string $table_name Tên bảng.
+	 * @param array $args Tham số truy vấn phụ (filter_field, filter_val).
+	 * @return int Tổng số dòng.
+	 */
+	public static function count_table_rows( $table_name, $args = array() ) {
+		global $wpdb;
+		
+		if ( strpos( $table_name, $wpdb->prefix . 'ska_data_' ) !== 0 ) {
+			return 0;
+		}
+
+		$where_sql = "1=1";
+		$prepare_values = array();
+
+		// 1. FILTER: Lọc dữ liệu
+		if ( ! empty( $args['filter_field'] ) && isset( $args['filter_val'] ) && $args['filter_val'] !== '' ) {
+			$filter_field = sanitize_key( $args['filter_field'] );
+			$filter_op    = ! empty( $args['filter_op'] ) ? strtolower( sanitize_text_field( $args['filter_op'] ) ) : 'like';
+			
+			if ( $filter_op === 'eq' || $filter_op === '=' ) {
+				$where_sql .= " AND `{$filter_field}` = %s";
+				$prepare_values[] = $args['filter_val'];
+			} elseif ( $filter_op === '!=' ) {
+				$where_sql .= " AND `{$filter_field}` != %s";
+				$prepare_values[] = $args['filter_val'];
+			} elseif ( $filter_op === '>' ) {
+				$where_sql .= " AND `{$filter_field}` > %s";
+				$prepare_values[] = $args['filter_val'];
+			} elseif ( $filter_op === '>=' ) {
+				$where_sql .= " AND `{$filter_field}` >= %s";
+				$prepare_values[] = $args['filter_val'];
+			} elseif ( $filter_op === '<' ) {
+				$where_sql .= " AND `{$filter_field}` < %s";
+				$prepare_values[] = $args['filter_val'];
+			} elseif ( $filter_op === '<=' ) {
+				$where_sql .= " AND `{$filter_field}` <= %s";
+				$prepare_values[] = $args['filter_val'];
+			} elseif ( $filter_op === 'in' ) {
+				$in_vals = is_array( $args['filter_val'] ) ? $args['filter_val'] : array_map( 'trim', explode( ',', $args['filter_val'] ) );
+				$placeholders = array_fill( 0, count( $in_vals ), '%s' );
+				$where_sql .= " AND `{$filter_field}` IN (" . implode( ',', $placeholders ) . ")";
+				foreach ( $in_vals as $v ) {
+					$prepare_values[] = $v;
+				}
+			} elseif ( $filter_op === 'json_contains' ) {
+				$val_str = (string) $args['filter_val'];
+				$val_json = wp_json_encode( $val_str );
+				if ( is_numeric( $val_str ) ) {
+					// Hỗ trợ mảng lưu số [1] hoặc chuỗi ["1"]
+					$where_sql .= " AND ( (JSON_VALID(`{$filter_field}`) AND (JSON_CONTAINS(`{$filter_field}`, %s, '$') OR JSON_CONTAINS(`{$filter_field}`, %s, '$'))) OR FIND_IN_SET(%s, REPLACE(`{$filter_field}`, ' ', '')) > 0 )";
+					$prepare_values[] = $val_str;
+					$prepare_values[] = $val_json;
+					$prepare_values[] = $val_str;
+				} else {
+					$where_sql .= " AND ( (JSON_VALID(`{$filter_field}`) AND JSON_CONTAINS(`{$filter_field}`, %s, '$')) OR FIND_IN_SET(%s, REPLACE(`{$filter_field}`, ' ', '')) > 0 )";
+					$prepare_values[] = $val_json;
+					$prepare_values[] = $val_str; // Cho FIND_IN_SET
+				}
+			} else {
+				$where_sql .= " AND `{$filter_field}` LIKE %s";
+				$prepare_values[] = '%' . $wpdb->esc_like( $args['filter_val'] ) . '%';
+			}
+		}
+
+		$sql = "SELECT COUNT(*) FROM `{$table_name}` WHERE {$where_sql}";
+
+		if ( ! empty( $prepare_values ) ) {
+			$final_sql = $wpdb->prepare( $sql, $prepare_values );
+			return (int) $wpdb->get_var( $final_sql );
+		} else {
+			return (int) $wpdb->get_var( $sql );
+		}
 	}
 
 	/**
@@ -188,6 +314,12 @@ class Data_Fetcher {
 				}
 			}
 
+			// Extract portal settings for the target table (for Dynamic Link generation)
+			$portal_slug = '';
+			if ( isset( $all_dict[ $target_table ]['__table_info']['portal_settings']['slug'] ) && ! empty( $all_dict[ $target_table ]['__table_info']['portal_settings']['active'] ) ) {
+				$portal_slug = $all_dict[ $target_table ]['__table_info']['portal_settings']['slug'];
+			}
+
 			// Đắp Map (Enrich) vào kết quả thô của Rows
 			foreach ( $rows as &$row ) {
 				if ( ! empty( $row[$col_name] ) ) {
@@ -196,7 +328,14 @@ class Data_Fetcher {
 					$has_valid = false;
 					foreach ( $ids as $id ) {
 						if ( is_numeric($id) && isset($map[ (int)$id ]) ) {
-							$enriched[] = array( 'id' => (int)$id, 'label' => $map[ (int)$id ] );
+							$item = array( 'id' => (int)$id, 'label' => $map[ (int)$id ] );
+							
+							// Sinh link động nếu bảng đích có khai báo Portal
+							if ( $portal_slug !== '' ) {
+								$item['url'] = home_url( '/' . $portal_slug . '/' . $id . '/' );
+							}
+
+							$enriched[] = $item;
 							$has_valid = true;
 						}
 					}

@@ -27,6 +27,7 @@ require_once SKA_DATA_PRO_PATH . 'inc/core/class-template-registry.php';
 require_once SKA_DATA_PRO_PATH . 'inc/core/class-data-fetcher.php';
 require_once SKA_DATA_PRO_PATH . 'inc/core/class-database-engine.php';
 require_once SKA_DATA_PRO_PATH . 'inc/core/class-query-builder.php';
+require_once SKA_DATA_PRO_PATH . 'inc/api/class-rest-api.php';
 // Khởi tạo hệ thống
 function init()
 {
@@ -34,6 +35,7 @@ function init()
     $ajax = new Admin\Admin_Ajax(); // Khởi tạo xử lý Request (AJAX)
     Core\Query_Builder::get_instance(); // Đánh thức cỗ máy xử lý Truy Xuất Dữ Liệu SQL
     Core\App_Manager::maybe_run_migration(); // Đồng bộ App Blueprint Migration
+    Api\Rest_Api::get_instance(); // Đăng ký REST API cho App Portal
 
     // Require file chứa Provider lúc hệ thống Hook Plugins_loaded (tránh bị return early)
     require_once SKA_DATA_PRO_PATH . 'inc/core/class-ska-provider.php';

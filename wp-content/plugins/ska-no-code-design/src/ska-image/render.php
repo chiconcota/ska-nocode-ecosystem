@@ -33,7 +33,7 @@ $img_attributes = sprintf(
     esc_attr( $object_fit )
 );
 
-$src = $image_url ? ' src="' . esc_url( $image_url ) . '"' : '';
+$src = $image_url ? ' src="' . \Ska\Builder\Utils\Dynamic_Data::safe_esc_url( $image_url ) . '"' : '';
 $image_alt = $attributes['alt'] ?? '';
 if ( ! $image_alt && $image_id ) {
     $image_alt = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
@@ -49,8 +49,8 @@ if ( ! empty( $attributes['logic']['enabled'] ) ) {
 
 // Render dynamic content if needed
 if ( ! empty( $attributes['dynamic']['source'] ) && $attributes['dynamic']['source'] !== 'static' ) {
-    $image_url = \Ska\Builder\Utils\Assets::get_dynamic_content( $attributes['dynamic'], 'url' );
-    $src = ' src="' . esc_url( $image_url ) . '"';
+    $image_url = \Ska\Builder\Utils\Dynamic_Data::get_dynamic_content( $attributes['dynamic'], 'url' );
+    $src = ' src="' . \Ska\Builder\Utils\Dynamic_Data::safe_esc_url( $image_url ) . '"';
 }
 
 $custom_style = ! empty( $attributes['customStyle'] ) ? ' style="' . esc_attr( $attributes['customStyle'] ) . '"' : '';

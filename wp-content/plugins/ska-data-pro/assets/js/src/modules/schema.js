@@ -210,4 +210,85 @@ export function attachSchemaEvents() {
             }
         });
     }
+
+    // 7. CẤU HÌNH APP PORTAL
+    window.skaInitPortalSettings = function() {
+        const tableId = window.skaDataConfig.tableId;
+        const dict = window.skaGlobalDict && window.skaGlobalDict[tableId] ? window.skaGlobalDict[tableId] : null;
+        const portalSettings = dict && dict['__table_info'] && dict['__table_info']['portal_settings'] 
+                                ? dict['__table_info']['portal_settings'] 
+                                : {};
+
+        const chkActive = document.getElementById('ska-portal-active');
+        const fieldsWrapper = document.getElementById('ska-portal-fields-wrapper');
+        const slugInput = document.getElementById('ska-portal-slug');
+        const rolesInput = document.getElementById('ska-portal-roles');
+        const viewModeInput = document.getElementById('ska-portal-view-mode');
+
+        // Populate existing data
+        if (portalSettings && portalSettings.active) {
+            chkActive.checked = true;
+            fieldsWrapper.classList.remove('opacity-50', 'pointer-events-none');
+            slugInput.value = portalSettings.slug || '';
+            rolesInput.value = (portalSettings.roles || []).join(',');
+            viewModeInput.value = portalSettings.view_mode || 'readonly';
+        } else {
+            chkActive.checked = false;
+            fieldsWrapper.classList.add('opacity-50', 'pointer-events-none');
+            // Auto suggest slug based on table id
+            if (!slugInput.value) {
+                slugInput.value = tableId.replace('ska_data_', '').replace(/_/g, '-');
+            }
+        }
+
+        chkActive.addEventListener('change', function() {
+            if (this.checked) {
+                fieldsWrapper.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                fieldsWrapper.classList.add('opacity-50', 'pointer-events-none');
+            }
+        });
+    };
+
+    const exPortalSettingsBtn = document.getElementById('ska-execute-portal-settings-btn');
+    if (exPortalSettingsBtn) {
+        exPortalSettingsBtn.addEventListener('click', async () => {
+            const tableId = document.getElementById('ska-portal-table-slug').value;
+            const active = document.getElementById('ska-portal-active').checked;
+            const slug = document.getElementById('ska-portal-slug').value.trim();
+            const rolesInput = document.getElementById('ska-portal-roles').value.trim();
+            const viewMode = document.getElementById('ska-portal-view-mode').value;
+
+            if (active && !slug) {
+                alert('Vui lòng điền URL Slug cho Portal.');
+                return;
+            }
+
+            // Parse roles
+            let roles = [];
+            if (rolesInput) {
+                roles = rolesInput.split(',').map(r => r.trim()).filter(r => r);
+            }
+
+            exPortalSettingsBtn.disabled = true;
+            const originalText = exPortalSettingsBtn.innerHTML;
+            exPortalSettingsBtn.innerHTML = 'Đang lưu...';
+
+            const res = await apiFetch('ska_data_update_portal_settings', {
+                table: tableId,
+                active: active,
+                slug: slug,
+                roles: roles,
+                view_mode: viewMode
+            });
+
+            if (res.success) {
+                window.location.reload();
+            } else {
+                alert(res.data?.message || 'Có lỗi xảy ra trong quá trình lưu.');
+                exPortalSettingsBtn.disabled = false;
+                exPortalSettingsBtn.innerHTML = originalText;
+            }
+        });
+    }
 }

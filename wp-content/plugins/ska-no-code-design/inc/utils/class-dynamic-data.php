@@ -143,4 +143,20 @@ class Dynamic_Data {
             return $matches[0];
         }, $content );
     }
+
+    /**
+     * Safe esc_url wrapper that preserves {{...}} mustache tags.
+     * 
+     * @param string $url The URL to escape.
+     * @return string The escaped URL.
+     */
+    public static function safe_esc_url( $url ) {
+        if ( empty( $url ) ) {
+            return '';
+        }
+        if ( strpos( $url, '{{' ) !== false && strpos( $url, '}}' ) !== false ) {
+            return esc_attr( $url );
+        }
+        return esc_url( $url );
+    }
 }

@@ -112,6 +112,10 @@ $table_dict  = isset($all_dict[$current_table]) ? $all_dict[$current_table] : ar
                     </a>
                     <?php endif; ?>
                     
+                    <button id="ska-btn-portal-settings" class="px-3 py-1.5 text-sm bg-white border border-gray-300 rounded flex items-center gap-1 shadow-sm transition-colors text-blue-600 hover:bg-blue-50 hover:border-blue-300 ml-2" onclick="document.getElementById('ska-portal-settings-modal').classList.remove('hidden'); if(window.skaInitPortalSettings) window.skaInitPortalSettings();">
+                        <span class="dashicons dashicons-admin-site-alt3 mt-0.5" style="font-size: 16px;"></span> App Portal
+                    </button>
+
                     <div class="w-px h-6 bg-gray-200 mx-1"></div>
                     <button class="ska-add-row-trigger px-4 py-1.5 text-sm bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white rounded font-medium flex items-center gap-1 shadow-sm transition">
                         <span class="dashicons dashicons-plus-alt2 mt-0.5" style="font-size: 16px;"></span> Thêm Dòng Mới

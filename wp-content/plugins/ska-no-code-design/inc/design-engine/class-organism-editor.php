@@ -125,7 +125,7 @@ class Organism_Editor {
 			#wpfooter { display: none !important; }
 		</style>
 		
-		<div class="ska-organism-editor-wrapper bg-slate-100 h-screen w-full flex flex-col -ml-5 -mt-2 overflow-hidden" x-data="organismEditorData()">
+		<div class="ska-organism-editor-wrapper bg-slate-100 h-screen w-full flex flex-col overflow-hidden" x-data="organismEditorData()">
 			<!-- Topbar -->
 			<div class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4 shadow-sm z-10 shrink-0">
 				<div class="flex items-center gap-3">

@@ -8,11 +8,12 @@
 - **Độc Lập UI Admin:** Dashboard của Data Pro tự load Tailwind CDN tĩnh, KHÔNG hook vào CDN chung của Builder Core để tránh gãy Layout khi Core bị tắt.
 
 ## 2. WP HOOKS EXPOSED (GIAO TIẾP XUYÊN PLUGIN)
-*Dự kiến triển khai trong Phase 2:*
+*Dự kiến triển khai trong Phase 2 & 3:*
 - `apply_filters( 'ska_data_query', $results, $query_args )`: Hook để Logic Engine hoặc Design Engine gọi dữ liệu danh sách từ Data Pro.
 - `apply_filters( 'ska_data_get_row', null, $table, $id )`: Hook truy xuất nhanh 1 dòng dữ liệu duy nhất bằng Khóa chính.
 - `do_action( 'ska_data_schema_installed', $template_id )`: Hook báo hiệu một Template (vd: ecommerce) vừa được cài đặt thành công.
 - `apply_filters( 'ska_data_get_schema_registry', $schemas )`: Hook trả về cấu trúc mảng của tất cả các Bảng đang tồn tại (để Frontend Dynamic Tag Picker liệt kê ra Dropdown).
+- `do_action( 'ska_data_portal_settings_updated' )`: Hook phát ra khi User lưu cấu hình App Portal, cho phép Theme Builder lắng nghe để `flush_rewrite_rules()` an toàn.
 
 ## 3. DATA FLOW (LUỒNG QUẢN LÝ DỮ LIỆU)
 1. **Schema Initialization:** User chọn Template Gallery (UI) -> Gọi AJAX -> Server biên dịch Schema Array -> Kích hoạt `dbDelta()` -> Sinh bảng `wp_ska_data_xyz`. Hoặc tạo thủ công Custom Table `create_custom_table()`. (Hỗ trợ: `ecommerce`, `lms`, `booking`, `hospital`).
@@ -54,6 +55,11 @@ Nằm tại `assets/js/src`:
 - **Blueprint Portable System (JSON)**: Hệ thống đóng gói toàn bộ bảng (schema), các cột, cũng như cấu hình Tham chiếu (Relation & Rollup) sang một file Blueprint `.json` gọn nhẹ. Không đóng gói Raw Data để bảo mật.
 - **Dynamic Slug Resolution**: (Biện pháp chống đụng độ Tên Bảng). Khi người dùng Nhập (Import) file JSON, Tên Bảng gốc (Vd: `teachers`) chỉ đóng vai trò là "Ký danh Tương đối" (Relative Slug). Bộ Import sẽ bắt lỗi MySQL Collision `table_exists` và tự động rẽ nhánh sinh ra Hậu tố Vật lý mới (Vd: `ska_data_teachers_1`). Sau đó biên dịch ngược (Re-wire) tệp Ký danh này vào bảng nối mạng (Relation Config), đảm bảo cấu trúc bảng dù có mang đi qua Server khác vẫn giữ được sự toàn vẹn. Kéo theo Pipeline WP Hooks `ska_import_smart_object`.
 
-## 6. PHASE 4: GLOBAL "APP-SITE" SMART OBJECT
+## 6. DYNAMIC ROUTING V2 (APP PORTAL ENGINE)
+- **Kiến trúc Parasite Dispatcher:** Router không dựa vào hook trễ `template_redirect` mà dùng `parse_request` để đánh chặn URL ở vòng ngoài cùng.
+- **Short-circuit WP_Query:** Để tránh việc WP tốn CPU truy vấn Database cho trang 404, Router can thiệp vào hook `posts_pre_query` để ép WP_Query trả về mảng rỗng và vô hiệu hóa cơ chế tìm bài viết.
+- **Custom Base Slug & Dynamic Context:** Các bảng được gán một URL Slug tùy ý (không dính tiền tố cứng `/portal/`). Khi người dùng truy cập `/slug/{id}`, Router bóc tách ID động và bơm xuống biến Javascript toàn cục `window.SkaPortalContext` để Frontend (Alpine.js / Logic Engine) chủ động call API gọi dữ liệu Chi tiết.
+
+## 7. PHASE 4: GLOBAL "APP-SITE" SMART OBJECT
 - **Centralized Definition:** Ở Phase 4, Ska Data Pro sẽ thầu luôn việc lưu trữ tài nguyên vĩ mô của Website thông qua một Smart Object mang nhóm hệ thống (Ví dụ: `app-site`). 
 - **Replacement for PostMeta:** Bất kỳ "Ska Symbols" (Custom Reusable Blocks) hoặc Theme Settings (Global Colors/Fonts Defaults) nào cũng sẽ được lưu trực tiếp vào các Data Grid phẳng của `app-site` thay vì dùng Post/PostMeta nhúng CPT truyền thống. Điều này xoay chuyển toàn bộ Ecosystem về chuẩn "Zero-PostMeta".

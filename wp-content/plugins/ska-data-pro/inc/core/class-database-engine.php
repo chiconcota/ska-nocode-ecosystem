@@ -325,6 +325,16 @@ class Database_Engine
 			return new \WP_Error('alter_failed', 'Lỗi chèn cột ổ cứng: ' . $wpdb->last_error);
 		}
 
+		// TỰ ĐỘNG INDEXING (Multi-Valued Index cho MySQL 8.0+)
+		if ( in_array( $field_type, array('relation', 'rollup') ) ) {
+			// Cú pháp đặc thù của MySQL 8.0: Tạo chỉ mục trên mảng JSON. Ta dùng CHAR(50) ARRAY để hỗ trợ cả số lẫn chuỗi ID.
+			// Dùng suppress_errors để tránh văng lỗi trên các server cũ (MariaDB hoặc MySQL < 8.0) chưa hỗ trợ tính năng này.
+			$wpdb->suppress_errors();
+			$index_sql = "ALTER TABLE `{$table_name}` ADD INDEX `{$col_slug}_idx` ( (CAST(`{$col_slug}` AS CHAR(50) ARRAY)) )";
+			$wpdb->query($index_sql);
+			$wpdb->suppress_errors(false);
+		}
+
 		// LƯU CẤU TRÚC ÁNH XẠ (Dictionary) VỚI CÁI TÊN ĐẸP ĐẼ CỦA USER VÀO JSON OPTIONS
 		$dictionary = get_option('ska_data_dictionary', array());
 
@@ -742,5 +752,67 @@ class Database_Engine
 			'success' => true,
 			'options' => $dictionary[$table_name][$col_slug]['options']
 		);
+	}
+
+	/**
+	 * Cập nhật cấu hình App Portal cho một bảng.
+	 *
+	 * @param string $table_name Tên bảng đã có prefix.
+	 * @param array $settings Cấu hình bao gồm: active, slug, roles, view_mode.
+	 * @return true|\WP_Error
+	 */
+	public function update_portal_settings($table_name, $settings)
+	{
+		global $wpdb;
+
+		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
+			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+		}
+
+		$dictionary = get_option('ska_data_dictionary', array());
+
+		if (!isset($dictionary[$table_name])) {
+			return new \WP_Error('invalid_table', 'Bảng không tồn tại trong từ điển.');
+		}
+
+		// Quét kiểm tra Collision (Trùng lặp URL Slug)
+		$active = isset($settings['active']) ? (bool) $settings['active'] : false;
+		$slug = isset($settings['slug']) ? sanitize_title($settings['slug']) : '';
+		
+		if ($active && empty($slug)) {
+			return new \WP_Error('empty_slug', 'URL Slug không được để trống khi kích hoạt App Portal.');
+		}
+
+		if ($active) {
+			foreach ($dictionary as $tbl => $schema) {
+				if ($tbl === $table_name) {
+					continue;
+				}
+				if (isset($schema['__table_info']['portal_settings']) && !empty($schema['__table_info']['portal_settings']['active'])) {
+					if ($schema['__table_info']['portal_settings']['slug'] === $slug) {
+						return new \WP_Error('slug_collision', 'URL Slug này đã được sử dụng bởi một bảng khác. Vui lòng chọn Slug khác.');
+					}
+				}
+			}
+		}
+
+		// Lưu cài đặt vào __table_info
+		if (!isset($dictionary[$table_name]['__table_info'])) {
+			$dictionary[$table_name]['__table_info'] = array();
+		}
+
+		$dictionary[$table_name]['__table_info']['portal_settings'] = array(
+			'active' => $active,
+			'slug' => $slug,
+			'roles' => isset($settings['roles']) && is_array($settings['roles']) ? array_map('sanitize_text_field', $settings['roles']) : array(),
+			'view_mode' => isset($settings['view_mode']) ? sanitize_text_field($settings['view_mode']) : 'readonly'
+		);
+
+		update_option('ska_data_dictionary', $dictionary);
+
+		// Trigger hook để Ska App Router có thể flush rewrite rules
+		do_action('ska_data_portal_settings_updated', $table_name, $settings);
+
+		return true;
 	}
 }

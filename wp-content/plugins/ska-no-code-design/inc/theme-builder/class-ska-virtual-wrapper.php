@@ -64,7 +64,11 @@ class Ska_Virtual_Wrapper {
 	public function override_template( $template ) {
 		$location = '';
 
-		if ( is_404() ) {
+		$portal_slug = get_query_var( 'ska_portal' );
+
+		if ( ! empty( $portal_slug ) ) {
+			$location = 'app_layout'; // Allow users to design portal using 'app_layout' templates
+		} elseif ( is_404() ) {
 			$location = '404';
 		} elseif ( is_singular() ) {
 			$location = 'single';
@@ -157,11 +161,14 @@ class Ska_Virtual_Wrapper {
 				return $template; // Fallback if invalid JSON
 			}
 
+			// Hỗ trợ định dạng mới: {"rules": [...], "folder_id": "..."}
+			$rules_list = isset( $conditions['rules'] ) && is_array( $conditions['rules'] ) ? $conditions['rules'] : $conditions;
+
 			$is_included      = false;
 			$is_excluded      = false;
 			$has_include_rule = false;
 
-			foreach ( $conditions as $rule_data ) {
+			foreach ( $rules_list as $rule_data ) {
 				$type = isset( $rule_data['type'] ) ? $rule_data['type'] : 'include';
 				
 				if ( 'include' === $type ) {
@@ -225,25 +232,102 @@ class Ska_Virtual_Wrapper {
 				return is_404();
 			case 'is_search':
 				return is_search();
+			case 'is_portal':
+				return ! empty( get_query_var( 'ska_portal' ) );
+			case 'specific_portal':
+				if ( empty( $value ) ) {
+					return ! empty( get_query_var( 'ska_portal' ) );
+				}
+				return get_query_var( 'ska_portal' ) === $value;
 		}
 
 		return false;
 	}
 
-	/**
-	 * Get HTML content of an Organism
-	 */
 	private function get_organism_html( $organism_id ) {
 		if ( ! class_exists( '\Ska\Design\Api\Organisms_API' ) ) {
 			// Fallback direct query if API class is not loaded
 			global $wpdb;
 			$org_table = $wpdb->prefix . 'ska_data_sys_organisms';
 			$html = $wpdb->get_var( $wpdb->prepare( "SELECT html_content FROM {$org_table} WHERE id = %d", $organism_id ) );
-			return $html ? do_blocks( $html ) : '';
+			$html = $html ? do_blocks( $html ) : '';
+		} else {
+			$html_array = \Ska\Design\Api\Organisms_API::get_bulk_html( array( $organism_id ) );
+			$html = isset( $html_array[ $organism_id ] ) ? do_blocks( $html_array[ $organism_id ] ) : '';
 		}
 
-		$html_array = \Ska\Design\Api\Organisms_API::get_bulk_html( array( $organism_id ) );
-		return isset( $html_array[ $organism_id ] ) ? do_blocks( $html_array[ $organism_id ] ) : '';
+		// --------------------------------------------------------------------------
+		// THEME TEMPLATE HYDRATION (Global Context for Dedicated Portal Pages)
+		// --------------------------------------------------------------------------
+		global $ska_current_portal;
+		$ska_id = get_query_var( 'ska_id' );
+
+		if ( ! empty( $ska_id ) && ! empty( $ska_current_portal ) && ! empty( $ska_current_portal['table_name'] ) && class_exists( '\Ska\Data\Core\Data_Fetcher' ) ) {
+			$table_name = $ska_current_portal['table_name'];
+			$args = array(
+				'filter_field' => 'id',
+				'filter_op'    => 'eq',
+				'filter_val'   => $ska_id,
+			);
+			
+			// Lấy Record hiện tại của Portal Page
+			$rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $table_name, $args, 1 );
+			if ( ! empty( $rows ) ) {
+				$context = $rows[0];
+
+				// Regex Hydration y hệt như Ska Loop Render (hỗ trợ cả URL encoded)
+				$html = preg_replace_callback( '/\{\{\s*([a-zA-Z0-9_\.\$\-]+)\s*\}\}|\[\s*([a-zA-Z0-9_\.\$\-]+)\s*\]|%7B%7B\s*([a-zA-Z0-9_\.\$\-]+)\s*%7D%7D|%5B\s*([a-zA-Z0-9_\.\$\-]+)\s*%5D/', function( $matches ) use ( $context, $table_name ) {
+					$raw_key = '';
+					for ($i = 1; $i <= 4; $i++) {
+						if (!empty($matches[$i])) {
+							$raw_key = trim($matches[$i]);
+							break;
+						}
+					}
+					
+					// Dọn dẹp prefix (vd: 'app_courses.courses.teacher_id.url' -> 'teacher_id.url')
+					$key = str_replace( $table_name . '.', '', $raw_key );
+					
+					$parts = explode( '.', $raw_key );
+					
+					// Xử lý Dynamic Link cho cột Relation (vd: teacher_id.url)
+					if ( count( $parts ) > 1 && end( $parts ) === 'url' ) {
+						$field_name = $parts[ count($parts) - 2 ];
+						if ( isset( $context[ $field_name ] ) && is_string( $context[ $field_name ] ) ) {
+							$rel_val = $context[ $field_name ];
+							$decoded = json_decode($rel_val, true);
+							if ( is_array($decoded) && !empty($decoded[0]['url']) ) {
+								return esc_url( $decoded[0]['url'] );
+							}
+						}
+					}
+					
+					// Xử lý Value thông thường
+					if ( isset( $context[ $key ] ) ) {
+						$val = $context[ $key ];
+						// Nếu là array (vd: Relation chưa parse url), xuất dạng chuỗi để tránh lỗi Array to string conversion
+						if ( is_array( $val ) ) {
+							return esc_html( wp_json_encode( $val ) );
+						}
+						// Nếu là chuỗi JSON từ relation (ví dụ chỉ gọi [teacher_id])
+						if ( is_string( $val ) && strpos( $val, '[{"' ) === 0 ) {
+							$decoded = json_decode( $val, true );
+							if ( is_array( $decoded ) && ! empty( $decoded[0]['label'] ) ) {
+								// Mặc định xuất label nếu không chỉ định .url hay .id
+								$labels = array_column( $decoded, 'label' );
+								return esc_html( implode( ', ', $labels ) );
+							}
+						}
+						return esc_html( $val );
+					}
+					
+					// Giữ nguyên nếu không khớp
+					return $matches[0];
+				}, $html );
+			}
+		}
+
+		return $html;
 	}
 
 	/**
