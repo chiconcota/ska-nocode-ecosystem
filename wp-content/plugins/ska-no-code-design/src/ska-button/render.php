@@ -16,7 +16,7 @@ if ( ! empty( $attributes['link'] ) && ( ! empty( $attributes['link']['url'] ) |
     $target = $attributes['target'] ?? '_self';
     if ( ! empty( $attributes['dynamic']['url_source'] ) && $attributes['dynamic']['url_source'] !== 'static' ) {
         // Fallback dynamic resolve
-        $url = \Ska\Builder\Utils\Assets::get_dynamic_content( $attributes['dynamic'], 'url' );
+        $url = \Ska\Builder\Utils\Dynamic_Data::get_dynamic_content( $attributes['dynamic'], 'url' );
     }
 }
 $tagName      = $attributes['tagName'] ?? 'a';
@@ -50,7 +50,7 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 ) );
 
 if ( ! empty( $attributes['dynamic']['text_source'] ) && $attributes['dynamic']['text_source'] !== 'static' ) {
-    $text = \Ska\Builder\Utils\Assets::get_dynamic_content( $attributes['dynamic'], 'text' );
+    $text = \Ska\Builder\Utils\Dynamic_Data::get_dynamic_content( $attributes['dynamic'], 'text' );
 }
 // URL resolving is now handled at the top of the file.
 
@@ -97,7 +97,7 @@ if ( $tagName === 'button' ) {
 } else {
     printf(
         '<a href="%1$s" target="%2$s" %3$s>%4$s</a>',
-        esc_url( $url ),
+        \Ska\Builder\Utils\Dynamic_Data::safe_esc_url( $url ),
         esc_attr( $target ),
         $wrapper_attributes,
         $inner_html

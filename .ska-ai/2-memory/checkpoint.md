@@ -1,22 +1,21 @@
 # 🛑 SKA BUILDER CHECKPOINT BÀN GIAO
 
-## 1. Trạng thái hiện tại
-- Đã thực hiện **Kiến trúc Pivot (Quay xe)**: Phế bỏ hoàn toàn mô hình Single Page Application (SPA) dùng `x-show` để hiển thị các luồng App Portal.
-- Chuyển sang mô hình **Dedicated Pages (Trang độc lập)**. Mỗi view (List, Detail, Create, Edit) sẽ được cấp một Template riêng biệt (`ska_theme_builder`).
-- Xây dựng khái niệm **App Categorization (Virtual Folder)** trong Theme Builder để nhóm các giao diện theo từng App (LMS, CRM...) mà không cần sinh Taxonomy rác.
-- Đã thiết lập `project_manager_dedicated_pages.md` thay thế các lộ trình SPA cũ để dẫn dắt việc dọn dẹp (Cleanup) và triển khai Dynamic Router V2.
-- Giới hạn Scope của UI "Portal Visibility" (`portal-visibility.js`) chỉ xuất hiện trong CPT `ska_theme_builder`.
-- Các tài liệu cốt lõi (`decision-log.md`, `system_map.md`, `design-engine.md`) đã được cập nhật đồng bộ kiến trúc mới.
+## 1. Trạng thái hiện tại (Đã hoàn thành)
+- Hoàn tất **Milestone 6 (E2E Testing Dedicated Pages)**. 
+- Ổn định cơ chế nội suy động (Dynamic Hydration) trong `Ska_Virtual_Wrapper` và `Ska_Loop` để hỗ trợ giải mã các biến trong URL, biến chứa dấu gạch ngang (VD: `[ten-khoa-hoc]`) và các biến URL-encoded (phục vụ liên kết trực tiếp từ Gutenberg Toolbar).
+- Nâng cấp `Data_Fetcher` hỗ trợ tự động đối chiếu `JSON_CONTAINS` cho các trường Khóa ngoại (Relation), giải quyết triệt để lỗi trang trắng.
+- Xác thực thành công luồng **Reverse Lookup** (Rollup dữ liệu) trên Frontend thông qua block `ska-loop`.
+- Xác nhận **Task 4.3 (DB Auto-Indexing)** đã được hoàn thành với Multi-Valued Index trên MySQL 8.0+. Hệ thống sẵn sàng với hiệu năng cao.
 
 ## 2. Nhiệm vụ cho phiên tiếp theo (Next Session)
-**Chủ đề:** Dọn dẹp tàn dư SPA và Triển khai App Categorization.
-1. **Task 1.1:** Gỡ bỏ các UI SPA cũ trong Inspector (Panel điều hướng List/Detail) trong `portal-visibility.js` hoặc file tương ứng (vì giờ không cần switch view trên cùng 1 trang nữa).
-2. **Task 1.2:** Loại bỏ logic inject `x-show="$store.skaPortal.view === ..."` trong hook `render_block` (`init.php`).
-3. **Phase 2:** Bắt đầu xây dựng Filter Bar "App Categorization" trên trang Admin Theme Builder (`admin-panel.php`).
+**Chủ đề:** Khởi động Phase 4.6 (Auto-Generated CRUD Portal).
+1. Xây dựng nền tảng tự động sinh các Form (Create/Update) và giao diện Read/Delete dựa trên cấu trúc (Dictionary) của `ska_data_*` tables.
+2. Thiết kế Macro Pattern Injector để tiêm form vào Editor mà không làm hỏng Atomic nodes.
+3. Liên kết với bộ Middleware bảo mật quyền truy cập (Auth Gates).
 
 ## 3. Ngữ cảnh tập tin đang thao tác
 - `.ska-ai/1-overview/project-managers/project_manager_dedicated_pages.md`
-- `decision-log.md`
-- `system_map.md`
-- `ska-no-code-design/design-engine.md`
-- `checkpoint.md`
+- `.ska-ai/1-overview/system_map.md`
+- `.ska-ai/2-memory/checkpoint.md`
+- `class-virtual-wrapper.php` và `ska-loop/render.php` (Đã xử lý regex)
+- `class-data-fetcher.php` (Đã xử lý JSON relation query)

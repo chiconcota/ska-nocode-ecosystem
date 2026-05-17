@@ -1,5 +1,5 @@
 <?php
-require_once 'wp-load.php';
+require 'wp-load.php';
 global $wpdb;
-$dict = get_option('ska_data_dictionary');
-print_r($dict[$wpdb->prefix . 'ska_data_sys_presets']);
+$rows = $wpdb->get_results('SELECT * FROM wp_ska_data_courses LIMIT 5', ARRAY_A);
+print_r($rows);

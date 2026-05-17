@@ -37,7 +37,7 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 
 // Handle Dynamic Content
 if ( ! empty( $attributes['dynamic']['source'] ) && $attributes['dynamic']['source'] !== 'text' ) {
-    $content = \Ska\Builder\Utils\Assets::get_dynamic_content( $attributes['dynamic'], 'text' );
+    $content = \Ska\Builder\Utils\Dynamic_Data::get_dynamic_content( $attributes['dynamic'], 'text' );
 }
 
 if ( ! empty( $attributes['logic']['enabled'] ) ) {
@@ -49,7 +49,7 @@ if ( ! empty( $attributes['logic']['enabled'] ) ) {
 
 $link_attrs = '';
 if ( ! empty( $link_url ) ) {
-    $link_attrs = ' href="' . esc_url( $link_url ) . '"' . $link_target;
+    $link_attrs = ' href="' . \Ska\Builder\Utils\Dynamic_Data::safe_esc_url( $link_url ) . '"' . $link_target;
 }
 
 printf(

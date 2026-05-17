@@ -1,567 +1,316 @@
-[
-    {
-        "id": "wp_ska_data_campaigns",
-        "name": "Chiến dịch Marketing",
-        "app_group": "APP: SKA LEAD GEN PRO",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "ten_chien_dich",
-                "name": "ten_chien_dich",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "ngan_sach_vnd",
-                "name": "ngan_sach_vnd",
-                "type": "number",
-                "options": ""
-            },
-            {
-                "id": "trang_thai",
-                "name": "trang_thai",
-                "type": "select",
-                "options": ""
-            }
-        ]
+{
+    "wp_ska_data_campaigns": {
+        "__table_info": {
+            "name": "Chi\u1ebfn d\u1ecbch Marketing",
+            "icon": "dashicons-megaphone",
+            "app_id": "app_FHw8EL6u"
+        },
+        "ten_chien_dich": {
+            "label": "T\u00ean chi\u1ebfn d\u1ecbch",
+            "type": "short_text",
+            "options": ""
+        },
+        "ngan_sach_vnd": {
+            "label": "Ng\u00e2n s\u00e1ch (VN\u0110)",
+            "type": "number",
+            "options": ""
+        },
+        "trang_thai": {
+            "label": "Tr\u1ea1ng th\u00e1i",
+            "type": "select",
+            "options": ""
+        }
     },
-    {
-        "id": "wp_ska_data_leads",
-        "name": "Khách hàng Tiềm năng",
-        "app_group": "APP: SKA LEAD GEN PRO",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "ho_va_ten",
-                "name": "ho_va_ten",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "so_dien_thoai",
-                "name": "so_dien_thoai",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "email",
-                "name": "email",
-                "type": "email",
-                "options": ""
-            },
-            {
-                "id": "trang_thai_tu_van",
-                "name": "trang_thai_tu_van",
-                "type": "select",
-                "options": ""
-            },
-            {
-                "id": "den_tu_chien_dich",
-                "name": "den_tu_chien_dich",
-                "type": "relation",
-                "options": "{\"target_table\":\"wp_ska_data_campaigns\"}"
-            }
-        ]
+    "wp_ska_data_leads": {
+        "__table_info": {
+            "name": "Kh\u00e1ch h\u00e0ng Ti\u1ec1m n\u0103ng",
+            "icon": "dashicons-businessman",
+            "app_id": "app_FHw8EL6u"
+        },
+        "ho_va_ten": {
+            "label": "H\u1ecd v\u00e0 T\u00ean",
+            "type": "short_text",
+            "options": ""
+        },
+        "so_dien_thoai": {
+            "label": "S\u1ed1 \u0111i\u1ec7n tho\u1ea1i",
+            "type": "short_text",
+            "options": ""
+        },
+        "email": {
+            "label": "Email",
+            "type": "email",
+            "options": ""
+        },
+        "trang_thai_tu_van": {
+            "label": "Tr\u1ea1ng th\u00e1i T\u01b0 v\u1ea5n",
+            "type": "select",
+            "options": ""
+        },
+        "den_tu_chien_dich": {
+            "label": "\u0110\u1ebfn t\u1eeb Chi\u1ebfn D\u1ecbch",
+            "type": "relation",
+            "options": "{\"target_table\":\"wp_ska_data_campaigns\"}"
+        }
     },
-    {
-        "id": "wp_ska_data_notes",
-        "name": "Nhật ký Giao tiếp",
-        "app_group": "APP: SKA LEAD GEN PRO",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "ma_khach_hang",
-                "name": "ma_khach_hang",
-                "type": "relation",
-                "options": "{\"target_table\":\"wp_ska_data_leads\"}"
-            },
-            {
-                "id": "noi_dung_trao_doi",
-                "name": "noi_dung_trao_doi",
-                "type": "long_text",
-                "options": ""
-            },
-            {
-                "id": "ngay_tuong_tac",
-                "name": "ngay_tuong_tac",
-                "type": "date",
-                "options": ""
-            }
-        ]
+    "wp_ska_data_notes": {
+        "__table_info": {
+            "name": "Nh\u1eadt k\u00fd Giao ti\u1ebfp",
+            "icon": "dashicons-testimonial",
+            "app_id": "app_FHw8EL6u"
+        },
+        "ma_khach_hang": {
+            "label": "M\u00e3 Kh\u00e1ch H\u00e0ng",
+            "type": "relation",
+            "options": "{\"target_table\":\"wp_ska_data_leads\"}"
+        },
+        "noi_dung_trao_doi": {
+            "label": "N\u1ed9i dung trao \u0111\u1ed5i",
+            "type": "long_text",
+            "options": ""
+        },
+        "ngay_tuong_tac": {
+            "label": "Ng\u00e0y t\u01b0\u01a1ng t\u00e1c",
+            "type": "date",
+            "options": ""
+        }
     },
-    {
-        "id": "wp_ska_data_app_do5p1uxz_test_sync",
-        "name": "Test Sync",
-        "app_group": "APP: TEST SKAFX",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "kieu_text",
-                "name": "kieu_text",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "kieu_slect",
-                "name": "kieu_slect",
-                "type": "select",
-                "options": "đỏ, xanh, vàng, tím"
-            },
-            {
-                "id": "kieu_so",
-                "name": "kieu_so",
-                "type": "number",
-                "options": ""
-            }
-        ]
+    "wp_ska_data_sys_presets": {
+        "__table_info": {
+            "name": "Design Tokens (Presets)",
+            "icon": "dashicons-art",
+            "app_id": "ska_system"
+        },
+        "name": {
+            "label": "Name",
+            "type": "short_text",
+            "options": ""
+        },
+        "type": {
+            "label": "Type",
+            "type": "enum",
+            "options": "token_color, token_font, token_spacing, token_radius, token_shadow, preset_typography, preset_component"
+        },
+        "value": {
+            "label": "Value",
+            "type": "long_text",
+            "options": ""
+        }
     },
-    {
-        "id": "wp_ska_data_app_app_kiem_thu_moi_kiem_thu_table",
-        "name": "kiem thu table",
-        "app_group": "APP: APP KIỂM THỬ MỚI",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "ten",
-                "name": "ten",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "nam_sinh",
-                "name": "nam_sinh",
-                "type": "number",
-                "options": ""
-            },
-            {
-                "id": "tinh_trang_hon_nhan",
-                "name": "tinh_trang_hon_nhan",
-                "type": "select",
-                "options": "đã kết hôn, chưa kết hôn"
-            },
-            {
-                "id": "hoc_van",
-                "name": "hoc_van",
-                "type": "select",
-                "options": "cấp 1, cấp 2, cấp 3, đại học"
-            }
-        ]
+    "wp_ska_data_app_app_viet_de_test_node_logic_ban_gon_gian_co_tuoi": {
+        "__table_info": {
+            "name": "B\u1ea3n g\u01a1n gi\u1ea3n c\u00f3 tu\u1ed5i",
+            "icon": "dashicons-media-spreadsheet",
+            "app_id": "app_app_viet_de_test_node_logic"
+        },
+        "ten": {
+            "label": "T\u00ean",
+            "type": "short_text",
+            "options": ""
+        },
+        "nam_sinh": {
+            "label": "N\u0103m Sinh",
+            "type": "number",
+            "options": ""
+        },
+        "tuoi": {
+            "label": "Tu\u1ed5i",
+            "type": "number",
+            "options": ""
+        }
     },
-    {
-        "id": "wp_ska_data_app_app_kiem_thu_trung_lap_kiem_thu_talbe",
-        "name": "kiem thu table",
-        "app_group": "APP: APP KIEM THU TRÙNG LẶP",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "ten",
-                "name": "ten",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "tinh_trang_hon_nhan",
-                "name": "tinh_trang_hon_nhan",
-                "type": "select",
-                "options": "xanh, đỏ, tím"
-            },
-            {
-                "id": "hoc_van",
-                "name": "hoc_van",
-                "type": "multi_select",
-                "options": "1, 2, ,3"
-            }
-        ]
+    "wp_ska_data_app_app_viet_de_test_node_logic_phan_loai_khach_hang": {
+        "__table_info": {
+            "name": "ph\u00e2n lo\u1ea1i kh\u00e1ch h\u00e0ng",
+            "icon": "dashicons-media-spreadsheet",
+            "app_id": "app_app_viet_de_test_node_logic"
+        },
+        "ho_ten": {
+            "label": "H\u1ecd t\u00ean",
+            "type": "short_text",
+            "options": ""
+        },
+        "so_tien_da_chi": {
+            "label": "s\u1ed1 ti\u1ec1n \u0111\u00e3 chi",
+            "type": "currency",
+            "options": ""
+        },
+        "phan_loai_khach_hang": {
+            "label": "Ph\u00e2n lo\u1ea1i kh\u00e1ch h\u00e0ng",
+            "type": "select",
+            "options": "vip, kh\u00e1ch l\u1ebb, s\u1ec9"
+        }
     },
-    {
-        "id": "wp_ska_data_app_app_kiem_thu_trung_lap_kiem_thu_table",
-        "name": "kiểm thử table",
-        "app_group": "APP: APP KIEM THU TRÙNG LẶP",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "ten",
-                "name": "ten",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "nam_sinh",
-                "name": "nam_sinh",
-                "type": "number",
-                "options": ""
-            }
-        ]
+    "wp_ska_data_app_app_viet_de_test_node_logic_test_html_request_api_logs": {
+        "__table_info": {
+            "name": "Test html request api logs",
+            "icon": "dashicons-media-spreadsheet",
+            "app_id": "app_app_viet_de_test_node_logic"
+        }
     },
-    {
-        "id": "wp_ska_data_sys_theme_templates",
-        "name": "Theme Templates",
-        "app_group": "APP: SITE MANAGEMENT",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "name",
-                "name": "name",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "location",
-                "name": "location",
-                "type": "select",
-                "options": "header, footer, single, archive, 404"
-            },
-            {
-                "id": "organism_id",
-                "name": "organism_id",
-                "type": "number",
-                "options": ""
-            },
-            {
-                "id": "conditions",
-                "name": "conditions",
-                "type": "long_text",
-                "options": ""
-            }
-        ]
+    "wp_ska_data_app_app_viet_de_test_node_logic_test_api_log": {
+        "__table_info": {
+            "name": "test api log",
+            "icon": "dashicons-media-spreadsheet",
+            "app_id": "app_app_viet_de_test_node_logic"
+        },
+        "ten_nguoi_gui": {
+            "label": "ten nguoi gui",
+            "type": "short_text",
+            "options": ""
+        },
+        "nghe_nghiep": {
+            "label": "ngh\u1ec1 nghi\u1ec7p",
+            "type": "short_text",
+            "options": ""
+        },
+        "api_response_id": {
+            "label": "api response id",
+            "type": "short_text",
+            "options": ""
+        }
     },
-    {
-        "id": "wp_ska_data_sys_presets",
-        "name": "Design Tokens (Presets)",
-        "app_group": "APP: SITE MANAGEMENT",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "name",
-                "name": "name",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "type",
-                "name": "type",
-                "type": "select",
-                "options": "colors, typography, spacing, shadows"
-            },
-            {
-                "id": "json_content",
-                "name": "json_content",
-                "type": "long_text",
-                "options": ""
-            }
-        ]
+    "wp_ska_data_app_app_viet_de_test_node_logic_data_loop_log": {
+        "__table_info": {
+            "name": "data loop log",
+            "icon": "dashicons-media-spreadsheet",
+            "app_id": "app_app_viet_de_test_node_logic"
+        },
+        "log": {
+            "label": "log",
+            "type": "short_text",
+            "options": ""
+        }
     },
-    {
-        "id": "wp_ska_data_sys_organisms",
-        "name": "Organisms Blocks",
-        "app_group": "APP: SITE MANAGEMENT",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "name",
-                "name": "name",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "json_content",
-                "name": "json_content",
-                "type": "long_text",
-                "options": ""
-            },
-            {
-                "id": "title",
-                "name": "title",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "block_name",
-                "name": "block_name",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "html_content",
-                "name": "html_content",
-                "type": "long_text",
-                "options": ""
-            }
-        ]
+    "wp_ska_data_app_test_loop_block_bang_bac_si": {
+        "__table_info": {
+            "name": "b\u1ea3ng bac si",
+            "icon": "dashicons-media-spreadsheet",
+            "app_id": "app_test_loop_block"
+        },
+        "name": {
+            "label": "Name",
+            "type": "short_text",
+            "options": ""
+        },
+        "specialty": {
+            "label": "Specialty",
+            "type": "select",
+            "options": "\u0110a khoa, N\u1ed9i khoa, Ngo\u1ea1i khoa, Nhi khoa, S\u1ea3n ph\u1ee5 khoa, R\u0103ng - H\u00e0m - M\u1eb7t, Y h\u1ecdc c\u1ed5 truy\u1ec1n"
+        },
+        "experience": {
+            "label": "Experience",
+            "type": "number",
+            "options": ""
+        }
     },
-    {
-        "id": "wp_ska_data_doctors",
-        "name": "Doctors",
-        "app_group": "Ska Smart Object Table",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "doctor_name",
-                "name": "doctor_name",
-                "type": "text",
-                "options": null
-            },
-            {
-                "id": "avatar",
-                "name": "avatar",
-                "type": "media",
-                "options": ""
-            },
-            {
-                "id": "specialty",
-                "name": "specialty",
-                "type": "select",
-                "options": "nhi khoa, tim mạch, da liễu, ung thư, thần kinh, nội tiết"
-            },
-            {
-                "id": "experience",
-                "name": "experience",
-                "type": "number",
-                "options": ""
-            },
-            {
-                "id": "qualifications",
-                "name": "qualifications",
-                "type": "select",
-                "options": "Giáo sư, phó giao sư, tiến sĩ, thạc sĩ, cữ nhân"
-            },
-            {
-                "id": "city",
-                "name": "city",
-                "type": "text",
-                "options": null
-            },
-            {
-                "id": "clinic_name",
-                "name": "clinic_name",
-                "type": "text",
-                "options": null
-            },
-            {
-                "id": "rating",
-                "name": "rating",
-                "type": "text",
-                "options": null
-            },
-            {
-                "id": "patient_count",
-                "name": "patient_count",
-                "type": "text",
-                "options": null
-            },
-            {
-                "id": "consultation_fee",
-                "name": "consultation_fee",
-                "type": "text",
-                "options": null
-            },
-            {
-                "id": "availability_text",
-                "name": "availability_text",
-                "type": "text",
-                "options": null
-            },
-            {
-                "id": "has_guarantee",
-                "name": "has_guarantee",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            }
-        ]
+    "wp_ska_data_sys_theme_templates": {
+        "__table_info": {
+            "name": "Theme Templates",
+            "icon": "dashicons-admin-appearance",
+            "app_id": "ska_system"
+        },
+        "name": {
+            "label": "Name",
+            "type": "short_text",
+            "options": ""
+        },
+        "location": {
+            "label": "Location",
+            "type": "select",
+            "options": "header, footer, single, archive, 404"
+        },
+        "organism_id": {
+            "label": "Organism_ID",
+            "type": "number",
+            "options": ""
+        },
+        "conditions": {
+            "label": "Conditions",
+            "type": "long_text",
+            "options": ""
+        },
+        "is_active": {
+            "label": "Is Active",
+            "type": "boolean",
+            "options": ""
+        }
     },
-    {
-        "id": "wp_ska_data_app_app_viet_de_test_node_logic_ban_gon_gian_co_tuoi",
-        "name": "Bản gơn giản có tuổi",
-        "app_group": "APP: APP VIET DE TEST NODE LOGIC",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "ten",
-                "name": "ten",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "nam_sinh",
-                "name": "nam_sinh",
-                "type": "number",
-                "options": ""
-            },
-            {
-                "id": "tuoi",
-                "name": "tuoi",
-                "type": "number",
-                "options": ""
-            }
-        ]
+    "wp_ska_data_sys_organisms": {
+        "__table_info": {
+            "name": "Organisms Blocks",
+            "icon": "dashicons-layout",
+            "app_id": "ska_system"
+        },
+        "name": {
+            "label": "Name",
+            "type": "short_text",
+            "options": ""
+        },
+        "title": {
+            "label": "Title",
+            "type": "short_text",
+            "options": ""
+        },
+        "block_name": {
+            "label": "Block_Name",
+            "type": "short_text",
+            "options": ""
+        },
+        "json_content": {
+            "label": "JSON_Content",
+            "type": "long_text",
+            "options": ""
+        },
+        "html_content": {
+            "label": "HTML_Content",
+            "type": "long_text",
+            "options": ""
+        }
     },
-    {
-        "id": "wp_ska_data_app_app_viet_de_test_node_logic_phan_loai_khach_hang",
-        "name": "phân loại khách hàng",
-        "app_group": "APP: APP VIET DE TEST NODE LOGIC",
-        "columns": [
-            {
-                "id": "id",
-                "name": "ID",
-                "type": "number",
-                "options": null
-            },
-            {
-                "id": "created_at",
-                "name": "Ngày tạo (created_at)",
-                "type": "datetime",
-                "options": null
-            },
-            {
-                "id": "ho_ten",
-                "name": "ho_ten",
-                "type": "short_text",
-                "options": ""
-            },
-            {
-                "id": "so_tien_da_chi",
-                "name": "so_tien_da_chi",
-                "type": "currency",
-                "options": ""
-            },
-            {
-                "id": "phan_loai_khach_hang",
-                "name": "phan_loai_khach_hang",
-                "type": "select",
-                "options": "vip, khách lẻ, sỉ"
+    "wp_ska_data_app_courses_courses": {
+        "__table_info": {
+            "name": "Courses",
+            "icon": "dashicons-media-spreadsheet",
+            "app_id": "app_courses",
+            "portal_settings": {
+                "active": true,
+                "slug": "khoa-hoc",
+                "roles": [
+                    "Public"
+                ],
+                "view_mode": "crud"
             }
-        ]
+        },
+        "teacher_id": {
+            "label": "teacher id",
+            "type": "relation",
+            "options": "wp_ska_data_app_courses_teachers"
+        },
+        "ten_khoa_hoc": {
+            "label": "t\u00ean kh\u00f3a h\u1ecdc",
+            "type": "short_text",
+            "options": ""
+        }
+    },
+    "wp_ska_data_app_courses_teachers": {
+        "__table_info": {
+            "name": "Teachers",
+            "icon": "dashicons-media-spreadsheet",
+            "app_id": "app_courses",
+            "portal_settings": {
+                "active": true,
+                "slug": "giao-vien",
+                "roles": [
+                    "Administrator"
+                ],
+                "view_mode": "crud"
+            }
+        },
+        "ten_giao_vien": {
+            "label": "ten gi\u00e1o vi\u00ean",
+            "type": "short_text",
+            "options": ""
+        }
     }
-]
+}

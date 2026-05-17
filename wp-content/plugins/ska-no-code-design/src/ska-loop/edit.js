@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import ServerSideRender from '@wordpress/server-side-render';
 import { TailwindPanel } from '../components/TailwindPanel.js';
 export default function Edit( { attributes, setAttributes } ) {
-    const { sourceTable, limit, slots, tailwindClasses = '' } = attributes;
+    const { sourceTable, limit, slots, filters, tailwindClasses = '' } = attributes;
     const [organisms, setOrganisms] = useState([]);
     
     // Load organisms for dropdown from global cache
@@ -57,6 +57,22 @@ export default function Edit( { attributes, setAttributes } ) {
         setAttributes({ slots: newSlots });
     };
 
+    const addFilter = () => {
+        const newFilters = [...(filters || []), { column: '', operator: '=', value: '' }];
+        setAttributes({ filters: newFilters });
+    };
+
+    const removeFilter = (indexToRemove) => {
+        const newFilters = filters.filter((_, index) => index !== indexToRemove);
+        setAttributes({ filters: newFilters });
+    };
+
+    const updateFilter = (index, key, value) => {
+        const newFilters = [...filters];
+        newFilters[index] = { ...newFilters[index], [key]: value };
+        setAttributes({ filters: newFilters });
+    };
+
     const hasValidConfig = sourceTable && slots && slots.length > 0 && slots.some(s => s.organismId);
 
     return (
@@ -87,6 +103,62 @@ export default function Edit( { attributes, setAttributes } ) {
                         min={1}
                         max={100}
                     />
+                </PanelBody>
+
+                <PanelBody title={__('Điều kiện lọc (Filters)', 'ska-no-code-design')} initialOpen={false}>
+                    {filters && filters.map((filter, index) => (
+                        <div key={index} style={{ marginBottom: '16px', padding: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', backgroundColor: '#f8fafc' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                <strong style={{ fontSize: '13px' }}>Filter #{index + 1}</strong>
+                                <Button 
+                                    isDestructive 
+                                    isSmall 
+                                    icon="trash" 
+                                    onClick={() => removeFilter(index)}
+                                    label={__('Xóa Filter', 'ska-no-code-design')}
+                                />
+                            </div>
+                            
+                            <TextControl
+                                label={__('Trường dữ liệu (Column)', 'ska-no-code-design')}
+                                value={filter.column}
+                                onChange={(val) => updateFilter(index, 'column', val)}
+                                help={__('VD: teacher_id', 'ska-no-code-design')}
+                            />
+
+                            <SelectControl
+                                label={__('Toán tử (Operator)', 'ska-no-code-design')}
+                                value={filter.operator}
+                                options={[
+                                    { label: '=', value: '=' },
+                                    { label: '!=', value: '!=' },
+                                    { label: '>', value: '>' },
+                                    { label: '>=', value: '>=' },
+                                    { label: '<', value: '<' },
+                                    { label: '<=', value: '<=' },
+                                    { label: 'LIKE', value: 'LIKE' },
+                                    { label: 'IN', value: 'IN' },
+                                    { label: 'JSON_CONTAINS', value: 'JSON_CONTAINS' }
+                                ]}
+                                onChange={(val) => updateFilter(index, 'operator', val)}
+                            />
+                            
+                            <TextControl
+                                label={__('Giá trị (Value)', 'ska-no-code-design')}
+                                value={filter.value}
+                                onChange={(val) => updateFilter(index, 'value', val)}
+                                help={__('VD: {url:id} hoặc giá trị tĩnh', 'ska-no-code-design')}
+                            />
+                        </div>
+                    ))}
+                    
+                    <Button 
+                        variant="secondary" 
+                        onClick={addFilter}
+                        style={{ width: '100%', justifyContent: 'center', marginTop: '8px' }}
+                    >
+                        {__('+ Thêm Filter', 'ska-no-code-design')}
+                    </Button>
                 </PanelBody>
 
                 <PanelBody title={__('Điều kiện hiển thị (Slots)', 'ska-no-code-design')} initialOpen={true}>

@@ -137,11 +137,17 @@ class Ska_Theme_Builder_API {
 		);
 
 		if ( $id > 0 ) {
-			$record_data['id'] = $id;
+			// Update using Ska Data Pro Filter Pipeline
+			$update_result = apply_filters( 'ska_data_update_record', false, $record_data, $table_name, array( 'id' => $id ) );
+			if ( $update_result !== false ) {
+				$result = $id; // Giữ lại ID để trả về Client
+			} else {
+				$result = false;
+			}
+		} else {
+			// Insert using Ska Data Pro Filter Pipeline
+			$result = apply_filters( 'ska_data_insert_record', false, $record_data, $table_name );
 		}
-
-		// Insert/Update using Ska Data Pro Filter Pipeline
-		$result = apply_filters( 'ska_data_insert_record', false, $record_data, $table_name );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;

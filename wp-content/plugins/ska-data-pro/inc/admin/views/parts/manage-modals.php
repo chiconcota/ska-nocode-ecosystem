@@ -565,6 +565,58 @@ defined( 'ABSPATH' ) || exit;
     </div>
 </div>
 
+<!-- MÀN HÌNH APP PORTAL SETTINGS -->
+<div id="ska-portal-settings-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-[500px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50 text-blue-700">
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-admin-site-alt3 text-blue-500"></span> Cấu Hình App Portal</h3>
+            <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-portal-settings-modal').classList.add('hidden');"></span>
+        </div>
+        
+        <div class="p-5 flex flex-col gap-4">
+            <p class="text-xs text-gray-500 m-0 leading-relaxed">
+                Biến bảng dữ liệu này thành một App độc lập có URL riêng (vd: /khach-hang).
+            </p>
+            
+            <input type="hidden" id="ska-portal-table-slug" value="<?php echo esc_attr(isset($_GET['table']) ? $_GET['table'] : ''); ?>">
+            
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="ska-portal-active" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                <label for="ska-portal-active" class="text-sm font-bold text-gray-700">Kích hoạt App Portal</label>
+            </div>
+
+            <div id="ska-portal-fields-wrapper" class="opacity-50 pointer-events-none transition-opacity">
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Đường dẫn truy cập (URL Slug)</label>
+                    <div class="flex rounded-md shadow-sm">
+                        <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">/</span>
+                        <input type="text" id="ska-portal-slug" class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-white" placeholder="vd: danh-sach-khach-hang" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Quyền truy cập (Allowed Roles)</label>
+                    <input type="text" id="ska-portal-roles" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 bg-white" placeholder="vd: administrator,editor" autocomplete="off">
+                    <p class="mt-1 text-[11px] text-gray-500">Các quyền cách nhau bằng dấu phẩy. Để trống nếu muốn hiển thị Public.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Chế độ hiển thị dữ liệu</label>
+                    <select id="ska-portal-view-mode" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 bg-white text-gray-700">
+                        <option value="readonly">Chỉ xem (Read-only)</option>
+                        <option value="crud">Đọc & Ghi (CRUD Mode)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-5 py-3 border-t border-blue-100 bg-blue-50/30 flex justify-end gap-2">
+            <button onclick="document.getElementById('ska-portal-settings-modal').classList.add('hidden');" class="px-4 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 text-sm transition">Đóng</button>
+            <button id="ska-execute-portal-settings-btn" class="px-5 py-2 rounded font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-sm text-sm transition flex items-center gap-1"><span class="dashicons dashicons-saved mt-0.5"></span> Lưu Cấu Hình</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // Bơm Từ Điển Máy Chủ xuống Biến Toàn Cục Trình Duyệt để AJAX Bypass
     window.skaGlobalDict = <?php echo json_encode(isset($all_dict) ? $all_dict : array()); ?>;

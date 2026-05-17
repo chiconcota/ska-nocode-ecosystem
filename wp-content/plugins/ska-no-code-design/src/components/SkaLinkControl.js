@@ -88,7 +88,7 @@ export const SkaLinkControl = ({ link, onChange }) => {
                                     label={__('Loop Field Name', 'ska-builder-core')}
                                     value={dynamic.key}
                                     onChange={(val) => updateDynamic({ key: val })}
-                                    help={__('Ex: product_url, permalink', 'ska-builder-core')}
+                                    help={__('Ex: permalink, url, or relation_column.url (for Detail pages)', 'ska-builder-core')}
                                     __nextHasNoMarginBottom
                                 />
                             )}

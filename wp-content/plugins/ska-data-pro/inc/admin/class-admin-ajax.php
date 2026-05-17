@@ -44,6 +44,7 @@ class Admin_Ajax {
 		add_action( 'wp_ajax_ska_data_create_table', array( $this, 'data_create_table' ) );
 		add_action( 'wp_ajax_ska_data_rename_table', array( $this, 'data_rename_table' ) );
 		add_action( 'wp_ajax_ska_data_drop_table', array( $this, 'data_drop_table' ) );
+		add_action( 'wp_ajax_ska_data_update_portal_settings', array( $this, 'data_update_portal_settings' ) );
 
 		// Hook xử lý App Blueprint
 		add_action( 'wp_ajax_ska_data_create_app', array( $this, 'data_create_app' ) );
@@ -350,6 +351,55 @@ class Admin_Ajax {
 		}
 
 		wp_send_json_success( array( 'message' => 'Đã tan biến.' ) );
+	}
+
+	/**
+	 * AJAX: Cập nhật App Portal Settings
+	 */
+	public function data_update_portal_settings() {
+		$this->verify_crud_request();
+
+		$table        = isset( $_POST['table'] ) ? sanitize_text_field( wp_unslash( $_POST['table'] ) ) : '';
+		
+		// Handle boolean string or numeric 1/0
+		$is_active = false;
+		if ( isset( $_POST['active'] ) ) {
+			if ( $_POST['active'] === 'true' || $_POST['active'] === '1' || $_POST['active'] === true ) {
+				$is_active = true;
+			}
+		}
+
+		$slug         = isset( $_POST['slug'] ) ? sanitize_title( wp_unslash( $_POST['slug'] ) ) : '';
+		
+		// Roles can be an array if sent via json/fetch, or comma separated string
+		$roles_raw = isset( $_POST['roles'] ) ? wp_unslash( $_POST['roles'] ) : '';
+		$view_mode    = isset( $_POST['view_mode'] ) ? sanitize_text_field( wp_unslash( $_POST['view_mode'] ) ) : 'readonly';
+
+		if ( empty( $table ) ) {
+			wp_send_json_error( array( 'message' => 'Lỗi: Không xác định được Bảng dữ liệu.' ) );
+		}
+
+		if ( is_array( $roles_raw ) ) {
+			$roles = array_filter( array_map( 'sanitize_text_field', $roles_raw ) );
+		} else {
+			$roles = array_filter( array_map( 'trim', explode( ',', (string) $roles_raw ) ) );
+		}
+
+		$settings = array(
+			'active'    => $is_active,
+			'slug'      => $slug,
+			'roles'     => $roles,
+			'view_mode' => $view_mode
+		);
+
+		$engine = Database_Engine::get_instance();
+		$result = $engine->update_portal_settings( $table, $settings );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+
+		wp_send_json_success( array( 'message' => 'Cập nhật cấu hình App Portal thành công.' ) );
 	}
 
 	/**

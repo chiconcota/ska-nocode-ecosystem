@@ -8,11 +8,17 @@
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
 ---
-## 2026-05-16 - 🔴 Pivot: Chuyển dịch từ SPA App Portal sang Dedicated Pages
+## 2026-05-17 - 🟢 Hoàn tất E2E Testing Dedicated Pages (Milestone 6) & Bugfix Deprecation
+- **Decision (PHP 8.1+ Block-Template Fallback Deprecation):** Đã phân tích và triệt tiêu cảnh báo `strpos(): Passing null` trong `wp_normalize_path` của lõi WordPress. Nguyên nhân là khi định tuyến `Ska_App_Router` vô hiệu hóa WP_Query (`$query->is_404 = false`), lõi WordPress sẽ rơi vào trường hợp fallback `get_index_template()` (bởi vì các cờ `is_page`, `is_single` đều đang false). Điều này khiến hệ thống Block Template nội bộ của WordPress nhận biến rỗng, đẩy `null` vào `wp_normalize_path`. Tuy nhiên, luồng thực thi vẫn được `Ska_Virtual_Wrapper` tiếp quản hoàn hảo và render ra HTML đúng. Quyết định: Cảnh báo này vô hại, dọn dẹp debug handler trong `wp-config.php` và giữ nguyên kiến trúc `short_circuit_wp_query` vì lợi ích Performance (không tốn DB query thừa). Hệ thống chính thức đạt độ Ổn định (Stable).
+
+---
+## 2026-05-16 - 🔴 Pivot: Chuyển dịch từ SPA App Portal sang Dedicated Pages & Tối Ưu Hiệu Năng
 - **Decision (Dedicated Page Architecture):** Phế bỏ hoàn toàn kiến trúc SPA (Single Page Application) sử dụng `x-show` cho App Portal. Thay vào đó, chuyển sang mô hình **Dedicated Page** (Định tuyến theo URL). Mỗi view (List, Detail, Create, Edit) sẽ là một Template riêng biệt (CPT `ska_theme_builder`). Điều này giúp tránh DOM phình to và rối rắm cho Nocode Admin.
-- **Decision (App Categorization - Virtual Folder):** Không tạo thêm Taxonomy để nhóm các trang của một App, nhằm tránh rác Database. Thay vào đó, sử dụng **Virtual Folder** (dựa trên metadata của template) để nhóm và lọc template theo App (ví dụ: LMS, CRM) trong giao diện Theme Builder.
-- **Decision (Dynamic Routing V2):** Nâng cấp bộ `Ska_App_Router` để hỗ trợ bắt route động (`/slug/` hoặc `/slug/{id}`). Hệ thống sẽ dispatch tới đúng Template dựa trên URL tham số thay vì dùng `/portal/{table}`.
-- **Decision (Gutenberg UI Scope Restriction):** Cập nhật `portal-visibility.js` để giới hạn Panel cài đặt hiển thị (Visibility Scope) chỉ xuất hiện trong CPT `ska_theme_builder`, tránh làm "rác" UI của các post/page thông thường.
+- **Decision (App Categorization - JSON Dictionary):** Không tạo Taxonomy và không lưu meta thuần túy rải rác để tránh N+1 Query. Quyết định lưu cấu trúc **Virtual Folder** (danh mục App) thành một mảng JSON Dictionary tại `wp_options`. Khi load Admin, chỉ cần 1 lệnh lấy mảng này dựng cây Tree View giao diện cực nhanh, các Template chỉ việc map với ID của thư mục.
+- **Decision (Dynamic Routing V2 & Safe Flush):** Nâng cấp `Ska_App_Router` để hỗ trợ bắt route động (`/slug/{id}`). Lệnh tử huyệt `flush_rewrite_rules()` TUYỆT ĐỐI chỉ được gọi khi lưu/cập nhật frontend_slug ở cài đặt Smart Object, nghiêm cấm chạy ở hook `init` gây nghẽn server.
+- **Decision (Shadow FSE & Early Intercept):** Triển khai kiến trúc ký sinh bằng cách đặt Dispatcher tại hook `parse_request`. Đánh chặn URL từ rất sớm để nạp Context và ép WP render thẳng HTML của Ska, ngăn hệ thống đi tìm file `.php` vô ích. Đồng thời, Middleware kiểm tra quyền hạn (Role Checking) cũng nằm ngay tại đây để từ chối truy cập sớm, tránh tiêu tốn tài nguyên tải lõi WordPress.
+- **Decision (Data Pro Auto-Indexing):** Bắt buộc Ska Data Pro phải tự động thêm `INDEX` cho mọi cột được khai báo là "Relation" (Khóa ngoại) khi build DB. Việc này quyết định sự sống còn của tốc độ Reverse Lookup (Rollup) trên hệ cơ sở dữ liệu phẳng, ngăn chặn Table Scan khi dữ liệu phình to.
+- **Decision (Gutenberg UI Scope Restriction):** Cập nhật `portal-visibility.js` để giới hạn Panel cài đặt hiển thị (Visibility Scope) chỉ xuất hiện trong CPT `ska_theme_builder`, tránh làm "rác" UI.
 
 ---
 ## 2026-05-16 - 🔴 Pending: Kiến Trúc App Portal (Notion-like) & Data View

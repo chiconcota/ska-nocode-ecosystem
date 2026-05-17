@@ -33,8 +33,17 @@ class Ska_Theme_Builder {
 			\Ska_No_Code_Design\Theme_Builder\Ska_Virtual_Wrapper::get_instance();
 		}
 
+		// Load App Router (Virtual Router & Security Layer)
+		require_once plugin_dir_path( __FILE__ ) . 'class-ska-app-router.php';
+		if ( class_exists( '\Ska_No_Code_Design\Theme_Builder\Ska_App_Router' ) ) {
+			\Ska_No_Code_Design\Theme_Builder\Ska_App_Router::get_instance();
+		}
+
 		// Register Admin Menu (Submenu of Ska Dashboard)
 		add_action( 'admin_menu', array( $this, 'register_menu' ), 20 );
+
+		// Register AJAX Action for Folder sync
+		add_action( 'wp_ajax_ska_theme_builder_save_folders', array( $this, 'ajax_save_folders' ) );
 	}
 
 	/**
@@ -65,5 +74,29 @@ class Ska_Theme_Builder {
 		} else {
 			echo '<div class="wrap"><h2>Lỗi: Không tìm thấy giao diện Theme Builder.</h2></div>';
 		}
+	}
+
+	/**
+	 * AJAX Handler to save the Virtual Folders JSON
+	 */
+	public function ajax_save_folders() {
+		check_ajax_referer( 'ska_theme_builder_folders_nonce', '_ajax_nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+
+		$folders_json = isset( $_POST['folders'] ) ? wp_unslash( $_POST['folders'] ) : '[]';
+		
+		// Validate JSON
+		$decoded = json_decode( $folders_json, true );
+		if ( ! is_array( $decoded ) ) {
+			wp_send_json_error( 'Invalid JSON format' );
+		}
+
+		// Save the option with autoload = false (No-Trash Policy)
+		update_option( 'ska_theme_builder_folders', wp_json_encode( $decoded ), false );
+
+		wp_send_json_success( 'Folders saved successfully' );
 	}
 }
