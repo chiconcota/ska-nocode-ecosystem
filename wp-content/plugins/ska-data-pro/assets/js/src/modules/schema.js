@@ -224,6 +224,7 @@ export function attachSchemaEvents() {
         const slugInput = document.getElementById('ska-portal-slug');
         const rolesInput = document.getElementById('ska-portal-roles');
         const viewModeInput = document.getElementById('ska-portal-view-mode');
+        const redirectInput = document.getElementById('ska-portal-unauthorized-redirect');
 
         // Populate existing data
         if (portalSettings && portalSettings.active) {
@@ -232,6 +233,7 @@ export function attachSchemaEvents() {
             slugInput.value = portalSettings.slug || '';
             rolesInput.value = (portalSettings.roles || []).join(',');
             viewModeInput.value = portalSettings.view_mode || 'readonly';
+            if (redirectInput) redirectInput.value = portalSettings.unauthorized_redirect_url || '';
         } else {
             chkActive.checked = false;
             fieldsWrapper.classList.add('opacity-50', 'pointer-events-none');
@@ -258,6 +260,7 @@ export function attachSchemaEvents() {
             const slug = document.getElementById('ska-portal-slug').value.trim();
             const rolesInput = document.getElementById('ska-portal-roles').value.trim();
             const viewMode = document.getElementById('ska-portal-view-mode').value;
+            const redirectUrl = document.getElementById('ska-portal-unauthorized-redirect') ? document.getElementById('ska-portal-unauthorized-redirect').value.trim() : '';
 
             if (active && !slug) {
                 alert('Vui lòng điền URL Slug cho Portal.');
@@ -279,7 +282,8 @@ export function attachSchemaEvents() {
                 active: active,
                 slug: slug,
                 roles: roles,
-                view_mode: viewMode
+                view_mode: viewMode,
+                unauthorized_redirect_url: redirectUrl
             });
 
             if (res.success) {

@@ -607,6 +607,12 @@ defined( 'ABSPATH' ) || exit;
                         <option value="crud">Đọc & Ghi (CRUD Mode)</option>
                     </select>
                 </div>
+
+                <div class="mt-4 border-t border-gray-100 pt-4">
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Trang đích khi chưa đăng nhập (Unauthorized Redirect)</label>
+                    <input type="text" id="ska-portal-unauthorized-redirect" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 bg-white" placeholder="vd: /dang-nhap hoặc https://..." autocomplete="off">
+                    <p class="mt-1 text-[11px] text-gray-500">Nếu Portal bị khóa (Có phân quyền Roles), người dùng chưa đăng nhập sẽ bị đẩy về trang này thay vì wp-login mặc định. Để trống nếu muốn dùng wp-login.</p>
+                </div>
             </div>
         </div>
 

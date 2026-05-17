@@ -374,6 +374,7 @@ class Admin_Ajax {
 		// Roles can be an array if sent via json/fetch, or comma separated string
 		$roles_raw = isset( $_POST['roles'] ) ? wp_unslash( $_POST['roles'] ) : '';
 		$view_mode    = isset( $_POST['view_mode'] ) ? sanitize_text_field( wp_unslash( $_POST['view_mode'] ) ) : 'readonly';
+		$unauthorized_redirect = isset( $_POST['unauthorized_redirect_url'] ) ? sanitize_text_field( wp_unslash( $_POST['unauthorized_redirect_url'] ) ) : '';
 
 		if ( empty( $table ) ) {
 			wp_send_json_error( array( 'message' => 'Lỗi: Không xác định được Bảng dữ liệu.' ) );
@@ -389,7 +390,8 @@ class Admin_Ajax {
 			'active'    => $is_active,
 			'slug'      => $slug,
 			'roles'     => $roles,
-			'view_mode' => $view_mode
+			'view_mode' => $view_mode,
+			'unauthorized_redirect_url' => $unauthorized_redirect
 		);
 
 		$engine = Database_Engine::get_instance();
