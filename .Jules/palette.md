@@ -1,0 +1,3 @@
+## 2025-02-12 - Interactive Spans Keyboard Accessibility
+**Learning:** This app frequently uses `span` tags as interactive UI elements (mock buttons) within panels and popovers, but they often lack keyboard accessibility (tabIndex, onKeyDown) and proper screen reader descriptions for their inner Material Symbols.
+**Action:** When working on UI components, especially toolbars and utility panels, always check if `span` or `div` elements with `role="button"` have `tabIndex={0}`, an `onKeyDown` handler for 'Enter' and 'Space' keys, and ensure any inner text/icons used as labels are properly described via `aria-label` while hiding decorative icons with `aria-hidden="true"`.
