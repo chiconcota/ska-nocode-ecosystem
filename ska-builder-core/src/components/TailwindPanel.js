@@ -139,6 +139,7 @@ export const TailwindPanel = ({ className, setClassName, customStyle, setCustomS
                     {hasClasses && (
                         <span 
                             className="material-symbols-outlined" 
+                            aria-hidden="true"
                             title={__('Tailwind Active', 'ska-builder-core')}
                             style={{ 
                                 fontSize: '14px', 
