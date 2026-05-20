@@ -313,5 +313,88 @@
             "type": "short_text",
             "options": ""
         }
+    },
+    "wp_ska_data_app_quan_ly_dat_phong_khach_san_phong_khach_san": {
+        "__table_info": {
+            "name": "Ph\u00f2ng Kh\u00e1ch S\u1ea1n",
+            "icon": "dashicons-media-spreadsheet",
+            "app_id": "app_quan_ly_dat_phong_khach_san"
+        },
+        "ma_dat_phong": {
+            "label": "M\u00e3 \u0110\u1eb7t Ph\u00f2ng",
+            "type": "short_text",
+            "options": ""
+        },
+        "phong_dat": {
+            "label": "Ph\u00f2ng \u0110\u1eb7t",
+            "type": "relation",
+            "options": "wp_ska_data_app_quan_ly_dat_phong_khach_san_lich_dat_phong"
+        },
+        "khach_hang": {
+            "label": "Kh\u00e1ch H\u00e0ng",
+            "type": "short_text",
+            "options": ""
+        },
+        "ngay_check_in": {
+            "label": "Ng\u00e0y Check-in",
+            "type": "date",
+            "options": ""
+        },
+        "ngay_check_out": {
+            "label": "Ng\u00e0y Check-out",
+            "type": "date",
+            "options": ""
+        },
+        "tong_tien": {
+            "label": "T\u1ed5ng Ti\u1ec1n",
+            "type": "number",
+            "options": ""
+        },
+        "trang_thai_thanh_toan": {
+            "label": "Tr\u1ea1ng th\u00e1i Thanh to\u00e1n",
+            "type": "select",
+            "options": "Ch\u01b0a thanh to\u00e1n, \u0110\u00e3 thanh to\u00e1n"
+        }
+    },
+    "wp_ska_data_app_quan_ly_dat_phong_khach_san_lich_dat_phong": {
+        "__table_info": {
+            "name": "L\u1ecbch \u0110\u1eb7t Ph\u00f2ng",
+            "icon": "dashicons-media-spreadsheet",
+            "app_id": "app_quan_ly_dat_phong_khach_san",
+            "portal_settings": {
+                "active": true,
+                "slug": "lich-dat-phong",
+                "roles": [
+                    "administrator"
+                ],
+                "view_mode": "crud",
+                "unauthorized_redirect_url": ""
+            }
+        },
+        "ten_phong": {
+            "label": "t\u00ean ph\u00f2ng",
+            "type": "short_text",
+            "options": ""
+        },
+        "loai_phong": {
+            "label": "Lo\u1ea1i Ph\u00f2ng",
+            "type": "select",
+            "options": "Standard , Deluxe, VIP"
+        },
+        "gia_moi_dem": {
+            "label": "Gi\u00e1 m\u1ed7i \u0111\u00eam",
+            "type": "number",
+            "options": ""
+        },
+        "mo_ta_chi_tiet": {
+            "label": "M\u00f4 t\u1ea3 chi ti\u1ebft",
+            "type": "long_text",
+            "options": ""
+        },
+        "trang_thai": {
+            "label": "Tr\u1ea1ng th\u00e1i",
+            "type": "select",
+            "options": "Tr\u1ed1ng, \u0110\u00e3 \u0110\u1eb7t, B\u1ea3o Tr\u00ec"
+        }
     }
 }

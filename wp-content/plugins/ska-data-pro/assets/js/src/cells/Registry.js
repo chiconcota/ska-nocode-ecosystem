@@ -3,6 +3,7 @@ import MediaCell from './types/MediaCell.js';
 import GalleryCell from './types/GalleryCell.js';
 import SelectCell from './types/SelectCell.js';
 import TextCell from './types/TextCell.js';
+import DateCell from './types/DateCell.js';
 import RelationCell from './types/RelationCell.js';
 import BaseCell from './BaseCell.js';
 
@@ -25,8 +26,10 @@ export default class CellRegistry {
             case 'rollup':
                 // Read-only or special handled via popup
                 return new BaseCell(element); // fallback (no edit action)
+            case 'date':
+                return new DateCell(element);
             default:
-                // Text, Number, Date...
+                // Text, Number...
                 return new TextCell(element);
         }
     }

@@ -239,6 +239,16 @@ class Ska_Virtual_Wrapper {
 					return ! empty( get_query_var( 'ska_portal' ) );
 				}
 				return get_query_var( 'ska_portal' ) === $value;
+			case 'specific_portal_list':
+				if ( empty( $value ) ) {
+					return ! empty( get_query_var( 'ska_portal' ) ) && empty( get_query_var( 'ska_id' ) );
+				}
+				return get_query_var( 'ska_portal' ) === $value && empty( get_query_var( 'ska_id' ) );
+			case 'specific_portal_detail':
+				if ( empty( $value ) ) {
+					return ! empty( get_query_var( 'ska_portal' ) ) && ! empty( get_query_var( 'ska_id' ) );
+				}
+				return get_query_var( 'ska_portal' ) === $value && ! empty( get_query_var( 'ska_id' ) );
 		}
 
 		return false;

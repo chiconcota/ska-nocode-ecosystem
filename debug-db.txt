@@ -1,0 +1,18 @@
+ORGANISMS:
+id
+type
+created_at
+name
+json_content
+title
+block_name
+html_content
+
+THEME TEMPLATES:
+id
+created_at
+name
+location
+organism_id
+conditions
+is_active

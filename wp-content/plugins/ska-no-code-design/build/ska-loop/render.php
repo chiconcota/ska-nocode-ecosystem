@@ -233,10 +233,16 @@ foreach ( $rows as $index => $row ) {
 
     // Cắm dữ liệu (Hydration) vào Khuôn
     if ( ! empty( $matched_template_html ) ) {
-        // Hỗ trợ cả {{ variable }} và [variable]
-        $hydrated_html = preg_replace_callback( '/\{\{\s*([a-zA-Z0-9_\.\$]+)\s*\}\}|\[\s*([a-zA-Z0-9_\.\$]+)\s*\]/', function( $matches ) use ( $context, $actual_table_name ) {
-            // Biến nằm ở group 1 (nếu dùng {{}}) hoặc group 2 (nếu dùng [])
-            $raw_key = ! empty( $matches[1] ) ? trim( $matches[1] ) : trim( $matches[2] );
+        // Hỗ trợ cả {{ variable }}, [variable] và dạng URL-encoded (%7B%7B variable %7D%7D, %5B variable %5D)
+        $hydrated_html = preg_replace_callback( '/\{\{\s*([a-zA-Z0-9_\.\$\-]+)\s*\}\}|\[\s*([a-zA-Z0-9_\.\$\-]+)\s*\]|%7B%7B\s*([a-zA-Z0-9_\.\$\-]+)\s*%7D%7D|%5B\s*([a-zA-Z0-9_\.\$\-]+)\s*%5D/', function( $matches ) use ( $context, $actual_table_name ) {
+            // Biến nằm ở group 1, 2, 3 hoặc 4 tùy theo cú pháp khớp
+            $raw_key = '';
+            for ($i = 1; $i <= 4; $i++) {
+                if (!empty($matches[$i])) {
+                    $raw_key = trim($matches[$i]);
+                    break;
+                }
+            }
             
             $parts = explode( '.', $raw_key );
             

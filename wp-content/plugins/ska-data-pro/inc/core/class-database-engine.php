@@ -312,6 +312,9 @@ class Database_Engine
 			case 'date':
 				$mysql_type = 'DATE';
 				break;
+			case 'datetime':
+				$mysql_type = 'DATETIME';
+				break;
 			case 'url':
 				$mysql_type = 'VARCHAR(500)';
 				break;
@@ -815,5 +818,55 @@ class Database_Engine
 		do_action('ska_data_portal_settings_updated', $table_name, $settings);
 
 		return true;
+	}
+
+	/**
+	 * Tự động sinh giao diện App Portal (One-Click App Generator)
+	 * Uỷ quyền cho Ska No-Code Design thông qua Hook (Decoupled Pattern)
+	 *
+	 * @param string $table_name
+	 * @param array $options
+	 * @return array|\WP_Error
+	 */
+	public function generate_portal_ui($table_name, $options = array())
+	{
+		global $wpdb;
+
+		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
+			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+		}
+
+		$dictionary = get_option('ska_data_dictionary', array());
+		if (!isset($dictionary[$table_name])) {
+			return new \WP_Error('invalid_table', 'Bảng không tồn tại trong từ điển.');
+		}
+
+		// 1. Tự động thêm cột Nội dung (Gutenberg) nếu người dùng yêu cầu
+		if (!empty($options['add_gutenberg'])) {
+			$has_long_text = false;
+			foreach ($dictionary[$table_name] as $col_slug => $col_data) {
+				if ($col_slug !== '__table_info' && isset($col_data['type']) && $col_data['type'] === 'long_text') {
+					$has_long_text = true;
+					break;
+				}
+			}
+
+			if (!$has_long_text) {
+				$add_result = $this->add_column($table_name, 'Nội dung', 'long_text', '');
+				if (is_wp_error($add_result)) {
+					return $add_result;
+				}
+			}
+		}
+
+		// 2. Giao tiếp với Ska No-Code Design thông qua WP Filter (Decoupled Microservices)
+		// Ska No-Code Design sẽ sinh Organism, List View, Detail View và trả về array URLs
+		$result = apply_filters('ska_design_generate_portal_assets', false, $table_name, $options);
+
+		if (false === $result) {
+			return new \WP_Error('missing_design_engine', 'Ska No-Code Design Plugin chưa được kích hoạt hoặc không phản hồi.');
+		}
+
+		return $result;
 	}
 }

@@ -57,11 +57,13 @@ add_filter('ska_data_insert_record', function ($result, $payload, $table_name) {
     global $wpdb;
 
     if (empty($table_name) || empty($payload)) {
+        error_log("ska_data_insert_record: table_name or payload is empty. table_name: " . print_r($table_name, true));
         return false;
     }
 
     // Tự động bọc prefix bảo mật (Vd: truyền "ska_data_leads" -> "wp_ska_data_leads")
     $table_name_with_prefix = strpos($table_name, $wpdb->prefix) === 0 ? $table_name : $wpdb->prefix . $table_name;
+    error_log("ska_data_insert_record: Processing insert for table: " . $table_name_with_prefix);
 
     // Bộ lọc Vô trùng: Loại bỏ thông tin rác (Ví Dụ Input người dùng chế bậy không có thật trong Schema)
     $columns = \Ska\Data\Core\Data_Fetcher::get_table_columns($table_name_with_prefix);
@@ -71,6 +73,7 @@ add_filter('ska_data_insert_record', function ($result, $payload, $table_name) {
             $valid_columns[] = $col->Field;
         }
     }
+    error_log("ska_data_insert_record: valid_columns: " . print_r($valid_columns, true));
 
     // Đọc Dictionary để hỗ trợ phân giải Label/Alias (Tên Người Dùng Đặt) về Tên Cột Vật lý
     $clean_table_name = str_replace($wpdb->prefix, '', $table_name_with_prefix);
@@ -79,44 +82,51 @@ add_filter('ska_data_insert_record', function ($result, $payload, $table_name) {
 
     $clean_insert_data = array();
     foreach ($payload as $key => $val) {
+        $col_slug = false;
+
         // Trường hợp 1: Key khớp chính xác với Cột Vật lý MySQL (Ví dụ: title, name, text_1)
         if (in_array($key, $valid_columns)) {
-            $clean_insert_data[$key] = is_array($val) ? wp_json_encode(array_values($val)) : $val;
-            continue;
-        }
-
-        // Trường hợp 2: Key là Label Tiếng Việt hoặc Alias từ Form (Ví dụ: "Họ và tên", "name")
-        $matched_col = false;
-        // Chuẩn hóa Key đầu vào để so sánh linh hoạt (xóa phân biệt hoa/thường, dấu cách/gạch)
-        $normalized_key = sanitize_title(str_replace('_', '-', $key));
-
-        foreach ($table_dict as $col_slug => $col_meta) {
-            if ($col_slug === '__table_info')
-                continue;
-
-            if (!empty($col_meta['label'])) {
-                $normalized_label = sanitize_title(str_replace('_', '-', $col_meta['label']));
-
-                // Khớp tĩnh bằng chữ gốc HOẶC khớp động qua Slug
-                if ($col_meta['label'] === $key || $normalized_label === $normalized_key) {
-                    $matched_col = $col_slug;
-                    break;
+            $col_slug = $key;
+        } else {
+            // Trường hợp 2: Key là Label Tiếng Việt hoặc Alias từ Form (Ví dụ: "Họ và tên", "name")
+            $normalized_key = sanitize_title(str_replace('_', '-', $key));
+            foreach ($table_dict as $s => $col_meta) {
+                if ($s === '__table_info') continue;
+                if (!empty($col_meta['label'])) {
+                    $normalized_label = sanitize_title(str_replace('_', '-', $col_meta['label']));
+                    if ($col_meta['label'] === $key || $normalized_label === $normalized_key) {
+                        $col_slug = $s;
+                        break;
+                    }
                 }
             }
         }
 
-        // Cắm dữ liệu vào mảng đích theo Mật Danh vật lý đã được phiên dịch
-        if ($matched_col && in_array($matched_col, $valid_columns)) {
-            $clean_insert_data[$matched_col] = is_array($val) ? wp_json_encode(array_values($val)) : $val;
+        if ($col_slug && in_array($col_slug, $valid_columns)) {
+            if (is_array($val)) {
+                $is_relation = (isset($table_dict[$col_slug]['type']) && $table_dict[$col_slug]['type'] === 'relation');
+                if ($is_relation) {
+                    $clean_insert_data[$col_slug] = implode(',', array_map('sanitize_text_field', array_values($val)));
+                } else {
+                    $clean_insert_data[$col_slug] = wp_json_encode(array_values($val));
+                }
+            } else {
+                $clean_insert_data[$col_slug] = $val;
+            }
         }
     }
 
     if (empty($clean_insert_data)) {
+        error_log("ska_data_insert_record: clean_insert_data is empty after filtering. payload keys: " . print_r(array_keys($payload), true));
         return false; // Payload rỗng tuếch không có trường nào khớp
     }
 
     // Lệnh Đúc Bê Tông của WordPress
     $wpdb->insert($table_name_with_prefix, $clean_insert_data);
+    
+    if (!$wpdb->insert_id) {
+        error_log("ska_data_insert_record: WPDB Insert Failed. Error: " . $wpdb->last_error);
+    }
 
     return $wpdb->insert_id ? $wpdb->insert_id : false;
 }, 10, 3);
@@ -145,29 +155,35 @@ add_filter('ska_data_update_record', function ($result, $payload, $table_name, $
 
     $clean_update_data = array();
     foreach ($payload as $key => $val) {
+        $col_slug = false;
+
         if (in_array($key, $valid_columns)) {
-            $clean_update_data[$key] = is_array($val) ? wp_json_encode(array_values($val)) : $val;
-            continue;
-        }
-
-        $matched_col = false;
-        $normalized_key = sanitize_title(str_replace('_', '-', $key));
-
-        foreach ($table_dict as $col_slug => $col_meta) {
-            if ($col_slug === '__table_info')
-                continue;
-
-            if (!empty($col_meta['label'])) {
-                $normalized_label = sanitize_title(str_replace('_', '-', $col_meta['label']));
-                if ($col_meta['label'] === $key || $normalized_label === $normalized_key) {
-                    $matched_col = $col_slug;
-                    break;
+            $col_slug = $key;
+        } else {
+            $normalized_key = sanitize_title(str_replace('_', '-', $key));
+            foreach ($table_dict as $s => $col_meta) {
+                if ($s === '__table_info') continue;
+                if (!empty($col_meta['label'])) {
+                    $normalized_label = sanitize_title(str_replace('_', '-', $col_meta['label']));
+                    if ($col_meta['label'] === $key || $normalized_label === $normalized_key) {
+                        $col_slug = $s;
+                        break;
+                    }
                 }
             }
         }
 
-        if ($matched_col && in_array($matched_col, $valid_columns)) {
-            $clean_update_data[$matched_col] = is_array($val) ? wp_json_encode(array_values($val)) : $val;
+        if ($col_slug && in_array($col_slug, $valid_columns)) {
+            if (is_array($val)) {
+                $is_relation = (isset($table_dict[$col_slug]['type']) && $table_dict[$col_slug]['type'] === 'relation');
+                if ($is_relation) {
+                    $clean_update_data[$col_slug] = implode(',', array_map('sanitize_text_field', array_values($val)));
+                } else {
+                    $clean_update_data[$col_slug] = wp_json_encode(array_values($val));
+                }
+            } else {
+                $clean_update_data[$col_slug] = $val;
+            }
         }
     }
 

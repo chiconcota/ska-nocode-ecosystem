@@ -63,13 +63,31 @@ function _registerSkaForm() {
                     }
 
                     if (typeof this.fields[name] === 'undefined') {
-                        // Khởi tạo giá trị mặc định dựa theo loại input
-                        if (isArray) {
-                            this.fields[name] = [];
-                        } else if (input.type === 'checkbox') {
-                            this.fields[name] = input.checked || false;
+                        // NẾU CÓ currentData TRONG PORTAL CONTEXT, HÃY ƯU TIÊN LẤY TỪ currentData!
+                        const portalStore = Alpine.store('skaPortal');
+                        if (portalStore && portalStore.currentData && typeof portalStore.currentData[name] !== 'undefined') {
+                            let val = portalStore.currentData[name];
+                            if (Array.isArray(val)) {
+                                if (val.length > 0 && typeof val[0] === 'object' && val[0] !== null && typeof val[0].id !== 'undefined') {
+                                    let ids = val.map(item => item.id.toString());
+                                    this.fields[name] = isArray ? ids : (ids[0] || '');
+                                } else {
+                                    this.fields[name] = val;
+                                }
+                            } else if (typeof val === 'object' && val !== null && typeof val.id !== 'undefined') {
+                                this.fields[name] = isArray ? [val.id.toString()] : val.id.toString();
+                            } else {
+                                this.fields[name] = val;
+                            }
                         } else {
-                            this.fields[name] = input.value || '';
+                            // Khởi tạo giá trị mặc định dựa theo loại input
+                            if (isArray) {
+                                this.fields[name] = [];
+                            } else if (input.type === 'checkbox') {
+                                this.fields[name] = input.checked || false;
+                            } else {
+                                this.fields[name] = input.value || '';
+                            }
                         }
                     }
 
@@ -326,6 +344,81 @@ function _registerSkaPortal() {
     });
 }
 
+
+
+/**
+ * Đăng ký skaScratchpad Controller vào Alpine để quản lý Rich Text & Gutenberg Iframe
+ */
+function _registerSkaScratchpad() {
+    Alpine.data('skaScratchpad', (fieldName) => ({
+        isOpen: false,
+        isLoading: false,
+        iframeUrl: '',
+        postId: null,
+        
+        init() {
+            // Watch changes if needed
+        },
+
+        async openDesigner() {
+            this.isOpen = true;
+            this.isLoading = true;
+
+            try {
+                // Gọi API lấy Iframe URL
+                const restUrl = (window.skaAppEnv && window.skaAppEnv.restUrl) ? window.skaAppEnv.restUrl.replace('ska-logic', 'ska-builder') : '/wp-json/ska-builder/v1';
+                const currentHtml = this.$refs.editor.value || '';
+                
+                const response = await fetch(`${restUrl}/scratchpad/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-WP-Nonce': window.skaAppEnv ? window.skaAppEnv.nonce : ''
+                    },
+                    body: JSON.stringify({ content: currentHtml })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.postId = data.post_id;
+                    this.iframeUrl = data.iframe_url;
+                } else {
+                    alert('Lỗi khởi tạo Trình thiết kế: ' + data.message);
+                    this.isOpen = false;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi kết nối khi khởi tạo Trình thiết kế.');
+                this.isOpen = false;
+            }
+        },
+
+        async closeDesigner() {
+            this.isOpen = false;
+            this.iframeUrl = '';
+            
+            if (!this.postId) return;
+
+            // Xóa Scratchpad để dọn rác
+            try {
+                const restUrl = (window.skaAppEnv && window.skaAppEnv.restUrl) ? window.skaAppEnv.restUrl.replace('ska-logic', 'ska-builder') : '/wp-json/ska-builder/v1';
+                await fetch(`${restUrl}/scratchpad/destroy`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-WP-Nonce': window.skaAppEnv ? window.skaAppEnv.nonce : ''
+                    },
+                    body: JSON.stringify({ post_id: this.postId })
+                });
+                this.postId = null;
+            } catch (err) {
+                console.error('Lỗi khi dọn dẹp Scratchpad', err);
+            }
+        }
+    }));
+}
+
 // Script này load TRƯỚC Alpine.js (thứ tự enqueue trong render.php).
 // Khi Alpine load sau → phát alpine:init → hàm này hứng → đăng ký skaForm & skaTheme.
 // Fallback: Nếu Alpine đã load trước (edge-case HTML Attributes) → gọi trực tiếp.
@@ -333,10 +426,12 @@ if (window.Alpine) {
     _registerSkaForm();
     _registerSkaTheme();
     _registerSkaPortal();
+    _registerSkaScratchpad();
 } else {
     document.addEventListener('alpine:init', () => {
         _registerSkaForm();
         _registerSkaTheme();
         _registerSkaPortal();
+        _registerSkaScratchpad();
     });
 }

@@ -157,7 +157,7 @@ class Organisms_API {
                 $cache_data[ $row['id'] ] = [
                     'id'   => $row['id'],
                     'name' => $row['name'],
-                    'json' => json_decode( $row['json_content'], true ),
+                    'json' => json_decode( $row['json_content'] ?? '', true ),
                     'html_content' => $row['html_content']
                 ];
             }
