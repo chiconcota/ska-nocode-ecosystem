@@ -45,6 +45,7 @@ class Admin_Ajax {
 		add_action( 'wp_ajax_ska_data_rename_table', array( $this, 'data_rename_table' ) );
 		add_action( 'wp_ajax_ska_data_drop_table', array( $this, 'data_drop_table' ) );
 		add_action( 'wp_ajax_ska_data_update_portal_settings', array( $this, 'data_update_portal_settings' ) );
+		add_action( 'wp_ajax_ska_data_generate_portal_ui', array( $this, 'data_generate_portal_ui' ) );
 
 		// Hook xử lý App Blueprint
 		add_action( 'wp_ajax_ska_data_create_app', array( $this, 'data_create_app' ) );
@@ -402,6 +403,38 @@ class Admin_Ajax {
 		}
 
 		wp_send_json_success( array( 'message' => 'Cập nhật cấu hình App Portal thành công.' ) );
+	}
+
+	/**
+	 * AJAX: Auto-Generate Portal UI (One-Click App Generator)
+	 */
+	public function data_generate_portal_ui() {
+		$this->verify_crud_request();
+
+		$table = isset( $_POST['table'] ) ? sanitize_text_field( wp_unslash( $_POST['table'] ) ) : '';
+		$add_gutenberg = isset( $_POST['add_gutenberg'] ) && $_POST['add_gutenberg'] === 'true';
+
+		if ( empty( $table ) ) {
+			wp_send_json_error( array( 'message' => 'Lỗi: Không xác định được Bảng dữ liệu.' ) );
+		}
+
+		$engine = Database_Engine::get_instance();
+		$result = $engine->generate_portal_ui( $table, array(
+			'add_gutenberg' => $add_gutenberg,
+		) );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+
+		wp_send_json_success( array( 
+			'message'           => 'Tự động tạo UI cho Portal thành công.',
+			'portal_url'        => isset( $result['portal_url'] ) ? $result['portal_url'] : '',
+			'theme_builder_url' => isset( $result['theme_builder_url'] ) ? $result['theme_builder_url'] : '',
+			'list_view_editor_url'   => isset( $result['list_view_editor_url'] ) ? $result['list_view_editor_url'] : '',
+			'detail_view_editor_url' => isset( $result['detail_view_editor_url'] ) ? $result['detail_view_editor_url'] : '',
+			'data'              => $result 
+		) );
 	}
 
 	/**

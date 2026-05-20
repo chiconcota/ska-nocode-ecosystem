@@ -178,16 +178,31 @@ class Ska_Theme_Builder_API {
 
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ska_data_sys_theme_templates';
+		$table_organisms = $wpdb->prefix . 'ska_data_sys_organisms';
 
+		// 1. Lấy organism_id liên kết từ template trước khi thực hiện xóa
+		$template = $wpdb->get_row( $wpdb->prepare( "SELECT organism_id FROM {$table_name} WHERE id = %d", $id ), ARRAY_A );
+
+		// 2. Tiến hành xóa template
 		$deleted = $wpdb->delete( $table_name, array( 'id' => $id ), array( '%d' ) );
 
 		if ( false === $deleted ) {
 			return new \WP_Error( 'db_error', 'Không thể xóa bản ghi.', array( 'status' => 500 ) );
 		}
 
+		// 3. Tự động xóa Organism liên kết để tránh tích lũy dữ liệu rác trong database
+		if ( ! empty( $template ) && ! empty( $template['organism_id'] ) ) {
+			$wpdb->delete( $table_organisms, array( 'id' => $template['organism_id'] ), array( '%d' ) );
+			
+			// Làm mới (Flush) JSON Cache cho Editor sau khi xóa organism để dropdown tải đúng
+			if ( class_exists( '\Ska\Design\Api\Organisms_API' ) ) {
+				\Ska\Design\Api\Organisms_API::get_instance()->export_physical_cache();
+			}
+		}
+
 		return rest_ensure_response( array(
 			'success' => true,
-			'message' => 'Xóa Theme Template thành công.',
+			'message' => 'Xóa Theme Template và Organism liên kết thành công.',
 		) );
 	}
 }

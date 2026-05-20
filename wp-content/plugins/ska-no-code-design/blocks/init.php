@@ -24,6 +24,7 @@ function ska_builder_core_register_blocks() {
     // Form Interface Blocks
     register_block_type( SKA_DESIGN_PATH . 'build/ska-input' );
     register_block_type( SKA_DESIGN_PATH . 'build/ska-select' );
+    register_block_type( SKA_DESIGN_PATH . 'build/ska-form-rich-text' );
 
     // Ska Symbols (Organism Reference)
     register_block_type( SKA_DESIGN_PATH . 'build/ska-organism-ref' );

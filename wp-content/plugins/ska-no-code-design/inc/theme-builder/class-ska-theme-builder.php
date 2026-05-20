@@ -39,6 +39,18 @@ class Ska_Theme_Builder {
 			\Ska_No_Code_Design\Theme_Builder\Ska_App_Router::get_instance();
 		}
 
+		// Load Portal Generator (Listens to Ska Data Pro for auto-generation)
+		require_once plugin_dir_path( __FILE__ ) . 'class-ska-portal-generator.php';
+		if ( class_exists( '\Ska_No_Code_Design\Theme_Builder\Ska_Portal_Generator' ) ) {
+			\Ska_No_Code_Design\Theme_Builder\Ska_Portal_Generator::get_instance();
+		}
+
+		// Load Shadow Scratchpad API
+		require_once plugin_dir_path( __FILE__ ) . 'class-api-shadow-scratchpad.php';
+		if ( class_exists( '\Ska_No_Code_Design\Theme_Builder\API_Shadow_Scratchpad' ) ) {
+			\Ska_No_Code_Design\Theme_Builder\API_Shadow_Scratchpad::get_instance();
+		}
+
 		// Register Admin Menu (Submenu of Ska Dashboard)
 		add_action( 'admin_menu', array( $this, 'register_menu' ), 20 );
 

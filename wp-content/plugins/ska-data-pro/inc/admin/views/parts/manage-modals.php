@@ -24,6 +24,8 @@ defined( 'ABSPATH' ) || exit;
                     <option value="long_text">Nội Dung Dài (Văn bản / Rich Text HTML)</option>
                     <option value="number">Số Đếm (Number)</option>
                     <option value="currency">Tiền Lẻ / Tỷ Giá (Currency)</option>
+                    <option value="date">Ngày Tháng (Date)</option>
+                    <option value="datetime">Ngày Giờ (Date Time)</option>
                     <option value="url">Đường Dẫn Link (URL)</option>
                     <option value="media">Ảnh Đơn (Single Image)</option>
                     <option value="media_gallery">Thư Viện Ảnh (Media Gallery)</option>
@@ -126,6 +128,8 @@ defined( 'ABSPATH' ) || exit;
                     <option value="long_text">Nội Dung Dài (Văn bản / Rich Text HTML)</option>
                     <option value="number">Số Đếm (Number)</option>
                     <option value="currency">Tiền Lẻ / Tỷ Giá (Currency)</option>
+                    <option value="date">Ngày Tháng (Date)</option>
+                    <option value="datetime">Ngày Giờ (Date Time)</option>
                     <option value="url">Đường Dẫn Link (URL)</option>
                     <option value="media">Ảnh Đơn (Single Image)</option>
                     <option value="media_gallery">Thư Viện Ảnh (Media Gallery)</option>
@@ -613,8 +617,177 @@ defined( 'ABSPATH' ) || exit;
                     <input type="text" id="ska-portal-unauthorized-redirect" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 bg-white" placeholder="vd: /dang-nhap hoặc https://..." autocomplete="off">
                     <p class="mt-1 text-[11px] text-gray-500">Nếu Portal bị khóa (Có phân quyền Roles), người dùng chưa đăng nhập sẽ bị đẩy về trang này thay vì wp-login mặc định. Để trống nếu muốn dùng wp-login.</p>
                 </div>
+
+                <!-- NEW: AUTO-GENERATE UI SECTION -->
+                <div x-data="skaPortalGenerator()" x-init="initData()" id="ska-auto-generate-ui-section" class="relative mt-5 p-5 bg-gradient-to-br from-indigo-50/50 to-blue-50/30 border border-indigo-100 rounded-lg">
+                    <!-- Badge/Label -->
+                    <div class="absolute -top-3 left-4 bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2 py-0.5 rounded uppercase tracking-wide flex items-center gap-1">
+                        <span class="dashicons dashicons-superhero" style="font-size:12px;width:12px;height:12px;"></span> Mới
+                    </div>
+
+                    <div class="mb-4 mt-1">
+                        <h3 class="text-[15px] font-semibold text-gray-800 flex items-center gap-2">
+                            Tự động sinh Giao diện (Auto-Generate UI)
+                        </h3>
+                        <p class="text-[13px] text-gray-500 mt-1">
+                            Hệ thống sẽ tự động tạo Organism, List View, Detail View và cấu hình liên kết dữ liệu chỉ với một nút bấm.
+                        </p>
+                    </div>
+
+                    <!-- Gợi ý thông minh (Chỉ hiện khi thiếu cột long_text) -->
+                    <div x-show="needsLongText && !isSuccess" style="display: none;" x-transition class="bg-amber-50/80 border border-amber-200 rounded-md p-3 mb-4 flex items-start gap-3 shadow-sm transition-opacity" :class="{ 'opacity-50 pointer-events-none': isGenerating }">
+                        <div class="text-amber-500 mt-0.5">
+                            <span class="dashicons dashicons-lightbulb"></span>
+                        </div>
+                        <div class="flex-1">
+                            <label class="flex items-start gap-2 cursor-pointer group/tip">
+                                <input type="checkbox" x-model="addLongText" class="mt-[3px] w-4 h-4 text-amber-500 border-amber-300 rounded focus:ring-amber-500 cursor-pointer">
+                                <span class="text-[13px] text-gray-800 font-medium leading-snug group-hover/tip:text-gray-900">
+                                    Bảng này chưa có trường Nội dung. Tự động thêm trường Bài viết (Gutenberg) giúp tôi.
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Trạng thái mặc định / Đang chạy: Nút Generate -->
+                    <button x-show="!isSuccess" type="button" @click="generatePortal()" :disabled="isGenerating" 
+                            class="w-full flex justify-center items-center gap-2 text-white font-medium py-2.5 px-4 rounded-md shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            :class="isGenerating ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'">
+                        <span class="dashicons" :class="isGenerating ? 'dashicons-update animate-spin' : 'dashicons-admin-magic'"></span>
+                        <span x-text="isGenerating ? 'Đang khởi tạo hệ thống...' : 'Tự động sinh App Portal ngay'"></span>
+                    </button>
+
+                    <!-- Trạng thái thành công -->
+                    <div x-show="isSuccess" style="display: none;" x-transition class="mt-2">
+                        <div class="bg-green-50 border border-green-200 rounded-md p-4 mb-4 text-center">
+                            <div class="mx-auto flex items-center justify-center h-10 w-10 rounded-full bg-green-100 mb-2">
+                                <span class="dashicons dashicons-yes text-green-600" style="font-size:24px;width:24px;height:24px;"></span>
+                            </div>
+                            <h4 class="text-[14px] font-semibold text-green-800">Khởi tạo thành công!</h4>
+                            <p class="text-[13px] text-green-600 mt-1">Organism, List View và Detail View đã được tạo.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-3">
+                            <a :href="listViewEditorUrl" x-show="listViewEditorUrl" target="_blank" class="flex justify-center items-center gap-2 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
+                                <span class="dashicons dashicons-edit"></span> Sửa List View
+                            </a>
+                            <a :href="detailViewEditorUrl" x-show="detailViewEditorUrl" target="_blank" class="flex justify-center items-center gap-2 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
+                                <span class="dashicons dashicons-edit"></span> Sửa Detail View
+                            </a>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-3">
+                            <a :href="portalUrl" target="_blank" class="flex justify-center items-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
+                                <span class="dashicons dashicons-external"></span> Xem Frontend
+                            </a>
+                            <a :href="themeBuilderUrl" target="_blank" class="flex justify-center items-center gap-2 bg-gray-50 border border-gray-200 hover:bg-gray-100 text-gray-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
+                                <span class="dashicons dashicons-admin-customizer"></span> Quản lý Template
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('skaPortalGenerator', () => ({
+                isGenerating: false,
+                isSuccess: false,
+                needsLongText: false,
+                addLongText: true,
+                portalUrl: '',
+                themeBuilderUrl: '',
+                listViewEditorUrl: '',
+                detailViewEditorUrl: '',
+
+                initData() {
+                    // Lắng nghe sự kiện mở modal để kiểm tra Schema hiện tại có long_text không
+                    const openBtn = document.getElementById('ska-btn-portal-settings');
+                    if (openBtn) {
+                        openBtn.addEventListener('click', () => {
+                            setTimeout(() => {
+                                this.isSuccess = false;
+                                this.isGenerating = false;
+                                this.checkSchemaForLongText();
+                            }, 50);
+                        });
+                    }
+                },
+                
+                checkSchemaForLongText() {
+                    const tableId = document.getElementById('ska-portal-table-slug').value;
+                    // skaGlobalDict được khởi tạo từ PHP ở index
+                    const dict = window.skaGlobalDict && window.skaGlobalDict[tableId] ? window.skaGlobalDict[tableId] : null;
+                    let hasLongText = false;
+                    if (dict) {
+                        for (const col in dict) {
+                            if (col !== '__table_info' && dict[col].type === 'long_text') {
+                                hasLongText = true;
+                                break;
+                            }
+                        }
+                    }
+                    this.needsLongText = !hasLongText;
+                    if (!this.needsLongText) this.addLongText = false;
+                },
+
+                async generatePortal() {
+                    const tableId = document.getElementById('ska-portal-table-slug').value;
+                    const slug = document.getElementById('ska-portal-slug').value.trim();
+                    const rolesInput = document.getElementById('ska-portal-roles').value.trim();
+                    const viewMode = document.getElementById('ska-portal-view-mode').value;
+                    const redirectUrl = document.getElementById('ska-portal-unauthorized-redirect') ? document.getElementById('ska-portal-unauthorized-redirect').value.trim() : '';
+                    const active = document.getElementById('ska-portal-active').checked;
+
+                    if (!active) {
+                        alert('Vui lòng "Kích hoạt App Portal" và Lưu cấu hình trước khi tự động sinh.');
+                        return;
+                    }
+
+                    if (!slug) {
+                        alert('Vui lòng điền URL Slug trước khi tạo giao diện.');
+                        return;
+                    }
+
+                    this.isGenerating = true;
+
+                    try {
+                        const fd = new URLSearchParams();
+                        fd.append('action', 'ska_data_generate_portal_ui');
+                        fd.append('_ajax_nonce', window.skaDataConfig.nonce);
+                        fd.append('table', tableId);
+                        fd.append('slug', slug);
+                        fd.append('roles', rolesInput);
+                        fd.append('view_mode', viewMode);
+                        fd.append('unauthorized_redirect_url', redirectUrl);
+                        fd.append('add_long_text', this.addLongText ? '1' : '0');
+
+                        const response = await fetch(window.skaDataConfig.ajaxurl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: fd
+                        });
+
+                        const res = await response.json();
+                        
+                        if (res.success) {
+                            this.isSuccess = true;
+                            this.portalUrl = res.data.portal_url;
+                            this.themeBuilderUrl = res.data.theme_builder_url;
+                            this.listViewEditorUrl = res.data.list_view_editor_url;
+                            this.detailViewEditorUrl = res.data.detail_view_editor_url;
+                        } else {
+                            alert(res.data?.message || 'Lỗi khởi tạo UI');
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert('Lỗi kết nối máy chủ');
+                    } finally {
+                        this.isGenerating = false;
+                    }
+                }
+            }));
+        });
+        </script>
 
         <div class="px-5 py-3 border-t border-blue-100 bg-blue-50/30 flex justify-end gap-2">
             <button onclick="document.getElementById('ska-portal-settings-modal').classList.add('hidden');" class="px-4 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 text-sm transition">Đóng</button>

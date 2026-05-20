@@ -41,6 +41,7 @@ $table_dict  = isset($all_dict[$current_table]) ? $all_dict[$current_table] : ar
 ?>
 <!-- Tích hợp Tailwind CDN để Code UI Grid mô phỏng Airtable -->
 <script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <style>
 /* Reset WP content box padding để giao diện Full Width (tràn sang trái) */
 #wpcontent { padding-left: 0; padding-bottom: 0; }
