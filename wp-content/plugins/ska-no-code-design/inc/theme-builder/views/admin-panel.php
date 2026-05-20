@@ -225,8 +225,17 @@
                                     </select>
 
                                     <!-- Value (If needed) -->
-                                    <template x-if="['post_type', 'specific_post', 'specific_portal', 'specific_portal_list', 'specific_portal_detail'].includes(rule.rule)">
-                                        <input type="text" x-model="rule.value" :placeholder="rule.rule === 'specific_post' ? 'ID (VD: 12)' : (rule.rule.includes('portal') ? 'Portal slug (VD: nhan-vien)' : 'slug (VD: post, page)')" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm focus:border-indigo-500 outline-none w-36">
+                                    <template x-if="['post_type', 'specific_post'].includes(rule.rule)">
+                                        <input type="text" x-model="rule.value" :placeholder="rule.rule === 'specific_post' ? 'ID (VD: 12)' : 'slug (VD: post, page)'" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm focus:border-indigo-500 outline-none w-48">
+                                    </template>
+                                    
+                                    <template x-if="['specific_portal', 'specific_portal_list', 'specific_portal_detail'].includes(rule.rule)">
+                                        <select x-model="rule.value" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm focus:border-indigo-500 outline-none min-w-48 bg-white">
+                                            <option value="">-- Chọn App Portal --</option>
+                                            <template x-for="portal in portals" :key="portal.slug">
+                                                <option :value="portal.slug" x-text="portal.label"></option>
+                                            </template>
+                                        </select>
                                     </template>
                                     
                                     <!-- Delete -->
@@ -291,10 +300,31 @@
     </div>
 </div>
 
-<?php $folders_json = get_option('ska_theme_builder_folders', '[]'); ?>
+<?php 
+$folders_json = get_option('ska_theme_builder_folders', '[]'); 
+$dictionary = get_option('ska_data_dictionary', array());
+$portals = array();
+foreach ($dictionary as $table_name => $schema) {
+    $table_info = isset($schema['__table_info']) ? $schema['__table_info'] : array();
+    
+    $portal_settings = isset($table_info['portal_settings']) ? $table_info['portal_settings'] : array();
+    if (empty($portal_settings['active']) || empty($portal_settings['slug'])) {
+        continue; // Chỉ lấy các App Portal đã được kích hoạt
+    }
+    
+    $table_label = isset($table_info['label']) ? $table_info['label'] : $table_name;
+    $portal_slug = $portal_settings['slug'];
+    
+    $portals[] = array(
+        'label' => $table_label . ' (/' . $portal_slug . ')',
+        'slug' => $portal_slug
+    );
+}
+?>
 <script>
 document.addEventListener('alpine:init', () => {
     Alpine.data('themeBuilderData', () => ({
+        portals: <?php echo wp_json_encode($portals); ?>,
         tabs: [
             { id: 'all', name: 'Tất cả', icon: 'grid_view' },
             { id: 'header', name: 'Header', icon: 'vertical_align_top' },
