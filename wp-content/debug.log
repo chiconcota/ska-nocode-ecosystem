@@ -1665,3 +1665,320 @@ Stack trace:
 [20-May-2026 14:17:45 UTC] [SkaFX Engine Failure]: Lỗi cú pháp không xác định: Ký tự '{' tại dòng 1
 [20-May-2026 14:17:53 UTC] Ska Loop: Return early 5 - Empty compiled_templates
 [20-May-2026 14:17:53 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 21:47:39 UTC] PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in phar://C:/Program Files (x86)/Local/resources/extraResources/bin/wp-cli/wp-cli.phar/vendor/wp-cli/php-cli-tools/lib/cli/Colors.php on line 95
+[20-May-2026 22:16:22 UTC] [SkaFX Engine Failure]: Lỗi cú pháp không xác định: Ký tự '{' tại dòng 1
+[20-May-2026 22:28:44 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[20-May-2026 22:28:44 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[20-May-2026 22:28:44 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[20-May-2026 22:28:44 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[20-May-2026 22:28:44 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_theme_templates
+[20-May-2026 22:28:44 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => created_at
+    [2] => name
+    [3] => location
+    [4] => organism_id
+    [5] => conditions
+    [6] => is_active
+)
+
+[20-May-2026 22:28:44 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[20-May-2026 22:28:44 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[20-May-2026 22:28:44 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_theme_templates
+[20-May-2026 22:28:44 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => created_at
+    [2] => name
+    [3] => location
+    [4] => organism_id
+    [5] => conditions
+    [6] => is_active
+)
+
+[20-May-2026 22:28:46 UTC] Ska Loop: Return early 5 - Empty compiled_templates
+[20-May-2026 22:28:46 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[20-May-2026 22:28:47 UTC] Ska Loop: Return early 5 - Empty compiled_templates
+[20-May-2026 22:28:47 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[20-May-2026 22:29:38 UTC] Ska Loop: Return early 5 - Empty compiled_templates
+[20-May-2026 22:29:38 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[20-May-2026 22:30:05 UTC] [SkaFX Engine Failure]: Lỗi cú pháp không xác định: Ký tự '{' tại dòng 1
+[20-May-2026 22:30:24 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[20-May-2026 22:41:07 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[20-May-2026 22:41:07 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[20-May-2026 22:41:07 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[20-May-2026 22:41:07 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[20-May-2026 22:41:07 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_theme_templates
+[20-May-2026 22:41:07 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => created_at
+    [2] => name
+    [3] => location
+    [4] => organism_id
+    [5] => conditions
+    [6] => is_active
+)
+
+[20-May-2026 22:41:08 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[20-May-2026 22:41:08 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[20-May-2026 22:41:08 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_theme_templates
+[20-May-2026 22:41:08 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => created_at
+    [2] => name
+    [3] => location
+    [4] => organism_id
+    [5] => conditions
+    [6] => is_active
+)
+
+[20-May-2026 22:41:11 UTC] Ska Loop: Return early 5 - Empty compiled_templates
+[20-May-2026 22:41:11 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[20-May-2026 22:41:12 UTC] Ska Loop: Return early 5 - Empty compiled_templates
+[20-May-2026 22:41:12 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[20-May-2026 22:41:56 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[20-May-2026 22:41:56 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[20-May-2026 22:41:57 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[20-May-2026 22:41:57 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[20-May-2026 22:41:57 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_theme_templates
+[20-May-2026 22:41:57 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => created_at
+    [2] => name
+    [3] => location
+    [4] => organism_id
+    [5] => conditions
+    [6] => is_active
+)
+
+[20-May-2026 22:41:57 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[20-May-2026 22:41:57 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[20-May-2026 22:41:57 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_theme_templates
+[20-May-2026 22:41:57 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => created_at
+    [2] => name
+    [3] => location
+    [4] => organism_id
+    [5] => conditions
+    [6] => is_active
+)
+
+[20-May-2026 22:48:18 UTC] Automatic updates starting...
+[20-May-2026 22:48:18 UTC]   Automatic theme updates starting...
+[20-May-2026 22:48:18 UTC]   Automatic theme updates complete.
+[20-May-2026 22:48:18 UTC] Automatic updates complete.
+[20-May-2026 22:51:51 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[20-May-2026 22:52:07 UTC] Ska Loop: Return early 5 - Empty compiled_templates
+[20-May-2026 22:52:07 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[20-May-2026 22:52:58 UTC] Ska Loop: Return early 5 - Empty compiled_templates
+[20-May-2026 22:52:58 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
