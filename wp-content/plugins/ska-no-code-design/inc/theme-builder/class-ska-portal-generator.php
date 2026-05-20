@@ -154,7 +154,7 @@ class Ska_Portal_Generator
 		$portal_slug = isset($table_info['portal_settings']['slug']) && !empty($table_info['portal_settings']['slug']) ? $table_info['portal_settings']['slug'] : $table_slug;
 
 		// 2. Sinh List View Template
-		$list_view_id = $this->create_list_view($table_slug, $table_label, $organism_id, $folder_id, $portal_slug);
+		$list_view_id = $this->create_list_view($table_name, $table_slug, $table_label, $organism_id, $folder_id, $portal_slug);
 		if (is_wp_error($list_view_id)) {
 			return $list_view_id;
 		}
@@ -211,13 +211,13 @@ class Ska_Portal_Generator
 		return $result;
 	}
 
-	private function create_list_view($table_slug, $table_label, $organism_id, $folder_id = '', $portal_slug = '')
+	private function create_list_view($table_name, $table_slug, $table_label, $organism_id, $folder_id = '', $portal_slug = '')
 	{
 		$blocks = array(
 			array(
 				'name' => 'ska-builder/loop',
 				'attributes' => array(
-					'sourceTable' => $table_slug,
+					'sourceTable' => $table_name,
 					'slots' => array(
 						array(
 							'organismId' => (string)$organism_id,
@@ -234,7 +234,7 @@ class Ska_Portal_Generator
 			'type' => 'archive',
 			'name' => 'List View: ' . $table_label,
 			'json_content' => wp_json_encode($blocks),
-			'html_content' => '<!-- wp:ska-builder/loop {"sourceTable":"' . esc_attr($table_slug) . '","slots":[{"organismId":"' . $organism_id . '","condition":""}]} /-->'
+			'html_content' => '<!-- wp:ska-builder/loop {"sourceTable":"' . esc_attr($table_name) . '","slots":[{"organismId":"' . $organism_id . '","condition":""}]} /-->'
 		);
 
 		$list_org_id = apply_filters('ska_data_insert_record', false, $org_data, 'ska_data_sys_organisms');
