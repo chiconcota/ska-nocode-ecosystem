@@ -154,7 +154,7 @@ class Ska_Portal_Generator
 		$portal_slug = isset($table_info['portal_settings']['slug']) && !empty($table_info['portal_settings']['slug']) ? $table_info['portal_settings']['slug'] : $table_slug;
 
 		// 2. Sinh List View Template
-		$list_view_id = $this->create_list_view($table_name, $table_slug, $table_label, $organism_id, $folder_id, $portal_slug);
+		$list_view_id = $this->create_list_view($table_name, $table_slug, $table_label, $organism_id, $folder_id, $portal_slug, $schema);
 		if (is_wp_error($list_view_id)) {
 			return $list_view_id;
 		}
@@ -163,6 +163,11 @@ class Ska_Portal_Generator
 		$detail_view_id = $this->create_detail_view($table_slug, $table_label, $schema, $folder_id, $portal_slug);
 		if (is_wp_error($detail_view_id)) {
 			return $detail_view_id;
+		}
+
+		// 4. Làm mới JSON Cache cho Organisms sau khi tạo mới để Tailwind Compiler nhận diện class
+		if (class_exists('\Ska\Design\Api\Organisms_API')) {
+			\Ska\Design\Api\Organisms_API::get_instance()->export_physical_cache();
 		}
 
 		return array(
@@ -177,24 +182,164 @@ class Ska_Portal_Generator
 		);
 	}
 
+	private function compute_list_grid($schema)
+	{
+		$list_columns = array();
+		foreach ($schema as $col_slug => $col_data) {
+			if ($col_slug === '__table_info' || $col_slug === 'id' || $col_slug === 'created_at') {
+				continue;
+			}
+			$type = isset($col_data['type']) ? $col_data['type'] : 'text';
+			if ($type === 'long_text' || $type === 'json' || $type === 'textarea') {
+				continue;
+			}
+			$list_columns[$col_slug] = $col_data;
+		}
+
+		$title_slug = '';
+		foreach ($list_columns as $slug => $data) {
+			if (isset($data['type']) && in_array($data['type'], array('text', 'email'))) {
+				$title_slug = $slug;
+				break;
+			}
+		}
+		if (empty($title_slug) && !empty($list_columns)) {
+			reset($list_columns);
+			$title_slug = key($list_columns);
+		}
+		
+		if ($title_slug) {
+			unset($list_columns[$title_slug]);
+		}
+
+		$col_count = count($list_columns);
+		if ($col_count === 0) {
+			$grid_class = 'grid-cols-[1fr_40px]';
+		} else {
+			$grid_class = 'grid-cols-[2fr_repeat(' . $col_count . ',minmax(0,1fr))_40px]';
+		}
+
+		return array(
+			'title_slug' => $title_slug,
+			'columns' => $list_columns,
+			'grid_class' => $grid_class
+		);
+	}
+
 	private function create_organism($table_slug, $table_label, $schema)
 	{
-		$blocks = array(
+		$grid_info = $this->compute_list_grid($schema);
+		$title_slug = $grid_info['title_slug'];
+		$columns = $grid_info['columns'];
+		$grid_class = $grid_info['grid_class'];
+
+		$portal_slug = isset($schema['__table_info']['portal_settings']['slug']) && !empty($schema['__table_info']['portal_settings']['slug']) ? $schema['__table_info']['portal_settings']['slug'] : $table_slug;
+
+		$html_content = '<!-- wp:ska-builder/container {"tagName":"a","tailwindClasses":"ska-organism-row grid ' . $grid_class . ' gap-4 items-center p-4 border-b border-slate-100 bg-white hover:bg-slate-50 transition-colors cursor-pointer group no-underline","htmlAttributes":[{"key":"href","value":"/' . esc_attr($portal_slug) . '/{{id}}/"}]} -->' . "\n";
+		
+		// Col 1 Blocks & HTML
+		$col1_blocks = array(
 			array(
 				'name' => 'ska-builder/container',
-				'attributes' => array('tailwindClasses' => 'ska-organism-row flex items-center justify-between p-4 border-b border-slate-100 bg-white hover:bg-slate-50 transition-colors'),
+				'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'flex items-center gap-3 overflow-hidden'),
 				'innerBlocks' => array(
 					array(
-						'name' => 'ska-builder/text',
-						'attributes' => array('content' => 'ID: [' . $table_slug . '.id] - ' . $table_label, 'tailwindClasses' => 'text-sm font-medium text-slate-800'),
+						'name' => 'ska-builder/container',
+						'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0'),
+						'innerBlocks' => array(
+							array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'span', 'content' => '#', 'tailwindClasses' => 'font-bold text-sm'))
+						)
+					),
+					array(
+						'name' => 'ska-builder/container',
+						'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'flex flex-col gap-0.5 min-w-0'),
+						'innerBlocks' => array()
 					)
 				)
 			)
 		);
+		
+		$col1_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center gap-3 overflow-hidden"} -->' . "\n";
+		$col1_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0"} -->' . "\n";
+		$col1_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"#","tailwindClasses":"font-bold text-sm"} /-->' . "\n";
+		$col1_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+		$col1_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex flex-col gap-0.5 min-w-0"} -->' . "\n";
+		
+		if ($title_slug) {
+			$col1_blocks[0]['innerBlocks'][1]['innerBlocks'][] = array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'span', 'content' => '{{' . $title_slug . '}}', 'tailwindClasses' => 'font-bold text-slate-800 line-clamp-1'));
+			$col1_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"{{' . $title_slug . '}}","tailwindClasses":"font-bold text-slate-800 line-clamp-1"} /-->' . "\n";
+		}
+		
+		$col1_blocks[0]['innerBlocks'][1]['innerBlocks'][] = array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'span', 'content' => 'ID: [' . $table_slug . '.id]', 'tailwindClasses' => 'text-xs text-slate-500 line-clamp-1'));
+		$col1_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"ID: [' . $table_slug . '.id]","tailwindClasses":"text-xs text-slate-500 line-clamp-1"} /-->' . "\n";
+		
+		$col1_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+		$col1_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 
-		$html_content = '<!-- wp:ska-builder/container {"tailwindClasses":"ska-organism-row flex items-center justify-between p-4 border-b border-slate-100 bg-white hover:bg-slate-50 transition-colors"} -->' . "\n";
-		$html_content .= '<!-- wp:ska-builder/text {"content":"ID: [' . $table_slug . '.id] - ' . esc_html($table_label) . '","tailwindClasses":"text-sm font-medium text-slate-800"} /-->' . "\n";
+		$html_content .= $col1_html;
+
+		// Other Columns
+		$other_cols_blocks = array();
+		$other_cols_html = '';
+
+		foreach ($columns as $slug => $data) {
+			$type = isset($data['type']) ? $data['type'] : 'text';
+			if ($type === 'select' || $type === 'radio' || $type === 'boolean') {
+				$other_cols_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center"} -->' . "\n";
+				$other_cols_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"{{' . $slug . '}}","tailwindClasses":"px-2.5 py-1 text-xs font-semibold rounded-full bg-green-50 text-green-700"} /-->' . "\n";
+				$other_cols_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+
+				$other_cols_blocks[] = array(
+					'name' => 'ska-builder/container',
+					'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'flex items-center'),
+					'innerBlocks' => array(
+						array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'span', 'content' => '{{' . $slug . '}}', 'tailwindClasses' => 'px-2.5 py-1 text-xs font-semibold rounded-full bg-green-50 text-green-700'))
+					)
+				);
+			} else {
+				$other_cols_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center"} -->' . "\n";
+				$other_cols_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"{{' . $slug . '}}","tailwindClasses":"text-sm text-slate-600 line-clamp-1"} /-->' . "\n";
+				$other_cols_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+
+				$other_cols_blocks[] = array(
+					'name' => 'ska-builder/container',
+					'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'flex items-center'),
+					'innerBlocks' => array(
+						array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'span', 'content' => '{{' . $slug . '}}', 'tailwindClasses' => 'text-sm text-slate-600 line-clamp-1'))
+					)
+				);
+			}
+		}
+
+		// Action Column
+		$action_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center justify-end"} -->' . "\n";
+		$action_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":">","tailwindClasses":"text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all font-bold"} /-->' . "\n";
+		$action_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+
+		$other_cols_blocks[] = array(
+			'name' => 'ska-builder/container',
+			'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'flex items-center justify-end'),
+			'innerBlocks' => array(
+				array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'span', 'content' => '>', 'tailwindClasses' => 'text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all font-bold'))
+			)
+		);
+
+		$html_content .= $other_cols_html . $action_html;
 		$html_content .= '<!-- /wp:ska-builder/container -->';
+
+		$blocks = array(
+			array(
+				'name' => 'ska-builder/container',
+				'attributes' => array(
+					'tagName' => 'a',
+					'tailwindClasses' => 'ska-organism-row grid ' . $grid_class . ' gap-4 items-center p-4 border-b border-slate-100 bg-white hover:bg-slate-50 transition-colors cursor-pointer group no-underline',
+					'htmlAttributes' => array(
+						array('key' => 'href', 'value' => '/' . $portal_slug . '/{{id}}/')
+					)
+				),
+				'innerBlocks' => array_merge($col1_blocks, $other_cols_blocks)
+			)
+		);
 
 		$record_data = array(
 			'type' => 'organism',
@@ -211,21 +356,66 @@ class Ska_Portal_Generator
 		return $result;
 	}
 
-	private function create_list_view($table_name, $table_slug, $table_label, $organism_id, $folder_id = '', $portal_slug = '')
+	private function create_list_view($table_name, $table_slug, $table_label, $organism_id, $folder_id = '', $portal_slug = '', $schema = array())
 	{
+		$grid_info = $this->compute_list_grid($schema);
+		$columns = $grid_info['columns'];
+		$grid_class = $grid_info['grid_class'];
+		$real_portal_slug = !empty($portal_slug) ? $portal_slug : $table_slug;
+
+		// 1. App Header (Title + Add Button)
+		$header_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"} -->' . "\n";
+		$header_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex flex-col"} -->' . "\n";
+		$header_html .= '<!-- wp:ska-builder/text {"tagName":"h2","content":"Quản lý ' . esc_attr($table_label) . '","tailwindClasses":"text-2xl font-bold text-slate-900"} /-->' . "\n";
+		$header_html .= '<!-- wp:ska-builder/text {"tagName":"p","content":"Quản lý và theo dõi tiến độ các tác vụ.","tailwindClasses":"text-slate-500 text-sm"} /-->' . "\n";
+		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+		$header_html .= '<!-- wp:ska-builder/container {"tagName":"a","tailwindClasses":"px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold shadow-sm transition no-underline flex items-center justify-center","htmlAttributes":[{"key":"href","value":"/' . esc_attr($real_portal_slug) . '/create/"}]} -->' . "\n";
+		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"+ Thêm Bản Ghi Mới","tailwindClasses":""} /-->' . "\n";
+		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+
+		// 2. Table Card Container
+		$card_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"} -->' . "\n";
+		
+		// 3. Table Header Row (Grid)
+		$thead_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"hidden md:grid ' . $grid_class . ' gap-4 items-center p-4 border-b border-slate-200 bg-slate-50/50"} -->' . "\n";
+		$thead_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"TÊN BẢN GHI / THÔNG TIN","tailwindClasses":"text-xs font-bold text-slate-400 uppercase tracking-wider"} /-->' . "\n";
+		foreach ($columns as $slug => $data) {
+			$col_label = isset($data['label']) ? $data['label'] : $slug;
+			$thead_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"' . esc_attr($col_label) . '","tailwindClasses":"text-xs font-bold text-slate-400 uppercase tracking-wider"} /-->' . "\n";
+		}
+		$thead_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"HÀNH ĐỘNG","tailwindClasses":"text-xs font-bold text-slate-400 uppercase tracking-wider text-right"} /-->' . "\n";
+		$thead_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+
+		// 4. The Loop
+		$loop_html = '<!-- wp:ska-builder/loop {"sourceTable":"' . esc_attr($table_name) . '","slots":[{"organismId":"' . $organism_id . '","condition":""}]} /-->' . "\n";
+
+		$card_html .= $thead_html . $loop_html;
+		$card_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+
+		$html_content = $header_html . $card_html;
+
 		$blocks = array(
 			array(
-				'name' => 'ska-builder/loop',
-				'attributes' => array(
-					'sourceTable' => $table_name,
-					'slots' => array(
-						array(
-							'organismId' => (string)$organism_id,
-							'condition' => ''
-						)
-					)
-				),
+				'name' => 'ska-builder/container',
+				'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6'),
 				'innerBlocks' => array()
+			),
+			array(
+				'name' => 'ska-builder/container',
+				'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden'),
+				'innerBlocks' => array(
+					array(
+						'name' => 'ska-builder/loop',
+						'attributes' => array(
+							'sourceTable' => $table_name,
+							'slots' => array(
+								array('organismId' => (string)$organism_id, 'condition' => '')
+							)
+						),
+						'innerBlocks' => array()
+					)
+				)
 			)
 		);
 
@@ -234,7 +424,7 @@ class Ska_Portal_Generator
 			'type' => 'archive',
 			'name' => 'List View: ' . $table_label,
 			'json_content' => wp_json_encode($blocks),
-			'html_content' => '<!-- wp:ska-builder/loop {"sourceTable":"' . esc_attr($table_name) . '","slots":[{"organismId":"' . $organism_id . '","condition":""}]} /-->'
+			'html_content' => $html_content
 		);
 
 		$list_org_id = apply_filters('ska_data_insert_record', false, $org_data, 'ska_data_sys_organisms');
@@ -249,7 +439,7 @@ class Ska_Portal_Generator
 			'organism_id' => $list_org_id,
 			'conditions' => wp_json_encode(array(
 				'rules' => array(
-					array('rule' => 'specific_portal_list', 'value' => !empty($portal_slug) ? $portal_slug : $table_slug, 'type' => 'include')
+					array('rule' => 'specific_portal_list', 'value' => $real_portal_slug, 'type' => 'include')
 				),
 				'folder_id' => $folder_id
 			)),

@@ -126,7 +126,7 @@ class Tailwind_Compiler {
 			}
 
 			if ( $css_rule ) {
-				$escaped_class = str_replace( array( ':', '[', ']', '/', '.' ), array( '\:', '\[', '\]', '\/', '\.' ), $class );
+				$escaped_class = str_replace( array( ':', '[', ']', '/', '.', '(', ')', ',' ), array( '\:', '\[', '\]', '\/', '\.', '\(', '\)', '\,' ), $class );
 
 				$selector_suffix = $pseudo;
 				
@@ -315,7 +315,11 @@ class Tailwind_Compiler {
 			$val_str = number_format( floatval( $matches[2] ) * 0.25, 3, '.', '' );
 			return "{$prop}: {$val_str}rem;";
 		}
-		if ( preg_match( '/^grid-cols-([1-9]|1[0-2])$/', $class, $matches ) ) return "grid-template-columns: repeat({$matches[1]}, minmax(0, 1fr)); display: grid;";
+		if ( preg_match( '/^grid-cols-([1-9]|1[0-2])$/', $class, $matches ) ) return "grid-template-columns: repeat({$matches[1]}, minmax(0, 1fr));";
+		if ( preg_match( '/^grid-cols-\[(.+)\]$/', $class, $matches ) ) {
+			$val = str_replace( '_', ' ', $matches[1] );
+			return "grid-template-columns: {$val};";
+		}
 		if ( preg_match( '/^col-span-([1-9]|1[0-2])$/', $class, $matches ) ) return "grid-column: span {$matches[1]} / span {$matches[1]};";
 		if ( $class === 'col-span-full' ) return "grid-column: 1 / -1;";
 		if ( preg_match( '/^grid-rows-([1-9]|1[0-2])$/', $class, $matches ) ) return "grid-template-rows: repeat({$matches[1]}, minmax(0, 1fr));";
