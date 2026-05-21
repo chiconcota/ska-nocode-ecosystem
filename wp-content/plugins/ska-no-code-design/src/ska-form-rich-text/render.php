@@ -6,38 +6,47 @@
  */
 
 $field_name = isset($attributes['field']) ? esc_attr($attributes['field']) : 'noi_dung';
-$label      = isset($attributes['label']) ? esc_html($attributes['label']) : 'Nội dung';
+$label      = isset($attributes['label']) ? esc_html($attributes['label']) : 'Mô tả chi tiết';
 $class_name = isset($attributes['className']) ? esc_attr($attributes['className']) : '';
 $tw_classes = isset($attributes['tailwindClasses']) ? esc_attr($attributes['tailwindClasses']) : '';
 
 // HTML cho Frontend 
-// Chúng ta sẽ cần wp.editor.initialize hoặc tinymce để khởi tạo editor
-// Về phía UI, ta sẽ bọc vào AlpineJS x-data="skaScratchpad(field_name)"
+// Về phía UI, ta sẽ bọc vào AlpineJS x-data="skaScratchpad('field_name')"
 $wrapper_class = trim("ska-form-rich-text $class_name $tw_classes");
+$editor_id = 'ska_editor_' . str_replace('-', '_', sanitize_title($field_name));
 ?>
 
 <div class="<?php echo esc_attr($wrapper_class); ?>" x-data="skaScratchpad('<?php echo esc_js($field_name); ?>')">
-    <label class="block text-sm font-medium text-gray-700 mb-1">
-        <?php echo $label; ?>
-    </label>
-    
-    <!-- Button để mở Gutenberg Iframe -->
-    <div class="mb-2">
-        <button type="button" @click="openDesigner()" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+    <div class="flex items-center justify-between mb-2">
+        <label class="block text-lg font-bold text-gray-800">
+            <?php echo $label; ?>
+        </label>
+        
+        <!-- Button để mở Gutenberg Iframe -->
+        <button type="button" @click="openDesigner()" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             <span class="dashicons dashicons-edit mr-1" style="font-size: 16px; width: 16px; height: 16px;"></span>
-            Mở Trình Thiết Kế Nâng Cao
+            Open Design Editor
         </button>
     </div>
 
     <!-- Vùng soạn thảo TinyMCE cơ bản -->
-    <div class="scratchpad-editor-wrap">
-        <textarea 
-            x-ref="editor" 
-            id="ska-richtext-<?php echo esc_attr($field_name); ?>" 
-            name="<?php echo esc_attr($field_name); ?>"
-            class="ska-tiny-mce hidden"
-            x-model="fields.<?php echo esc_attr($field_name); ?>"
-        ></textarea>
+    <div class="scratchpad-editor-wrap bg-white text-black border border-gray-300 rounded-md shadow-sm overflow-hidden" wire:ignore>
+        <?php 
+        // Bắt buộc enqueue editor scripts để Frontend có TinyMCE
+        if ( ! function_exists( 'wp_enqueue_editor' ) ) {
+            require_once ABSPATH . 'wp-includes/general-template.php';
+        }
+        wp_enqueue_editor();
+        
+        wp_editor('', $editor_id, array(
+            'textarea_name' => $field_name,
+            'media_buttons' => true,
+            'editor_class'  => 'ska-tiny-mce',
+            'textarea_rows' => 10,
+            'teeny'         => false,
+            'quicktags'     => true
+        )); 
+        ?>
     </div>
 
     <!-- Modal chứa Iframe Gutenberg -->
