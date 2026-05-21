@@ -2095,3 +2095,23 @@ Stack trace:
 [21-May-2026 01:26:42 UTC]   Automatic theme updates starting...
 [21-May-2026 01:26:42 UTC]   Automatic theme updates complete.
 [21-May-2026 01:26:42 UTC] Automatic updates complete.
+[21-May-2026 01:53:54 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:54:03 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:54:40 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:54:47 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:55:02 UTC] Ska_Workflow_Runner: Graph rỗng hoặc không tìm thấy workflow_id = insert_wp_app_quan_ly_dat_phong_khach_san_lich_dat_phong
+[21-May-2026 01:55:03 UTC] Ska_Workflow_Runner: Graph rỗng hoặc không tìm thấy workflow_id = insert_wp_app_quan_ly_dat_phong_khach_san_lich_dat_phong
+[21-May-2026 01:55:03 UTC] Ska_Workflow_Runner: Graph rỗng hoặc không tìm thấy workflow_id = insert_wp_app_quan_ly_dat_phong_khach_san_lich_dat_phong
+[21-May-2026 01:55:48 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:55:55 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:56:47 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:56:47 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:57:46 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:57:51 UTC] [SkaFX Engine Failure]: Lỗi cú pháp không xác định: Ký tự '{' tại dòng 1
+[21-May-2026 01:57:56 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:58:31 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:59:25 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 01:59:28 UTC] [SkaFX Engine Failure]: Lỗi cú pháp không xác định: Ký tự '{' tại dòng 1
+[21-May-2026 01:59:47 UTC] [SkaFX Engine Failure]: Lỗi cú pháp không xác định: Ký tự '{' tại dòng 1
+[21-May-2026 01:59:53 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 02:00:32 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
