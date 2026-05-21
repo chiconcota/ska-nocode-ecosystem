@@ -432,20 +432,22 @@ function _registerSkaScratchpad() {
             }
         },
 
-        async closeDesigner() {
-            // Lấy nội dung từ Iframe trước khi đóng
+        async closeDesigner(saveChanges = false) {
+            // Lấy nội dung từ Iframe trước khi đóng chỉ khi saveChanges là true
             if (this.postId) {
                 try {
-                    const iframe = this.$el.querySelector('iframe');
+                    const iframe = document.getElementById('ska_iframe_' + fieldName);
                     if (iframe && iframe.contentWindow && iframe.contentWindow.wp && iframe.contentWindow.wp.data) {
-                        const content = iframe.contentWindow.wp.data.select('core/editor').getEditedPostContent();
-                        if (content !== undefined) {
-                            this.fields[fieldName] = content;
-                            
-                            // Cập nhật lại TinyMCE nếu đang hiển thị
-                            const editorId = 'ska_editor_' + fieldName.replace(/-/g, '_').toLowerCase();
-                            if (window.tinymce && window.tinymce.get(editorId)) {
-                                window.tinymce.get(editorId).setContent(content);
+                        if (saveChanges) {
+                            const content = iframe.contentWindow.wp.data.select('core/editor').getEditedPostContent();
+                            if (content !== undefined) {
+                                this.fields[fieldName] = content;
+                                
+                                // Cập nhật lại TinyMCE nếu đang hiển thị
+                                const editorId = 'ska_editor_' + fieldName.replace(/-/g, '_').toLowerCase();
+                                if (window.tinymce && window.tinymce.get(editorId)) {
+                                    window.tinymce.get(editorId).setContent(content);
+                                }
                             }
                         }
 
@@ -458,6 +460,9 @@ function _registerSkaScratchpad() {
                         } catch(err) {
                             console.warn("Could not clear Gutenberg entity record edits", err);
                         }
+
+                        // Đợi React trong iframe re-render và gỡ bỏ trước khi huỷ iframe
+                        await new Promise(resolve => setTimeout(resolve, 150));
                     }
                 } catch(e) {
                     console.warn("Could not retrieve content from Gutenberg iframe", e);

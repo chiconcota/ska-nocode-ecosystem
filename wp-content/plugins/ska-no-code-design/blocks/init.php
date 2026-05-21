@@ -147,7 +147,7 @@ function ska_builder_core_register_frontend_engine() {
         'ska-frontend',
         SKA_DESIGN_URL . 'assets/js/ska-frontend.js',
         array(),
-        '1.0.1',
+        '1.0.3',
         true
     );
 

@@ -26,6 +26,70 @@ class API_Shadow_Scratchpad
 	{
 		add_action('init', array($this, 'register_scratchpad_cpt'));
 		add_action('rest_api_init', array($this, 'register_routes'));
+		add_action('admin_head', array($this, 'disable_beforeunload_for_scratchpad'));
+	}
+
+	/**
+	 * Vô hiệu hóa event beforeunload cho Scratchpad để tránh hiện popup "Rời khỏi trang web"
+	 */
+	public function disable_beforeunload_for_scratchpad()
+	{
+		$is_scratchpad = false;
+
+		// Method 1: Check using get_current_screen
+		if (function_exists('get_current_screen')) {
+			$screen = get_current_screen();
+			if ($screen && $screen->post_type === 'ska_scratchpad') {
+				$is_scratchpad = true;
+			}
+		}
+
+		// Method 2: Check using global $post
+		if (!$is_scratchpad) {
+			global $post;
+			if ($post && $post->post_type === 'ska_scratchpad') {
+				$is_scratchpad = true;
+			}
+		}
+
+		// Method 3: Check using request parameters
+		if (!$is_scratchpad) {
+			$post_id = isset($_GET['post']) ? intval($_GET['post']) : 0;
+			if ($post_id > 0) {
+				$post_type = get_post_type($post_id);
+				if ($post_type === 'ska_scratchpad') {
+					$is_scratchpad = true;
+				}
+			} elseif (isset($_GET['post_type']) && $_GET['post_type'] === 'ska_scratchpad') {
+				$is_scratchpad = true;
+			}
+		}
+
+		if ($is_scratchpad) {
+			?>
+			<script id="ska-disable-beforeunload">
+			(function() {
+				// Intercept addEventListener
+				const originalAddEventListener = window.addEventListener;
+				window.addEventListener = function(type, listener, options) {
+					if (type === 'beforeunload') {
+						return;
+					}
+					return originalAddEventListener.apply(this, arguments);
+				};
+
+				// Intercept window.onbeforeunload
+				Object.defineProperty(window, 'onbeforeunload', {
+					get: function() { return null; },
+					set: function(value) {
+						// Silently ignore
+					},
+					configurable: true
+				});
+			})();
+			</script>
+			<?php
+		}
 	}
 
 	/**
