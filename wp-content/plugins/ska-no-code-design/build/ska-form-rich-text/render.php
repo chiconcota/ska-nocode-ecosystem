@@ -12,7 +12,7 @@ $tw_classes = isset($attributes['tailwindClasses']) ? esc_attr($attributes['tail
 
 // HTML cho Frontend 
 // Chúng ta sẽ cần wp.editor.initialize hoặc tinymce để khởi tạo editor
-// Về phía UI, ta sẽ bọc vào AlpineJS x-data="skaScratchpad('<?php echo $field_name; ?>')"
+// Về phía UI, ta sẽ bọc vào AlpineJS x-data="skaScratchpad(field_name)"
 $wrapper_class = trim("ska-form-rich-text $class_name $tw_classes");
 ?>
 

@@ -267,10 +267,26 @@ class Ska_App_Router {
 			$columns[ $key ] = $val;
 		}
 
+		$current_id = (get_query_var( 'ska_id' ) && get_query_var( 'ska_id' ) !== 'create') ? absint( get_query_var( 'ska_id' ) ) : null;
+		$current_data = null;
+		
+		if ( $current_id && class_exists( '\Ska\Data\Core\Data_Fetcher' ) ) {
+			$args = array(
+				'filter_field' => 'id',
+				'filter_op'    => 'eq',
+				'filter_val'   => $current_id,
+			);
+			$rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $table_name, $args, 1 );
+			if ( ! empty( $rows ) ) {
+				$current_data = $rows[0];
+			}
+		}
+
 		$context = array(
 			'portal'     => $ska_current_portal,
 			'columns'    => $columns,
-			'currentId'  => (get_query_var( 'ska_id' ) && get_query_var( 'ska_id' ) !== 'create') ? absint( get_query_var( 'ska_id' ) ) : null,
+			'currentId'  => $current_id,
+			'currentData'=> $current_data,
 			'restUrl'    => esc_url_raw( rest_url( 'ska-data/v1/portal/' . $table_name . '/rows' ) ),
 			'nonce'      => wp_create_nonce( 'wp_rest' ),
 		);
