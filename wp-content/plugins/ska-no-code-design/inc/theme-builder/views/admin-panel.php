@@ -229,7 +229,7 @@
                                         <input type="text" x-model="rule.value" :placeholder="rule.rule === 'specific_post' ? 'ID (VD: 12)' : 'slug (VD: post, page)'" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm focus:border-indigo-500 outline-none w-48">
                                     </template>
                                     
-                                    <template x-if="['specific_portal', 'specific_portal_list', 'specific_portal_detail'].includes(rule.rule)">
+                                    <template x-if="['specific_portal', 'specific_portal_list', 'specific_portal_detail', 'specific_portal_create'].includes(rule.rule)">
                                         <select x-model="rule.value" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm focus:border-indigo-500 outline-none min-w-48 bg-white">
                                             <option value="">-- Chọn App Portal --</option>
                                             <template x-for="portal in portals" :key="portal.slug">
@@ -372,7 +372,8 @@ document.addEventListener('alpine:init', () => {
             { value: 'is_portal', label: 'Tất cả App Portal' },
             { value: 'specific_portal', label: 'App Portal cụ thể (Theo Slug)' },
             { value: 'specific_portal_list', label: 'App Portal List View (Theo Slug)' },
-            { value: 'specific_portal_detail', label: 'App Portal Detail View (Theo Slug)' }
+            { value: 'specific_portal_detail', label: 'App Portal Detail View (Theo Slug)' },
+            { value: 'specific_portal_create', label: 'App Portal Create View (Theo Slug)' }
         ],
 
         apiUrl: '<?php echo esc_url( rest_url( 'ska-builder/v1/theme-templates' ) ); ?>',
