@@ -355,6 +355,21 @@ function _registerSkaScratchpad() {
         isLoading: false,
         iframeUrl: '',
         postId: null,
+
+        getBuilderRestUrl() {
+            let restUrl = '/wp-json/ska-builder/v1';
+            if (window.skaAppEnv && window.skaAppEnv.restUrl) {
+                const rawUrl = window.skaAppEnv.restUrl;
+                if (rawUrl.includes('ska-logic/v1/submit')) {
+                    restUrl = rawUrl.replace('ska-logic/v1/submit', 'ska-builder/v1');
+                } else if (rawUrl.includes('ska-logic%2Fv1%2Fsubmit')) {
+                    restUrl = rawUrl.replace('ska-logic%2Fv1%2Fsubmit', 'ska-builder%2Fv1');
+                } else {
+                    restUrl = rawUrl.replace('ska-logic', 'ska-builder');
+                }
+            }
+            return restUrl;
+        },
         
         init() {
             // Khởi tạo liên kết TinyMCE với AlpineJS fields
@@ -389,7 +404,7 @@ function _registerSkaScratchpad() {
 
             try {
                 // Gọi API lấy Iframe URL
-                const restUrl = (window.skaAppEnv && window.skaAppEnv.restUrl) ? window.skaAppEnv.restUrl.replace('ska-logic', 'ska-builder') : '/wp-json/ska-builder/v1';
+                const restUrl = this.getBuilderRestUrl();
                 const currentHtml = this.fields[fieldName] || '';
                 
                 const response = await fetch(`${restUrl}/scratchpad/create`, {
@@ -446,7 +461,7 @@ function _registerSkaScratchpad() {
 
             // Xóa Scratchpad để dọn rác
             try {
-                const restUrl = (window.skaAppEnv && window.skaAppEnv.restUrl) ? window.skaAppEnv.restUrl.replace('ska-logic', 'ska-builder') : '/wp-json/ska-builder/v1';
+                const restUrl = this.getBuilderRestUrl();
                 await fetch(`${restUrl}/scratchpad/destroy`, {
                     method: 'POST',
                     headers: {

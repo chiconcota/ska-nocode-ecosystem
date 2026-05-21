@@ -1,17 +1,20 @@
-# Checkpoint Bàn Giao Phiên Làm Việc - 2026-05-21
+# CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v1.0.0)
+*Ngày cập nhật: 2026-05-21*
 
-## 1. Trạng Thái Hiện Tại
-- Hệ thống đã hoàn thiện giao diện Create View (Insert) và Detail View (Update) chuẩn Notion-style (thiết kế tinh giản, focus, responsive, header cố định, tiêu đề lớn).
-- Đã tách hàm `build_form_layout` để dùng chung layout cấu trúc cho cả 2 view (Update & Insert).
-- Đã cấu hình ánh xạ Atomic Blocks vào form (Rich Text, Fields, Button).
-- Nút sinh App Portal giờ đây trả về URL Editor cho cả Create View.
+## 1. Trạng thái hiện tại (Status)
+- **Công việc**: Khắc phục lỗi khi nhấn nút "Open Design Editor" báo lỗi REST API 404 (`No route was found matching the URL and request method`).
+- **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH & KIỂM THỬ THÀNH CÔNG.
+- **Kết quả E2E**: Đã mô phỏng click trên môi trường thật (`http://ska-core-builder.local/lich-dat-phong/1/`), nút kích hoạt mở Gutenberg Editor Iframe mượt mà, tạo thành công Shadow CPT (Post ID 1079), hiển thị giao diện thiết kế và đóng/dọn dẹp dữ liệu hoàn toàn sạch sẽ (bắn lệnh hủy bài viết nháp thành công).
 
-## 2. Các File Đã Thay Đổi trong Phiên
-- `class-ska-portal-generator.php`: Thêm hàm `build_form_layout`, `create_insert_view`, chỉnh sửa `create_detail_view` và `generate_assets`.
-- `class-admin-ajax.php` & `manage-modals.php`: Bổ sung URL `insert_view_editor_url` cho Success Modal của Generator.
-- Các file tài liệu: `design-workflow-app-portal-views.md`, `system_map.md`, `decision-log.md`.
+## 2. Chi tiết các tệp đã sửa đổi (Modified Files)
+- **Frontend JS**: [ska-frontend.js](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/assets/js/ska-frontend.js) - Bổ sung hàm `getBuilderRestUrl()` tự động nhận diện cấu trúc Permalinks của WordPress để convert namespace an toàn từ `ska-logic` sang `ska-builder`.
+- **PHP Template (Rich Text)**: [render.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/src/ska-form-rich-text/render.php) - Bổ sung CSS scoped, làm đẹp TinyMCE Segmented Control Tabs, và tinh chỉnh các thuộc tính `display` của lớp phủ modal để tương thích hoàn toàn với logic `x-show` của AlpineJS.
+- **Build Output**: Tự động compile và đồng bộ hóa qua `npm run build` và `npm run sync`.
 
-## 3. Công Việc Cho Phiên Sau (Next Steps)
-- Người dùng (USER) cần truy cập vào Frontend để xác minh lại giao diện Create View (`/create`) và Detail View (`/{id}`).
-- Nếu mọi thứ ổn, có thể chuyển sang kiểm thử luồng Submit Data xem có ghi đúng dữ liệu xuống DB hay không.
-- Nếu có lỗi giao diện (CSS) thì tiếp tục tinh chỉnh Tailwind classes trong hàm `build_form_layout`.
+## 3. Nhật ký và Tài liệu đi kèm
+- Cập nhật **Decision Log**: `.ska-ai/2-memory/decision-log.md`
+- Cập nhật **System Map Recent Logs**: `.ska-ai/1-overview/system_map.md`
+- Cập nhật **Ecosystem Blocks Docs**: `.ska-ai/3-ecosystem/ska-no-code-design/blocks.md`
+
+## 4. Công việc tiếp theo (Next Steps)
+- Tiến hành thực hiện các tác vụ tiếp theo của Phase 4.6 hoặc bàn giao lại cho User.
