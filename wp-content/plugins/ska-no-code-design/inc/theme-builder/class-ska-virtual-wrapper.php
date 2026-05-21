@@ -279,7 +279,7 @@ class Ska_Virtual_Wrapper {
 		global $ska_current_portal;
 		$ska_id = get_query_var( 'ska_id' );
 
-		if ( ! empty( $ska_id ) && ! empty( $ska_current_portal ) && ! empty( $ska_current_portal['table_name'] ) && class_exists( '\Ska\Data\Core\Data_Fetcher' ) ) {
+		if ( ! empty( $ska_id ) && $ska_id !== 'create' && ! empty( $ska_current_portal ) && ! empty( $ska_current_portal['table_name'] ) && class_exists( '\Ska\Data\Core\Data_Fetcher' ) ) {
 			$table_name = $ska_current_portal['table_name'];
 			$args = array(
 				'filter_field' => 'id',
