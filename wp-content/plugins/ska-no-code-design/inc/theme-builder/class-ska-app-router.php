@@ -58,7 +58,7 @@ class Ska_App_Router {
 	 */
 	public function register_rewrites() {
 		add_rewrite_tag( '%ska_portal%', '([^&]+)' );
-		add_rewrite_tag( '%ska_id%', '([0-9]+)' );
+		add_rewrite_tag( '%ska_id%', '([a-zA-Z0-9-]+)' );
 		
 		$dictionary = get_option( 'ska_data_dictionary', array() );
 		if ( is_array( $dictionary ) ) {
@@ -67,8 +67,8 @@ class Ska_App_Router {
 					$settings = $schema['__table_info']['portal_settings'];
 					if ( ! empty( $settings['active'] ) && ! empty( $settings['slug'] ) ) {
 						$slug = sanitize_title( $settings['slug'] );
-						// Detail view: /bai-hoc/123
-						add_rewrite_rule( '^' . $slug . '/([0-9]+)/?$', 'index.php?ska_portal=' . $slug . '&ska_id=$matches[1]', 'top' );
+						// Detail view or Create view: /bai-hoc/123 or /bai-hoc/create
+						add_rewrite_rule( '^' . $slug . '/([a-zA-Z0-9-]+)/?$', 'index.php?ska_portal=' . $slug . '&ska_id=$matches[1]', 'top' );
 						// List view: /bai-hoc
 						add_rewrite_rule( '^' . $slug . '/?$', 'index.php?ska_portal=' . $slug, 'top' );
 					}
@@ -80,9 +80,9 @@ class Ska_App_Router {
 		add_rewrite_rule( '^portal/([a-z0-9-]+)/?$', 'index.php?ska_portal=$matches[1]', 'top' );
 
 		// Auto-flush rewrite rules once
-		if ( ! get_option( 'ska_portal_rewrites_flushed' ) ) {
+		if ( ! get_option( 'ska_portal_rewrites_flushed_v2' ) ) {
 			flush_rewrite_rules();
-			update_option( 'ska_portal_rewrites_flushed', true );
+			update_option( 'ska_portal_rewrites_flushed_v2', true );
 		}
 	}
 
@@ -270,7 +270,7 @@ class Ska_App_Router {
 		$context = array(
 			'portal'     => $ska_current_portal,
 			'columns'    => $columns,
-			'currentId'  => get_query_var( 'ska_id' ) ? absint( get_query_var( 'ska_id' ) ) : null,
+			'currentId'  => (get_query_var( 'ska_id' ) && get_query_var( 'ska_id' ) !== 'create') ? absint( get_query_var( 'ska_id' ) ) : null,
 			'restUrl'    => esc_url_raw( rest_url( 'ska-data/v1/portal/' . $table_name . '/rows' ) ),
 			'nonce'      => wp_create_nonce( 'wp_rest' ),
 		);
