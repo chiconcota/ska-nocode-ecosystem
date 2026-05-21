@@ -357,7 +357,30 @@ function _registerSkaScratchpad() {
         postId: null,
         
         init() {
-            // Watch changes if needed
+            // Khởi tạo liên kết TinyMCE với AlpineJS fields
+            setTimeout(() => {
+                const editorId = 'ska_editor_' + fieldName.replace(/-/g, '_').toLowerCase();
+                if (window.tinymce && window.tinymce.get(editorId)) {
+                    const ed = window.tinymce.get(editorId);
+                    
+                    // Lắng nghe thay đổi từ TinyMCE để update Alpine
+                    ed.on('change keyup', () => {
+                        this.fields[fieldName] = ed.getContent();
+                    });
+
+                    // Lắng nghe thay đổi từ Alpine để update TinyMCE (nếu load data từ API)
+                    this.$watch(`fields.${fieldName}`, (val) => {
+                        if (ed.getContent() !== val) {
+                            ed.setContent(val || '');
+                        }
+                    });
+
+                    // Set giá trị ban đầu nếu Alpine đã có data (ví dụ lúc Edit)
+                    if (this.fields[fieldName]) {
+                        ed.setContent(this.fields[fieldName]);
+                    }
+                }
+            }, 1000);
         },
 
         async openDesigner() {
@@ -367,7 +390,7 @@ function _registerSkaScratchpad() {
             try {
                 // Gọi API lấy Iframe URL
                 const restUrl = (window.skaAppEnv && window.skaAppEnv.restUrl) ? window.skaAppEnv.restUrl.replace('ska-logic', 'ska-builder') : '/wp-json/ska-builder/v1';
-                const currentHtml = this.$refs.editor.value || '';
+                const currentHtml = this.fields[fieldName] || '';
                 
                 const response = await fetch(`${restUrl}/scratchpad/create`, {
                     method: 'POST',
@@ -395,6 +418,27 @@ function _registerSkaScratchpad() {
         },
 
         async closeDesigner() {
+            // Lấy nội dung từ Iframe trước khi đóng
+            if (this.postId) {
+                try {
+                    const iframe = this.$el.querySelector('iframe');
+                    if (iframe && iframe.contentWindow && iframe.contentWindow.wp && iframe.contentWindow.wp.data) {
+                        const content = iframe.contentWindow.wp.data.select('core/editor').getEditedPostContent();
+                        if (content !== undefined) {
+                            this.fields[fieldName] = content;
+                            
+                            // Cập nhật lại TinyMCE nếu đang hiển thị
+                            const editorId = 'ska_editor_' + fieldName.replace(/-/g, '_').toLowerCase();
+                            if (window.tinymce && window.tinymce.get(editorId)) {
+                                window.tinymce.get(editorId).setContent(content);
+                            }
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Could not retrieve content from Gutenberg iframe", e);
+                }
+            }
+
             this.isOpen = false;
             this.iframeUrl = '';
             
