@@ -448,6 +448,16 @@ function _registerSkaScratchpad() {
                                 window.tinymce.get(editorId).setContent(content);
                             }
                         }
+
+                        // Reset dirty state to prevent beforeunload prompt
+                        try {
+                            const wp = iframe.contentWindow.wp;
+                            const type = wp.data.select('core/editor').getCurrentPostType();
+                            const id = wp.data.select('core/editor').getCurrentPostId();
+                            wp.data.dispatch('core').clearEntityRecordEdits('postType', type, id);
+                        } catch(err) {
+                            console.warn("Could not clear Gutenberg entity record edits", err);
+                        }
                     }
                 } catch(e) {
                     console.warn("Could not retrieve content from Gutenberg iframe", e);

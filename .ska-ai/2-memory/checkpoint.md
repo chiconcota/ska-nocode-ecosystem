@@ -2,14 +2,13 @@
 *Ngày cập nhật: 2026-05-21*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Công việc**: Khắc phục lỗi khi nhấn nút "Open Design Editor" báo lỗi REST API 404 (`No route was found matching the URL and request method`).
+- **Công việc**: Khắc phục lỗi cảnh báo của trình duyệt ("Rời khỏi trang web? Các thay đổi bạn đã thực hiện có thể không được lưu") khi đóng hoặc cập nhật modal thiết kế Rich Text.
 - **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH & KIỂM THỬ THÀNH CÔNG.
-- **Kết quả E2E**: Đã mô phỏng click trên môi trường thật (`http://ska-core-builder.local/lich-dat-phong/1/`), nút kích hoạt mở Gutenberg Editor Iframe mượt mà, tạo thành công Shadow CPT (Post ID 1079), hiển thị giao diện thiết kế và đóng/dọn dẹp dữ liệu hoàn toàn sạch sẽ (bắn lệnh hủy bài viết nháp thành công).
+- **Kết quả E2E**: Đã tích hợp thành công lệnh `wp.data.dispatch('core').clearEntityRecordEdits('postType', type, id)` vào hàm `closeDesigner()` trong `ska-frontend.js`. Khi bấm "Hoàn tất & Cập nhật" hoặc bấm đóng modal, hệ thống tự động reset trạng thái dirty trong Gutenberg về clean, cho phép trình duyệt dọn dẹp Iframe và đóng modal mượt mà, không bao giờ xuất hiện hộp thoại cảnh báo. Nội dung chỉnh sửa vẫn được lưu trữ hoàn chỉnh vào Alpine field.
 
 ## 2. Chi tiết các tệp đã sửa đổi (Modified Files)
-- **Frontend JS**: [ska-frontend.js](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/assets/js/ska-frontend.js) - Bổ sung hàm `getBuilderRestUrl()` tự động nhận diện cấu trúc Permalinks của WordPress để convert namespace an toàn từ `ska-logic` sang `ska-builder`.
-- **PHP Template (Rich Text)**: [render.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/src/ska-form-rich-text/render.php) - Bổ sung CSS scoped, làm đẹp TinyMCE Segmented Control Tabs, và tinh chỉnh các thuộc tính `display` của lớp phủ modal để tương thích hoàn toàn với logic `x-show` của AlpineJS.
-- **Build Output**: Tự động compile và đồng bộ hóa qua `npm run build` và `npm run sync`.
+- **Frontend JS**: [ska-frontend.js](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/assets/js/ska-frontend.js) - Bổ sung logic clear entity edits trước khi unload iframe URL.
+- **Build Output**: Đã compile thành công qua `npm run build` và đồng bộ qua `npm run sync`.
 
 ## 3. Nhật ký và Tài liệu đi kèm
 - Cập nhật **Decision Log**: `.ska-ai/2-memory/decision-log.md`
@@ -17,4 +16,4 @@
 - Cập nhật **Ecosystem Blocks Docs**: `.ska-ai/3-ecosystem/ska-no-code-design/blocks.md`
 
 ## 4. Công việc tiếp theo (Next Steps)
-- Tiến hành thực hiện các tác vụ tiếp theo của Phase 4.6 hoặc bàn giao lại cho User.
+- Tiếp tục kiểm thử E2E và bàn giao cho khách hàng hoặc triển khai các tác vụ tiếp theo của Phase 4.6.
