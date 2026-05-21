@@ -433,6 +433,7 @@ class Admin_Ajax {
 			'theme_builder_url' => isset( $result['theme_builder_url'] ) ? $result['theme_builder_url'] : '',
 			'list_view_editor_url'   => isset( $result['list_view_editor_url'] ) ? $result['list_view_editor_url'] : '',
 			'detail_view_editor_url' => isset( $result['detail_view_editor_url'] ) ? $result['detail_view_editor_url'] : '',
+			'insert_view_editor_url' => isset( $result['insert_view_editor_url'] ) ? $result['insert_view_editor_url'] : '',
 			'data'              => $result 
 		) );
 	}
