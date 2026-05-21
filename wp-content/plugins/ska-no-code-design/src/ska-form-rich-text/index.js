@@ -40,10 +40,27 @@ registerBlockType(metadata.name, {
                     </PanelBody>
                 </InspectorControls>
 
-                <div {...blockProps} style={{ border: '1px dashed #ccc', padding: '10px', background: '#f9f9f9' }}>
-                    <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>{label}</div>
-                    <div style={{ padding: '20px', background: '#fff', border: '1px solid #ddd', color: '#888' }}>
-                        [Rich Text Area - Sẽ tải TinyMCE & Nút mở Trình thiết kế ở Frontend]
+                <div {...blockProps} style={{ marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold', color: '#1e293b' }}>{label}</h3>
+                        <button type="button" style={{ display: 'inline-flex', alignItems: 'center', padding: '6px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '12px', fontWeight: '600', color: '#334155', background: '#fff', cursor: 'pointer' }}>
+                            <span className="dashicons dashicons-edit" style={{ fontSize: '14px', width: '14px', height: '14px', marginRight: '4px', display: 'inline-block', verticalAlign: 'middle' }}></span>
+                            Open Design Editor
+                        </button>
+                    </div>
+                    <div style={{ border: '1px solid #cbd5e1', borderRadius: '8px', overflow: 'hidden', background: '#fff', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '8px 12px' }}>
+                            <div style={{ display: 'inline-flex', gap: '4px' }}>
+                                <button type="button" style={{ padding: '4px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '12px', background: '#fff', color: '#334155', cursor: 'pointer' }}>Add Media</button>
+                            </div>
+                            <div style={{ display: 'inline-flex', background: '#f1f5f9', padding: '2px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                                <button type="button" style={{ padding: '4px 12px', border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: '600', background: '#fff', color: '#0f172a', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>Visual</button>
+                                <button type="button" style={{ padding: '4px 12px', border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: '500', background: 'transparent', color: '#64748b' }}>Code</button>
+                            </div>
+                        </div>
+                        <div style={{ padding: '40px 20px', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>
+                            [Rich Text Area - Sẽ tải TinyMCE ở Frontend]
+                        </div>
                     </div>
                 </div>
             </>

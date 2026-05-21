@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v1.0.0)
-@status: ONE-CLICK APP PORTAL (PHASE 4) | @last_update: 2026-05-20
+@status: ONE-CLICK APP PORTAL (PHASE 4) | @last_update: 2026-05-21
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core (Host) + PHP 8.2+
@@ -61,6 +61,10 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 
 ## 7. RECENT LOGS (LATEST)
 > *Các nhật ký từ Phase 1 và 2 đã được lưu trữ trong `.ska-ai/2-memory/archive/`. Chỉ giữ lại các cập nhật cốt lõi gần đây (Phase 3 -> Phase 4).*
+
+- **2026-05-21 - 🟢 Hoàn thành: Tinh giản Layout & Nâng cấp UX/UI Trình soạn thảo văn bản giàu (Phase 4.6):** Hợp nhất nhãn H3 tiêu đề và nút **Open Design Editor** trực tiếp vào khối `ska-builder/form-rich-text`. Loại bỏ các container bọc ngoài phức tạp trong `class-ska-portal-generator.php` giúp giải quyết lỗi trùng lặp nhãn "Mô tả chi tiết" và badge "Classic Editor" cũ. Nhúng CSS cục bộ (scoped) để tùy biến giao diện các tab Visual/Code của WordPress TinyMCE thành dạng Segmented Control Pills chuyên nghiệp có đường viền phân định, hover, shadow và hiển thị trạng thái active nền trắng rõ nét. Đồng bộ hóa mã hiển thị tĩnh trong Gutenberg Editor. Khắc phục triệt để lỗi REST 404 (`No route was found matching the URL and request method`) khi khởi tạo Scratchpad bằng cách thiết lập hàm `getBuilderRestUrl()` tự động chuyển đổi namespace chuẩn xác cho cả pretty/plain permalinks, đồng thời loại bỏ CSS `display: flex !important` trong modal tránh lỗi logic ẩn hiện (`x-show`) của AlpineJS.
+
+- **2026-05-21 - 🟢 Hoàn thành: Sửa lỗi cuộn kép (double scrollbar) frontend & cắt xén block appender (+) editor (Phase 4.6):** Hủy bỏ các lớp giới hạn chiều cao `h-screen overflow-hidden` trên `<form>` và `overflow-y-auto` trên `<main>` trong `Ska_Portal_Generator`. Chuyển sang sử dụng `min-h-screen` trên `<form>` và `flex-1 bg-slate-50` trên `<main>`. Điều này giải quyết triệt để lỗi sinh ra double scrollbar ở frontend (cho phép trang cuộn tự nhiên theo trình duyệt với sticky header) và ngăn việc block appender `+` cùng outlines bị cắt xén trong Gutenberg Editor.
 
 - **2026-05-21 - 🟢 Hoàn thành: Thiết kế Dedicated Create View & Notion-style Form Layout (Phase 4.6):** Hủy bỏ hoàn toàn cấu trúc Modal Quick Edit cho chức năng Thêm mới bản ghi để tránh làm phình DOM và làm nặng List View. Refactor `class-ska-portal-generator.php` bổ sung hàm `build_form_layout` dùng chung cho cả `create_detail_view` (Update) và `create_insert_view` (Insert). Giao diện Form được chuẩn hóa theo Notion-style (nền trắng, viền mỏng, responsive, có header cố định). Cập nhật thành công API AJAX để bổ sung Link Editor Create View trực tiếp vào Success Modal của App Generator.
 

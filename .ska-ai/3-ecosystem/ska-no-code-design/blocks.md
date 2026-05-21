@@ -109,3 +109,14 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
   - `loop`: Xuất ra format Mustache `{{key}}` để Engine `Ska Loop` tiến hành preg_replace tự động. Tương thích 100% với Hydration Pipeline.
   - **Inline Parser:** Sử dụng Regex (`resolve_inline_links`) tại SSR để quét chuỗi HTML, lấy URL/Mustache tiêm vào thuộc tính `href` của thẻ `<a>` và tự động loại bỏ các data attribute dư thừa (`data-dynamic-source`, v.v.).
 - **Quy tắc Frontend Flat DOM:** Dữ liệu URL động phải được giải quyết và tiêm vào thuộc tính `href` của thẻ gốc trước khi buffer được trả về. Mọi hook liên quan phải chạy ở Phase Render.
+
+#### 12. Ska Rich Text (`ska-builder/form-rich-text`)
+- **Attributes:** `field`, `label`, `tailwindClasses`, `className`.
+- **Render (v1.0.0 - 2026-05-21):** 
+  - Khối tự trị quản lý toàn bộ cấu trúc: Tiêu đề H3 (`text-lg font-bold text-slate-800`), nút **Open Design Editor** kích hoạt AlpineJS `@click="openDesigner()"`, và trình soạn thảo TinyMCE.
+  - Nhúng CSS scoped trực tiếp vào khối để tùy biến và định dạng toàn diện giao diện `.wp-editor-wrap` của WordPress TinyMCE. Thay thế thanh tabs mặc định thành Segmented Pills Controls bóng bẩy, hỗ trợ hover, active states rõ rệt, cải thiện UX/UI.
+  - **Shadow Scratchpad API Routing Integration:** Sử dụng helper `getBuilderRestUrl()` để giải quyết và định tuyến chính xác URL REST API cho việc tạo/hủy Scratchpad. Thay thế hoàn toàn thuật toán `.replace('ska-logic', 'ska-builder')` dễ gây lỗi 404 nếu permalink của WordPress sử dụng chế độ Plain (`?rest_route=`). Helper tự động xử lý và ánh xạ:
+    - Pretty URL: `/wp-json/ska-logic/v1/submit` -> `/wp-json/ska-builder/v1`
+    - Plain URL: `?rest_route=%2Fska-logic%2Fv1%2Fsubmit` -> `?rest_route=%2Fska-builder%2Fv1`
+  - **CSS Modal Scoped & Alpine Compatibility:** Thư viện CSS nội bộ sử dụng scope để tránh tràn style và loại bỏ thuộc tính `display: flex !important` khỏi lớp phủ `.ska-designer-modal-overlay` và `.ska-designer-modal-loader` nhằm đảm bảo khả năng tương thích 100% với thuộc tính hiển thị `x-show` của AlpineJS (tránh việc modal không thể ẩn đi khi `isOpen` chuyển về `false`).
+

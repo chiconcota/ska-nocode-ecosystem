@@ -523,8 +523,7 @@ class Ska_Portal_Generator
 
 		// 2. Main Content
 		$main_blocks = array();
-		$main_html = '<!-- wp:ska-builder/container {"tagName":"main","tailwindClasses":"flex-1 overflow-y-auto bg-white min-h-screen"} -->' . "\n";
-		$main_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"max-w-4xl mx-auto px-6 md:px-12 pt-12 pb-32"} -->' . "\n";
+		$main_html = '';
 
 		// Page Title
 		$title_text = ($mode === 'insert') ? 'Tạo mới: ' . $table_label : $table_label;
@@ -559,31 +558,15 @@ class Ska_Portal_Generator
 
 			if ($type === 'long_text' || $type === 'textarea') {
 				$long_text_blocks[] = array(
-					'name' => 'ska-builder/container',
-					'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'w-full mb-12'),
-					'innerBlocks' => array(
-						array(
-							'name' => 'ska-builder/container',
-							'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'flex items-center justify-between mb-3'),
-							'innerBlocks' => array(
-								array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'h3', 'content' => $col_label, 'tailwindClasses' => 'text-lg font-bold text-slate-800')),
-								array('name' => 'ska-builder/container', 'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'bg-white border border-slate-200 text-slate-500 text-xs font-semibold py-1.5 px-3 rounded-md shadow-sm'), 'innerBlocks' => array(
-									array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'span', 'content' => 'Classic Editor', 'tailwindClasses' => ''))
-								))
-							)
-						),
-						array('name' => 'ska-builder/form-rich-text', 'attributes' => array('field' => $col_slug, 'label' => $col_label, 'tailwindClasses' => 'notion-editor-block min-h-[150px] w-full p-4 border border-slate-300 rounded-lg bg-white focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 transition-all shadow-sm'), 'innerBlocks' => array())
-					)
+					'name' => 'ska-builder/form-rich-text',
+					'attributes' => array(
+						'field' => $col_slug,
+						'label' => $col_label,
+						'tailwindClasses' => 'w-full mb-12'
+					),
+					'innerBlocks' => array()
 				);
-				$long_text_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"w-full mb-12"} -->' . "\n";
-				$long_text_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center justify-between mb-3"} -->' . "\n";
-				$long_text_html .= '<!-- wp:ska-builder/text {"tagName":"h3","content":"' . esc_attr($col_label) . '","tailwindClasses":"text-lg font-bold text-slate-800"} /-->' . "\n";
-				$long_text_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"bg-white border border-slate-200 text-slate-500 text-xs font-semibold py-1.5 px-3 rounded-md shadow-sm"} -->' . "\n";
-				$long_text_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"Classic Editor","tailwindClasses":""} /-->' . "\n";
-				$long_text_html .= '<!-- /wp:ska-builder/container -->' . "\n";
-				$long_text_html .= '<!-- /wp:ska-builder/container -->' . "\n";
-				$long_text_html .= '<!-- wp:ska-builder/form-rich-text {"field":"' . esc_attr($col_slug) . '","label":"' . esc_attr($col_label) . '","tailwindClasses":"notion-editor-block min-h-[150px] w-full p-4 border border-slate-300 rounded-lg bg-white focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 transition-all shadow-sm"} /-->' . "\n";
-				$long_text_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+				$long_text_html .= '<!-- wp:ska-builder/form-rich-text {"field":"' . esc_attr($col_slug) . '","label":"' . esc_attr($col_label) . '","tailwindClasses":"w-full mb-12"} /-->' . "\n";
 			} else {
 				$input_classes = 'w-full py-1.5 px-3 rounded-md appearance-none text-slate-800 font-medium hover:bg-slate-100 focus:bg-white focus:ring-1 focus:ring-slate-200 border border-transparent focus:border-slate-300 transition-colors cursor-pointer focus:cursor-text outline-none';
 				$field_block = array();
@@ -661,8 +644,7 @@ class Ska_Portal_Generator
 			$main_html .= $long_text_html;
 		}
 
-		$main_html .= '<!-- /wp:ska-builder/container -->' . "\n"; // End max-w-4xl
-		$main_html .= '<!-- /wp:ska-builder/container -->' . "\n"; // End main
+		// End max-w-4xl and main tags are now handled in $final_html
 
 		$blocks[] = array(
 			'name' => 'ska-builder/container',
@@ -671,7 +653,7 @@ class Ska_Portal_Generator
 		);
 		$blocks[] = array(
 			'name' => 'ska-builder/container',
-			'attributes' => array('tagName' => 'main', 'tailwindClasses' => 'flex-1 overflow-y-auto bg-slate-50 min-h-screen'),
+			'attributes' => array('tagName' => 'main', 'tailwindClasses' => 'flex-1 bg-slate-50'),
 			'innerBlocks' => array(
 				array(
 					'name' => 'ska-builder/container',
@@ -688,15 +670,15 @@ class Ska_Portal_Generator
 					'tagName' => 'form',
 					'isSkaForm' => true,
 					'formActionId' => $form_action_id,
-					'tailwindClasses' => 'flex flex-col h-screen overflow-hidden'
+					'tailwindClasses' => 'flex flex-col min-h-screen'
 				),
 				'innerBlocks' => $blocks
 			)
 		);
 
-		$final_html = '<!-- wp:ska-builder/container {"tagName":"form","isSkaForm":true,"formActionId":"' . esc_attr($form_action_id) . '","tailwindClasses":"flex flex-col h-screen overflow-hidden"} -->' . "\n";
+		$final_html = '<!-- wp:ska-builder/container {"tagName":"form","isSkaForm":true,"formActionId":"' . esc_attr($form_action_id) . '","tailwindClasses":"flex flex-col min-h-screen"} -->' . "\n";
 		$final_html .= $header_html;
-		$final_html .= '<!-- wp:ska-builder/container {"tagName":"main","tailwindClasses":"flex-1 overflow-y-auto bg-slate-50 min-h-screen"} -->' . "\n";
+		$final_html .= '<!-- wp:ska-builder/container {"tagName":"main","tailwindClasses":"flex-1 bg-slate-50"} -->' . "\n";
 		$final_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"max-w-4xl mx-auto px-6 md:px-12 pt-12 pb-32 bg-white min-h-screen shadow-sm"} -->' . "\n";
 		$final_html .= $main_html;
 		$final_html .= '<!-- /wp:ska-builder/container -->' . "\n";
