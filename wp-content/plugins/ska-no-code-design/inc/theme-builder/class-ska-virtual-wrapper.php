@@ -245,10 +245,17 @@ class Ska_Virtual_Wrapper {
 				}
 				return get_query_var( 'ska_portal' ) === $value && empty( get_query_var( 'ska_id' ) );
 			case 'specific_portal_detail':
+				$ska_id = get_query_var( 'ska_id' );
 				if ( empty( $value ) ) {
-					return ! empty( get_query_var( 'ska_portal' ) ) && ! empty( get_query_var( 'ska_id' ) );
+					return ! empty( get_query_var( 'ska_portal' ) ) && ! empty( $ska_id ) && $ska_id !== 'create';
 				}
-				return get_query_var( 'ska_portal' ) === $value && ! empty( get_query_var( 'ska_id' ) );
+				return get_query_var( 'ska_portal' ) === $value && ! empty( $ska_id ) && $ska_id !== 'create';
+			case 'specific_portal_create':
+				$ska_id = get_query_var( 'ska_id' );
+				if ( empty( $value ) ) {
+					return ! empty( get_query_var( 'ska_portal' ) ) && $ska_id === 'create';
+				}
+				return get_query_var( 'ska_portal' ) === $value && $ska_id === 'create';
 		}
 
 		return false;
