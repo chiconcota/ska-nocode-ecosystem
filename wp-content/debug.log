@@ -2115,3 +2115,92 @@ Stack trace:
 [21-May-2026 01:59:47 UTC] [SkaFX Engine Failure]: Lỗi cú pháp không xác định: Ký tự '{' tại dòng 1
 [21-May-2026 01:59:53 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
 [21-May-2026 02:00:32 UTC] PHP Warning:  Undefined variable $wrapper_class in C:\Users\ADMIN\Local Sites\ska-core-builder\app\public\wp-content\plugins\ska-no-code-design\build\ska-form-rich-text\render.php on line 19
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_theme_templates
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => created_at
+    [2] => name
+    [3] => location
+    [4] => organism_id
+    [5] => conditions
+    [6] => is_active
+)
+
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_theme_templates
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => created_at
+    [2] => name
+    [3] => location
+    [4] => organism_id
+    [5] => conditions
+    [6] => is_active
+)
+
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_organisms
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => type
+    [2] => created_at
+    [3] => name
+    [4] => json_content
+    [5] => title
+    [6] => block_name
+    [7] => html_content
+)
+
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: Processing insert for table: wp_ska_data_sys_theme_templates
+[21-May-2026 15:08:51 UTC] ska_data_insert_record: valid_columns: Array
+(
+    [0] => id
+    [1] => created_at
+    [2] => name
+    [3] => location
+    [4] => organism_id
+    [5] => conditions
+    [6] => is_active
+)
+
+[21-May-2026 15:08:55 UTC] Ska Loop: Return early 5 - Empty compiled_templates
