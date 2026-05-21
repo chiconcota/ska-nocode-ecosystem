@@ -1,17 +1,17 @@
 # Checkpoint Bàn Giao Phiên Làm Việc - 2026-05-21
 
 ## 1. Trạng Thái Hiện Tại
-- Hệ thống đã hoàn thiện hoàn toàn giao diện Premium List View (cấu trúc Card, bo góc, phân trang).
-- Đã bổ sung tính năng thuật toán Cột Động (Dynamic Grid) tự động nhận diện số lượng trường hợp lệ để sinh CSS class (`grid-cols-[...]`) cho List View.
-- Đã vá 3 lỗ hổng chí mạng của `Tailwind_Compiler` khiến CSS Grid động không hoạt động (lỗi escape ký tự đặc biệt, lỗi class Regex, lỗi ép cứng display grid).
-- CSDL tự động làm mới `organisms.json` ngay sau khi sinh App Portal.
+- Hệ thống đã hoàn thiện giao diện Create View (Insert) và Detail View (Update) chuẩn Notion-style (thiết kế tinh giản, focus, responsive, header cố định, tiêu đề lớn).
+- Đã tách hàm `build_form_layout` để dùng chung layout cấu trúc cho cả 2 view (Update & Insert).
+- Đã cấu hình ánh xạ Atomic Blocks vào form (Rich Text, Fields, Button).
+- Nút sinh App Portal giờ đây trả về URL Editor cho cả Create View.
 
-## 2. Các File Đã Thay Đổi trong Phiên (Cuối)
-- `class-ska-portal-generator.php`: Thêm hàm `compute_list_grid()`, nâng cấp UI List View, và kích hoạt `export_physical_cache()`.
-- `class-tailwind-compiler.php`: Bổ sung Regex cho `grid-cols-[...]`, gỡ bỏ `display: grid`, và sửa lỗi escape các ký tự đặc biệt `(`, `)`, `,` cho CSS Selectors.
-- Các tài liệu lõi (`design-engine.md`, `decision-log.md`, `system_map.md`, `design-workflow-app-portal-views.md`).
+## 2. Các File Đã Thay Đổi trong Phiên
+- `class-ska-portal-generator.php`: Thêm hàm `build_form_layout`, `create_insert_view`, chỉnh sửa `create_detail_view` và `generate_assets`.
+- `class-admin-ajax.php` & `manage-modals.php`: Bổ sung URL `insert_view_editor_url` cho Success Modal của Generator.
+- Các file tài liệu: `design-workflow-app-portal-views.md`, `system_map.md`, `decision-log.md`.
 
 ## 3. Công Việc Cho Phiên Sau (Next Steps)
-- Tiếp tục thực hiện các bài kiểm thử E2E Test cho luồng Auto-Generator.
-- Cân nhắc cấu hình tính năng Modal Quick Edit nếu cần thiết hoặc chuyển hướng sang xây dựng kiến trúc UI cho Create View riêng biệt (Dedicated Page).
-- Đảm bảo quy trình kết nối với Ska Logic Engine.
+- Người dùng (USER) cần truy cập vào Frontend để xác minh lại giao diện Create View (`/create`) và Detail View (`/{id}`).
+- Nếu mọi thứ ổn, có thể chuyển sang kiểm thử luồng Submit Data xem có ghi đúng dữ liệu xuống DB hay không.
+- Nếu có lỗi giao diện (CSS) thì tiếp tục tinh chỉnh Tailwind classes trong hàm `build_form_layout`.

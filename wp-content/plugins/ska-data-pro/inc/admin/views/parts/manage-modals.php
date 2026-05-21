@@ -666,12 +666,15 @@ defined( 'ABSPATH' ) || exit;
                             <h4 class="text-[14px] font-semibold text-green-800">Khởi tạo thành công!</h4>
                             <p class="text-[13px] text-green-600 mt-1">Organism, List View và Detail View đã được tạo.</p>
                         </div>
-                        <div class="grid grid-cols-2 gap-3 mt-3">
+                        <div class="grid grid-cols-3 gap-3 mt-3">
                             <a :href="listViewEditorUrl" x-show="listViewEditorUrl" target="_blank" class="flex justify-center items-center gap-2 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
                                 <span class="dashicons dashicons-edit"></span> Sửa List View
                             </a>
                             <a :href="detailViewEditorUrl" x-show="detailViewEditorUrl" target="_blank" class="flex justify-center items-center gap-2 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
                                 <span class="dashicons dashicons-edit"></span> Sửa Detail View
+                            </a>
+                            <a :href="insertViewEditorUrl" x-show="insertViewEditorUrl" target="_blank" class="flex justify-center items-center gap-2 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
+                                <span class="dashicons dashicons-edit"></span> Sửa Create View
                             </a>
                         </div>
                         <div class="grid grid-cols-2 gap-3 mt-3">
@@ -698,6 +701,7 @@ defined( 'ABSPATH' ) || exit;
                 themeBuilderUrl: '',
                 listViewEditorUrl: '',
                 detailViewEditorUrl: '',
+                insertViewEditorUrl: '',
 
                 initData() {
                     // Lắng nghe sự kiện mở modal để kiểm tra Schema hiện tại có long_text không
@@ -775,6 +779,7 @@ defined( 'ABSPATH' ) || exit;
                             this.themeBuilderUrl = res.data.theme_builder_url;
                             this.listViewEditorUrl = res.data.list_view_editor_url;
                             this.detailViewEditorUrl = res.data.detail_view_editor_url;
+                            this.insertViewEditorUrl = res.data.insert_view_editor_url;
                         } else {
                             alert(res.data?.message || 'Lỗi khởi tạo UI');
                         }
