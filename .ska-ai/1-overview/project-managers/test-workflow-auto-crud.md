@@ -55,14 +55,14 @@
    - Bấm **"Tự động sinh App Portal ngay"** và chờ thông báo thành công.
 
 > [!NOTE]
-> **Điều kiện vượt qua (Pass Criteria): [ĐÃ PASS ✅]**
+> **Điều kiện vượt qua (Pass Criteria): [chưa PASS ❌]**
 > - [x] Sau khi sinh app, hệ thống hiển thị Modal Success với các tùy chọn điều hướng nhanh: Edit List View, Edit Detail View, View Frontend, Manage Templates.
 > - [x] Sinh ra đúng các tệp Template (`phong-khach-san-list`, `phong-khach-san-detail`, `lich-dat-phong-list`, `lich-dat-phong-detail`) trong CPT `ska_theme_builder` và các Organism layout tương ứng trong bảng phẳng hệ thống.
 > - [x] Truy cập được các đường dẫn Frontend: `/portal/phong-khach-san` và `/portal/lich-dat-phong` mà không bị lỗi 404.
 
 ---
 
-## BƯỚC 3: KIỂM THỬ THÊM MỚI NHANH (QUICK EDIT MODAL)
+## BƯỚC 3: KIỂM THỬ THÊM MỚI NHANH (QUICK EDIT MODAL) bỏ
 *Hệ thống sẽ tự động giấu trường Long Text ra khỏi Modal tạo nhanh để tối ưu UX.*
 
 1. Truy cập Frontend: `yoursite.com/portal/phong-khach-san`.
