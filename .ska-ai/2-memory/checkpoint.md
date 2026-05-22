@@ -1,10 +1,10 @@
 # CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v1.0.0)
-*Ngày cập nhật: 2026-05-21*
+*Ngày cập nhật: 2026-05-22*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Công việc**: Khắc phục lỗi cảnh báo của trình duyệt ("Rời khỏi trang web? Các thay đổi bạn đã thực hiện có thể không được lưu") khi đóng hoặc cập nhật modal thiết kế Rich Text.
+- **Công việc**: Khắc phục lỗi các trường dữ liệu bị biến mất (reset về chuỗi rỗng) sau khi người dùng nhấn nút cập nhật trên Detail/Update View của Portal.
 - **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH & KIỂM THỬ THÀNH CÔNG.
-- **Kết quả E2E**: Đã tích hợp thành công lệnh `wp.data.dispatch('core').clearEntityRecordEdits('postType', type, id)` vào hàm `closeDesigner()` trong `ska-frontend.js`. Khi bấm "Hoàn tất & Cập nhật" hoặc bấm đóng modal, hệ thống tự động reset trạng thái dirty trong Gutenberg về clean, cho phép trình duyệt dọn dẹp Iframe và đóng modal mượt mà, không bao giờ xuất hiện hộp thoại cảnh báo. Nội dung chỉnh sửa vẫn được lưu trữ hoàn chỉnh vào Alpine field.
+- **Kết quả E2E**: Đã thêm logic kiểm tra `isUpdate` thông minh trong `ska-frontend.js`. Khi thực thi lưu ở Detail/Update View (thông qua `actionId.startsWith('update_')`, hoặc presence của `fields.id`, hoặc presence của `Alpine.store('skaPortal').currentData.id`), controller `skaForm` sẽ giữ nguyên giá trị đã nhập ngoài frontend thay vì reset trắng biểu mẫu. Đã kiểm thử thành công trên trang `http://ska-core-builder.local/phong-khach-san/1/` bằng Chrome DevTools, xác nhận dữ liệu được cập nhật thành công và các trường dữ liệu không bị biến mất. Trái lại, trên trang Create View (`/create/`), form vẫn được tự động reset rỗng như mong đợi.
 
 ### 5. Fixed Teleport querySelector & Separated Close vs Save Modal Actions
 - **Files:**

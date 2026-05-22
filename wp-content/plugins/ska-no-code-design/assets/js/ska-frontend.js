@@ -67,12 +67,26 @@ function _registerSkaForm() {
                         const portalStore = Alpine.store('skaPortal');
                         if (portalStore && portalStore.currentData && typeof portalStore.currentData[name] !== 'undefined') {
                             let val = portalStore.currentData[name];
+                            
+                            // Nếu val là chuỗi và trông giống JSON array/object, thử parse nó trước
+                            if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
+                                try {
+                                    const parsed = JSON.parse(val);
+                                    if (parsed !== null) {
+                                        val = parsed;
+                                    }
+                                } catch (e) {
+                                    // Bỏ qua nếu parse lỗi
+                                }
+                            }
+
                             if (Array.isArray(val)) {
                                 if (val.length > 0 && typeof val[0] === 'object' && val[0] !== null && typeof val[0].id !== 'undefined') {
                                     let ids = val.map(item => item.id.toString());
                                     this.fields[name] = isArray ? ids : (ids[0] || '');
                                 } else {
-                                    this.fields[name] = val;
+                                    let ids = val.map(item => (typeof item === 'object' && item !== null && typeof item.id !== 'undefined') ? item.id.toString() : item.toString());
+                                    this.fields[name] = isArray ? ids : (ids[0] || '');
                                 }
                             } else if (typeof val === 'object' && val !== null && typeof val.id !== 'undefined') {
                                 this.fields[name] = isArray ? [val.id.toString()] : val.id.toString();
@@ -212,12 +226,20 @@ function _registerSkaForm() {
                         window.$ska.processEventBus(data.data._ska_events);
                     }
 
-                    // Reset Form
-                    Object.keys(this.fields).forEach((key) => {
-                        this.fields[key] = Array.isArray(this.fields[key]) ? [] : '';
-                    });
+                    // Reset Form (chỉ reset nếu không phải là cập nhật - update)
+                    const portalStore = Alpine.store('skaPortal');
+                    const isPortalUpdate = portalStore && portalStore.currentData && !Array.isArray(portalStore.currentData) && portalStore.currentData.id;
+                    const isUpdate = (typeof actionId === 'string' && actionId.startsWith('update_')) || 
+                                     (this.fields && this.fields.id) || 
+                                     isPortalUpdate;
+                    if (!isUpdate) {
+                        Object.keys(this.fields).forEach((key) => {
+                            this.fields[key] = Array.isArray(this.fields[key]) ? [] : '';
+                        });
+                        this.step = 1;
+                    }
                     this.errors = {};
-                    this.step = 1;
+
 
                     // Phát sự kiện thành công
                     this.$el.dispatchEvent(new CustomEvent('ska-form-success', {

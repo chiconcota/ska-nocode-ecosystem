@@ -7,9 +7,11 @@ Ska Logic Engine là bộ óc kết nối (Node Engine định tuyến) giúp "V
 ## 1. Tôn Chỉ Hoạt Động (Event-Driven Backbone)
 Giao tiếp hoàn toàn vô hình thông qua WP Hook. Cách ly Microservices triệt để.
 - REST API `POST /ska-logic/v1/submit` đón nhận dữ liệu thô. (API Receiver).
+- **Tự động sinh/đăng ký Workflow cho CRUD Portal (2026-05-22):** Nếu ID của Form gửi lên có tiền tố `insert_` hoặc `update_` và chưa có workflow cấu hình sẵn, hệ thống tự động kiểm tra sự tồn tại của bảng phẳng dữ liệu tương ứng. Nếu bảng tồn tại, hệ thống tự động sinh một đồ thị workflow CRUD (Trigger -> DB Action -> Response) và lưu vào `ska_logic_simple_workflows`. Điều này giúp các Portal mới sinh tự động qua App Generator vận hành lưu/thêm bản ghi trơn tru mà không cần cấu hình thủ công.
 - Bơm dữ liệu lên phễu bằng Filter `apply_filters( 'ska_logic_run_pipeline', $clean_data, $form_id )`.
 - Class `Ska_Workflow_Runner` khởi động, lặp qua đồ thị Graph và cho điện chạy qua các cục `Nodes`.
 - Ở cuối bằng chuyền, một Action Node sẽ gồng mình lên phát lệnh `apply_filters('ska_data_insert_record')` để tống cổ cục hàng qua sang vương quốc `Ska Data Pro` đúc MySQL.
+
 
 ## 2. Tiêu Chuẩn Giao Diện Node
 Tất cả các cục Xử lý mềm (Date, Slug) hoặc Cục Hành Động chốt (Gửi Email) BẮT BUỘC IMPLEMENTS `Ska_Logic_Node`.

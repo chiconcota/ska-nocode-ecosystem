@@ -159,25 +159,75 @@ class Ska_Dynamic_Content {
                     $real_table_name = $wpdb->prefix . $real_table_name;
                 }
 
-                if ( isset( $all_dict[ $real_table_name ][ $column_name ]['options'] ) ) {
-                    $options_str = $all_dict[ $real_table_name ][ $column_name ]['options'];
+                $col_config = isset( $all_dict[ $real_table_name ][ $column_name ] ) ? $all_dict[ $real_table_name ][ $column_name ] : array();
+                $col_type = isset( $col_config['type'] ) ? $col_config['type'] : '';
+
+                $target_table = '';
+                if ( $col_type === 'relation' ) {
+                    $target_table = isset( $col_config['options'] ) ? $col_config['options'] : '';
+                } elseif ( $column_name === 'id' ) {
+                    // Nếu binding là {{#foreach target_table.id}} thì target_table chính là bảng đích này
+                    $target_table = $real_table_name;
+                }
+
+                if ( ! empty( $target_table ) ) {
+                    $id_col = 'id';
+                    $display_col = 'id';
+                    
+                    if ( $target_table === $wpdb->posts ) {
+                        $id_col = 'ID';
+                        $display_col = 'post_title';
+                    } elseif ( $target_table === $wpdb->users ) {
+                        $id_col = 'ID';
+                        $display_col = 'display_name';
+                    } else {
+                        // Thử DESCRIBE bảng để tìm cột hiển thị (varchar/text đầu tiên)
+                        $columns = $wpdb->get_results( "DESCRIBE `{$target_table}`" );
+                        if ( $columns ) {
+                            foreach ( $columns as $col ) {
+                                if ( strpos( strtolower( $col->Type ), 'varchar' ) !== false || strpos( strtolower( $col->Type ), 'text' ) !== false ) {
+                                    $display_col = $col->Field;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    $is_core_wp_table = ( $target_table === $wpdb->posts || $target_table === $wpdb->users );
+                    if ( $is_core_wp_table || strpos( $target_table, $wpdb->prefix ) === 0 ) {
+                        $results = $wpdb->get_results( "SELECT `{$id_col}` as id, `{$display_col}` as label FROM `{$target_table}` LIMIT 1000", ARRAY_A );
+                        
+                        $generated_html = '';
+                        if ( ! empty( $results ) && is_array( $results ) ) {
+                            foreach ( $results as $row ) {
+                                $row_html = str_replace( 
+                                    array( '{{value}}', '{{label}}', '{{.}}' ), 
+                                    array( esc_attr( $row['id'] ), esc_html( $row['label'] ), esc_html( $row['label'] ) ), 
+                                    $template 
+                                );
+                                $generated_html .= $row_html;
+                            }
+                        }
+                        
+                        if ( strpos( $block_content, '<select' ) !== false ) {
+                            $block_content = preg_replace( '/(<select[^>]*>)(.*?)(<\/select>)/is', '${1}' . $generated_html . '${3}', $block_content );
+                        } else {
+                            $block_content = preg_replace( '/^(.*?>)(.*?)(<\/[a-zA-Z0-9]+>\s*<span.*)$/is', '${1}' . $generated_html . '${3}', $block_content );
+                        }
+                    }
+                } elseif ( isset( $col_config['options'] ) ) {
+                    $options_str = $col_config['options'];
                     $options_arr = array_map( 'trim', explode( ',', $options_str ) );
                     
                     $generated_html = '';
                     foreach ( $options_arr as $opt ) {
-                        // Mảng phẳng chuỗi: {{.}}
-                        // Tạm thời thay thế {{.}} và {{value}}, {{label}} về cùng 1 biến $opt
                         $row_html = str_replace( array( '{{.}}', '{{value}}', '{{label}}' ), esc_attr( $opt ), $template );
                         $generated_html .= $row_html;
                     }
                     
-                    // Thay thế toàn bộ ruột của thẻ <select> hoặc vùng chứa đầu tiên bằng $generated_html
-                    // Sửa lỗi Regex cũ (nuốt nhầm thẻ </span> báo lỗi bên dưới Select)
                     if ( strpos( $block_content, '<select' ) !== false ) {
                         $block_content = preg_replace( '/(<select[^>]*>)(.*?)(<\/select>)/is', '${1}' . $generated_html . '${3}', $block_content );
                     } else {
-                        // Fallback cho thẻ div hoặc các wrapper khác (radio/checkbox)
-                        // Bắt thẻ mở đầu tiên và thẻ đóng tương ứng của nó (giả định thẻ wrapper chứa các option)
                         $block_content = preg_replace( '/^(.*?>)(.*?)(<\/[a-zA-Z0-9]+>\s*<span.*)$/is', '${1}' . $generated_html . '${3}', $block_content );
                     }
                 }

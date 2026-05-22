@@ -406,19 +406,54 @@ class Admin_Ajax {
 	}
 
 	/**
-	 * AJAX: Auto-Generate Portal UI (One-Click App Generator)
+	 * AJAX: Tự động sinh giao diện App Portal (One-Click App Generator)
+	 * Lưu cấu hình Portal Settings trước khi sinh để đồng bộ đường dẫn (slug) chính xác.
 	 */
 	public function data_generate_portal_ui() {
 		$this->verify_crud_request();
 
 		$table = isset( $_POST['table'] ) ? sanitize_text_field( wp_unslash( $_POST['table'] ) ) : '';
-		$add_gutenberg = isset( $_POST['add_gutenberg'] ) && $_POST['add_gutenberg'] === 'true';
+		
+		// Đọc đúng tham số add_long_text do JavaScript gửi lên
+		$add_gutenberg = false;
+		if ( isset( $_POST['add_long_text'] ) && $_POST['add_long_text'] === '1' ) {
+			$add_gutenberg = true;
+		} elseif ( isset( $_POST['add_gutenberg'] ) && ( $_POST['add_gutenberg'] === 'true' || $_POST['add_gutenberg'] === '1' ) ) {
+			$add_gutenberg = true;
+		}
 
 		if ( empty( $table ) ) {
 			wp_send_json_error( array( 'message' => 'Lỗi: Không xác định được Bảng dữ liệu.' ) );
 		}
 
 		$engine = Database_Engine::get_instance();
+
+		// Nếu frontend có truyền cấu hình slug lên thì lưu trước khi sinh assets
+		if ( isset( $_POST['slug'] ) ) {
+			$slug = sanitize_title( wp_unslash( $_POST['slug'] ) );
+			$roles_raw = isset( $_POST['roles'] ) ? wp_unslash( $_POST['roles'] ) : '';
+			if ( is_array( $roles_raw ) ) {
+				$roles = array_filter( array_map( 'sanitize_text_field', $roles_raw ) );
+			} else {
+				$roles = array_filter( array_map( 'trim', explode( ',', (string) $roles_raw ) ) );
+			}
+			$view_mode = isset( $_POST['view_mode'] ) ? sanitize_text_field( wp_unslash( $_POST['view_mode'] ) ) : 'readonly';
+			$unauthorized_redirect = isset( $_POST['unauthorized_redirect_url'] ) ? sanitize_text_field( wp_unslash( $_POST['unauthorized_redirect_url'] ) ) : '';
+
+			$settings = array(
+				'active'                    => true, // Khi tự động sinh thì mặc định kích hoạt Portal
+				'slug'                      => $slug,
+				'roles'                     => $roles,
+				'view_mode'                 => $view_mode,
+				'unauthorized_redirect_url' => $unauthorized_redirect
+			);
+
+			$update_res = $engine->update_portal_settings( $table, $settings );
+			if ( is_wp_error( $update_res ) ) {
+				wp_send_json_error( array( 'message' => 'Lỗi cập nhật cấu hình Portal: ' . $update_res->get_error_message() ) );
+			}
+		}
+
 		$result = $engine->generate_portal_ui( $table, array(
 			'add_gutenberg' => $add_gutenberg,
 		) );
@@ -437,6 +472,7 @@ class Admin_Ajax {
 			'data'              => $result 
 		) );
 	}
+
 
 	/**
 	 * AJAX: Tạo App Blueprint
