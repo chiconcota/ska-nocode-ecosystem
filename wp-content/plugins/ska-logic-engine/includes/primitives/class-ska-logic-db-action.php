@@ -52,6 +52,51 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
                     $data_to_save[$col] = $this->evaluate_field($expr, $payload);
                 }
             }
+
+            // 3. CHUẨN HÓA DỮ LIỆU: Chuẩn hóa trường Relation và các dữ liệu dạng mảng trước khi ghi DB
+            $all_dict = get_option('ska_data_dictionary', []);
+            $table_dict = isset($all_dict[$table]) ? $all_dict[$table] : [];
+            
+            foreach ($data_to_save as $col => $val) {
+                if (isset($table_dict[$col])) {
+                    $col_type = isset($table_dict[$col]['type']) ? $table_dict[$col]['type'] : '';
+                    if ($col_type === 'relation') {
+                        if (is_array($val)) {
+                            $ids = [];
+                            foreach ($val as $item) {
+                                if (is_array($item) && isset($item['id'])) {
+                                    $ids[] = $item['id'];
+                                } elseif (is_object($item) && isset($item->id)) {
+                                    $ids[] = $item->id;
+                                } else {
+                                    $ids[] = $item;
+                                }
+                            }
+                            $data_to_save[$col] = implode(',', array_filter(array_map('trim', $ids)));
+                        } elseif (is_string($val)) {
+                            $trimmed_val = trim($val);
+                            if (str_starts_with($trimmed_val, '[') || str_starts_with($trimmed_val, '{')) {
+                                $decoded = json_decode($trimmed_val, true);
+                                if (is_array($decoded)) {
+                                    $ids = [];
+                                    foreach ($decoded as $item) {
+                                        if (is_array($item) && isset($item['id'])) {
+                                            $ids[] = $item['id'];
+                                        } else {
+                                            $ids[] = $item;
+                                        }
+                                    }
+                                    $data_to_save[$col] = implode(',', array_filter(array_map('trim', $ids)));
+                                }
+                            }
+                        }
+                    } else {
+                        if (is_array($val)) {
+                            $data_to_save[$col] = wp_json_encode($val);
+                        }
+                    }
+                }
+            }
         }
 
         switch ($actionType) {

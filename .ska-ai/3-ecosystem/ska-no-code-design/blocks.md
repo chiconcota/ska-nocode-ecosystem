@@ -57,6 +57,7 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
 - **Trạng thái:** Không bọc form mặc định, tuân thủ nguyên lý `ALLOW_BLOCKS` cho phép nhúng Container làm layout grid.
 - **Pivot (2026-04-14):** Form được giao nhiệm vụ tự động hóa thu thập dữ liệu (payload theo thẻ `name`) và bắn AJAX về Engine thay vì ép người dùng Nocode viết mã JS bằng AlpineJS `x-on:click`.
 - **Alpine Form Integration (2026-04-23):** Hoàn thiện liên kết hai chiều giữa Cấu trúc Khối (HTML) và Logic Backend (Ska Logic Engine) thông qua Controller `skaForm('workflow_id')`. Các trường State UI (`fields.*`, `status.*`) được chuẩn hóa toàn bộ, cho phép Form tiếp nhận, validation, và submit dữ liệu siêu mượt mà không cần code JS thêm. Script Dependency của `alpine.min.js` cũng được fix đảm bảo nó luôn load sau `ska-frontend.js` để Controller được sẵn sàng trước khi DOM quét Alpine State.
+- **Form Reset Logic on Success (2026-05-22):** Nâng cấp Controller `skaForm` trong `ska-frontend.js` để tự động xác định trạng thái form là Update View (`isUpdate` đánh giá là `true`) khi `actionId` bắt đầu bằng `update_`, hoặc form fields có `id`, hoặc `Alpine.store('skaPortal').currentData.id` hợp lệ. Logic này ngăn việc form bị reset trắng sau khi submit update thành công (giữ nguyên dữ liệu trên Detail View của Portal), trong khi vẫn thực hiện reset form rỗng bình thường trên Create View (Insert).
 
 #### 9. Ska Input (`ska-builder/input`) & Ska Select (`ska-builder/select`)
 - **Attributes:** `fieldName`, `inputType`, `placeholder`, `isRequired`, `tailwindClasses`, `customStyle`.
@@ -75,6 +76,8 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
 - **Backend Architecture (2026-04-22):** Sử dụng cơ chế Bulk Loading thông qua `Organisms_API::get_bulk_html` để load hàng loạt template HTML của Organism. Áp dụng Hydration Engine tốc độ cao bằng `preg_replace_callback` để đắp Data (Flat Tables) vào cặp thẻ Mustache `{{key}}`. Không được query SQL bên trong vòng lặp.
 - **Condition Matching (2026-05-04):** Sử dụng `SkaLogicEngine::evaluate` (SkaFX) để quét và quyết định Slot hiển thị. Chấp nhận các giá trị Truthy (`1`, `'1'`, `true`, `'true'`) để đánh giá biểu thức logic chính xác hơn. Hỗ trợ biến hệ thống `$item` để điều kiện hóa từng bản ghi trong vòng lặp.
 - **Tailwind Integration (2026-05-04):** Bổ sung thuộc tính `tailwindClasses`, tích hợp `<TailwindPanel>` vào Sidebar và ép Editor/Frontend cùng dùng chung một lớp bọc thẻ `<div class="wp-block-ska-builder-loop ska-loop-wrapper [TAILWIND]">` duy nhất để sửa dứt điểm lỗi mất Layout khi kéo thả ngang dọc. Đã xóa toàn bộ HTML Dump và Log rác ở Production để tối ưu hiệu năng.
+- **Phân giải hiển thị trường Quan Hệ - Relation Fields (2026-05-22):** Trong tệp `render.php` của vòng lặp loop, hệ thống tự động kiểm tra và nhận diện các cột dữ liệu kiểu quan hệ được lưu trữ dưới dạng mảng JSON (sau khi giải phóng slashes `stripslashes`). Nó sẽ trích xuất tất cả các `label` của đối tượng liên kết và nối chúng bằng dấu phẩy để hiển thị chính xác tên nhãn ngoài List View thay vì in chuỗi JSON thô.
+
 
 ## 3. Cấu trúc thư mục
 - `init.php`: Đăng ký các block.

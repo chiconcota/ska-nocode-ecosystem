@@ -41,12 +41,93 @@ class Ska_Form_Receiver
             $clean_data[sanitize_text_field($k)] = is_string($v) ? sanitize_text_field($v) : $v;
         }
 
-        // 2. Chuyển Lệnh Sang Băng Chuyền (The Runner)
+        // 2. Tự động sinh/đăng ký Workflow nếu là CRUD Portal tự động
+        $workflows = get_option('ska_logic_simple_workflows', []);
+        if (!isset($workflows[$form_id])) {
+            $action_type = '';
+            $table_slug = '';
+            if (strpos($form_id, 'insert_') === 0) {
+                $action_type = 'insert';
+                $table_slug = substr($form_id, 7);
+            } elseif (strpos($form_id, 'update_') === 0) {
+                $action_type = 'update';
+                $table_slug = substr($form_id, 7);
+            }
+
+            if (!empty($action_type) && !empty($table_slug)) {
+                global $wpdb;
+                $prefix = $wpdb->prefix . get_option('ska_data_prefix', 'ska_data_');
+                $table_name = $prefix . $table_slug;
+
+                // Kiểm tra xem bảng vật lý có tồn tại không
+                $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name));
+                if ($table_exists) {
+                    // Tạo đồ thị Workflow
+                    $graph = [
+                        'nodes' => [
+                            [
+                                'id' => 'trigger_1',
+                                'type' => 'TriggerNode',
+                                'class' => 'Ska_Logic_Trigger_Node',
+                                'position' => ['x' => 50, 'y' => 50],
+                                'data' => [
+                                    'label' => 'Trigger Node',
+                                    'workflowId' => $form_id
+                                ]
+                            ],
+                            [
+                                'id' => 'db_action_1',
+                                'type' => 'DBActionNode',
+                                'class' => 'Ska_Logic_DB_Action',
+                                'position' => ['x' => 50, 'y' => 200],
+                                'data' => [
+                                    'label' => 'DB CRUD Action',
+                                    'table' => $table_name,
+                                    'actionType' => $action_type,
+                                    'recordId' => '{{id}}'
+                                ]
+                            ],
+                            [
+                                'id' => 'response_1',
+                                'type' => 'ClientResponseNode',
+                                'class' => 'Ska_Logic_Client_Response',
+                                'position' => ['x' => 50, 'y' => 400],
+                                'data' => [
+                                    'label' => 'Client Response',
+                                    'message' => 'Nhiệm màu! Dữ liệu đã được lưu thành công!'
+                                ]
+                            ]
+                        ],
+                        'edges' => [
+                            [
+                                'source' => 'trigger_1',
+                                'target' => 'db_action_1',
+                                'animated' => true,
+                                'id' => 'edge_trigger_db'
+                            ],
+                            [
+                                'source' => 'db_action_1',
+                                'target' => 'response_1',
+                                'animated' => true,
+                                'id' => 'edge_db_response'
+                            ]
+                        ]
+                    ];
+
+                    $workflows[$form_id] = [
+                        'graph' => $graph
+                    ];
+                    update_option('ska_logic_simple_workflows', $workflows);
+                }
+            }
+        }
+
+        // 3. Chuyển Lệnh Sang Băng Chuyền (The Runner)
         // Áp dụng Nguyên Tắc Vàng = Cấm gọi Class Runner trực tiếp!
         // Truyền Hook vào ko trung, ai hứng thì tính (Ở đây Logic Core đã đăng ký add_filter đón lõng r)
         $completed_payload = apply_filters('ska_logic_run_pipeline', $clean_data, $form_id);
 
-        // 2.1 CẢNH BÁO BẢO MẬT/DEV MODE: Check xem Workflow có tồn tại thật không? Tránh fake success
+        // 3.1 CẢNH BÁO BẢO MẬT/DEV MODE: Check xem Workflow có tồn tại thật không? Tránh fake success
         $workflows = get_option('ska_logic_simple_workflows', []);
         if (!isset($workflows[$form_id])) {
             return rest_ensure_response([

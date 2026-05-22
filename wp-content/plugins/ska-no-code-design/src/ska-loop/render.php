@@ -279,7 +279,20 @@ foreach ( $rows as $index => $row ) {
             $field_name = end( $parts );
             
             if ( isset( $context[ $field_name ] ) ) {
-                return esc_html( (string) $context[ $field_name ] );
+                $val = $context[ $field_name ];
+                if ( is_string( $val ) ) {
+                    $val_clean = trim( stripslashes( $val ) );
+                    if ( str_starts_with( $val_clean, '[{' ) ) {
+                        $decoded = json_decode( $val_clean, true );
+                        if ( is_array( $decoded ) ) {
+                            $labels = array_column( $decoded, 'label' );
+                            if ( ! empty( $labels ) ) {
+                                return esc_html( implode( ', ', $labels ) );
+                            }
+                        }
+                    }
+                }
+                return esc_html( (string) $val );
             }
             
             // Nếu không tìm thấy dữ liệu, trả về lại nguyên gốc để User biết lỗi

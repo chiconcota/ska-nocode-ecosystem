@@ -143,11 +143,13 @@ add_action( 'admin_enqueue_scripts', 'ska_builder_core_register_alpine' );
  * Thứ tự: ska-frontend.js → alpine.min.js → Alpine phát alpine:init → skaForm đăng ký.
  */
 function ska_builder_core_register_frontend_engine() {
+    $js_file = SKA_DESIGN_PATH . 'assets/js/ska-frontend.js';
+    $version = file_exists( $js_file ) ? filemtime( $js_file ) : '1.0.3';
     wp_register_script(
         'ska-frontend',
         SKA_DESIGN_URL . 'assets/js/ska-frontend.js',
         array(),
-        '1.0.3',
+        $version,
         true
     );
 

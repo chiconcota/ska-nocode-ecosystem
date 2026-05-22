@@ -36,8 +36,9 @@ class Ska_Portal_Generator
 	 */
 	public function cleanup_assets_on_table_delete($table_name)
 	{
-		$table_slug = str_replace(get_option('ska_data_prefix', 'ska_data_'), '', $table_name);
 		global $wpdb;
+		$prefix = $wpdb->prefix . get_option('ska_data_prefix', 'ska_data_');
+		$table_slug = str_replace($prefix, '', $table_name);
 
 		$table_templates = $wpdb->prefix . 'ska_data_sys_theme_templates';
 		$table_organisms = $wpdb->prefix . 'ska_data_sys_organisms';
@@ -105,8 +106,11 @@ class Ska_Portal_Generator
 
 		$schema = $dictionary[$table_name];
 		$table_info = isset($schema['__table_info']) ? $schema['__table_info'] : array();
-		$table_label = isset($table_info['label']) ? $table_info['label'] : $table_name;
-		$table_slug = str_replace(get_option('ska_data_prefix', 'ska_data_'), '', $table_name);
+		$table_label = isset($table_info['name']) ? $table_info['name'] : (isset($table_info['label']) ? $table_info['label'] : $table_name);
+		global $wpdb;
+		$prefix = $wpdb->prefix . get_option('ska_data_prefix', 'ska_data_');
+		$table_slug = str_replace($prefix, '', $table_name);
+		$portal_slug = isset($table_info['portal_settings']['slug']) && !empty($table_info['portal_settings']['slug']) ? $table_info['portal_settings']['slug'] : $table_slug;
 
 		// Tự động xác định hoặc khởi tạo Folder tương ứng cho App trong Theme Builder
 		$app_id = isset($table_info['app_id']) ? $table_info['app_id'] : 'uncategorized';
@@ -145,13 +149,14 @@ class Ska_Portal_Generator
 			}
 		}
 
+		// Dọn dẹp các templates và organisms cũ để tránh trùng lặp/xung đột route 404
+		$this->cleanup_existing_assets($table_name, $portal_slug);
+
 		// 1. Sinh Organism (List Row)
 		$organism_id = $this->create_organism($table_slug, $table_label, $schema);
 		if (is_wp_error($organism_id)) {
 			return $organism_id;
 		}
-
-		$portal_slug = isset($table_info['portal_settings']['slug']) && !empty($table_info['portal_settings']['slug']) ? $table_info['portal_settings']['slug'] : $table_slug;
 
 		// 2. Sinh List View Template
 		$list_view_id = $this->create_list_view($table_name, $table_slug, $table_label, $organism_id, $folder_id, $portal_slug, $schema);
@@ -587,7 +592,9 @@ class Ska_Portal_Generator
 					$field_html = '<!-- wp:ska-builder/select {"fieldName":"' . esc_attr($col_slug) . '","optionsText":"' . esc_attr($opt_escaped) . '","displayStyle":"dropdown","isRequired":' . ($is_required ? 'true' : 'false') . ',"tailwindClasses":"' . esc_attr($input_classes) . '"} /-->' . "\n";
 				} elseif ($type === 'relation') {
 					$target_table = isset($col_data['options']) ? $col_data['options'] : '';
-					$clean_target_table = str_replace(get_option('ska_data_prefix', 'ska_data_'), '', $target_table);
+					global $wpdb;
+					$prefix = $wpdb->prefix . get_option('ska_data_prefix', 'ska_data_');
+					$clean_target_table = str_replace($prefix, '', $target_table);
 					$field_block = array('name' => 'ska-builder/select', 'attributes' => array('fieldName' => $col_slug, 'optionsText' => '', 'displayStyle' => 'dropdown', 'isRequired' => $is_required, 'skaDynamicBinding' => '{{#foreach ' . $clean_target_table . '.id}}', 'tailwindClasses' => $input_classes), 'innerBlocks' => array());
 					$field_html = '<!-- wp:ska-builder/select {"fieldName":"' . esc_attr($col_slug) . '","optionsText":"","displayStyle":"dropdown","isRequired":' . ($is_required ? 'true' : 'false') . ',"skaDynamicBinding":"{{#foreach ' . esc_attr($clean_target_table) . '.id}}","tailwindClasses":"' . esc_attr($input_classes) . '"} /-->' . "\n";
 				} else {
@@ -755,6 +762,80 @@ class Ska_Portal_Generator
 		if (!$result) return new \WP_Error('insert_failed', 'Không thể tạo Create View Template.');
 
 		return $result;
+	}
+
+	/**
+	 * Dọn dẹp các templates và organisms cũ của một bảng trước khi sinh assets mới
+	 *
+	 * @param string $table_name Tên bảng vật lý đầy đủ
+	 * @param string $portal_slug Slug của portal được cấu hình
+	 */
+	private function cleanup_existing_assets($table_name, $portal_slug)
+	{
+		global $wpdb;
+		$prefix = $wpdb->prefix . get_option('ska_data_prefix', 'ska_data_');
+		$table_slug_clean = str_replace($prefix, '', $table_name);
+		// Tính slug cũ (có thể dính wp_ do lỗi trước đây)
+		$table_slug_old = str_replace(get_option('ska_data_prefix', 'ska_data_'), '', $table_name);
+
+		$table_templates = $wpdb->prefix . 'ska_data_sys_theme_templates';
+		$table_organisms = $wpdb->prefix . 'ska_data_sys_organisms';
+
+		// Thu thập các giá trị slug cần quét dọn
+		$slugs_to_clean = array_unique(array($table_slug_clean, $table_slug_old, $portal_slug));
+		$slugs_to_clean = array_filter($slugs_to_clean);
+
+		if (empty($slugs_to_clean)) {
+			return;
+		}
+
+		// 1. Tìm các templates có conditions chứa các slug này
+		$templates_to_delete = array();
+		$organism_ids = array();
+
+		foreach ($slugs_to_clean as $slug) {
+			$like_slug = '%' . $wpdb->esc_like('"' . $slug . '"') . '%';
+			$results = $wpdb->get_results($wpdb->prepare(
+				"SELECT id, organism_id FROM $table_templates WHERE conditions LIKE %s",
+				$like_slug
+			));
+			if (!empty($results)) {
+				foreach ($results as $tpl) {
+					$templates_to_delete[] = intval($tpl->id);
+					if (!empty($tpl->organism_id)) {
+						$organism_ids[] = intval($tpl->organism_id);
+					}
+				}
+			}
+		}
+
+		// 2. Xóa các Organisms liên kết trực tiếp với templates đó
+		if (!empty($organism_ids)) {
+			$organism_ids = array_unique($organism_ids);
+			$ids_placeholders = implode(',', array_fill(0, count($organism_ids), '%d'));
+			$wpdb->query($wpdb->prepare(
+				"DELETE FROM $table_organisms WHERE id IN ($ids_placeholders)",
+				...$organism_ids
+			));
+		}
+
+		// 3. Xóa các Organisms của bảng này dựa trên json_content (ví dụ: loop, row)
+		$wpdb->query($wpdb->prepare(
+			"DELETE FROM $table_organisms WHERE json_content LIKE %s OR json_content LIKE %s OR json_content LIKE %s",
+			'%' . $wpdb->esc_like('"' . $table_slug_clean . '.id"') . '%',
+			'%' . $wpdb->esc_like('"sourceTable":"' . $table_name . '"') . '%',
+			'%' . $wpdb->esc_like('update_' . $table_slug_clean) . '%'
+		));
+
+		// 4. Xóa các Templates ra khỏi bảng
+		if (!empty($templates_to_delete)) {
+			$templates_to_delete = array_unique($templates_to_delete);
+			$tpl_placeholders = implode(',', array_fill(0, count($templates_to_delete), '%d'));
+			$wpdb->query($wpdb->prepare(
+				"DELETE FROM $table_templates WHERE id IN ($tpl_placeholders)",
+				...$templates_to_delete
+			));
+		}
 	}
 }
 
