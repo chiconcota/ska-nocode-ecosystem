@@ -71,6 +71,12 @@ class Rest_Api {
 				),
 			),
 		) );
+
+		register_rest_route( 'ska-data/v1', '/portal/(?P<table>[a-zA-Z0-9_-]+)/rows/(?P<id>\d+)', array(
+			'methods'             => WP_REST_Server::DELETABLE,
+			'callback'            => array( $this, 'delete_portal_row' ),
+			'permission_callback' => array( $this, 'check_portal_permissions' ),
+		) );
 	}
 
 	/**
@@ -211,5 +217,49 @@ class Rest_Api {
 		);
 
 		return new WP_REST_Response( $response_data, 200 );
+	}
+
+	/**
+	 * Xử lý xóa dòng từ Portal Frontend REST API
+	 */
+	public function delete_portal_row( WP_REST_Request $request ) {
+		global $wpdb;
+		
+		$table_name = $request['table'];
+		$id = absint( $request['id'] );
+		
+		// Đảm bảo có prefix
+		if ( strpos( $table_name, $wpdb->prefix ) !== 0 ) {
+			$table_name = $wpdb->prefix . $table_name;
+		}
+
+		if ( ! class_exists( '\Ska\Data\Core\Database_Engine' ) ) {
+			return new WP_REST_Response( array(
+				'success' => false,
+				'message' => 'Lỗi hệ thống: Engine dữ liệu chưa sẵn sàng.'
+			), 500 );
+		}
+
+		$engine = \Ska\Data\Core\Database_Engine::get_instance();
+		$result = $engine->delete_row( $table_name, $id );
+
+		if ( is_wp_error( $result ) ) {
+			return new WP_REST_Response( array(
+				'success' => false,
+				'message' => $result->get_error_message()
+			), 400 );
+		}
+
+		if ( ! $result ) {
+			return new WP_REST_Response( array(
+				'success' => false,
+				'message' => 'Không thể xóa dòng hoặc dòng không tồn tại.'
+			), 400 );
+		}
+
+		return new WP_REST_Response( array(
+			'success' => true,
+			'message' => 'Xóa dòng thành công.'
+		), 200 );
 	}
 }

@@ -1,31 +1,25 @@
-# CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v1.0.0)
+# CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v2.0.0)
 *Ngày cập nhật: 2026-05-22*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Công việc**: Khắc phục lỗi các trường dữ liệu bị biến mất (reset về chuỗi rỗng) sau khi người dùng nhấn nút cập nhật trên Detail/Update View của Portal.
-- **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH & KIỂM THỬ THÀNH CÔNG.
-- **Kết quả E2E**: Đã thêm logic kiểm tra `isUpdate` thông minh trong `ska-frontend.js`. Khi thực thi lưu ở Detail/Update View (thông qua `actionId.startsWith('update_')`, hoặc presence của `fields.id`, hoặc presence của `Alpine.store('skaPortal').currentData.id`), controller `skaForm` sẽ giữ nguyên giá trị đã nhập ngoài frontend thay vì reset trắng biểu mẫu. Đã kiểm thử thành công trên trang `http://ska-core-builder.local/phong-khach-san/1/` bằng Chrome DevTools, xác nhận dữ liệu được cập nhật thành công và các trường dữ liệu không bị biến mất. Trái lại, trên trang Create View (`/create/`), form vẫn được tự động reset rỗng như mong đợi.
-
-### 5. Fixed Teleport querySelector & Separated Close vs Save Modal Actions
-- **Files:**
-  - [ska-frontend.js](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/assets/js/ska-frontend.js)
-  - [render.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/src/ska-form-rich-text/render.php)
-  - [class-api-shadow-scratchpad.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/theme-builder/class-api-shadow-scratchpad.php)
-- **Change:**
-  - Resolved `null` reference error when querying the Gutenberg iframe inside the Alpine.js component: because the modal container is teleported to `body` via `x-teleport="body"`, querying `this.$el.querySelector('iframe')` always returned `null`. Replaced this with a global lookup using `document.getElementById` and a unique iframe ID structure (`ska_iframe_${fieldName}`).
-  - Separated the modal closing action: only retrieve and update Alpine fields and TinyMCE when `saveChanges` is `true`.
-  - Added a `150ms` delay after calling Gutenberg's `clearEntityRecordEdits` to let React re-render inside the iframe.
-  - **Bulletproof Beforeunload Interceptor:** Added a hook on `admin_head` inside `class-api-shadow-scratchpad.php` to inject an inline script inside the iframe when editing `ska_scratchpad`. This script overrides `window.addEventListener` and `window.onbeforeunload` to intercept and completely block Gutenberg's `beforeunload` warnings, resolving the browser alert dialog issue in both save and cancel flows.
-  - Bumped frontend script version in `blocks/init.php` to `1.0.3` to prevent client browser caching.
+- **Công việc**: Tích hợp tính năng Xóa Dòng (Row Deletion) an toàn trực tiếp trên giao diện List View của Portal ở Frontend.
+- **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH & KIỂM THỬ THÀNH CÔNG 100%.
+- **Kết quả E2E**: 
+  - Đã thêm route `DELETE` `/portal/{table}/rows/{id}` hỗ trợ phân quyền an toàn qua `check_portal_permissions()` trong `Ska Data Pro`.
+  - Refactor `create_organism` trong `Ska_Portal_Generator` để đổi container row từ `<a>` sang `<div>` và xử lý click định hướng qua Alpine.js, loại trừ click vào nút Xóa để tránh lỗi Nesting Tag.
+  - Inject đoạn JS helper `deleteRow` thực hiện fetch API và xử lý hiệu ứng mờ dần (opacity) kết hợp thu hẹp chiều cao (height) mượt mà trước khi xóa hẳn dòng khỏi DOM.
+  - Đã tạo lại Portal Organism và Template List View thành công, kiểm thử trực tiếp trên trình duyệt bằng `chrome-devtools-mcp` xác nhận xóa record thành công ở database và cập nhật giao diện mượt mà.
 
 ## 2. Chi tiết các tệp đã sửa đổi (Modified Files)
-- **Frontend JS**: [ska-frontend.js](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/assets/js/ska-frontend.js) - Bổ sung logic clear entity edits trước khi unload iframe URL.
-- **Build Output**: Đã compile thành công qua `npm run build` và đồng bộ qua `npm run sync`.
+- **REST API Endpoint**: [class-rest-api.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/inc/api/class-rest-api.php)
+- **Portal Generator**: [class-ska-portal-generator.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/theme-builder/class-ska-portal-generator.php)
+- **Portal Router**: [class-ska-app-router.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/theme-builder/class-ska-app-router.php)
 
 ## 3. Nhật ký và Tài liệu đi kèm
 - Cập nhật **Decision Log**: `.ska-ai/2-memory/decision-log.md`
 - Cập nhật **System Map Recent Logs**: `.ska-ai/1-overview/system_map.md`
-- Cập nhật **Ecosystem Blocks Docs**: `.ska-ai/3-ecosystem/ska-no-code-design/blocks.md`
+- Cập nhật **Ecosystem Documentation**: `.ska-ai/3-ecosystem/ska-no-code-design/design-engine.md` và `.ska-ai/3-ecosystem/ska-data-pro/architecture.md`
+- Cập nhật **Project Manager**: `.ska-ai/1-overview/project-managers/design-workflow-app-portal-views.md` (Ghi nhận Task 5 & Hoàn thành)
 
 ## 4. Công việc tiếp theo (Next Steps)
-- Tiếp tục kiểm thử E2E và bàn giao cho khách hàng hoặc triển khai các tác vụ tiếp theo của Phase 4.6.
+- Tiếp tục thực hiện các tác vụ tiếp theo của Phase 4.6 (như phát triển Trigger Node "Table Listener" trong Ska Logic Engine).

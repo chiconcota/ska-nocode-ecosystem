@@ -394,30 +394,59 @@ function _registerSkaScratchpad() {
         },
         
         init() {
-            // Khởi tạo liên kết TinyMCE với AlpineJS fields
-            setTimeout(() => {
-                const editorId = 'ska_editor_' + fieldName.replace(/-/g, '_').toLowerCase();
-                if (window.tinymce && window.tinymce.get(editorId)) {
-                    const ed = window.tinymce.get(editorId);
-                    
-                    // Lắng nghe thay đổi từ TinyMCE để update Alpine
-                    ed.on('change keyup', () => {
-                        this.fields[fieldName] = ed.getContent();
-                    });
+            const editorId = 'ska_editor_' + fieldName.replace(/-/g, '_').toLowerCase();
+            const textarea = document.getElementById(editorId);
 
-                    // Lắng nghe thay đổi từ Alpine để update TinyMCE (nếu load data từ API)
-                    this.$watch(`fields.${fieldName}`, (val) => {
-                        if (ed.getContent() !== val) {
-                            ed.setContent(val || '');
-                        }
-                    });
-
-                    // Set giá trị ban đầu nếu Alpine đã có data (ví dụ lúc Edit)
-                    if (this.fields[fieldName]) {
-                        ed.setContent(this.fields[fieldName]);
-                    }
+            // 1. Đồng bộ trực tiếp với textarea thô (chế độ Code/HTML)
+            if (textarea) {
+                if (this.fields[fieldName]) {
+                    textarea.value = this.fields[fieldName];
                 }
-            }, 1000);
+                textarea.addEventListener('input', (e) => {
+                    this.fields[fieldName] = e.target.value;
+                });
+                textarea.addEventListener('change', (e) => {
+                    this.fields[fieldName] = e.target.value;
+                });
+                this.$watch(`fields.${fieldName}`, (val) => {
+                    if (textarea.value !== val) {
+                        textarea.value = val || '';
+                    }
+                });
+            }
+
+            // 2. Đồng bộ với TinyMCE
+            const bindTinyMCE = (ed) => {
+                if (ed.id !== editorId) return;
+
+                // Lắng nghe thay đổi từ TinyMCE để update Alpine
+                ed.on('change keyup NodeChange', () => {
+                    this.fields[fieldName] = ed.getContent();
+                });
+
+                // Lắng nghe thay đổi từ Alpine để đồng bộ lại TinyMCE
+                this.$watch(`fields.${fieldName}`, (val) => {
+                    if (ed.getContent() !== val) {
+                        ed.setContent(val || '');
+                    }
+                });
+
+                // Set giá trị ban đầu nếu Alpine đã có data (ví dụ lúc Edit)
+                if (this.fields[fieldName]) {
+                    ed.setContent(this.fields[fieldName]);
+                }
+            };
+
+            if (window.tinymce) {
+                const existingEd = window.tinymce.get(editorId);
+                if (existingEd) {
+                    bindTinyMCE(existingEd);
+                }
+                // Lắng nghe nếu editor được tạo sau (ví dụ click chuyển tab Visual)
+                window.tinymce.on('AddEditor', (e) => {
+                    bindTinyMCE(e.editor);
+                });
+            }
         },
 
         async openDesigner() {

@@ -59,6 +59,7 @@ Nằm tại `assets/js/src`:
 - **Kiến trúc Parasite Dispatcher:** Router không dựa vào hook trễ `template_redirect` mà dùng `parse_request` để đánh chặn URL ở vòng ngoài cùng.
 - **Short-circuit WP_Query:** Để tránh việc WP tốn CPU truy vấn Database cho trang 404, Router can thiệp vào hook `posts_pre_query` để ép WP_Query trả về mảng rỗng và vô hiệu hóa cơ chế tìm bài viết.
 - **Custom Base Slug & Dynamic Context:** Các bảng được gán một URL Slug tùy ý (không dính tiền tố cứng `/portal/`). Khi người dùng truy cập `/slug/{id}`, Router bóc tách ID động và bơm xuống biến Javascript toàn cục `window.SkaPortalContext` để Frontend (Alpine.js / Logic Engine) chủ động call API gọi dữ liệu Chi tiết.
+- **REST API DELETE Endpoint (2026-05-22):** Đăng ký route `DELETE` `/portal/(?P<table>[a-zA-Z0-9_-]+)/rows/(?P<id>\d+)` trong `class-rest-api.php`. Cho phép người dùng ở Frontend thực hiện xóa dòng an toàn nhờ việc kiểm tra quyền truy cập thông qua hàm `check_portal_permissions()` xác thực nonce và quyền hạn của user trên bảng phẳng, trước khi gọi `Database_Engine::delete_record()` xóa vĩnh viễn dòng dữ liệu vật lý.
 
 ## 7. PHASE 4: GLOBAL "APP-SITE" SMART OBJECT
 - **Centralized Definition:** Ở Phase 4, Ska Data Pro sẽ thầu luôn việc lưu trữ tài nguyên vĩ mô của Website thông qua một Smart Object mang nhóm hệ thống (Ví dụ: `app-site`). 
