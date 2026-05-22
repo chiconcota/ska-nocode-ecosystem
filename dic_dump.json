@@ -318,7 +318,16 @@
         "__table_info": {
             "name": "Ph\u00f2ng Kh\u00e1ch S\u1ea1n",
             "icon": "dashicons-media-spreadsheet",
-            "app_id": "app_quan_ly_dat_phong_khach_san"
+            "app_id": "app_quan_ly_dat_phong_khach_san",
+            "portal_settings": {
+                "active": true,
+                "slug": "phong-khach-san",
+                "roles": [
+                    "Administrator"
+                ],
+                "view_mode": "crud",
+                "unauthorized_redirect_url": ""
+            }
         },
         "ma_dat_phong": {
             "label": "M\u00e3 \u0110\u1eb7t Ph\u00f2ng",
@@ -354,6 +363,11 @@
             "label": "Tr\u1ea1ng th\u00e1i Thanh to\u00e1n",
             "type": "select",
             "options": "Ch\u01b0a thanh to\u00e1n, \u0110\u00e3 thanh to\u00e1n"
+        },
+        "noi_dung": {
+            "label": "N\u1ed9i dung",
+            "type": "long_text",
+            "options": ""
         }
     },
     "wp_ska_data_app_quan_ly_dat_phong_khach_san_lich_dat_phong": {
