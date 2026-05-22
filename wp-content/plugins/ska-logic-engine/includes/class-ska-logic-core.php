@@ -103,11 +103,15 @@ class Ska_Logic_Core {
     }
 
     public function enqueue_frontend_scripts() {
+        $version = file_exists( SKA_LOGIC_ENGINE_DIR . 'assets/js/ska-core.js' ) 
+            ? filemtime( SKA_LOGIC_ENGINE_DIR . 'assets/js/ska-core.js' ) 
+            : SKA_LOGIC_ENGINE_VERSION;
+
         wp_enqueue_script(
             'ska-core-js',
             SKA_LOGIC_ENGINE_URL . 'assets/js/ska-core.js',
             [],
-            SKA_LOGIC_ENGINE_VERSION,
+            $version,
             true
         );
 

@@ -31,14 +31,53 @@ class Ska_Form_Receiver
             $form_id = trim(sanitize_text_field(reset($form_id)));
         }
 
-        // 1. Phễu Khử Độc: Chặn XSS Injection cơ bản nhất 
-        // Lớp Kho còn 1 bộ vệ sinh SQL nữa
+        // 1. Phễu Khử Độc: Chặn XSS Injection cơ bản nhất và phân loại kiểu cột
+        global $wpdb;
+        $table_slug = '';
+        if (strpos($form_id, 'insert_') === 0) {
+            $table_slug = substr($form_id, 7);
+        } elseif (strpos($form_id, 'update_') === 0) {
+            $table_slug = substr($form_id, 7);
+        }
+
+        $table_schema = [];
+        if (!empty($table_slug)) {
+            $prefix = $wpdb->prefix . get_option('ska_data_prefix', 'ska_data_');
+            $table_name = $prefix . $table_slug;
+            $dictionary = get_option('ska_data_dictionary', []);
+            if (isset($dictionary[$table_name]) && is_array($dictionary[$table_name])) {
+                $table_schema = $dictionary[$table_name];
+            }
+        }
+
         $clean_data = [];
         foreach ($data as $k => $v) {
             // Loại bỏ cái tham số route rác của REST API
-            if ($k === 'rest_route')
+            if ($k === 'rest_route') {
                 continue;
-            $clean_data[sanitize_text_field($k)] = is_string($v) ? sanitize_text_field($v) : $v;
+            }
+
+            $clean_key = sanitize_text_field($k);
+            
+            // Lấy kiểu cột từ lược đồ schema
+            $col_type = '';
+            if (isset($table_schema[$clean_key]) && is_array($table_schema[$clean_key])) {
+                $col_type = $table_schema[$clean_key]['type'] ?? '';
+            }
+
+            if (is_string($v)) {
+                if ($col_type === 'long_text') {
+                    // long_text: Bỏ qua sanitize_text_field để bảo toàn mã HTML, CSS JIT, và block comments Gutenberg
+                    $clean_data[$clean_key] = wp_unslash($v);
+                } elseif (in_array($col_type, ['relation', 'multi_select', 'rollup'], true) && (str_starts_with($v, '[') || str_starts_with($v, '{'))) {
+                    // relation/multi_select/rollup: Bỏ qua sanitize_text_field nếu là chuỗi JSON để không phá hủy cấu trúc mảng/đối tượng
+                    $clean_data[$clean_key] = wp_unslash($v);
+                } else {
+                    $clean_data[$clean_key] = sanitize_text_field($v);
+                }
+            } else {
+                $clean_data[$clean_key] = $v;
+            }
         }
 
         // 2. Tự động sinh/đăng ký Workflow nếu là CRUD Portal tự động
@@ -51,6 +90,9 @@ class Ska_Form_Receiver
                 $table_slug = substr($form_id, 7);
             } elseif (strpos($form_id, 'update_') === 0) {
                 $action_type = 'update';
+                $table_slug = substr($form_id, 7);
+            } elseif (strpos($form_id, 'delete_') === 0) {
+                $action_type = 'delete';
                 $table_slug = substr($form_id, 7);
             }
 
@@ -94,7 +136,8 @@ class Ska_Form_Receiver
                                 'position' => ['x' => 50, 'y' => 400],
                                 'data' => [
                                     'label' => 'Client Response',
-                                    'message' => 'Nhiệm màu! Dữ liệu đã được lưu thành công!'
+                                    'response_type' => ($action_type === 'delete') ? 'remove_row' : 'toast',
+                                    'message' => ($action_type === 'delete') ? 'Đã xóa bản ghi thành công!' : 'Nhiệm màu! Dữ liệu đã được lưu thành công!'
                                 ]
                             ]
                         ],

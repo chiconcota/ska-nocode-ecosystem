@@ -327,7 +327,7 @@ class Ska_Portal_Generator
 		// Action Column
 		$action_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center justify-end gap-3"} -->' . "\n";
 		$action_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":">","tailwindClasses":"text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all font-bold cursor-pointer"} /-->' . "\n";
-		$action_html .= '<!-- wp:ska-builder/container {"tagName":"button","tailwindClasses":"action-btn p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center","htmlAttributes":[{"key":"@click.stop","value":"if (confirm(\'Bạn có chắc chắn muốn xóa vĩnh viễn dòng này?\')) { deleteRow({{id}}, $el) }"}]} -->' . "\n";
+		$action_html .= '<!-- wp:ska-builder/container {"tagName":"button","tailwindClasses":"ska-action-delete_' . esc_attr($table_slug) . ' action-btn p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center","htmlAttributes":[{"key":"data-ska-payload","value":"{\\"id\\": {{id}}}"},{"key":"data-ska-confirm","value":"Bạn có chắc chắn muốn xóa vĩnh viễn dòng này?"}]} -->' . "\n";
 		$action_html .= '<!-- wp:ska-builder/icon {"iconName":"delete","tailwindClasses":"text-lg"} /-->' . "\n";
 		$action_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$action_html .= '<!-- /wp:ska-builder/container -->' . "\n";
@@ -344,9 +344,10 @@ class Ska_Portal_Generator
 					'name' => 'ska-builder/container',
 					'attributes' => array(
 						'tagName' => 'button',
-						'tailwindClasses' => 'action-btn p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center',
+						'tailwindClasses' => 'ska-action-delete_' . esc_attr($table_slug) . ' action-btn p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center',
 						'htmlAttributes' => array(
-							array('key' => '@click.stop', 'value' => 'if (confirm(\'Bạn có chắc chắn muốn xóa vĩnh viễn dòng này?\')) { deleteRow({{id}}, $el) }')
+							array('key' => 'data-ska-payload', 'value' => '{"id": {{id}}}'),
+							array('key' => 'data-ska-confirm', 'value' => 'Bạn có chắc chắn muốn xóa vĩnh viễn dòng này?')
 						)
 					),
 					'innerBlocks' => array(

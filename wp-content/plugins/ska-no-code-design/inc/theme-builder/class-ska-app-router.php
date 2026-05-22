@@ -38,9 +38,6 @@ class Ska_App_Router {
 
 		// Setup frontend context (Alpine variables)
 		add_action( 'wp_head', array( $this, 'inject_frontend_context' ), 5 );
-
-		// Inject portal footer scripts
-		add_action( 'wp_footer', array( $this, 'inject_portal_footer_scripts' ), 100 );
 	}
 
 	/**
@@ -299,75 +296,6 @@ class Ska_App_Router {
 		echo "</script>\n";
 	}
 
-	/**
-	 * Inject portal helper scripts (e.g. deleteRow) into footer
-	 */
-	public function inject_portal_footer_scripts() {
-		global $ska_current_portal;
-		
-		// Only output if this is a valid portal request
-		if ( empty( $ska_current_portal ) ) {
-			return;
-		}
-		?>
-		<script id="ska-portal-footer-scripts">
-		function deleteRow(id, btnEl) {
-			if (!id || !btnEl) return;
-			
-			const rowEl = btnEl.closest('.ska-organism-row');
-			if (!rowEl) return;
 
-			const context = window.SkaPortalContext;
-			if (!context || !context.restUrl || !context.nonce) {
-				alert('Lỗi: Hệ thống chưa được cấu hình đầy đủ để thực hiện hành động này.');
-				return;
-			}
-
-			const deleteUrl = context.restUrl + '/' + id;
-
-			rowEl.style.transition = 'all 0.5s ease';
-			rowEl.style.opacity = '0.5';
-			rowEl.style.pointerEvents = 'none';
-
-			fetch(deleteUrl, {
-				method: 'DELETE',
-				headers: {
-					'X-WP-Nonce': context.nonce,
-					'Content-Type': 'application/json'
-				}
-			})
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('Yêu cầu xóa thất bại.');
-				}
-				return response.json();
-			})
-			.then(data => {
-				if (data.success) {
-					rowEl.style.opacity = '0';
-					rowEl.style.height = '0';
-					rowEl.style.paddingTop = '0';
-					rowEl.style.paddingBottom = '0';
-					rowEl.style.marginTop = '0';
-					rowEl.style.marginBottom = '0';
-					rowEl.style.borderWidth = '0';
-					setTimeout(() => {
-						rowEl.remove();
-					}, 500);
-				} else {
-					rowEl.style.opacity = '1';
-					rowEl.style.pointerEvents = 'auto';
-					alert(data.message || 'Lỗi: Không thể xóa dòng.');
-				}
-			})
-			.catch(error => {
-				rowEl.style.opacity = '1';
-				rowEl.style.pointerEvents = 'auto';
-				alert(error.message || 'Lỗi kết nối hoặc hệ thống.');
-			});
-		}
-		</script>
-		<?php
-	}
 }
 

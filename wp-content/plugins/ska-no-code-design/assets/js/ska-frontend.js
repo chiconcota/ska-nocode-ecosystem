@@ -223,7 +223,7 @@ function _registerSkaForm() {
 
                     // KÍCH HOẠT EVENT BUS - HỆ TUẦN HOÀN CHO PHÉP BACKEND RA LỆNH NGƯỢC LẠI FRONTEND
                     if (data.data && data.data._ska_events && window.$ska && window.$ska.processEventBus) {
-                        window.$ska.processEventBus(data.data._ska_events);
+                        window.$ska.processEventBus(data.data._ska_events, this.$el);
                     }
 
                     // Reset Form (chỉ reset nếu không phải là cập nhật - update)
