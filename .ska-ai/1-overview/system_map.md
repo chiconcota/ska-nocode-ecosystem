@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v1.0.0)
-@status: ONE-CLICK APP PORTAL (PHASE 4) | @last_update: 2026-05-21
+@status: ONE-CLICK APP PORTAL (PHASE 4) | @last_update: 2026-05-22
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core (Host) + PHP 8.2+
@@ -61,6 +61,10 @@ Dù chi tiết quyết định đã được lưu vào `archive/decision-log-pha
 
 ## 7. RECENT LOGS (LATEST)
 > *Các nhật ký từ Phase 1 và 2 đã được lưu trữ trong `.ska-ai/2-memory/archive/`. Chỉ giữ lại các cập nhật cốt lõi gần đây (Phase 3 -> Phase 4).*
+
+- **2026-05-22 - 🟢 Hoàn thành: Tích hợp tính năng Xóa Dòng trực tiếp trên Portal List View (Phase 4.6):** Bổ sung REST API endpoint `DELETE` `/portal/{table}/rows/{id}` với phân quyền an toàn `check_portal_permissions()`. Refactor `create_organism` chuyển đổi Container ngoài cùng của Row từ `<a>` sang `<div>` và bắt sự kiện `@click` để tránh lỗi lồng thẻ HTML, đồng thời thêm nút Xóa có class `action-btn` và `@click.stop`. Inject hàm JavaScript helper `deleteRow` thông qua `wp_footer` xử lý gửi API và làm mờ, ẩn dòng biến mất mượt mà trước khi xóa khỏi DOM. Đã kích hoạt tái sinh portal thành công và xác thực hoạt động ổn định.
+
+- **2026-05-22 - 🟢 Hoàn thành: Khắc phục lỗi lưu dữ liệu Design Editor & Đồng bộ TinyMCE/Code View (Phase 4.6):** Sửa lỗi dữ liệu soạn thảo từ Design Editor (Shadow Scratchpad) không được lưu xuống CSDL Ska Data Pro hoặc hiển thị ngoài trang frontend. Giải quyết bằng 2 cải tiến: 1) Nâng cấp `class-form-receiver.php` tự động tra cứu schema của bảng, bỏ qua hoàn toàn hàm `sanitize_text_field()` đối với các cột kiểu `long_text` hoặc kiểu dữ liệu JSON (`relation`, `multi_select`, `rollup`), thay vào đó sử dụng `wp_unslash()` để bảo vệ nguyên vẹn các comment của Gutenberg (`<!-- wp:ska-builder/text -->`) và các block raw HTML/Tailwind phức tạp (bao gồm các block như `html2tailwind`). 2) Khắc phục lỗi không đồng bộ dữ liệu khi trình soạn thảo hiển thị ở tab "Code/HTML" lúc load trang bằng cách thiết lập đồng bộ hai chiều trực tiếp với `<textarea>` thô, kết hợp lắng nghe sự kiện `AddEditor` của TinyMCE để tự động kích hoạt đồng bộ khi người dùng chuyển sang tab "Visual".
 
 - **2026-05-22 - 🟢 Hoàn thành: Khắc phục lỗi reset form khi gửi thành công trên Portal Detail/Update View (Phase 4.6):** Sửa đổi `ska-frontend.js` để có check `isUpdate` thông minh bao gồm kiểm tra `Alpine.store('skaPortal').currentData.id` cùng với `actionId.startsWith('update_')` và `this.fields.id`. Điều này ngăn form bị reset rỗng khi nhấn 'Lưu Thay Đổi' (Update) ở trang chi tiết Portal, trong khi vẫn giữ nguyên chức năng reset form về rỗng ở trang Thêm Mới (Create View). Đã tích hợp query dynamic version `filemtime` trong `init.php` để giải quyết triệt để vấn đề cache JS của trình duyệt.
 

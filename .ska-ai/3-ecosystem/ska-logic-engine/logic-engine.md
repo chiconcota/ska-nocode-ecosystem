@@ -10,7 +10,14 @@ Giao tiếp hoàn toàn vô hình thông qua WP Hook. Cách ly Microservices tri
 - **Tự động sinh/đăng ký Workflow cho CRUD Portal (2026-05-22):** Nếu ID của Form gửi lên có tiền tố `insert_` hoặc `update_` và chưa có workflow cấu hình sẵn, hệ thống tự động kiểm tra sự tồn tại của bảng phẳng dữ liệu tương ứng. Nếu bảng tồn tại, hệ thống tự động sinh một đồ thị workflow CRUD (Trigger -> DB Action -> Response) và lưu vào `ska_logic_simple_workflows`. Điều này giúp các Portal mới sinh tự động qua App Generator vận hành lưu/thêm bản ghi trơn tru mà không cần cấu hình thủ công.
 - Bơm dữ liệu lên phễu bằng Filter `apply_filters( 'ska_logic_run_pipeline', $clean_data, $form_id )`.
 - Class `Ska_Workflow_Runner` khởi động, lặp qua đồ thị Graph và cho điện chạy qua các cục `Nodes`.
-- Ở cuối bằng chuyền, một Action Node sẽ gồng mình lên phát lệnh `apply_filters('ska_data_insert_record')` để tống cổ cục hàng qua sang vương quốc `Ska Data Pro` đúc MySQL.
+- Ở cuối bằng chuyền, một Action Node sẽ gồng mình lên phát lệnh `apply_filters('ska_data_insert_record')` to tống cổ cục hàng qua sang vương quốc `Ska Data Pro` đúc MySQL.
+
+### 1.1. Quy tắc Lọc Dữ liệu An Toàn (Sanitization Bypass Rules)
+Để hỗ trợ lưu trữ hoàn hảo các khối Gutenberg blocks (`<!-- wp:... -->`), custom raw HTML, các mã CSS Tailwind tùy biến và các kiểu dữ liệu JSON đặc biệt (`relation`, `multi_select`, `rollup`) được tạo ra từ Design Editor (Shadow Scratchpad) hoặc Frontend Portal:
+- Hệ thống đón nhận dữ liệu API (`Ska_Logic_Form_Receiver`) tự động tra cứu lược đồ bảng (`ska_data_dictionary`) dựa trên Form ID.
+- Tự động bỏ qua hàm lọc `sanitize_text_field()` đối với các cột được định nghĩa kiểu `long_text` hoặc kiểu dữ liệu JSON, thay vào đó áp dụng `wp_unslash()` để lưu trữ dữ liệu thô nguyên bản vào CSDL phẳng `wp_ska_data_*`.
+- Phòng chống tấn công SQL Injection vẫn được bảo đảm tuyệt đối 100% nhờ việc sử dụng cơ chế prepared statements (`$wpdb->prepare`, `$wpdb->insert`, `$wpdb->update`) ở tầng xử lý DB Action Node.
+
 
 
 ## 2. Tiêu Chuẩn Giao Diện Node

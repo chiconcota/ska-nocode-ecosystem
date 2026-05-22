@@ -248,7 +248,7 @@ class Ska_Portal_Generator
 
 		$portal_slug = isset($schema['__table_info']['portal_settings']['slug']) && !empty($schema['__table_info']['portal_settings']['slug']) ? $schema['__table_info']['portal_settings']['slug'] : $table_slug;
 
-		$html_content = '<!-- wp:ska-builder/container {"tagName":"a","tailwindClasses":"ska-organism-row grid ' . $grid_class . ' gap-4 items-center p-4 border-b border-slate-100 bg-white hover:bg-slate-50 transition-colors cursor-pointer group no-underline","htmlAttributes":[{"key":"href","value":"/' . esc_attr($portal_slug) . '/{{id}}/"}]} -->' . "\n";
+		$html_content = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"ska-organism-row grid ' . $grid_class . ' gap-4 items-center p-4 border-b border-slate-100 bg-white hover:bg-slate-50 transition-colors cursor-pointer group","htmlAttributes":[{"key":"@click","value":"if (!$event.target.closest(\'.action-btn\')) window.location.href = \'/' . esc_attr($portal_slug) . '/{{id}}/\'"}]} -->' . "\n";
 		
 		// Col 1 Blocks & HTML
 		$col1_blocks = array(
@@ -288,20 +288,20 @@ class Ska_Portal_Generator
 		
 		$col1_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$col1_html .= '<!-- /wp:ska-builder/container -->' . "\n";
-
+ 
 		$html_content .= $col1_html;
-
+ 
 		// Other Columns
 		$other_cols_blocks = array();
 		$other_cols_html = '';
-
+ 
 		foreach ($columns as $slug => $data) {
 			$type = isset($data['type']) ? $data['type'] : 'text';
 			if ($type === 'select' || $type === 'radio' || $type === 'boolean') {
 				$other_cols_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center"} -->' . "\n";
 				$other_cols_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"{{' . $slug . '}}","tailwindClasses":"px-2.5 py-1 text-xs font-semibold rounded-full bg-green-50 text-green-700"} /-->' . "\n";
 				$other_cols_html .= '<!-- /wp:ska-builder/container -->' . "\n";
-
+ 
 				$other_cols_blocks[] = array(
 					'name' => 'ska-builder/container',
 					'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'flex items-center'),
@@ -313,7 +313,7 @@ class Ska_Portal_Generator
 				$other_cols_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center"} -->' . "\n";
 				$other_cols_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"{{' . $slug . '}}","tailwindClasses":"text-sm text-slate-600 line-clamp-1"} /-->' . "\n";
 				$other_cols_html .= '<!-- /wp:ska-builder/container -->' . "\n";
-
+ 
 				$other_cols_blocks[] = array(
 					'name' => 'ska-builder/container',
 					'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'flex items-center'),
@@ -323,31 +323,56 @@ class Ska_Portal_Generator
 				);
 			}
 		}
-
+ 
 		// Action Column
-		$action_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center justify-end"} -->' . "\n";
-		$action_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":">","tailwindClasses":"text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all font-bold"} /-->' . "\n";
+		$action_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center justify-end gap-3"} -->' . "\n";
+		$action_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":">","tailwindClasses":"text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all font-bold cursor-pointer"} /-->' . "\n";
+		$action_html .= '<!-- wp:ska-builder/container {"tagName":"button","tailwindClasses":"action-btn p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center","htmlAttributes":[{"key":"@click.stop","value":"if (confirm(\'Bạn có chắc chắn muốn xóa vĩnh viễn dòng này?\')) { deleteRow({{id}}, $el) }"}]} -->' . "\n";
+		$action_html .= '<!-- wp:ska-builder/icon {"iconName":"delete","tailwindClasses":"text-lg"} /-->' . "\n";
 		$action_html .= '<!-- /wp:ska-builder/container -->' . "\n";
-
+		$action_html .= '<!-- /wp:ska-builder/container -->' . "\n";
+ 
 		$other_cols_blocks[] = array(
 			'name' => 'ska-builder/container',
-			'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'flex items-center justify-end'),
+			'attributes' => array('tagName' => 'div', 'tailwindClasses' => 'flex items-center justify-end gap-3'),
 			'innerBlocks' => array(
-				array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'span', 'content' => '>', 'tailwindClasses' => 'text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all font-bold'))
+				array(
+					'name' => 'ska-builder/text', 
+					'attributes' => array('tagName' => 'span', 'content' => '>', 'tailwindClasses' => 'text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all font-bold cursor-pointer')
+				),
+				array(
+					'name' => 'ska-builder/container',
+					'attributes' => array(
+						'tagName' => 'button',
+						'tailwindClasses' => 'action-btn p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center',
+						'htmlAttributes' => array(
+							array('key' => '@click.stop', 'value' => 'if (confirm(\'Bạn có chắc chắn muốn xóa vĩnh viễn dòng này?\')) { deleteRow({{id}}, $el) }')
+						)
+					),
+					'innerBlocks' => array(
+						array(
+							'name' => 'ska-builder/icon',
+							'attributes' => array(
+								'iconName' => 'delete',
+								'tailwindClasses' => 'text-lg'
+							)
+						)
+					)
+				)
 			)
 		);
-
+ 
 		$html_content .= $other_cols_html . $action_html;
 		$html_content .= '<!-- /wp:ska-builder/container -->';
-
+ 
 		$blocks = array(
 			array(
 				'name' => 'ska-builder/container',
 				'attributes' => array(
-					'tagName' => 'a',
-					'tailwindClasses' => 'ska-organism-row grid ' . $grid_class . ' gap-4 items-center p-4 border-b border-slate-100 bg-white hover:bg-slate-50 transition-colors cursor-pointer group no-underline',
+					'tagName' => 'div',
+					'tailwindClasses' => 'ska-organism-row grid ' . $grid_class . ' gap-4 items-center p-4 border-b border-slate-100 bg-white hover:bg-slate-50 transition-colors cursor-pointer group',
 					'htmlAttributes' => array(
-						array('key' => 'href', 'value' => '/' . $portal_slug . '/{{id}}/')
+						array('key' => '@click', 'value' => 'if (!$event.target.closest(\'.action-btn\')) window.location.href = \'/' . $portal_slug . '/{{id}}/\'')
 					)
 				),
 				'innerBlocks' => array_merge($col1_blocks, $other_cols_blocks)

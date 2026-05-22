@@ -36,6 +36,8 @@ Nâng cấp và hoàn thiện lõi `class-ska-portal-generator.php`. Đảm bả
 - [x] Truy cập Frontend, kiểm tra giao diện CSS có bị vỡ hay không.
 - [x] Test luồng Click nút Thêm Mới -> Chuyển sang Create View -> Nhập liệu -> Submit. Đảm bảo dữ liệu ghi đúng xuống DB.
 - [x] Test click vào một Row -> Mở trang Detail View -> Chỉnh sửa -> Lưu. Đảm bảo bản ghi cập nhật thành công.
+- [x] Tích hợp và kiểm thử tính năng Xóa Dòng (Row Deletion) an toàn trực tiếp trên List View (tránh lỗi Nesting Tag, có hiệu ứng transition mượt mà khi xóa record).
+
 
 ---
 *Tài liệu này được sinh ra để quản lý tiến độ cho mini-project thiết kế UI/UX Generator.*
