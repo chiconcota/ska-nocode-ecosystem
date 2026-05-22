@@ -657,6 +657,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                 className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
               >
                 <option value="toast">Show Toast Message</option>
+                <option value="remove_row">Remove Row (Xóa dòng)</option>
                 <option value="redirect">Redirect / Navigate</option>
                 <option value="open_modal">Open Modal Popup</option>
                 <option value="fire_event">Fire Custom Event</option>
@@ -705,7 +706,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
               </div>
             )}
 
-            {(!selectedNode.data.response_type || selectedNode.data.response_type === 'toast') && (
+            {(!selectedNode.data.response_type || selectedNode.data.response_type === 'toast' || selectedNode.data.response_type === 'remove_row') && (
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Toast Message</label>

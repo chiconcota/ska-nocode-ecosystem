@@ -32,6 +32,11 @@ class Ska_Logic_Client_Response implements Ska_Logic_Node {
                 $event['payload'] = $payload; 
                 break;
                 
+            case 'remove_row':
+                $event['message'] = $this->evaluate_template( $config['message'] ?? 'Đã xóa bản ghi thành công!', $payload );
+                $event['toast_type'] = isset($config['toast_type']) ? $config['toast_type'] : 'success';
+                break;
+                
             case 'toast':
             default:
                 $event['type'] = 'toast';

@@ -7,6 +7,7 @@ window.$ska = {
      * @param {Object} payload Dữ liệu người dùng truyền từ giao diện
      */
     submitForm: async (el, payload = {}) => {
+        window.$ska.lastClickedElement = el;
         // 1. Nhận diện ID Workflow
         const logicId = el.getAttribute('data-ska-action') || el.dataset.logicId || 'default_form_submit';
         
@@ -73,7 +74,7 @@ window.$ska = {
                 
                 // KÍCH HOẠT EVENT BUS - HỆ TUẦN HOÀN CHO PHÉP BACKEND RA LỆNH NGƯỢC LẠI FRONTEND
                 if (result.data && result.data._ska_events) {
-                    window.$ska.processEventBus(result.data._ska_events);
+                    window.$ska.processEventBus(result.data._ska_events, el);
                 }
 
                 // Dọn dẹp Form (Reset Trắng)
@@ -127,7 +128,7 @@ window.$ska = {
      * 
      * @param {Array} events Danh sách lệnh
      */
-    processEventBus: (events) => {
+    processEventBus: (events, initiatorEl = null) => {
         if (!Array.isArray(events)) return;
         
         events.forEach(evt => {
@@ -145,6 +146,64 @@ window.$ska = {
             } 
             else if (evt.type === 'fire_event' && evt.event_name) {
                 window.dispatchEvent(new CustomEvent(evt.event_name, { detail: evt.payload || {} }));
+            }
+            else if (evt.type === 'remove_row') {
+                if (evt.message) {
+                    window.$ska.showToast(evt.message, evt.toast_type || 'success');
+                }
+                const targetEl = initiatorEl || window.$ska.lastClickedElement;
+                if (targetEl) {
+                    let rowEl = null;
+
+                    // 1. Nếu nằm trong Loop, phần tử lặp lại (hàng cần xóa) luôn là con trực tiếp của Loop container
+                    const loopContainer = targetEl.closest('.wp-block-ska-builder-loop, .ska-loop-wrapper');
+                    if (loopContainer) {
+                        let current = targetEl;
+                        while (current && current.parentElement && current.parentElement !== loopContainer) {
+                            current = current.parentElement;
+                        }
+                        if (current && current !== loopContainer) {
+                            rowEl = current;
+                        }
+                    }
+
+                    // 2. Nếu không nằm trong Loop hoặc không tìm thấy, dùng selector truyền thống
+                    if (!rowEl) {
+                        rowEl = targetEl.closest('tr') || 
+                                targetEl.closest('.ska-organism-row') || 
+                                targetEl.closest('.ska-loop-item') || 
+                                targetEl.closest('.loop-item');
+                    }
+
+                    // 3. Fallback cuối cùng: Tránh việc closest() trả về chính targetEl nếu targetEl có class container
+                    if (!rowEl || rowEl === targetEl) {
+                        const parent = targetEl.parentElement;
+                        if (parent) {
+                            rowEl = parent.closest('[data-id]') ||
+                                    parent.closest('.ska-container-block') ||
+                                    parent.closest('.wp-block-ska-builder-container') ||
+                                    parent;
+                        }
+                    }
+
+                    if (rowEl) {
+                        rowEl.style.transition = 'all 0.4s ease';
+                        rowEl.style.opacity = '0';
+                        rowEl.style.transform = 'scale(0.95)';
+                        rowEl.style.maxHeight = rowEl.offsetHeight + 'px';
+                        setTimeout(() => {
+                            rowEl.style.height = '0';
+                            rowEl.style.paddingTop = '0';
+                            rowEl.style.paddingBottom = '0';
+                            rowEl.style.marginTop = '0';
+                            rowEl.style.marginBottom = '0';
+                            rowEl.style.overflow = 'hidden';
+                            setTimeout(() => {
+                                rowEl.remove();
+                            }, 400);
+                        }, 100);
+                    }
+                }
             }
             else if (evt.type === 'toast' && evt.message) {
                 window.$ska.showToast(evt.message, evt.toast_type || 'success');
@@ -213,6 +272,13 @@ document.addEventListener('click', function(e) {
     
     // Nếu nó nằm trong Form đã được binding bằng Alpine (skaForm) thì bỏ qua để Form tự xử lý
     if (actionEl.closest('form[x-data*="skaForm"]')) return;
+
+    // Lấy confirm message trước khi chạy
+    const confirmMsg = actionEl.getAttribute('data-ska-confirm');
+    if (confirmMsg && !window.confirm(confirmMsg)) {
+        e.preventDefault();
+        return;
+    }
 
     e.preventDefault();
 
