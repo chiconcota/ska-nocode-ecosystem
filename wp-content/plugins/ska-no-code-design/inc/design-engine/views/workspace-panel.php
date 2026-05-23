@@ -12,7 +12,7 @@
             <div>
                 <button @click="openCreateModal()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-sm transition-all flex items-center gap-2 border-0 cursor-pointer">
                     <span class="material-symbols-outlined text-[20px]">add</span>
-                    Tạo Symbol Mới
+                    <?php esc_html_e( 'Create New Symbol', 'ska-no-code-design' ); ?>
                 </button>
             </div>
         </div>
@@ -35,7 +35,7 @@
                                 <div x-show="openMenu" x-transition.opacity class="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-lg z-10 py-1">
                                     <button @click="deleteOrganism(organism.id)" class="w-full text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 flex items-center gap-2 border-0 bg-transparent cursor-pointer">
                                         <span class="material-symbols-outlined text-[18px]">delete</span>
-                                        Xóa Symbol
+                                        <?php esc_html_e( 'Delete Symbol', 'ska-no-code-design' ); ?>
                                     </button>
                                 </div>
                             </div>
@@ -48,11 +48,11 @@
                     <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
                         <span class="text-xs text-slate-400 flex items-center gap-1">
                             <span class="material-symbols-outlined text-[14px]">schedule</span>
-                            Cập nhật: <span x-text="organism.updated_at"></span>
+                            <?php esc_html_e( 'Updated:', 'ska-no-code-design' ); ?> <span x-text="organism.updated_at"></span>
                         </span>
                         <a :href="getEditorUrl(organism.id)" class="text-pink-600 hover:text-pink-800 font-bold text-sm flex items-center gap-1 no-underline">
                             <span class="material-symbols-outlined text-[18px]">design_services</span>
-                            Mở Editor
+                            <?php esc_html_e( 'Open Editor', 'ska-no-code-design' ); ?>
                         </a>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                 <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">extension</span>
                 <p class="text-slate-500 font-medium"><?php esc_html_e( 'There are no Components / Symbols yet.', 'ska-no-code-design' ); ?></p>
                 <button @click="openCreateModal()" class="mt-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-2 px-4 rounded-lg shadow-sm transition-all border-0 cursor-pointer">
-                    Tạo Symbol đầu tiên
+                    <?php esc_html_e( 'Create first Symbol', 'ska-no-code-design' ); ?>
                 </button>
             </div>
         </div>
@@ -82,17 +82,17 @@
                     <!-- Tên Symbol -->
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-1"><?php esc_html_e( 'Symbol Name (Component)', 'ska-no-code-design' ); ?></label>
-                        <input type="text" x-model="currentName" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-none transition-all" placeholder=__( 'Example: Primary button', 'ska-no-code-design' )>
+                        <input type="text" x-model="currentName" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-none transition-all" placeholder="<?php echo esc_attr( __( 'Example: Primary button', 'ska-no-code-design' ) ); ?>">
                     </div>
                 </div>
 
                 <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-slate-50">
                     <button @click="closeModal()" class="px-5 py-2 rounded-xl text-slate-600 font-bold hover:bg-slate-200 bg-slate-100 border-0 cursor-pointer transition-all">
-                        Hủy
+                        <?php esc_html_e( 'Cancel', 'ska-no-code-design' ); ?>
                     </button>
                     <button @click="saveOrganism()" class="px-5 py-2 rounded-xl text-white font-bold bg-pink-600 hover:bg-pink-700 shadow-sm border-0 cursor-pointer transition-all flex items-center gap-2">
                         <span x-show="isLoading" class="material-symbols-outlined animate-spin text-[18px]">sync</span>
-                        <span x-text=__( '\'Create New\'', 'ska-no-code-design' )></span>
+                        <span><?php esc_html_e( 'Create New', 'ska-no-code-design' ); ?></span>
                     </button>
                 </div>
             </div>
@@ -145,7 +145,7 @@ document.addEventListener('alpine:init', () => {
 
         async saveOrganism() {
             if (!this.currentName.trim()) {
-                alert(__( 'Please enter a Symbol name.', 'ska-no-code-design' ));
+                alert('<?php echo esc_js( __( 'Please enter a Symbol name.', 'ska-no-code-design' ) ); ?>');
                 return;
             }
 
@@ -170,18 +170,18 @@ document.addEventListener('alpine:init', () => {
                     await this.loadOrganisms();
                     this.closeModal();
                 } else {
-                    alert(result.message || __( 'An error occurred while creating Symbol.', 'ska-no-code-design' ));
+                    alert(result.message || '<?php echo esc_js( __( 'An error occurred while creating Symbol.', 'ska-no-code-design' ) ); ?>');
                 }
             } catch (error) {
                 console.error(error);
-                alert(__( 'Connection error.', 'ska-no-code-design' ));
+                alert('<?php echo esc_js( __( 'Connection error.', 'ska-no-code-design' ) ); ?>');
             } finally {
                 this.isLoading = false;
             }
         },
 
         async deleteOrganism(id) {
-            if (confirm(__( 'Are you sure you want to delete this Symbol? ', 'ska-no-code-design' ))) {
+            if (confirm('<?php echo esc_js( __( 'Are you sure you want to delete this Symbol? ', 'ska-no-code-design' ) ); ?>')) {
                 try {
                     const response = await fetch(`${this.apiUrl}/${id}`, {
                         method: 'DELETE',
@@ -193,11 +193,11 @@ document.addEventListener('alpine:init', () => {
                     if (response.ok && result.success) {
                         this.organisms = this.organisms.filter(t => t.id !== id);
                     } else {
-                        alert(result.message || __( 'Symbol cannot be deleted.', 'ska-no-code-design' ));
+                        alert(result.message || '<?php echo esc_js( __( 'Symbol cannot be deleted.', 'ska-no-code-design' ) ); ?>');
                     }
                 } catch (error) {
                     console.error(error);
-                    alert(__( 'Connection error.', 'ska-no-code-design' ));
+                    alert('<?php echo esc_js( __( 'Connection error.', 'ska-no-code-design' ) ); ?>');
                 }
             }
         },

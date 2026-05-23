@@ -1178,3 +1178,12 @@ msgstr "App Portal Detail View (Theo Slug)"
 msgid "App Portal Create View (By Slug)"
 msgstr "App Portal Create View (Theo Slug)"
 
+msgid "Delete Symbol"
+msgstr "Xóa Symbol"
+
+msgid "Create first Symbol"
+msgstr "Tạo Symbol đầu tiên"
+
+msgid "Create New"
+msgstr "Tạo Mới"
+
