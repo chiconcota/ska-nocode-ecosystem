@@ -92,7 +92,7 @@ if ( ! isset( $ska_rendering_organisms ) ) {
 
 foreach ( $bulk_html as $org_id => $raw_html ) {
     if ( isset( $ska_rendering_organisms[ $org_id ] ) ) {
-        $compiled_templates[ $org_id ] = '<div style="color:red; padding:10px; border:1px solid red;"><?php esc_html_e( 'Error: Infinite Loop detected at Symbol/Organism ID: \' . ', 'ska-no-code-design' ); ?></div>';
+        $compiled_templates[ $org_id ] = '<div style="color:red; padding:10px; border:1px solid red;">' . esc_html__( 'Error: Infinite Loop detected at Symbol/Organism ID:', 'ska-no-code-design' ) . ' ' . esc_html($org_id) . '</div>';
         continue;
     }
     

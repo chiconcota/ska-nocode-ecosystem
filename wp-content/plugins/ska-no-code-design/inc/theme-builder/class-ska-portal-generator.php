@@ -327,7 +327,7 @@ class Ska_Portal_Generator
 		// Action Column
 		$action_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center justify-end gap-3"} -->' . "\n";
 		$action_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":">","tailwindClasses":"text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all font-bold cursor-pointer"} /-->' . "\n";
-		$action_html .= '<!-- wp:ska-builder/container {"tagName":"button","tailwindClasses":"ska-action-delete_' . esc_attr($table_slug) . ' action-btn p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center","htmlAttributes":[{"key":"data-ska-payload","value":"{\\"id\\": {{id}}}"},{"key":"data-ska-confirm","value":__( 'Are you sure you want to permanently delete this line?', 'ska-no-code-design' )}]} -->' . "\n";
+		$action_html .= '<!-- wp:ska-builder/container {"tagName":"button","tailwindClasses":"ska-action-delete_' . esc_attr($table_slug) . ' action-btn p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center","htmlAttributes":[{"key":"data-ska-payload","value":"{\\"id\\": {{id}}}"},{"key":"data-ska-confirm","value":"' . esc_attr( __( 'Are you sure you want to permanently delete this line?', 'ska-no-code-design' ) ) . '"}]} -->' . "\n";
 		$action_html .= '<!-- wp:ska-builder/icon {"iconName":"delete","tailwindClasses":"text-lg"} /-->' . "\n";
 		$action_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$action_html .= '<!-- /wp:ska-builder/container -->' . "\n";
@@ -548,7 +548,7 @@ class Ska_Portal_Generator
 		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"Chi tiết: ' . esc_attr($table_label) . '","tailwindClasses":"text-slate-700 font-medium truncate max-w-[200px]"} /-->' . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center gap-2"} -->' . "\n";
-		$header_html .= __( '<!-- wp:ska-builder/button {\"tagName\":\"button\",\"actionType\":\"submit\",\"text\":\"Save Changes\",\"tailwindClasses\":\"bg-gradient-to-r from-cyan-400 via-amber-400 to-emerald-500 bg-[length:200%_auto] hover:bg-right text-white px-5 py-2 rounded shadow-sm ', 'ska-no-code-design' ) . "\n";
+		$header_html .= '<!-- wp:ska-builder/button {"tagName":"button","actionType":"submit","text":"' . esc_attr( __( 'Save Changes', 'ska-no-code-design' ) ) . '","tailwindClasses":"bg-gradient-to-r from-cyan-400 via-amber-400 to-emerald-500 bg-[length:200%_auto] hover:bg-right text-white px-5 py-2 rounded shadow-sm text-sm font-bold transition-all min-w-[120px] opacity-90 hover:opacity-100 border-none cursor-pointer"} /-->' . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 
@@ -626,8 +626,8 @@ class Ska_Portal_Generator
 				} else {
 					$input_type = in_array($type, array('number', 'date', 'email', 'media_gallery')) ? $type : 'text';
 					if ($input_type === 'media_gallery') $input_type = 'text'; // Fallback
-					$field_block = array('name' => 'ska-builder/input', 'attributes' => array('fieldName' => $col_slug, 'inputType' => $input_type, 'placeholder' => __( 'Drum', 'ska-no-code-design' ), 'isRequired' => $is_required, 'fieldValue' => $val_binding, 'tailwindClasses' => $input_classes), 'innerBlocks' => array());
-					$field_html = '<!-- wp:ska-builder/input {"fieldName":"' . esc_attr($col_slug) . '","inputType":"' . esc_attr($input_type) . __( '\",\"placeholder\":\"Empty\",\"isRequired\":', 'ska-no-code-design' ) . ($is_required ? 'true' : 'false') . ',"fieldValue":"' . esc_attr($val_binding) . '","tailwindClasses":"' . esc_attr($input_classes) . '"} /-->' . "\n";
+					$field_block = array('name' => 'ska-builder/input', 'attributes' => array('fieldName' => $col_slug, 'inputType' => $input_type, 'placeholder' => __( 'Empty', 'ska-no-code-design' ), 'isRequired' => $is_required, 'fieldValue' => $val_binding, 'tailwindClasses' => $input_classes), 'innerBlocks' => array());
+					$field_html = '<!-- wp:ska-builder/input {"fieldName":"' . esc_attr($col_slug) . '","inputType":"' . esc_attr($input_type) . '","placeholder":"' . esc_attr( __( 'Empty', 'ska-no-code-design' ) ) . '","isRequired":' . ($is_required ? 'true' : 'false') . ',"fieldValue":"' . esc_attr($val_binding) . '","tailwindClasses":"' . esc_attr($input_classes) . '"} /-->' . "\n";
 				}
 
 				$meta_blocks[] = array(

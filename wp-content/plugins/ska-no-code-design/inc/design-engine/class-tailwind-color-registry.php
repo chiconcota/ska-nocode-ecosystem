@@ -83,11 +83,11 @@ class Tailwind_Color_Registry {
 			global $wpdb;
 			$table_name = $wpdb->prefix . 'ska_data_sys_presets';
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) === $table_name ) {
-				$row = $wpdb->get_row( $wpdb->prepare( "SELECT json_content FROM {$table_name} WHERE name = %s", 'Global Design Tokens' ), ARRAY_A );
-				if ( $row && ! empty( $row['json_content'] ) ) {
-					$tokens = json_decode( $row['json_content'], true );
-					if ( isset( $tokens['colors'] ) && is_array( $tokens['colors'] ) ) {
-						$colors = $tokens['colors'];
+				$rows = $wpdb->get_results( "SELECT name, value FROM {$table_name} WHERE type = 'token_color'", ARRAY_A );
+				if ( $rows ) {
+					foreach ( $rows as $row ) {
+						$key = sanitize_key( str_replace( '-', '_', sanitize_title( $row['name'] ) ) );
+						$colors[ $key ] = $row['value'];
 					}
 				}
 			}
@@ -120,6 +120,20 @@ class Tailwind_Color_Registry {
 			$tokens = json_decode( $json_data, true );
 			if ( isset( $tokens['darkColors'] ) && is_array( $tokens['darkColors'] ) ) {
 				$colors = $tokens['darkColors'];
+			}
+		}
+
+		if ( empty( $colors ) ) {
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'ska_data_sys_presets';
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) === $table_name ) {
+				$rows = $wpdb->get_results( "SELECT name, value FROM {$table_name} WHERE type = 'token_dark_color'", ARRAY_A );
+				if ( $rows ) {
+					foreach ( $rows as $row ) {
+						$key = sanitize_key( str_replace( '-', '_', sanitize_title( $row['name'] ) ) );
+						$colors[ $key ] = $row['value'];
+					}
+				}
 			}
 		}
 

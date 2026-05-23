@@ -94,12 +94,12 @@ class Framework_UI
                         <div class="mt-5 flex gap-3 text-sm">
                             <?php if ($is_installed): ?>
                                 <button class="border-0 bg-slate-100 text-slate-500 px-4 py-2 rounded-lg font-medium cursor-not-allowed flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-[18px]">power_off</span> Vui lòng bật trong thẻ Plugins
+                                    <span class="material-symbols-outlined text-[18px]">power_off</span> <?php esc_html_e( 'Please enable in Plugins tab', 'ska-no-code-design' ); ?>
                                 </button>
                             <?php else: ?>
                                 <a href="<?php echo esc_url($mod['url']); ?>" target="_blank"
                                     class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg no-underline">
-                                    <span class="material-symbols-outlined text-[18px]">download</span> Tải xuống Plugin
+                                    <span class="material-symbols-outlined text-[18px]">download</span> <?php esc_html_e( 'Download Plugin', 'ska-no-code-design' ); ?>
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -123,12 +123,12 @@ class Framework_UI
                         <p class="text-sm text-slate-500 mt-2 leading-relaxed"><?php esc_html_e( 'Headless architecture bridge (wordpress2nextjs) & JSON Schema API Export. ', 'ska-no-code-design' ); ?></p>
                     </div>
                     <span class="h-[24px] inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200 shadow-sm">
-                        Đóng băng
+                        <?php esc_html_e( 'Frozen', 'ska-no-code-design' ); ?>
                     </span>
                 </div>
                 <div class="mt-5 flex gap-3 text-sm">
                     <button class="border-0 bg-slate-50 text-slate-400 px-4 py-2 rounded-lg font-medium cursor-not-allowed flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">lock_clock</span> Tính năng sắp ra mắt
+                        <span class="material-symbols-outlined text-[18px]">lock_clock</span> <?php esc_html_e( 'Feature coming soon', 'ska-no-code-design' ); ?>
                     </button>
                 </div>
             </div>
@@ -174,15 +174,15 @@ class Framework_UI
                 <div class="mt-5 flex gap-4 text-sm">
                     <?php if ($theme_active): ?>
                         <a href="#" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg no-underline">
-                            <span class="material-symbols-outlined text-[18px]">brush</span> Tùy biến Theme.json
+                            <span class="material-symbols-outlined text-[18px]">brush</span> <?php esc_html_e( 'Customize Theme.json', 'ska-no-code-design' ); ?>
                         </a>
                     <?php elseif ($theme_exists): ?>
                         <a href="<?php echo admin_url('themes.php'); ?>" class="inline-flex items-center gap-1 text-slate-700 font-semibold hover:text-indigo-700 transition-colors bg-slate-100 hover:bg-indigo-50 px-4 py-2 rounded-lg no-underline border border-slate-200 hover:border-indigo-200">
-                            <span class="material-symbols-outlined text-[18px]">toggle_on</span> Kích hoạt trong Appearance
+                            <span class="material-symbols-outlined text-[18px]">toggle_on</span> <?php esc_html_e( 'Activate in Appearance', 'ska-no-code-design' ); ?>
                         </a>
                     <?php else: ?>
                         <a href="https://ska.vn/canvas-theme" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg no-underline">
-                            <span class="material-symbols-outlined text-[18px]">download</span> Tải xuống Base Theme
+                            <span class="material-symbols-outlined text-[18px]">download</span> <?php esc_html_e( 'Download Base Theme', 'ska-no-code-design' ); ?>
                         </a>
                     <?php endif; ?>
                 </div>

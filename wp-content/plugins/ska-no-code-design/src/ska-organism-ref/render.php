@@ -52,9 +52,9 @@ if ( empty( $found_html ) ) {
         '<div style="padding:16px; border:2px dashed #f43f5e; background:#fff1f2; color:#be123c; border-radius:6px; font-family:sans-serif;">
             <strong style="display:flex; align-items:center; gap:8px;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                Ska Symbol (ID: %s) Is Empty
+                ' . esc_html__( 'Ska Symbol (ID: %s) Is Empty', 'ska-no-code-design' ) . '
             </strong>
-             <p style="margin-top:8px; font-size:13px; margin-bottom:0;"><?php esc_html_e( 'This template has not had saved HTML (Or because it was created before the latest update). ', 'ska-no-code-design' ); ?></p>
+             <p style="margin-top:8px; font-size:13px; margin-bottom:0;">' . esc_html__( 'This template has not had saved HTML (Or because it was created before the latest update). Please reopen the original Symbol and click Update to let the system re-render the HTML content.', 'ska-no-code-design' ) . '</p>
         </div>',
         esc_html( $organism_id )
     );

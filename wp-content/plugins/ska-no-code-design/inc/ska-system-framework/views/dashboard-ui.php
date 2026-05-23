@@ -86,7 +86,7 @@ defined( 'ABSPATH' ) || exit;
             <div class="flex flex-wrap gap-3">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold border border-indigo-100 shadow-inner">
                     <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                    Hệ thống ổn định
+                    <?php esc_html_e( 'System Stable', 'ska-no-code-design' ); ?>
                 </span>
             </div>
         </header>
@@ -108,7 +108,7 @@ defined( 'ABSPATH' ) || exit;
             </div>
             <div>
                 <h3 class="text-rose-800 font-bold m-0 border-0 p-0 text-base"><?php esc_html_e( 'Missing Core Module!', 'ska-no-code-design' ); ?></h3>
-                <p class="text-rose-700 text-sm mt-1.5 mb-0 leading-relaxed">Hệ sinh thái đang chạy ở chế độ giới hạn. Vui lòng cài đặt và kích hoạt <strong>Ska Data Pro</strong> & <strong>Ska Logic Engine</strong> để mở khóa sức mạnh No-code vô hạn.</p>
+                <p class="text-rose-700 text-sm mt-1.5 mb-0 leading-relaxed"><?php printf( __( 'The ecosystem is running in a limited mode. Please install and activate %1$s & %2$s to unlock infinite No-code power.', 'ska-no-code-design' ), '<strong>Ska Data Pro</strong>', '<strong>Ska Logic Engine</strong>' ); ?></p>
             </div>
         </div>
         <?php endif; ?>
@@ -122,7 +122,7 @@ defined( 'ABSPATH' ) || exit;
                 <div class="flex items-center justify-between border-b border-slate-200/60 pb-3">
                     <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2 m-0 border-0 pb-0">
                         <span class="material-symbols-outlined text-indigo-500 bg-indigo-50 p-1.5 rounded-lg">extension</span>
-                        Các Module Đã Cài Đặt
+                        <?php esc_html_e( 'Installed Modules', 'ska-no-code-design' ); ?>
                     </h2>
                     <span class="text-xs font-bold bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800 border border-emerald-200/50 px-3 py-1 rounded-full shadow-sm"><?php esc_html_e( 'Synced', 'ska-no-code-design' ); ?></span>
                 </div>
@@ -145,7 +145,7 @@ defined( 'ABSPATH' ) || exit;
                     <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
                         <h3 class="m-0 font-bold text-slate-800 flex items-center gap-2 text-base">
                             <span class="material-symbols-outlined text-indigo-500">settings_applications</span>
-                            Cài Đặt Hệ Thống
+                            <?php esc_html_e( 'System Settings', 'ska-no-code-design' ); ?>
                         </h3>
                     </div>
                     <form id="skaSystemSettingsForm" method="post" action="" class="p-5 space-y-5" style="margin:0;">
@@ -166,7 +166,7 @@ defined( 'ABSPATH' ) || exit;
                         <div class="pt-5 border-t border-slate-100">
                             <button type="submit" class="w-full py-2.5 border-0 btn-primary text-white rounded-xl text-sm font-bold uppercase tracking-wider cursor-pointer flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined text-[18px]">save</span>
-                                Lưu Cài Đặt
+                                <?php esc_html_e( 'Save Settings', 'ska-no-code-design' ); ?>
                             </button>
                         </div>
                     </form>
@@ -180,18 +180,18 @@ defined( 'ABSPATH' ) || exit;
                     <div class="relative z-10">
                         <h3 class="m-0 border-0 pb-0 pt-0 font-bold text-rose-800 flex items-center gap-2 mb-2 text-base">
                             <span class="material-symbols-outlined text-rose-500">gavel</span>
-                            Khu vực nguy hiểm
+                            <?php esc_html_e( 'Danger Zone', 'ska-no-code-design' ); ?>
                         </h3>
                         <p class="text-xs text-rose-600/80 mb-5 font-medium"><?php esc_html_e( 'The operations below deeply impact Blueprint and RAM/Cache.', 'ska-no-code-design' ); ?></p>
                         
                         <div class="space-y-3">
                             <button class="w-full py-2.5 bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-sm flex justify-center items-center gap-2">
                                 <span class="material-symbols-outlined text-[18px]">delete_sweep</span>
-                                Xóa Context Cache
+                                <?php esc_html_e( 'Clear Context Cache', 'ska-no-code-design' ); ?>
                             </button>
                             <button class="w-full py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-sm flex justify-center items-center gap-2">
                                 <span class="material-symbols-outlined text-[18px]">cleaning_services</span>
-                                Flush JIT CSS
+                                <?php esc_html_e( 'Flush JIT CSS', 'ska-no-code-design' ); ?>
                             </button>
                         </div>
                     </div>
@@ -205,7 +205,7 @@ defined( 'ABSPATH' ) || exit;
             <div class="flex items-center justify-between border-b border-slate-200/60 pb-3 mb-6">
                 <h2 class="m-0 border-0 pb-0 pt-0 text-xl font-bold text-slate-800 flex items-center gap-2">
                     <span class="material-symbols-outlined text-purple-500 bg-purple-50 p-1.5 rounded-lg">grid_view</span>
-                    Tiện Ích Mở Rộng
+                    <?php esc_html_e( 'Extensions', 'ska-no-code-design' ); ?>
                 </h2>
             </div>
 
@@ -222,7 +222,7 @@ defined( 'ABSPATH' ) || exit;
             <?php if ( ! has_action( 'ska_system_dashboard_extensions' ) ) : ?>
                 <div class="bg-white/60 backdrop-blur border border-dashed border-slate-300 rounded-2xl text-center py-12 text-slate-500 text-sm font-medium">
                     <span class="material-symbols-outlined text-[48px] text-slate-300 mb-3 block">extension_off</span>
-                    Chưa có tiện ích mở rộng nào được cài đặt.
+                    <?php esc_html_e( 'No extensions have been installed yet.', 'ska-no-code-design' ); ?>
                 </div>
             <?php endif; ?>
         </div>

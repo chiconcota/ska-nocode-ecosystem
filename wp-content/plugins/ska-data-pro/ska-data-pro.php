@@ -219,9 +219,13 @@ add_shortcode('ska_test_data', function ($atts) {
     $row = apply_filters('ska_data_get_row', null, $atts['table'], intval($atts['id']));
 
     if (is_array($row) && isset($row[$atts['col']])) {
-        return __( '<b>Result from DB:</b> <span style=\'color:green\'>', 'ska-data-pro' ) . esc_html($row[$atts['col']]) . "</span>";
+        return sprintf(
+            '<b>%s</b> <span style="color:green">%s</span>',
+            esc_html__( 'Result from DB:', 'ska-data-pro' ),
+            esc_html($row[$atts['col']])
+        );
     }
-    return __( '<i>No data found. ', 'ska-data-pro' );
+    return '<i>' . esc_html__( 'No data found. Please check table name/ID!', 'ska-data-pro' ) . '</i>';
 });
 // --- ĐOẠN CODE TEST TRỰC TIẾP EXTENSIBILITY DATA PROVIDERS ---
 add_shortcode('ska_test_ext', function () {
@@ -230,11 +234,11 @@ add_shortcode('ska_test_ext', function () {
 
     $raw_html = '
     <div style="padding:15px; border: 2px dashed #10b981; border-radius: 8px; background: #ecfdf5; margin-top:20px;">
-        <h4 style="color:#047857; margin-top:0;"><?php esc_html_e( '1. Connection status (Single):', 'ska-data-pro' ); ?></h4>
+        <h4 style="color:#047857; margin-top:0;">' . esc_html__( '1. Connection status (Single):', 'ska-data-pro' ) . '</h4>
         <p><strong>Status:</strong> {{test:status}}</p>
         <p><strong>Server Time:</strong> {{test:time}}</p>
         
-        <h4 style="color:#047857;"><?php esc_html_e( '2. Virtual Object Array Loop Machine (WooCommerce Loop Simulator):', 'ska-data-pro' ); ?></h4>
+        <h4 style="color:#047857;">' . esc_html__( '2. Virtual Object Array Loop Machine (WooCommerce Loop Simulator):', 'ska-data-pro' ) . '</h4>
         <ul style="padding-left: 20px;">
             {{#foreach test:mock_users}}
             <li style="margin-bottom: 5px;">
@@ -260,7 +264,7 @@ add_shortcode('ska_dump_table', function ($atts) {
     $table = $atts['table'];
 
     if (empty($table))
-        return __( '<b style=\"color:red\">No table=\"\" parameter was entered</b>', 'ska-data-pro' );
+        return '<b style="color:red">' . esc_html__( 'No table="" parameter was entered', 'ska-data-pro' ) . '</b>';
 
     $fetcher = new \Ska\Data\Core\Data_Fetcher();
     // Kéo 5 dòng đầu tiên, quá trình này tự động kích hoạt Cỗ máy Enrich (Rollup & Relation)
@@ -270,12 +274,17 @@ add_shortcode('ska_dump_table', function ($atts) {
     );
     $rows = $fetcher->get_table_rows($table, $args, 5);
 
-    if (empty($rows))
-        return __( '<i>Table $table is empty or does not exist.</i>', 'ska-data-pro' );
+    if (empty($rows)) {
+        return sprintf( '<i>%s</i>', esc_html( sprintf( __( 'Table %s is empty or does not exist.', 'ska-data-pro' ), $table ) ) );
+    }
 
     // Build cấu trúc HTML để giả lập Frontend Component
     $html = '<div style="font-family: sans-serif; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 1px solid #e2e8f0;">';
-    $html .= __( '<h3 style=\"margin-top:0; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;\">Frontend Returned Data (Table: <span style=\"color:#059669\">', 'ska-data-pro' ) . $table . '</span>)</h3>';
+    $html .= sprintf(
+        '<h3 style="margin-top:0; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">%s <span style="color:#059669">%s</span>)</h3>',
+        esc_html__( 'Frontend Returned Data (Table:', 'ska-data-pro' ),
+        esc_html( $table )
+    );
 
     $html .= '<div style="overflow-x:auto;"><table style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: left;">';
 
@@ -302,10 +311,14 @@ add_shortcode('ska_dump_table', function ($atts) {
                 $decoded = json_decode($val, true);
                 if (json_last_error() === JSON_ERROR_NONE) {
                     // Dễ nhìn trên Frontend
-                    $display_val = __( '<i>(Virtual JSON array) -> </i> <strong style=\"color:#059669\">', 'ska-data-pro' ) . esc_html(print_r($decoded, true)) . '</strong>';
+                    $display_val = sprintf(
+                        '<i>%s -> </i> <strong style="color:#059669">%s</strong>',
+                        esc_html__( '(Virtual JSON array)', 'ska-data-pro' ),
+                        esc_html( print_r( $decoded, true ) )
+                    );
                 }
             } else if ($val === '' || $val === null) {
-                $display_val = __( '<em style=\"color:#cbd5e1\">NULL Under Database</em>', 'ska-data-pro' );
+                $display_val = '<em style="color:#cbd5e1">' . esc_html__( 'NULL Under Database', 'ska-data-pro' ) . '</em>';
             }
 
             $html .= "<td style='padding: 12px; vertical-align: top;'>{$display_val}</td>";
@@ -315,7 +328,12 @@ add_shortcode('ska_dump_table', function ($atts) {
     $html .= '</tbody></table></div>';
 
     $html .= '<div style="margin-top: 15px; padding: 12px; background: #fffbeb; border-left: 4px solid #fbbf24; border-radius: 4px; font-size: 13px; color: #b45309;">';
-    $html .= __( '<strong>The Mystery:</strong> You see, even though the value under <code>MySQL DB</code> is NULL, when calling the Frontend with PHP, the <code style=\"background:#fcd34d; padding:2px 4px; border-radius:4px;\">Data_Fetcher</code> machine has silently decompiled the ID and filled in the text for you! ', 'ska-data-pro' );
+    $html .= sprintf(
+        /* translators: 1: MySQL DB code tag, 2: Data_Fetcher code tag */
+        __( '<strong>The Mystery:</strong> You see, even though the value under %1$s is NULL, when calling the Frontend with PHP, the %2$s machine has silently decompiled the ID and filled in the text for you! This is VIRTUAL DATA!', 'ska-data-pro' ),
+        '<code>MySQL DB</code>',
+        '<code style="background:#fcd34d; padding:2px 4px; border-radius:4px;">Data_Fetcher</code>'
+    );
     $html .= '</div>';
 
     $html .= '</div>';
@@ -331,7 +349,7 @@ add_shortcode('ska_migrate_json', function () {
         return __( 'There is no data dictionary.', 'ska-data-pro' );
 
     $global_prefix = $wpdb->prefix . 'ska_data_';
-    $log = __( '<h3>Start converting TEXT to JSON:</h3><ul>', 'ska-data-pro' );
+    $log = '<h3>' . esc_html__( 'Start converting TEXT to JSON:', 'ska-data-pro' ) . '</h3><ul>';
 
     foreach ($dictionary as $clean_table_name => $table_config) {
         $table_name = $global_prefix . $clean_table_name;
@@ -365,7 +383,13 @@ add_shortcode('ska_migrate_json', function () {
                 }
 
                 $alter_queries[] = "MODIFY COLUMN `{$col_slug}` JSON";
-                $log .= __( '<li>Fixed {$fixed_count} lines containing old CSV to JSON for column <b>{$col_slug}</b> (Table {$table_name})</li>', 'ska-data-pro' );
+                $log .= sprintf(
+                    /* translators: 1: fixed count, 2: column slug, 3: table name */
+                    __( '<li>Fixed %1$d lines containing old CSV to JSON for column <b>%2$s</b> (Table %3$s)</li>', 'ska-data-pro' ),
+                    $fixed_count,
+                    esc_html( $col_slug ),
+                    esc_html( $table_name )
+                );
             }
         }
 
@@ -373,13 +397,20 @@ add_shortcode('ska_migrate_json', function () {
             $sql = "ALTER TABLE `{$table_name}` " . implode(', ', $alter_queries);
             $result = $wpdb->query($sql);
             if (false === $result) {
-                $log .= "<li><b style='color:red;'><?php esc_html_e( 'ERROR IN FORCING TABLE {$table_name}:', 'ska-data-pro' ); ?></b> " . $wpdb->last_error . "</li>";
+                $log .= sprintf(
+                    '<li><b style="color:red;">%s</b> %s</li>',
+                    esc_html( sprintf( __( 'ERROR IN FORCING TABLE %s:', 'ska-data-pro' ), $table_name ) ),
+                    esc_html( $wpdb->last_error )
+                );
             } else {
-                $log .= __( '<li><b style=\'color:green;\'>SUCCESSFULLY TYPE TABLE {$table_name} TO JSON!</b></li>', 'ska-data-pro' );
+                $log .= sprintf(
+                    '<li><b style="color:green;">%s</b></li>',
+                    esc_html( sprintf( __( 'SUCCESSFULLY CONVERTED TABLE %s TO JSON!', 'ska-data-pro' ), $table_name ) )
+                );
             }
         }
     }
 
-    $log .= __( '</ul><p>All done. ', 'ska-data-pro' );
+    $log .= '</ul><p>' . esc_html__( 'All completed. You can refresh the Schema section!', 'ska-data-pro' ) . '</p>';
     return $log;
 });
