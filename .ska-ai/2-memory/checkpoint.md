@@ -1,30 +1,26 @@
 # CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v2.0.0)
-*Ngày cập nhật: 2026-05-22*
+*Ngày cập nhật: 2026-05-23*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Công việc**: Chuyển đổi tính năng xóa dòng dữ liệu ở Portal List View từ gọi API REST trực tiếp sang liên kết thông qua Ska Logic Engine (Workflow).
+- **Công việc**: Quốc tế hóa (i18n) hoàn toàn các nhãn UI và các tùy chọn điều kiện hiển thị trên Dashboard Theme Builder.
 - **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH & KIỂM THỬ THÀNH CÔNG 100%.
 - **Kết quả E2E**: 
-  - Nút Xóa sinh ra ở Portal List View sử dụng class hành động dạng `ska-action-delete_{table_slug}` và context payload `data-ska-payload="{{id}}"`, loại bỏ hoàn toàn helper script thủ công trong footer.
-  - Tự động sinh/đăng ký workflow CRUD xóa bản ghi dạng `delete_{table_slug}` tại `Form_Receiver` ở backend khi nhận được yêu cầu lần đầu tiên.
-  - Event Bus client (`ska-core.js`) lắng nghe event client response `remove_row`, định vị dòng cha gần nhất thông qua `window.$ska.lastClickedElement` và chạy hiệu ứng fade-out + collapse mượt mà (300ms) trước khi xóa khỏi DOM.
-  - Tích hợp kiểm tra xác nhận an toàn qua thuộc tính `data-ska-confirm` mà không cần viết code JS.
-  - Đã chạy kịch bản vá/tái sinh các portal template và kiểm thử thực tế trên browser thành công: bản ghi bị xóa hoàn toàn ở Database và giao diện cập nhật mượt mà.
-  - Khắc phục thành công lỗi ẩn ô nhập liệu Toast Message trong Settings Panel bằng cách bổ sung tùy chọn `remove_row` vào dropdown Response Type và cập nhật điều kiện hiển thị tương ứng.
+  - Toàn bộ các nhãn tiếng Việt viết cứng trên Dashboard Theme Builder (như `Tất cả App`, `Tạo Template`, `Cập nhật:`, `Mở Editor`, `Sửa Settings`, `Xóa Template`, `Thêm Rule`, `Hủy`, `Lưu`, v.v.) đã được bọc vào các hàm dịch chuẩn của WordPress (`esc_html_e`, `__`, `esc_js`).
+  - Đã cập nhật từ điển dịch song ngữ `translation_map.json` và `vietnamese_strings.json`.
+  - Chạy compiler Node.js tái tạo thành công file `.po` và `.mo` dịch thuật sang tiếng Việt của `ska-no-code-design` (tổng số chuỗi dịch nâng từ 377 lên 390).
+  - Không phát sinh lỗi cú pháp PHP (`php -l` sạch) hoặc lỗi JavaScript console crash nào.
 
 ## 2. Chi tiết các tệp đã sửa đổi (Modified Files)
-- **Logic Engine Settings Panel**: [SettingsPanel.jsx](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-logic-engine/assets/src/builder/components/SettingsPanel.jsx)
-- **Logic Engine API Receiver**: [class-form-receiver.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-logic-engine/includes/api/class-form-receiver.php)
-- **Logic Client Response**: [class-ska-logic-client-response.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-logic-engine/includes/primitives/class-ska-logic-client-response.php)
-- **Frontend Logic Core**: [ska-core.js](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-logic-engine/assets/js/ska-core.js)
-- **Portal Generator**: [class-ska-portal-generator.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/theme-builder/class-ska-portal-generator.php)
-- **Portal Router**: [class-ska-app-router.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/theme-builder/class-ska-app-router.php)
+- **Theme Builder View**: [admin-panel.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/theme-builder/views/admin-panel.php)
+- **Localization Files**:
+  - [ska-no-code-design-vi.po](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/languages/ska-no-code-design-vi.po)
+  - [ska-no-code-design-vi.mo](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/languages/ska-no-code-design-vi.mo)
+  - [translation_map.json](file:///C:/Users/ADMIN/.gemini/antigravity-ide/brain/8fdc8fdd-eb7d-4dcc-866d-5ad2ef8fceab/scratch/translation_map.json)
+  - [vietnamese_strings.json](file:///C:/Users/ADMIN/.gemini/antigravity-ide/brain/8fdc8fdd-eb7d-4dcc-866d-5ad2ef8fceab/scratch/vietnamese_strings.json)
 
 ## 3. Nhật ký và Tài liệu đi kèm
 - Cập nhật **Decision Log**: `.ska-ai/2-memory/decision-log.md`
 - Cập nhật **System Map Recent Logs**: `.ska-ai/1-overview/system_map.md`
-- Cập nhật **Ecosystem Documentation**: `.ska-ai/3-ecosystem/ska-logic-engine/logic-engine.md`
-- Cập nhật **Project Manager**: `.ska-ai/1-overview/project-managers/design-workflow-app-portal-views.md`
 
 ## 4. Công việc tiếp theo (Next Steps)
 - Tiến hành đóng gói MVP (Packaging & Release) và bàn giao hệ thống.
