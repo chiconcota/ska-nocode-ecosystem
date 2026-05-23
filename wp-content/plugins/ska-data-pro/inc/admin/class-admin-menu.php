@@ -36,8 +36,8 @@ class Admin_Menu {
 	public function register_menu() {
 		add_submenu_page(
 			'ska-system-dashboard',
-			__( 'Ska Data', 'ska-data-pro' ),
-			__( 'Ska Data', 'ska-data-pro' ),
+			__( 'Manage Database', 'ska-data-pro' ),
+			__( 'Manage Database', 'ska-data-pro' ),
 			'manage_options',
 			'ska-data-pro',
 			[ $this, 'render_dashboard' ]
@@ -70,10 +70,10 @@ class Admin_Menu {
                 </div>
                 <div class="mt-5 flex gap-4 text-sm">
                     <a href="?page=ska-data-pro" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors bg-indigo-50 px-3 py-1.5 rounded-lg no-underline">
-                        <span class="material-symbols-outlined text-[18px]">open_in_new</span> <?php echo esc_html__( 'Access Database', 'ska-data-pro' ); ?>
+                        <span class="material-symbols-outlined text-[18px]">open_in_new</span> <?php echo esc_html__( 'Manage Database', 'ska-data-pro' ); ?>
                     </a>
                     <a href="?page=ska-data-pro-manage" class="inline-flex items-center gap-1 text-slate-600 font-medium hover:text-slate-900 transition-colors px-3 py-1.5 hover:bg-slate-50 rounded-lg no-underline">
-                        <span class="material-symbols-outlined text-[18px]">settings</span> <?php echo esc_html__( 'Manage Semantic IDs', 'ska-data-pro' ); ?>
+                        <span class="material-symbols-outlined text-[18px]">settings</span> <?php echo esc_html__( 'Workspace', 'ska-data-pro' ); ?>
                     </a>
                 </div>
             </div>
@@ -88,7 +88,7 @@ class Admin_Menu {
 			<div class="w-12 h-12 bg-gradient-to-br from-indigo-50 to-purple-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4 border border-indigo-100 shadow-sm relative z-10 group-hover:scale-110 transition-transform">
 				<span class="material-symbols-outlined text-[24px]">web_stories</span>
 			</div>
-			<h3 class="font-bold text-base m-0 p-0 border-0 mb-2 group-hover:text-indigo-600 transition-colors relative z-10">Site Blueprint</h3>
+			<h3 class="font-bold text-base m-0 p-0 border-0 mb-2 group-hover:text-indigo-600 transition-colors relative z-10"><?php echo esc_html__( 'Site Blueprint', 'ska-data-pro' ); ?></h3>
 			<p class="text-xs text-slate-500 m-0 leading-relaxed relative z-10"><?php echo esc_html__( 'Manage Theme Templates, Organisms & Tokens for Web App.', 'ska-data-pro' ); ?></p>
 		</a>
 		<?php

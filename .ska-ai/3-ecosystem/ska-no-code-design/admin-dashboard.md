@@ -26,3 +26,12 @@ Sự mở rộng cấu trúc hiển thị trang Dashboard thông qua 3 Action Ho
 ## 5. RÀNG BUỘC BẢO MẬT (CONSTRAINTS)
 - Mọi Form lưu cấu hình bắt buộc chèn qua `$nonce = wp_create_nonce( 'ska_system_nonce_action' );`.
 - Chỉ Administrator (quyền `manage_options`) mới được phép truy cập Dashboard Framework.
+
+## 6. CẤU TRÚC ĐIỀU HƯỚNG SIDEBAR (SIDEBAR NAVIGATION STRUCTURE)
+Để giữ sidebar WordPress sạch đẹp và trực quan, tất cả các menu điều hướng thuộc hệ sinh thái Ska được tổ chức theo phân cấp trực thuộc menu cha **Ska Ecosystem** (`ska-system-dashboard`):
+1. **Theme Options** (slug: `ska-design-tokens`): Trang quản trị tùy chọn giao diện & Design Tokens. Nằm ở vị trí số 1 (priority `1`).
+2. **Ska Organisms Manager** (slug: `ska-design-workspace`): Trang quản trị các Reusable Block/Organism. Nằm ở vị trí số 2 (priority `2`).
+3. **Theme Builder** (slug: `ska-theme-builder`): Trang quản trị các view layout và template động. Nằm ở vị trí số 3 (priority `3`).
+
+*Lưu ý lập trình:* Đăng ký hook `admin_menu` của submenu bắt buộc sử dụng priority `20` trở lên để tránh lỗi access permission 403 do menu cha chưa được đăng ký kịp. Tất cả các submenu của Logic Engine Workflow được ẩn khỏi sidebar bằng cách truyền parent slug là `null`, giúp tránh phình to menu WordPress.
+

@@ -149,7 +149,7 @@ class Framework_UI
             <div class="absolute top-0 left-0 w-1.5 h-full <?php echo $theme_active ? 'bg-gradient-to-b from-indigo-400 to-purple-600' : 'bg-slate-300 group-hover:bg-indigo-400'; ?> transition-colors"></div>
             <?php if ($theme_active): ?>
                 <div class="absolute top-0 right-0 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-bl-xl uppercase tracking-wider shadow-sm">
-                    Active Theme
+                    <?php esc_html_e( 'Active Theme', 'ska-no-code-design' ); ?>
                 </div>
             <?php endif; ?>
             <div class="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 <?php echo esc_attr($t_icon_style); ?>">
@@ -158,7 +158,7 @@ class Framework_UI
             <div class="flex-1">
                 <div class="flex justify-between items-start">
                     <div>
-                        <h3 class="m-0 pt-0 pb-0 border-0 font-bold text-lg <?php echo esc_attr($t_title_style); ?>">Ska Canvas Theme</h3>
+                        <h3 class="m-0 pt-0 pb-0 border-0 font-bold text-lg <?php echo esc_attr($t_title_style); ?>"><?php esc_html_e( 'Ska Canvas Theme', 'ska-no-code-design' ); ?></h3>
                         <p class="text-sm text-slate-600 mt-2 leading-relaxed"><?php esc_html_e( 'Barebone WP Theme (Zero CSS). ', 'ska-no-code-design' ); ?></p>
                     </div>
                     <?php if (!$theme_active): ?>

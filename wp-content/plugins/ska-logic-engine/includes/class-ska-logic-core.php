@@ -134,12 +134,12 @@ class Ska_Logic_Core {
             [ $this, 'render_admin_page' ]
         );
 
-        // Render thêm submenu cho từng workflow
+        // Render thêm submenu cho từng workflow (ẩn khỏi menu sidebar bằng cách truyền null làm parent slug)
         $workflows = get_option('ska_logic_simple_workflows', []);
         if (is_array($workflows)) {
             foreach ($workflows as $id => $data) {
                 add_submenu_page(
-                    'ska-system-dashboard',
+                    null,
                     $id . ' Workflow', 
                     '— ' . $id, 
                     'manage_options', 
@@ -167,7 +167,7 @@ class Ska_Logic_Core {
                 </div>
                 <div class="mt-5 flex gap-4 text-sm">
                     <a href="?page=ska-logic-engine" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors bg-indigo-50 px-3 py-1.5 rounded-lg no-underline">
-                        <span class="material-symbols-outlined text-[18px]">account_tree</span> Mở Băng chuyền (Workflows)
+                        <span class="material-symbols-outlined text-[18px]">account_tree</span> <?php esc_html_e( 'Open Workflows', 'ska-logic-engine' ); ?>
                     </a>
                 </div>
             </div>

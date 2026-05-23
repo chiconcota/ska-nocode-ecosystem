@@ -75,6 +75,13 @@ Priority: Security > Functionality > Performance > Explanation.
 - Bind to `127.0.0.1` unless public access needed
 - NO databases without passwords
  
+# 10. INTERNATIONALIZATION (I18N) & LANGUAGE POLICY
+- **No-Vietnamese-in-Code (MANDATORY):**
+  - Mọi chuỗi hiển thị (UI strings, labels, placeholders, titles, messages) trong mã nguồn PHP/JS/HTML mặc định **PHẢI viết bằng tiếng Anh**, tuyệt đối không viết cứng tiếng Việt.
+  - Tuyệt đối không viết cứng chuỗi tiếng Anh mà **PHẢI bọc trong các hàm i18n chuẩn** của WordPress (ví dụ: `__( 'Text', 'domain' )`, `esc_html_e( 'Text', 'domain' )`, `esc_js( __( 'Text', 'domain' ) )`) để hỗ trợ dịch đa ngôn ngữ.
+  - Ngay cả khi USER viết yêu cầu bằng tiếng Việt, mã nguồn sinh ra phải viết bằng tiếng Anh và bọc i18n.
+  - **Ngoại lệ duy nhất:** Các dòng chú thích code (Comments) và PHPDoc có thể viết bằng tiếng Việt.
+
 # ACTION PLAN
 1. Brief analysis (max 3 bullets, Vietnamese)
 2. Full code OR exact modified segments

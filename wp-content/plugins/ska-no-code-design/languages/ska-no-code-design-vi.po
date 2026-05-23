@@ -1253,3 +1253,36 @@ msgstr "Thương hiệu & Màu sắc"
 msgid "UI Components"
 msgstr "Thành phần UI"
 
+msgid "Active"
+msgstr "Đang hoạt động"
+
+msgid "When enabled, displays a Red Badge when frontend errors occur (duplicate ID, AST error) instead of failing silently to preserve layout."
+msgstr "Khi bật, hiển thị Badge Đỏ khi xảy ra lỗi Frontend (Trùng lặp ID, sai AST) thay vì giấu đi để giữ Layout."
+
+msgid "Brand, Font & Theme Options"
+msgstr "Brand, Font & Theme Options"
+
+msgid "Theme Builder"
+msgstr "Theme Builder"
+
+msgid "Customize AI"
+msgstr "Tùy chỉnh AI"
+
+msgid "Ska AI Architect"
+msgstr "Kiến trúc sư Ska AI"
+
+msgid "AI installation module is being developed for the next phase."
+msgstr "Module cài đặt AI đang được phát triển cho phase tiếp theo."
+
+msgid "Active Theme"
+msgstr "Theme đang hoạt động"
+
+msgid "Ska Canvas Theme"
+msgstr "Giao diện Ska Canvas"
+
+msgid "Ska Organisms Manager"
+msgstr "Quản lý Organism"
+
+msgid "Theme Options"
+msgstr "Tùy chọn Theme"
+

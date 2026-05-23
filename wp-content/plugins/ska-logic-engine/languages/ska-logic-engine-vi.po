@@ -218,3 +218,6 @@ msgstr "Ký tự bất định không thể bóc tách Prefix tại dòng"
 msgid "Syntax error: Incorrect character."
 msgstr "Lỗi cú pháp: Ký tự không đúng chuẩn."
 
+msgid "Open Workflows"
+msgstr "Mở Băng chuyền (Workflows)"
+

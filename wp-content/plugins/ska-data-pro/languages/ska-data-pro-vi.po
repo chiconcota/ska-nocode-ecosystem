@@ -1088,3 +1088,15 @@ msgstr "</ul><p>Tất cả đã hoàn tất. Bạn có thể F5 lại mục Sche
 msgid "All done. "
 msgstr "Tất cả đã hoàn tất. Bạn có thể F5 lại mục Schema!"
 
+msgid "Site Blueprint"
+msgstr "Bản thiết kế Website"
+
+msgid "Manage Theme Templates, Organisms & Tokens for Web App."
+msgstr "Quản lý Theme Templates, Organisms & Tokens cho Web App."
+
+msgid "Manage Database"
+msgstr "Quản lý Database"
+
+msgid "Workspace"
+msgstr "Workspace"
+

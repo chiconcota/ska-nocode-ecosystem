@@ -69,7 +69,7 @@ class Ska_Theme_Builder {
 			'manage_options',       // Capability
 			'ska-theme-builder',    // Menu slug
 			array( $this, 'render_admin_panel' ), // Callback function
-			2 // Position
+			3 // Position
 		);
 	}
 

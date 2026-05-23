@@ -44,11 +44,11 @@ class Design_Workspace_UI {
         add_submenu_page(
             'ska-system-dashboard', 
             'Design Workspace',     
-            __( 'Designer submission', 'ska-no-code-design' ),     
+            __( 'Ska Organisms Manager', 'ska-no-code-design' ),     
             'manage_options',       
             'ska-design-workspace', 
             [ $this, 'render_page' ], 
-            3 
+            2 
         );
     }
 

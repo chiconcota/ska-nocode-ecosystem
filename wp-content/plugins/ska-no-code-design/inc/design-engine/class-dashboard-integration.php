@@ -30,27 +30,27 @@ class Ska_Design_Dashboard_Integration {
                         <p class="text-sm text-slate-500 mt-1"><?php esc_html_e( 'Provides Base Atomic Blocks, Tailwind v4 JIT Compiler and html2tailwind converter. ', 'ska-no-code-design' ); ?></p>
                     </div>
                     <span class="h-[22px] inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
-                        Đang hoạt động
+                        <?php esc_html_e( 'Active', 'ska-no-code-design' ); ?>
                     </span>
                 </div>
                 <div class="mt-4 flex gap-3 text-sm">
                     <?php if ( $can_use_design ) : ?>
                         <a href="<?php echo esc_url( admin_url( 'admin.php?page=ska-design-workspace' ) ); ?>" class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline"><?php esc_html_e( 'Open Designer', 'ska-no-code-design' ); ?></a>
                         <span class="text-slate-300">|</span>
-                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=ska-design-tokens' ) ); ?>" class="text-slate-600 hover:text-slate-900">Brand, Font & Theme Options</a>
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=ska-design-tokens' ) ); ?>" class="text-slate-600 hover:text-slate-900"><?php esc_html_e( 'Brand, Font & Theme Options', 'ska-no-code-design' ); ?></a>
                         <span class="text-slate-300">|</span>
-                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=ska-theme-builder' ) ); ?>" class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline">Theme Builder</a>
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=ska-theme-builder' ) ); ?>" class="text-indigo-600 font-medium hover:text-indigo-800 hover:underline"><?php esc_html_e( 'Theme Builder', 'ska-no-code-design' ); ?></a>
                     <?php else : ?>
-                        <span class="text-slate-400 font-medium flex items-center gap-1 cursor-not-allowed" title=__( 'Requires activation of Ska Data Pro & Ska Logic Engine', 'ska-no-code-design' )>
-                            <span class="material-symbols-outlined text-[16px]">lock</span> Mở Trình thiết kế
+                        <span class="text-slate-400 font-medium flex items-center gap-1 cursor-not-allowed" title="<?php echo esc_attr( __( 'Requires activation of Ska Data Pro & Ska Logic Engine', 'ska-no-code-design' ) ); ?>">
+                            <span class="material-symbols-outlined text-[16px]">lock</span> <?php esc_html_e( 'Open Designer', 'ska-no-code-design' ); ?>
                         </span>
                         <span class="text-slate-300">|</span>
-                        <span class="text-slate-400 flex items-center gap-1 cursor-not-allowed" title=__( 'Requires activation of Ska Data Pro & Ska Logic Engine', 'ska-no-code-design' )>
-                            <span class="material-symbols-outlined text-[16px]">lock</span> Brand, Font & Theme Options
+                        <span class="text-slate-400 flex items-center gap-1 cursor-not-allowed" title="<?php echo esc_attr( __( 'Requires activation of Ska Data Pro & Ska Logic Engine', 'ska-no-code-design' ) ); ?>">
+                            <span class="material-symbols-outlined text-[16px]">lock</span> <?php esc_html_e( 'Brand, Font & Theme Options', 'ska-no-code-design' ); ?>
                         </span>
                         <span class="text-slate-300">|</span>
-                        <span class="text-slate-400 flex items-center gap-1 cursor-not-allowed" title=__( 'Requires activation of Ska Data Pro & Ska Logic Engine', 'ska-no-code-design' )>
-                            <span class="material-symbols-outlined text-[16px]">lock</span> Theme Builder
+                        <span class="text-slate-400 flex items-center gap-1 cursor-not-allowed" title="<?php echo esc_attr( __( 'Requires activation of Ska Data Pro & Ska Logic Engine', 'ska-no-code-design' ) ); ?>">
+                            <span class="material-symbols-outlined text-[16px]">lock</span> <?php esc_html_e( 'Theme Builder', 'ska-no-code-design' ); ?>
                         </span>
                     <?php endif; ?>
                 </div>
@@ -82,8 +82,7 @@ class Ska_Design_Dashboard_Integration {
         <div class="flex items-start justify-between">
             <div class="pr-4">
                 <h4 class="m-0 border-0 pt-0 pb-0 text-sm font-semibold text-slate-800"><?php esc_html_e( 'Dev Mode', 'ska-no-code-design' ); ?></h4>
-                <p class="text-xs text-slate-500 mt-1 block">Khi bật, hiển thị Badge Đỏ khi xảy ra lỗi
-                    Frontend (Trùng lặp ID, sai AST) thay vì giấu đi để giữ Layout.</p>
+                <p class="text-xs text-slate-500 mt-1 block"><?php esc_html_e( 'When enabled, displays a Red Badge when frontend errors occur (duplicate ID, AST error) instead of failing silently to preserve layout.', 'ska-no-code-design' ); ?></p>
             </div>
             <div class="relative inline-block w-10 align-middle select-none transition duration-200 ease-in flex-shrink-0 mt-1">
                 <input type="checkbox" name="ska_system_dev_mode" id="ska_system_dev_mode" value="1" <?php checked($dev_mode, '1'); ?>
