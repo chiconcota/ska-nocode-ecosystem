@@ -44,7 +44,7 @@ foreach ($data_dictionary as $table_name => $meta) {
                 } else {
                     $name = $col_key;
                     if ($col_key === 'id') $name = 'ID';
-                    if ($col_key === 'created_at') $name = 'Ngày tạo (created_at)';
+                    if ($col_key === 'created_at') $name = __( 'Created date (created_at)', 'ska-logic-engine' );
                     
                     $type = 'text';
                     if (strpos(strtolower($p_col->Type), 'int') !== false) $type = 'number';
@@ -85,25 +85,25 @@ foreach ($data_dictionary as $table_name => $meta) {
 $available_nodes = [
     [
         'class' => 'Ska_Format_Processor',
-        'name' => '🧰 Định Dạng Dữ Liệu (Chuẩn hóa Rác)',
+        'name' => __( '🧰 Data Format (Junk Standardization)', 'ska-logic-engine' ),
         'type' => 'processor',
         'color' => '#f59e0b'
     ],
     [
         'class' => 'Ska_Insert_Data_Action',
-        'name' => '🗄️ Lưu Xuống Data (Bất kỳ Bảng nào)',
+        'name' => __( '🗄️ Save Data (Any Table)', 'ska-logic-engine' ),
         'type' => 'action',
         'color' => '#10b981'
     ],
     [
         'class' => 'Ska_Update_Data_Action',
-        'name' => '📝 Cập Nhật Record (Update)',
+        'name' => __( '📝 Update Record (Update)', 'ska-logic-engine' ),
         'type' => 'action',
         'color' => '#8b5cf6'
     ],
     [
         'class' => 'Ska_Email_Action',
-        'name' => '✉️ Gửi Email (Có {{biến_động}})',
+        'name' => __( '✉️ Send Email (There are {{variations}})', 'ska-logic-engine' ),
         'type' => 'action',
         'color' => '#3b82f6'
     ]

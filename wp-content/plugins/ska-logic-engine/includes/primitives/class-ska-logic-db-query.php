@@ -19,11 +19,11 @@ class Ska_Logic_DB_Query implements Ska_Logic_Node {
         $resultVar  = isset($config['resultVar']) ? trim($config['resultVar']) : 'query_results';
 
         if (empty($table)) {
-            error_log("Ska_Logic_DB_Query: Bỏ qua do chưa chọn Table.");
+            error_log(__( 'Ska_Logic_DB_Query: Skipped because Table was not selected.', 'ska-logic-engine' ));
             return ['payload' => $payload, 'port' => 'main']; 
         }
 
-        error_log("Ska_Logic_DB_Query: Bắt đầu xử lý cho Table {$table}. ReturnType: {$returnType}");
+        error_log(__( 'Ska_Logic_DB_Query: Start processing for Table {$table}. ', 'ska-logic-engine' ));
 
         $where_clauses = [];
         $query_values = [];
@@ -87,7 +87,7 @@ class Ska_Logic_DB_Query implements Ska_Logic_Node {
         if ($returnType === 'single') {
             $result = $wpdb->get_row($prepared_sql, ARRAY_A);
             error_log("Ska_Logic_DB_Query: SQL -> " . $prepared_sql);
-            error_log("Ska_Logic_DB_Query: Lấy 1 bản ghi từ {$table}.");
+            error_log(__( 'Ska_Logic_DB_Query: Get 1 record from {$table}.', 'ska-logic-engine' ));
         } else {
             $result = $wpdb->get_results($prepared_sql, ARRAY_A);
             error_log("Ska_Logic_DB_Query: SQL -> " . $prepared_sql);

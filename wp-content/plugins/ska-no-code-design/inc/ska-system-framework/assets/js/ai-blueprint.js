@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 /**
  * Ska AI Blueprint Generator
  */
@@ -17,7 +18,7 @@ function skaCloseAiModal() {
         document.getElementById('aiError').classList.add('hidden');
         document.getElementById('aiPrompt').disabled = false;
         document.getElementById('aiSubmitBtn').disabled = false;
-        document.getElementById('aiSubmitBtn').innerHTML = '<span class="material-symbols-outlined text-[18px] mr-1">magic_button</span> Tiến hành tạo ✨';
+        document.getElementById('aiSubmitBtn').innerHTML = __( '<span class=\"material-symbols-outlined text-[18px] mr-1\">magic_button</span> Proceed to create ✨', 'ska-no-code-design' );
     }, 300);
 }
 
@@ -62,17 +63,17 @@ function skaGenerateBlueprint() {
         loadingEl.style.display = 'none';
         
         document.getElementById('aiResultArea').classList.remove('hidden');
-        document.getElementById('aiSubmitBtn').innerHTML = '<span class="material-symbols-outlined text-[18px] mr-1">refresh</span> Tạo lại ✨';
+        document.getElementById('aiSubmitBtn').innerHTML = __( '<span class=\"material-symbols-outlined text-[18px] mr-1\">refresh</span> Regenerate ✨', 'ska-no-code-design' );
     }).fail(function(error) {
         console.error("Gemini API Error:", error);
         loadingEl.classList.add('hidden');
         loadingEl.style.display = 'none';
         
         document.getElementById('aiError').classList.remove('hidden');
-        const errorMsg = error && error.message ? error.message : "Không thể kết nối đến máy chủ Ska AI Overseer.";
+        const errorMsg = error && error.message ? error.message : __( 'Unable to connect to Ska AI Overseer server.', 'ska-no-code-design' );
         document.getElementById('aiErrorMessage').innerText = errorMsg;
         
-        document.getElementById('aiSubmitBtn').innerHTML = '<span class="material-symbols-outlined text-[18px] mr-1">magic_button</span> Thử lại ✨';
+        document.getElementById('aiSubmitBtn').innerHTML = __( '<span class=\"material-symbols-outlined text-[18px] mr-1\">magic_button</span> Try again ✨', 'ska-no-code-design' );
     }).always(function() {
         document.getElementById('aiPrompt').disabled = false;
         document.getElementById('aiSubmitBtn').disabled = false;

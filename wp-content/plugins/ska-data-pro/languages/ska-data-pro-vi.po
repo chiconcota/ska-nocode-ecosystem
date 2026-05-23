@@ -1,0 +1,1090 @@
+# Translation for ska-data-pro
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0.0\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Are you sure you want to permanently delete this line?"
+msgstr "Bạn có chắc chắn muốn xóa vĩnh viễn dòng này?"
+
+msgid "Cancel"
+msgstr "Hủy"
+
+msgid "Saving..."
+msgstr "Đang lưu..."
+
+msgid "-- Select Lookup Column --"
+msgstr "-- Chọn Cột Tra Cứu --"
+
+msgid "-- Loading data... --"
+msgstr "-- Đang tải dữ liệu... --"
+
+msgid "-- The table has no empty columns --"
+msgstr "-- Bảng không có cột rỗng --"
+
+msgid "-- Network error --"
+msgstr "-- Lỗi mạng --"
+
+msgid "Processing...`):(e.style.pointerEvents=`none`,e.innerHTML=`"
+msgstr "Đang xử lý...`):(e.style.pointerEvents=`none`,e.innerHTML=`"
+
+msgid "{let n=document.getElementById(`ska-col-label`),r=document.getElementById(`ska-col-type`),i=document.getElementById(`ska-col-options`),a=n.value.trim();if(!a){alert(`Column names cannot be empty.`),n.focus();return}e.disabled=!0,e.innerHTML=`"
+msgstr "{let n=document.getElementById(`ska-col-label`),r=document.getElementById(`ska-col-type`),i=document.getElementById(`ska-col-options`),a=n.value.trim();if(!a){alert(`Tên cột không được để trống.`),n.focus();return}e.disabled=!0,e.innerHTML=`"
+
+msgid "{let n=document.getElementById(`ska-new-app-name`).value.trim(),r=document.getElementById(`ska-new-app-icon`).value;if(!n){alert(`Please fill in Workspace name.`);return}e.disabled=!0,e.innerText=`Initializing...`;let i=await "
+msgstr "{let n=document.getElementById(`ska-new-app-name`).value.trim(),r=document.getElementById(`ska-new-app-icon`).value;if(!n){alert(`Vui lòng điền tên Workspace.`);return}e.disabled=!0,e.innerText=`Đang khởi tạo...`;let i=await t(`ska_data_create_app`,{name:n,icon:r});i.success?window.location.reload():(alert(i.data?.message||`Lỗi`),e.disabled=!1,e.innerHTML=`"
+
+msgid "{if(!a.files||a.files.length===0)return;let e=a.files[0],t=window.skaDataConfig||{},n=new "
+msgstr "{if(!a.files||a.files.length===0)return;let e=a.files[0],t=window.skaDataConfig||{},n=new FormData;n.append(`action`,`ska_data_import_app`),n.append(`security`,t.nonce),n.append(`blueprint_file`,e),s.disabled=!0,s.classList.add(`hidden`),c.classList.remove(`hidden`),c.classList.add(`flex`),a.disabled=!0;try{let e=await(await fetch(t.ajaxurl,{method:`POST`,body:n})).json();e.success?window.location.reload():(alert(e.data?.message||`Lỗi đúc cấu trúc.`),s.disabled=!1,s.classList.remove(`hidden`),c.classList.add(`hidden`),c.classList.remove(`flex`),a.disabled=!1)}catch(e){console.error(`API Error:`,e),alert(`Lỗi mạng hoặc server không phản hồi.`),s.disabled=!1,s.classList.remove(`hidden`),c.classList.add(`hidden`),c.classList.remove(`flex`),a.disabled=!1}}))}var o=class{constructor(t){this.cell=t,this.colName=t.getAttribute(`data-col`),this.type=t.getAttribute(`data-type`),this.val=t.getAttribute(`data-value`),this.optionsStr=t.getAttribute(`data-options`),this.rowId=t.closest(`tr`).getAttribute(`data-id`),this.contentDiv=t.querySelector(`.ska-cell-content`),this.tableId=e().tableId}edit(){console.warn(`Edit method not implemented for`,this.type)}async updateDb(e){this.cell.classList.add(`bg-blue-50`,`opacity-50`);let n=await t(`ska_data_update_cell`,{id:this.rowId,column:this.colName,value:e});return this.cell.classList.remove(`bg-blue-50`,`opacity-50`),n.success?(this.cell.setAttribute(`data-value`,e),this.val=e,!0):(alert(n.data?.message||`Có lỗi xảy ra`),!1)}},s=class extends o{async edit(){let e=this.val==`1`?`0`:`1`;if(await this.updateDb(e)){let t=e==`1`,n=t?`bg-emerald-500`:`bg-gray-300`,r=t?`translate-x-3.5`:`translate-x-0.5`;this.contentDiv.innerHTML=`"
+
+msgid "{e.stopPropagation(),t.splice(n,1),i()},r.appendChild(o),r.appendChild(s),a.appendChild(r)}),t.length===0&&(a.className=`text-center p-4 text-xs text-gray-400 italic bg-gray-50 rounded border border-dashed "
+msgstr "{e.stopPropagation(),t.splice(n,1),i()},r.appendChild(o),r.appendChild(s),a.appendChild(r)}),t.length===0&&(a.className=`text-center p-4 text-xs text-gray-400 italic bg-gray-50 rounded border border-dashed border-gray-200`,a.innerText=`Trống. Xin hãy thêm ảnh vào.`),e.appendChild(a);let o=document.createElement(`div`);o.className=`flex gap-2 mt-1`;let s=document.createElement(`button`);s.className=`flex-1 bg-white border border-emerald-500 text-emerald-600 hover:bg-emerald-50 text-xs py-1.5 rounded font-bold transition-colors flex justify-center items-center shadow-sm`,s.innerHTML=`"
+
+msgid "{let n=e.state().get(`selection`).first().toJSON();t.push(n.url),i()}),e.open()}else alert(`Unable to load wp.media`)};let c=document.createElement(`button`);c.className=`flex-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs py-1.5 "
+msgstr "{let n=e.state().get(`selection`).first().toJSON();t.push(n.url),i()}),e.open()}else alert(`Chưa tải được wp.media`)};let c=document.createElement(`button`);c.className=`flex-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs py-1.5 rounded font-bold transition-colors flex justify-center items-center shadow-sm`,c.innerHTML=`"
+
+msgid "Loading..."
+msgstr "Đang tải..."
+
+msgid "Out of available results."
+msgstr "Hết kết quả khả dụng."
+
+msgid "${i.data?.message||`Error`}"
+msgstr "${i.data?.message||`Lỗi`}"
+
+msgid "An error occurred"
+msgstr "Có lỗi xảy ra"
+
+msgid "The primary key (ID) cannot be edited"
+msgstr "Khoá chính (ID) không thể sửa"
+
+msgid "Drum. "
+msgstr "Trống. Xin hãy thêm ảnh vào."
+
+msgid "<span class=\"dashicons dashicons-plus\" style=\"font-size: 14px; margin-top: -1px; margin-right: 2px;\"></span> Add Photo"
+msgstr "<span class=\"dashicons dashicons-plus\" style=\"font-size: 14px; margin-top: -1px; margin-right: 2px;\"></span> Thêm Ảnh"
+
+msgid "Select Photo"
+msgstr "Chọn Ảnh"
+
+msgid "More"
+msgstr "Thêm"
+
+msgid "Wp.media has not been loaded yet"
+msgstr "Chưa tải được wp.media"
+
+msgid "<span class=\"dashicons dashicons-saved\" style=\"font-size: 14px; margin-top: -1px; margin-right: 2px;\"></span> Stamp"
+msgstr "<span class=\"dashicons dashicons-saved\" style=\"font-size: 14px; margin-top: -1px; margin-right: 2px;\"></span> Đóng Dấu"
+
+msgid "Select Image"
+msgstr "Chọn Hình Ảnh"
+
+msgid "Use This Photo"
+msgstr "Dùng Ảnh Này"
+
+msgid "Unable to load wp.media library"
+msgstr "Chưa tải được thư viện wp.media"
+
+msgid "Blank (No reference yet)."
+msgstr "Trống (Chưa tham chiếu ai)."
+
+msgid "Type search records..."
+msgstr "Gõ tìm kiếm bản ghi..."
+
+msgid "<div class=\"p-2 text-center text-[10px] text-gray-400\"><span class=\"dashicons dashicons-update-alt\" style=\"animation: spin 1s infinite linear;\"></span> Loading...</div>"
+msgstr "<div class=\"p-2 text-center text-[10px] text-gray-400\"><span class=\"dashicons dashicons-update-alt\" style=\"animation: spin 1s infinite linear;\"></span> Đang tải...</div>"
+
+msgid "<div class=\"p-2 text-center text-[10px] text-gray-400 bg-gray-50 italic\">No available results.</div>"
+msgstr "<div class=\"p-2 text-center text-[10px] text-gray-400 bg-gray-50 italic\">Hết kết quả khả dụng.</div>"
+
+msgid "Error"
+msgstr "Lỗi"
+
+msgid "${res.data?.message || "
+msgstr "${res.data?.message || 'Lỗi'}"
+
+msgid "<span class=\"dashicons dashicons-saved\" style=\"font-size: 14px; margin-top: -1px; margin-right: 4px;\"></span> Save Reference"
+msgstr "<span class=\"dashicons dashicons-saved\" style=\"font-size: 14px; margin-top: -1px; margin-right: 4px;\"></span> Lưu Tham Chiếu"
+
+msgid "Network crashed!"
+msgstr "Mạng bị xịt!"
+
+msgid "The feature to change Database options directly will be implemented later."
+msgstr "Tính năng đổi options Database trực tiếp sẽ được implement sau."
+
+msgid "Edit Options in Column configuration"
+msgstr "Sửa Option trong cấu hình Cột"
+
+msgid "Please enter Workspace name."
+msgstr "Vui lòng điền tên Workspace."
+
+msgid "Initializing..."
+msgstr "Đang khởi tạo..."
+
+msgid "<span class=\"dashicons dashicons-plus-alt2 mt-0.5\" style=\"font-size:16px;\"></span> Create Workspace"
+msgstr "<span class=\"dashicons dashicons-plus-alt2 mt-0.5\" style=\"font-size:16px;\"></span> Tạo Workspace"
+
+msgid "Save Information"
+msgstr "Lưu Thông Tin"
+
+msgid "Disbanding..."
+msgstr "Đang giải tán..."
+
+msgid "Accept Risk & Dissolve"
+msgstr "Chấp nhận Rủi ro & Giải Tán"
+
+msgid "Invalid file (Must be .json)"
+msgstr "File không hợp lệ (Phải là .json)"
+
+msgid "Drag and Drop or Select File (.json)"
+msgstr "Kéo thả hoặc Chọn File (.json)"
+
+msgid "Structural casting error."
+msgstr "Lỗi đúc cấu trúc."
+
+msgid "Network error or server not responding."
+msgstr "Lỗi mạng hoặc server không phản hồi."
+
+msgid "Option List"
+msgstr "Danh Sách Lựa Chọn (Option List)"
+
+msgid "Target Table"
+msgstr "Bảng Đích Khai Thác (Target Table)"
+
+msgid "<option value=\"\">-- Select Lookup Column --</option>"
+msgstr "<option value=\"\">-- Chọn Cột Tra Cứu --</option>"
+
+msgid "<option value=\"\">-- Loading data... --</option>"
+msgstr "<option value=\"\">-- Đang tải dữ liệu... --</option>"
+
+msgid "<option value=\"\">-- The table does not have empty columns --</option>"
+msgstr "<option value=\"\">-- Bảng không có cột rỗng --</option>"
+
+msgid "<option value=\"\">-- Network error --</option>"
+msgstr "<option value=\"\">-- Lỗi mạng --</option>"
+
+msgid "<span class=\"dashicons dashicons-update-alt\" style=\"animation: spin 1s infinite linear;\"></span> Processing..."
+msgstr "<span class=\"dashicons dashicons-update-alt\" style=\"animation: spin 1s infinite linear;\"></span> Đang xử lý..."
+
+msgid "<span class=\"dashicons dashicons-update-alt\" style=\"animation: spin 1s infinite linear;\"></span> Creating..."
+msgstr "<span class=\"dashicons dashicons-update-alt\" style=\"animation: spin 1s infinite linear;\"></span> Đang tạo..."
+
+msgid "Network error"
+msgstr "Lỗi mạng"
+
+msgid "Column names cannot be empty."
+msgstr "Tên cột không được để trống."
+
+msgid "<span class=\"dashicons dashicons-update-alt\" style=\"animation: spin 1s infinite linear;\"></span> Connecting..."
+msgstr "<span class=\"dashicons dashicons-update-alt\" style=\"animation: spin 1s infinite linear;\"></span> Đang kết nối..."
+
+msgid "You need to select the full Reference Column and Lookup Column for the Rollup function!"
+msgstr "Bạn cần chọn đầy đủ Cột Tham Chiếu và Cột Tra Cứu cho chức năng Rollup!"
+
+msgid "Create Data Field"
+msgstr "Tạo Trường Dữ Liệu"
+
+msgid "Name cannot be empty."
+msgstr "Tên không được trống."
+
+msgid "Recasting furnace..."
+msgstr "Đang đúc lại lò..."
+
+msgid "Save Attributes"
+msgstr "Lưu Thuộc Tính"
+
+msgid "Judgment in progress..."
+msgstr "Đang thi hành án..."
+
+msgid "Beheaded (Deleted Forever)"
+msgstr "Trảm (Xóa Mãi Mãi)"
+
+msgid "Please fill in the table name (eg: Customer)."
+msgstr "Vui lòng điền tên bảng (vd: Khách Hàng)."
+
+msgid "Create Table"
+msgstr "Tạo Bảng"
+
+msgid "Please fill in the table name."
+msgstr "Vui lòng điền tên bảng."
+
+msgid "Updating..."
+msgstr "Đang cập nhật..."
+
+msgid "Destroying..."
+msgstr "Đang phi tang..."
+
+msgid "Accept Risk & Delete"
+msgstr "Chấp nhận Rủi ro & Xóa"
+
+msgid "Please fill in the Slug URL for Portal."
+msgstr "Vui lòng điền URL Slug cho Portal."
+
+msgid "An error occurred during saving."
+msgstr "Có lỗi xảy ra trong quá trình lưu."
+
+msgid "Error: Table Name and Column Name cannot be blank."
+msgstr "Lỗi: Tên bảng và Tên cột không được để trống."
+
+msgid "Column added successfully."
+msgstr "Đã thêm Cột thành công."
+
+msgid "Error: Table Name, Column Code and Display Name cannot be blank."
+msgstr "Lỗi: Tên bảng, Mã cột và Tên hiển thị không được để trống."
+
+msgid "Updated Column Name and Type successfully."
+msgstr "Đã cập nhật Tên và Kiểu cột thành công."
+
+msgid "Error: Unable to determine Column to delete."
+msgstr "Lỗi: Không xác định được Cột cần xóa."
+
+msgid "This Column has been permanently discarded."
+msgstr "Đã vứt bỏ Cột này vĩnh viễn."
+
+msgid "Error: Missing Option configuration data."
+msgstr "Lỗi: Thiếu dữ liệu cấu hình Option."
+
+msgid "Updated successfully."
+msgstr "Cập nhật thành công."
+
+msgid "Security: You do not have Administrator rights."
+msgstr "Bảo mật: Bạn không có quyền Administrator."
+
+msgid "Error: Data Template cannot be determined (Template ID is empty)."
+msgstr "Lỗi: Không xác định được Mẫu dữ liệu (Template ID bị trống)."
+
+msgid "Error Casting Database Schema:"
+msgstr "Lỗi Đúc Schema CSDL:"
+
+msgid "Data Table initialization successful!"
+msgstr "Khởi tạo Bảng dữ liệu thành công!"
+
+msgid "Security: You do not have permission to manipulate the data."
+msgstr "Bảo mật: Bạn không có quyền thao tác dữ liệu."
+
+msgid "The table name parameter is missing."
+msgstr "Tham số tên bảng bị thiếu."
+
+msgid "Line added successfully."
+msgstr "Thêm dòng thành công."
+
+msgid "Wrong structure of data upload to Server."
+msgstr "Sai cấu trúc tải dữ liệu lên Server."
+
+msgid "Saved automatically."
+msgstr "Đã tự động lưu."
+
+msgid "Error missing ID to delete."
+msgstr "Lỗi thiếu ID để xóa."
+
+msgid "Permanent deletion successful."
+msgstr "Xóa vĩnh viễn thành công."
+
+msgid "Error: Table name cannot be empty."
+msgstr "Lỗi: Tên bảng không được để trống."
+
+msgid "Error: Invalid table information."
+msgstr "Lỗi: Thông tin bảng không hợp lệ."
+
+msgid "Table updated successfully."
+msgstr "Cập nhật bảng thành công."
+
+msgid "Error: Unable to determine table to Delete."
+msgstr "Lỗi: Không xác định được bảng cần Xóa."
+
+msgid "Has disappeared."
+msgstr "Đã tan biến."
+
+msgid "Error: Unable to determine Data Table."
+msgstr "Lỗi: Không xác định được Bảng dữ liệu."
+
+msgid "App Portal configuration updated successfully."
+msgstr "Cập nhật cấu hình App Portal thành công."
+
+msgid "Error updating Portal configuration:"
+msgstr "Lỗi cập nhật cấu hình Portal:"
+
+msgid "Automatically create UI for Portal successfully."
+msgstr "Tự động tạo UI cho Portal thành công."
+
+msgid "Workspace created successfully."
+msgstr "Tạo Workspace thành công."
+
+msgid "Workspace updated successfully."
+msgstr "Cập nhật Workspace thành công."
+
+msgid "Deleted Workspace successfully."
+msgstr "Xoá Workspace thành công."
+
+msgid "Missing Workspace ID."
+msgstr "Thiếu ID Workspace."
+
+msgid "Workspace does not exist."
+msgstr "Workspace không tồn tại."
+
+msgid "Error: Cannot find uploaded JSON file."
+msgstr "Lỗi: Không tìm thấy file JSON upload."
+
+msgid "Error: Invalid JSON file structure."
+msgstr "Lỗi: File JSON cấu trúc không hợp lệ."
+
+msgid "Error creating Workspace:"
+msgstr "Lỗi tạo Workspace:"
+
+msgid "Fatal Error creating Table:"
+msgstr "Fatal Error tạo Bảng:"
+
+msgid "Import Blueprint successfully!"
+msgstr "Import Blueprint thành công!"
+
+msgid "Missing Destination Table parameter."
+msgstr "Thiếu thông số Bảng Đích."
+
+msgid "Invalid table in Ecosystem."
+msgstr "Bảng không hợp lệ trong Hệ sinh thái."
+
+msgid "The destination table does not exist or is empty."
+msgstr "Bảng đích không tồn tại hoặc rỗng Schema."
+
+msgid "Record #"
+msgstr "Bản ghi #"
+
+msgid "Title (post_title)"
+msgstr "Tiêu đề (post_title)"
+
+msgid "Link to Slug article (post_name)"
+msgstr "Link bài viết Slug (post_name)"
+
+msgid "Author ID (post_author)"
+msgstr "ID Tác giả (post_author)"
+
+msgid "Content (post_content)"
+msgstr "Nội dung (post_content)"
+
+msgid "Short description (post_excerpt)"
+msgstr "Mô tả ngắn (post_excerpt)"
+
+msgid "Creation date (post_date)"
+msgstr "Ngày tạo (post_date)"
+
+msgid "Account (user_login)"
+msgstr "Tài khoản (user_login)"
+
+msgid "Display name (display_name)"
+msgstr "Tên hiển thị (display_name)"
+
+msgid "Destination table does not exist or is Empty."
+msgstr "Bảng đích không tồn tại hoặc Rỗng."
+
+msgid "Extremely fast Flat Tables management. "
+msgstr "Quản lý Dữ liệu Phẳng (Flat Tables) cực nhanh. Bắt đầu bằng cách chọn một bộ dữ liệu dự án mẫu."
+
+msgid "Retail store model. "
+msgstr "Mô hình cửa hàng bán lẻ. Tích hợp sẵn schema Giỏ hàng, Danh sách Sản phẩm, Kho và Đơn Đặt Hàng."
+
+msgid "Self-created table:"
+msgstr "Bảng tự tạo:"
+
+msgid "Install This Template"
+msgstr "Cài Đặt Mẫu Này"
+
+msgid "Online education system. "
+msgstr "Hệ thống giáo dục trực tuyến. Gồm cấu trúc Khóa học, Bài giảng và Tiến độ Học viên."
+
+msgid "Service booking model (Spa, Medical, Hotel). "
+msgstr "Mô hình đặt lịch dịch vụ (Spa, Y tế, Khách sạn). Gồm thông tin Dịch Vụ và Slot thời gian."
+
+msgid "Online Health System, Hospital. "
+msgstr "Hệ thống Y tế, Bệnh viện trực tuyến. Quản lý danh sách Bác sĩ, chuyên khoa, lịch khám."
+
+msgid "Create a Blank Table"
+msgstr "Tạo Bảng Trống"
+
+msgid "Build an empty Schema from scratch. Optionally add data columns and define relationships."
+msgstr "Xây dựng Schema rỗng từ con số 0. Tùy ý thêm cột dữ liệu và định nghĩa quan hệ."
+
+msgid "Get Started Now"
+msgstr "Bắt Đầu Ngay"
+
+msgid "Why use Flat Tables instead of the old \"Post & Meta\"?"
+msgstr "Tại sao dùng Flat Tables thay vì \"Post & Meta\" cũ?"
+
+msgid "🚀 Blazing Fast"
+msgstr "🚀 Siêu Tốc (Blazing Fast)"
+
+msgid "Data is stored on a single flat Table instead of being split into pieces according to WordPress's EAV Model, helping Query speed increase at least x10 times."
+msgstr "Dữ liệu được lưu trữ trên một Bảng phẳng duy nhất thay vì xé lẻ theo EAV Model của WordPress, giúp tốc độ Truy vấn (Query) tăng ít nhất x10 lần."
+
+msgid "⚡ Easy Query (No-code)"
+msgstr "⚡ Query Dễ Dàng (No-code)"
+
+msgid "Make it easy for Ska Builder to embed data out to the Frontend via the GUI Loop builder."
+msgstr "Giúp Ska Builder dễ dàng nhúng dữ liệu ra Frontend qua trình tạo Vòng lặp giao diện đồ họa."
+
+msgid "🧹 Clean"
+msgstr "🧹 Sạch Tinh Tươm (Clean)"
+
+msgid "Don't get mixed up with junk data from other WordPress plugins. "
+msgstr "Không bị lẫn lộn dữ liệu rác từ các plugin WordPress khác. Dữ liệu của ứng dụng bạn xây dựng hoàn toàn cách ly."
+
+msgid "Installing..."
+msgstr "Đang cài đặt..."
+
+msgid "Done!"
+msgstr "Hoàn tất!"
+
+msgid "Error:"
+msgstr "Lỗi:"
+
+msgid "System busy"
+msgstr "Hệ thống bận"
+
+msgid "A network error occurred while sending the request"
+msgstr "Có lỗi mạng xảy ra khi gửi request"
+
+msgid "Please select or install a Data Sheet."
+msgstr "Vui lòng chọn hoặc cài đặt một Bảng dữ liệu."
+
+msgid "This table does not have Column format (empty Schema)."
+msgstr "Bảng này chưa có định dạng Cột (Schema trống)."
+
+msgid "<span class=\"dashicons dashicons-external text-indigo-500 opacity-80\" style=\"font-size: 16px;\" "
+msgstr "<span class=\"dashicons dashicons-external text-indigo-500 opacity-80\" style=\"font-size: 16px;\" title=\"Tham Chiếu (Relation)\"></span>"
+
+msgid "<span class=\"dashicons dashicons-search text-orange-500 opacity-80\" style=\"font-size: 16px;\" "
+msgstr "<span class=\"dashicons dashicons-search text-orange-500 opacity-80\" style=\"font-size: 16px;\" title=\"Tra Cứu (Lookup / Rollup)\"></span>"
+
+msgid "Add New Field"
+msgstr "Thêm Trường Mới"
+
+msgid "(Empty)"
+msgstr "(Trống rỗng)"
+
+msgid "<span class=\"dashicons dashicons-networking align-middle mr-1\" style=\"font-size:16px;\"></span> Group: <span class=\"text-indigo-900 bg-white px-2 py-0.5 rounded shadow-sm border border-indigo-100 ml-1\">"
+msgstr "<span class=\"dashicons dashicons-networking align-middle mr-1\" style=\"font-size:16px;\"></span> Nhóm: <span class=\"text-indigo-900 bg-white px-2 py-0.5 rounded shadow-sm border border-indigo-100 ml-1\">"
+
+msgid "Group:"
+msgstr "Nhóm:"
+
+msgid "Delete this line"
+msgstr "Xóa dòng này"
+
+msgid "<span class=\"dashicons dashicons-editor-justify text-gray-400 origin-left scale-75 mr-1 align-middle\"></span><span class=\"text-gray-400 italic text-xs\">Text content...</span>"
+msgstr "<span class=\"dashicons dashicons-editor-justify text-gray-400 origin-left scale-75 mr-1 align-middle\"></span><span class=\"text-gray-400 italic text-xs\">Nội dung văn bản...</span>"
+
+msgid "Text content..."
+msgstr "Nội dung văn bản..."
+
+msgid "Add New Field (Column)."
+msgstr "Thêm Trường (Cột) Mới"
+
+msgid "Display Column Name"
+msgstr "Tên Cột Hiển Thị"
+
+msgid "eg: Product Model..."
+msgstr "vd: Hình Mẫu Sản Phẩm..."
+
+msgid "Data Format"
+msgstr "Định Dạng Dữ Liệu"
+
+msgid "Short Text"
+msgstr "Chữ Ngắn (Short Text)"
+
+msgid "Long Content (Text / Rich Text HTML)"
+msgstr "Nội Dung Dài (Văn bản / Rich Text HTML)"
+
+msgid "Number"
+msgstr "Số Đếm (Number)"
+
+msgid "Currency"
+msgstr "Tiền Lẻ / Tỷ Giá (Currency)"
+
+msgid "Date"
+msgstr "Ngày Tháng (Date)"
+
+msgid "Date Time"
+msgstr "Ngày Giờ (Date Time)"
+
+msgid "Link (URL)"
+msgstr "Đường Dẫn Link (URL)"
+
+msgid "Single Image"
+msgstr "Ảnh Đơn (Single Image)"
+
+msgid "Media Gallery"
+msgstr "Thư Viện Ảnh (Media Gallery)"
+
+msgid "Toggle Button (True/False)"
+msgstr "Nút Gạt (True/False)"
+
+msgid "Select List (Single Select)"
+msgstr "Danh Sách Chọn (Select Đơn)"
+
+msgid "Multi Select"
+msgstr "Chọn Nhiều (Multi Select)"
+
+msgid "Table Reference (Relation)"
+msgstr "Tham Chiếu Nối Bảng (Relation)"
+
+msgid "Rollup (Get Other Table Columns)"
+msgstr "Rollup (Lấy Cột Bảng Khác)"
+
+msgid "eg: blue, red, purple, yellow"
+msgstr "vd: xanh,đỏ,tím,vàng"
+
+msgid "-- Select Destination Table --"
+msgstr "-- Chọn Bảng Đích --"
+
+msgid "\">📦 WP Posts / Woo Products ("
+msgstr "\">📦 WP Posts / Sản Phẩm Woo ("
+
+msgid "1. Select Reference Column (Relation)"
+msgstr "1. Chọn Cột Tham Chiếu (Relation)"
+
+msgid "-- Select Relation column --"
+msgstr "-- Chọn cột Relation --"
+
+msgid "(Point to:"
+msgstr "(Trỏ tới:"
+
+msgid "2. Select Lookup Column (Target)"
+msgstr "2. Chọn Cột Tra Cứu (Mục Tiêu)"
+
+msgid "-- Please select Reference Column first --"
+msgstr "-- Vui lòng chọn Cột Tham Chiếu trước --"
+
+msgid "The states are separated by commas. "
+msgstr "Các trạng thái cách nhau bằng dấu phẩy. Mặc định option đầu tiên sẽ được chọn."
+
+msgid "The column will be written directly to the Hard Drive Disk System."
+msgstr "Cột sẽ được ghi thẳng vào Hệ Thống Đĩa Ổ cứng."
+
+msgid "Edit Attributes"
+msgstr "Chỉnh Sửa Thuộc Tính"
+
+msgid "New Nickname"
+msgstr "Tên Ký Danh Mới"
+
+msgid "Compress Data Type Again"
+msgstr "Ép Kiểu Dữ Liệu Lại"
+
+msgid "Risk of type casting:"
+msgstr "Rủi ro ép kiểu:"
+
+msgid "Demolition Warning"
+msgstr "Cảnh Báo Phá Hủy"
+
+msgid "You are swinging the ax to cut down the column"
+msgstr "Bạn đang vung rìu tính chém đứt cột"
+
+msgid "Turn Your Hands Back"
+msgstr "Quay Tay Lại"
+
+msgid "Initialize Data Table"
+msgstr "Khởi tạo Bảng Dữ Liệu"
+
+msgid "Data Table Name"
+msgstr "Tên Bảng Dữ Liệu"
+
+msgid "eg: Students, Products..."
+msgstr "vd: Học Sinh, Sản Phẩm..."
+
+msgid "Icon (Icon)"
+msgstr "Biểu Tượng (Icon)"
+
+msgid "Basic table"
+msgstr "Biểu bảng cơ bản"
+
+msgid "User / User"
+msgstr "Người dùng / User"
+
+msgid "Cart / Order"
+msgstr "Giỏ hàng / Đơn hàng"
+
+msgid "Products/Goods"
+msgstr "Sản phẩm / Hàng hóa"
+
+msgid "Calendar / Events"
+msgstr "Lịch / Sự kiện"
+
+msgid "Images / Media"
+msgstr "Hình ảnh / Media"
+
+msgid "Belongs to App (Context Group)"
+msgstr "Thuộc App (Nhóm Ngữ Cảnh)"
+
+msgid "Edit Table Name"
+msgstr "Chỉnh Sửa Tên Bảng"
+
+msgid "Icon"
+msgstr "Biểu Tượng"
+
+msgid "DESTROY THE WHOLE TABLE"
+msgstr "PHÁ HỦY TOÀN BỘ BẢNG"
+
+msgid "This action will Permanently Delete the board"
+msgstr "Hành động này sẽ Xóa Vĩnh Viễn bảng"
+
+msgid "from Computer."
+msgstr "khỏi Máy tính."
+
+msgid "Enter text"
+msgstr "Nhập chữ"
+
+msgid "to complete"
+msgstr "để hoàn thành"
+
+msgid "Type the word XACNHAN here"
+msgstr "Gõ chữ XACNHAN vào đây"
+
+msgid "Close"
+msgstr "Đóng lại"
+
+msgid "Create Space App"
+msgstr "Khởi Tạo Không Gian App"
+
+msgid "App Name"
+msgstr "Tên Không Gian (App Name)"
+
+msgid "eg: Scheduling App, Accounting App..."
+msgstr "vd: App Đặt Lịch, App Kế Toán..."
+
+msgid "Group/Team"
+msgstr "Nhóm / Đội ngũ"
+
+msgid "Education/Courses"
+msgstr "Giáo dục / Khóa học"
+
+msgid "Network / Network"
+msgstr "Mạng lưới / Network"
+
+msgid "Create Workspace"
+msgstr "Tạo Workspace"
+
+msgid "Rename Space"
+msgstr "Đổi Tên Không Gian"
+
+msgid "DISSOLVED APPLICATION"
+msgstr "GIẢI TÁN ỨNG DỤNG"
+
+msgid "This action will Clear Space"
+msgstr "Hành động này sẽ Xóa Không gian"
+
+msgid "Default Space"
+msgstr "Không gian Mặc định"
+
+msgid "Import (Import) Blueprint"
+msgstr "Nhập (Import) Blueprint"
+
+msgid "Upload the JSON file"
+msgstr "Tải tệp JSON lên"
+
+msgid "The Flat Table structure will automatically unpack"
+msgstr "Cấu trúc Flat Table sẽ tự động giải nén"
+
+msgid "Casting data, please wait..."
+msgstr "Đang đúc dữ liệu, vui lòng đợi..."
+
+msgid "Start Importing"
+msgstr "Bắt đầu Import"
+
+msgid "Filtering Data"
+msgstr "Lọc Dữ Liệu"
+
+msgid "Filter By Column"
+msgstr "Lọc Theo Cột"
+
+msgid "Condition"
+msgstr "Điều Kiện"
+
+msgid "Contains keywords (Include)"
+msgstr "Chứa từ khóa (Bao gồm)"
+
+msgid "Exact equals (=)"
+msgstr "Bằng chính xác (=)"
+
+msgid "Comparative value"
+msgstr "Giá trị so sánh"
+
+msgid "eg: Product A..."
+msgstr "vd: Sản phẩm A..."
+
+msgid "Apply Filter"
+msgstr "Áp Dụng Lọc"
+
+msgid "Group Records"
+msgstr "Gộp Nhóm Bản Ghi"
+
+msgid "Select columns to merge"
+msgstr "Chọn cột để gộp"
+
+msgid "-- No grouping --"
+msgstr "-- Không gộp nhóm --"
+
+msgid "Group Now"
+msgstr "Nhóm Ngay"
+
+msgid "App Portal Configuration"
+msgstr "Cấu Hình App Portal"
+
+msgid "Activate App Portal"
+msgstr "Kích hoạt App Portal"
+
+msgid "Access path (URL Slug)"
+msgstr "Đường dẫn truy cập (URL Slug)"
+
+msgid "Allowed Roles"
+msgstr "Quyền truy cập (Allowed Roles)"
+
+msgid "Permissions are separated by commas. "
+msgstr "Các quyền cách nhau bằng dấu phẩy. Để trống nếu muốn hiển thị Public."
+
+msgid "Data display mode"
+msgstr "Chế độ hiển thị dữ liệu"
+
+msgid "Read-only"
+msgstr "Chỉ xem (Read-only)"
+
+msgid "Read & Write (CRUD Mode)"
+msgstr "Đọc & Ghi (CRUD Mode)"
+
+msgid "Unauthorized Redirect"
+msgstr "Trang đích khi chưa đăng nhập (Unauthorized Redirect)"
+
+msgid "eg: /dang-nhap or https://..."
+msgstr "vd: /dang-nhap hoặc https://..."
+
+msgid "If the Portal is locked (with Roles permission), non-logged users will be pushed to this page instead of the default wp-login. "
+msgstr "Nếu Portal bị khóa (Có phân quyền Roles), người dùng chưa đăng nhập sẽ bị đẩy về trang này thay vì wp-login mặc định. Để trống nếu muốn dùng wp-login."
+
+msgid "isGenerating ? "
+msgstr "isGenerating ? 'Đang khởi tạo hệ thống...' : 'Tự động sinh App Portal ngay'"
+
+msgid "Initialization successful!"
+msgstr "Khởi tạo thành công!"
+
+msgid "Organism, List View and Detail View have been created."
+msgstr "Organism, List View và Detail View đã được tạo."
+
+msgid "Please \"Activate App Portal\" and Save configuration before auto-generating."
+msgstr "Vui lòng \"Kích hoạt App Portal\" và Lưu cấu hình trước khi tự động sinh."
+
+msgid "Please fill in the Slug URL before creating the theme."
+msgstr "Vui lòng điền URL Slug trước khi tạo giao diện."
+
+msgid "Error initializing UI"
+msgstr "Lỗi khởi tạo UI"
+
+msgid "Server connection error"
+msgstr "Lỗi kết nối máy chủ"
+
+msgid "Save Configuration"
+msgstr "Lưu Cấu Hình"
+
+msgid "Database space"
+msgstr "Không gian CSDL"
+
+msgid "Import (Import) Workspace from JSON file"
+msgstr "Nhập (Import) Workspace từ file JSON"
+
+msgid "Create a new Workspace"
+msgstr "Tạo Workspace mới"
+
+msgid "Initialize the sample table"
+msgstr "Khởi tạo bảng mẫu"
+
+msgid "There are no tables yet. "
+msgstr "Chưa có bảng nào. Hãy cài Schema trước."
+
+msgid "Space Setting"
+msgstr "Thiết lập Không gian"
+
+msgid "System error: Data engine is not ready."
+msgstr "Lỗi hệ thống: Engine dữ liệu chưa sẵn sàng."
+
+msgid "The line cannot be deleted or the line does not exist."
+msgstr "Không thể xóa dòng hoặc dòng không tồn tại."
+
+msgid "Successfully deleted line."
+msgstr "Xóa dòng thành công."
+
+msgid "Application name cannot be empty."
+msgstr "Tên ứng dụng không được để trống."
+
+msgid "This Application name is already in use (Clash Alias). "
+msgstr "Tên Ứng dụng này đã được sử dụng (Ký danh đụng độ). Vui lòng chọn một tên Tôn sùng sự Độc nhất!"
+
+msgid "The System Workspace cannot be modified."
+msgstr "Không thể sửa đổi Workspace Hệ thống."
+
+msgid "Application does not exist."
+msgstr "Ứng dụng không tồn tại."
+
+msgid "Cannot delete System Workspace."
+msgstr "Không thể xóa Workspace Hệ thống."
+
+msgid "Template data does not exist."
+msgstr "Template dữ liệu không tồn tại."
+
+msgid "Error creating table:"
+msgstr "Lỗi tạo bảng:"
+
+msgid "Security: Invalid table name."
+msgstr "Bảo mật: Tên bảng không hợp lệ."
+
+msgid "Database error when priming new line:"
+msgstr "Lỗi Database khi mồi dòng mới:"
+
+msgid "Security: Column does not exist."
+msgstr "Bảo mật: Cột không tồn tại."
+
+msgid "Error saving data:"
+msgstr "Lỗi lưu dữ liệu:"
+
+msgid "The system reports: There is a column with the same name [{$col_slug}] in the table."
+msgstr "Hệ thống báo: Đã có một cột bị trùng tên [{$col_slug}] trong bảng."
+
+msgid "Error inserting hard drive column:"
+msgstr "Lỗi chèn cột ổ cứng:"
+
+msgid "The ID Column (System Primary Key) cannot be modified."
+msgstr "Không thể sửa đổi Cột ID (Khóa chính hệ thống)."
+
+msgid "Display name cannot be blank."
+msgstr "Tên hiển thị không được để trống."
+
+msgid "This column data type cannot be updated:"
+msgstr "Không thể cập nhật kiểu dữ liệu cột này:"
+
+msgid "Absolutely do not delete the Primary Key ID Column."
+msgstr "Tuyệt đối không được xóa Cột ID khóa chính."
+
+msgid "Again, MySQL encountered a column truncation error:"
+msgstr "Lại MySQL gặp lỗi cắt cột:"
+
+msgid "Error deleting data:"
+msgstr "Lỗi xóa dữ liệu:"
+
+msgid "Invalid table name."
+msgstr "Tên bảng không hợp lệ."
+
+msgid "This table already exists."
+msgstr "Bảng này đã tồn tại."
+
+msgid "Security: Deleting tables belonging to the Core System is not allowed."
+msgstr "Bảo mật: Không được phép xóa bảng thuộc Hệ thống Lõi."
+
+msgid "Security: Modification of Core System board configuration is not allowed."
+msgstr "Bảo mật: Không được phép sửa đổi cấu hình bảng thuộc Hệ thống Lõi."
+
+msgid "This column is not yet in the dictionary."
+msgstr "Cột này chưa nằm trong từ điển."
+
+msgid "Calls are only allowed on (Multi) Select columns."
+msgstr "Chỉ được phép gọi trên cột dạng (Multi) Select."
+
+msgid "The table does not exist in the dictionary."
+msgstr "Bảng không tồn tại trong từ điển."
+
+msgid "URL Slug cannot be empty when activating App Portal."
+msgstr "URL Slug không được để trống khi kích hoạt App Portal."
+
+msgid "This Slug URL is already in use by another table. "
+msgstr "URL Slug này đã được sử dụng bởi một bảng khác. Vui lòng chọn Slug khác."
+
+msgid "Content"
+msgstr "Nội dung"
+
+msgid "Ska No-Code Design Plugin is not activated or not responding."
+msgstr "Ska No-Code Design Plugin chưa được kích hoạt hoặc không phản hồi."
+
+msgid "Basic White T-shirt"
+msgstr "Áo Thun Basic Trắng"
+
+msgid "Dark Blue Jeans"
+msgstr "Quần Jean Xanh Đậm"
+
+msgid "Sports Sneakers"
+msgstr "Giày Sneaker Thể Thao"
+
+msgid "Waterproof Travel Backpack"
+msgstr "Balo Du Lịch Chống Nước"
+
+msgid "Black Cap"
+msgstr "Mũ Lưỡi Trai Đen"
+
+msgid "Nguyen Van A"
+msgstr "Nguyễn Văn A"
+
+msgid "Tran Thi B"
+msgstr "Trần Thị B"
+
+msgid "Le Huu C"
+msgstr "Lê Hữu C"
+
+msgid "Basic to Advanced HTML/CSS"
+msgstr "HTML/CSS Cơ Bản Đến Nâng Cao"
+
+msgid "JavaScript Programming in Action"
+msgstr "Lập Trình JavaScript Thực Chiến"
+
+msgid "Lesson 1: HTML structure"
+msgstr "Bài 1: Cấu trúc HTML"
+
+msgid "Lesson 2: CSS Flexbox"
+msgstr "Bài 2: CSS Flexbox"
+
+msgid "Lesson 1: JS Variables and Loops"
+msgstr "Bài 1: Biến và Vòng lặp JS"
+
+msgid "Pham Van Hoc"
+msgstr "Phạm Văn Học"
+
+msgid "Dinh Thi Gioi"
+msgstr "Đinh Thị Giỏi"
+
+msgid "Handsome Men's Haircut"
+msgstr "Cắt Tóc Nam Chuẩn Điển Trai"
+
+msgid "Korean Hair Perm"
+msgstr "Uốn Tóc Hàn Quốc"
+
+msgid "Smoky Hair Dye"
+msgstr "Nhuộm Tóc Màu Khói"
+
+msgid "Mr. Tien"
+msgstr "Anh Tiến"
+
+msgid "Long friend"
+msgstr "Bạn Long"
+
+msgid "Nguyen Van A (Fake)"
+msgstr "Nguyễn Văn A (Fake)"
+
+msgid "Administrator"
+msgstr "Quản Trị Viên"
+
+msgid "Le Thi B (Fake)"
+msgstr "Lê Thị B (Fake)"
+
+msgid "Customers (VIP)"
+msgstr "Khách Hàng (VIP)"
+
+msgid "Tran C (Fake)"
+msgstr "Trần C (Fake)"
+
+msgid "Staff"
+msgstr "Nhân Viên"
+
+msgid "✅ CONNECTING EXTERNAL ADAPTER (EXTENSIBILITY) SUCCESSFULLY!"
+msgstr "✅ KẾT NỐI ADAPTER NGOẠI LAI (EXTENSIBILITY) THÀNH CÔNG!"
+
+msgid "Missing DB Engine"
+msgstr "Thiếu DB Engine"
+
+msgid "<b>Result from DB:</b> <span style='color:green'>"
+msgstr "<b>Kết quả từ DB:</b> <span style='color:green'>"
+
+msgid "Result from DB:"
+msgstr "Kết quả từ DB:"
+
+msgid "<i>No data found. "
+msgstr "<i>Không tìm thấy dữ liệu. Hãy check lại tên bảng/ID!</i>"
+
+msgid "No data found. "
+msgstr "Không tìm thấy dữ liệu. Hãy check lại tên bảng/ID!"
+
+msgid "<i>Ska Builder Core is not enabled (Lack of Logic Engine)</i>"
+msgstr "<i>Chưa bật Ska Builder Core (Thiếu Logic Engine)</i>"
+
+msgid "Ska Builder Core not enabled (Lack of Logic Engine)"
+msgstr "Chưa bật Ska Builder Core (Thiếu Logic Engine)"
+
+msgid "1. Connection status (Single):"
+msgstr "1. Trạng thái kết nối (Đơn):"
+
+msgid "2. Virtual Object Array Loop Machine (WooCommerce Loop Simulator):"
+msgstr "2. Cỗ máy Lặp Mảng Object Ảo (Giả lập WooCommerce Loop):"
+
+msgid "Missing Core"
+msgstr "Thiếu Core"
+
+msgid "<b style=\"color:red\">No table=\"\" parameter was entered</b>"
+msgstr "<b style=\"color:red\">Chưa nhập tham số table=\"\"</b>"
+
+msgid "The table=\"\" parameter has not been entered."
+msgstr "Chưa nhập tham số table=\"\""
+
+msgid "<i>Table $table is empty or does not exist.</i>"
+msgstr "<i>Bảng $table trống hoặc không tồn tại.</i>"
+
+msgid "Table $table is empty or does not exist."
+msgstr "Bảng $table trống hoặc không tồn tại."
+
+msgid "<h3 style=\"margin-top:0; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;\">Frontend Returned Data (Table: <span style=\"color:#059669\">"
+msgstr "<h3 style=\"margin-top:0; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;\">Dữ Liệu Trả Về Frontend (Table: <span style=\"color:#059669\">"
+
+msgid "Data Returned to Frontend (Table:"
+msgstr "Dữ Liệu Trả Về Frontend (Table:"
+
+msgid "<i>(Virtual JSON array) -> </i> <strong style=\"color:#059669\">"
+msgstr "<i>(Mảng JSON ảo) -> </i> <strong style=\"color:#059669\">"
+
+msgid "<em style=\"color:#cbd5e1\">NULL Under Database</em>"
+msgstr "<em style=\"color:#cbd5e1\">NULL Dưới Database</em>"
+
+msgid "NULL Under Database"
+msgstr "NULL Dưới Database"
+
+msgid "<strong>The Mystery:</strong> You see, even though the value under <code>MySQL DB</code> is NULL, when calling the Frontend with PHP, the <code style=\"background:#fcd34d; padding:2px 4px; border-radius:4px;\">Data_Fetcher</code> machine has silently decompiled the ID and filled in the text for you! "
+msgstr "<strong>Sự Mầu Nhiệm:</strong> Bạn thấy đấy, dù dưới <code>MySQL DB</code> giá trị là NULL, nhưng khi gọi lên Frontend bằng PHP, Cỗ máy <code style=\"background:#fcd34d; padding:2px 4px; border-radius:4px;\">Data_Fetcher</code> đã âm thầm dịch ngược ID và lấp đầy con chữ vào cho bạn rồi! Đây chính là VIRTUAL DATA!"
+
+msgid "The Mystery:"
+msgstr "Sự Mầu Nhiệm:"
+
+msgid "You see, though below"
+msgstr "Bạn thấy đấy, dù dưới"
+
+msgid "value is NULL, but when calling the Frontend with PHP, Engine"
+msgstr "giá trị là NULL, nhưng khi gọi lên Frontend bằng PHP, Cỗ máy"
+
+msgid "There is no data dictionary."
+msgstr "Không có data dictionary."
+
+msgid "<h3>Start converting TEXT to JSON:</h3><ul>"
+msgstr "<h3>Bắt đầu convert TEXT sang JSON:</h3><ul>"
+
+msgid "Start converting TEXT to JSON:"
+msgstr "Bắt đầu convert TEXT sang JSON:"
+
+msgid "<li>Fixed {$fixed_count} lines containing old CSV to JSON for column <b>{$col_slug}</b> (Table {$table_name})</li>"
+msgstr "<li>Đã sửa {$fixed_count} dòng chứa CSV cũ thành JSON cho cột <b>{$col_slug}</b> (Bảng {$table_name})</li>"
+
+msgid "Fixed {$fixed_count} lines containing old CSV to JSON for columns"
+msgstr "Đã sửa {$fixed_count} dòng chứa CSV cũ thành JSON cho cột"
+
+msgid "(Table {$table_name})"
+msgstr "(Bảng {$table_name})"
+
+msgid "<li><b style='color:red;'>TABLE TYPE ERROR {$table_name}:</b>"
+msgstr "<li><b style='color:red;'>LỖI ÉP KIỂU BẢNG {$table_name}:</b>"
+
+msgid "ERROR IN FORCING TABLE {$table_name}:"
+msgstr "LỖI ÉP KIỂU BẢNG {$table_name}:"
+
+msgid "<li><b style='color:green;'>SUCCESSFULLY TYPE TABLE {$table_name} TO JSON!</b></li>"
+msgstr "<li><b style='color:green;'>ÉP KIỂU THÀNH CÔNG BẢNG {$table_name} SANG JSON!</b></li>"
+
+msgid "SUCCESSFULLY FORCED TABLE {$table_name} TO JSON!"
+msgstr "ÉP KIỂU THÀNH CÔNG BẢNG {$table_name} SANG JSON!"
+
+msgid "</ul><p>All done. "
+msgstr "</ul><p>Tất cả đã hoàn tất. Bạn có thể F5 lại mục Schema!</p>"
+
+msgid "All done. "
+msgstr "Tất cả đã hoàn tất. Bạn có thể F5 lại mục Schema!"
+

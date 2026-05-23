@@ -137,7 +137,7 @@ class Ska_Form_Receiver
                                 'data' => [
                                     'label' => 'Client Response',
                                     'response_type' => ($action_type === 'delete') ? 'remove_row' : 'toast',
-                                    'message' => ($action_type === 'delete') ? 'Đã xóa bản ghi thành công!' : 'Nhiệm màu! Dữ liệu đã được lưu thành công!'
+                                    'message' => ($action_type === 'delete') ? __( 'Record deleted successfully!', 'ska-logic-engine' ) : __( 'Miracle! ', 'ska-logic-engine' )
                                 ]
                             ]
                         ],
@@ -175,7 +175,7 @@ class Ska_Form_Receiver
         if (!isset($workflows[$form_id])) {
             return rest_ensure_response([
                 'success' => false,
-                'message' => "Sai Mật Mã: Không tìm thấy Logic id '{$form_id}'. Vui lòng check thuộc tính data-ska-action= trên chữ HTML."
+                'message' => __( 'Wrong Password: Logic id \'{$form_id}\' not found. ', 'ska-logic-engine' )
             ]);
         }
 
@@ -190,11 +190,11 @@ class Ska_Form_Receiver
         if (isset($completed_payload['_latest_insert']) && $completed_payload['_latest_insert']['result'] === false) {
             return rest_ensure_response([
                 'success' => false,
-                'message' => "Lỗi Chặn Ở Kho: Mapping Cột sai hoặc Dữ liệu rỗng, Bảng {$completed_payload['_latest_insert']['table_name']} từ chối tiếp nhận!"
+                'message' => __( 'Blocking Error at Warehouse: Wrong Column Mapping or Empty Data, Table {$completed_payload[\'_latest_insert\'][\'table_name\']} refused reception!', 'ska-logic-engine' )
             ]);
         }
 
-        $message = 'Nhiệm màu! Data đã lướt an toàn qua các bộ Node vào trúng Lớp Kho!';
+        $message = __( 'Miracle! ', 'ska-logic-engine' );
         
         // Trích xuất thông báo từ ClientResponseNode (nếu có)
         if (!empty($completed_payload['_ska_events'])) {

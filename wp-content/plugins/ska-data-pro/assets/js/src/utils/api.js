@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 // Lấy cấu hình từ biến toàn cục do PHP đẩy xuống
 export const getConfig = () => window.skaDataConfig || {};
 
@@ -29,6 +30,6 @@ export const apiFetch = async (action, data = {}) => {
         return resJson;
     } catch (e) {
         console.error('API Error:', e);
-        return { success: false, data: { message: 'Lỗi mạng hoặc server không phản hồi.' } };
+        return { success: false, data: { message: __( 'Network error or server not responding.', 'ska-data-pro' ) } };
     }
 };

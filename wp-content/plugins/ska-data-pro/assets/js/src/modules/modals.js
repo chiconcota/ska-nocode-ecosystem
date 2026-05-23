@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { apiFetch } from '../utils/api.js';
 
 export function attachModalHandlers() {
@@ -21,12 +22,12 @@ export function attachModalHandlers() {
             txtInput.value = options || '';
             wrapper.classList.remove('hidden');
             txtInput.classList.remove('hidden');
-            labelEl.innerText = 'Danh Sách Lựa Chọn (Option List)';
+            labelEl.innerText = __( 'Option List', 'ska-data-pro' );
         } else if (type === 'relation') {
             selInput.value = options || '';
             wrapper.classList.remove('hidden');
             selInput.classList.remove('hidden');
-            labelEl.innerText = 'Bảng Đích Khai Thác (Target Table)';
+            labelEl.innerText = __( 'Target Table', 'ska-data-pro' );
         } else if (type === 'rollup') {
             wrapper.classList.remove('hidden');
             rollupWrapper.classList.remove('hidden');
@@ -115,12 +116,12 @@ export function attachModalHandlers() {
                 wrapper.classList.remove('hidden');
                 txtInput.classList.remove('hidden');
                 if (hint) hint.classList.remove('hidden');
-                if (label) label.innerText = 'Danh Sách Lựa Chọn (Option List)';
+                if (label) label.innerText = __( 'Option List', 'ska-data-pro' );
             } else if (this.value === 'relation') {
                 wrapper.classList.remove('hidden');
                 selInput.classList.remove('hidden');
                 if (hint) hint.classList.add('hidden');
-                if (label) label.innerText = 'Bảng Đích Khai Thác (Target Table)';
+                if (label) label.innerText = __( 'Target Table', 'ska-data-pro' );
             } else if (this.value === 'rollup') {
                 wrapper.classList.remove('hidden');
                 if(rollupWrapper) rollupWrapper.classList.remove('hidden');
@@ -141,7 +142,7 @@ export function attachModalHandlers() {
             const selectedOption = this.options[this.selectedIndex];
             const targetTable = selectedOption ? selectedOption.getAttribute('data-target') : null;
             
-            targetSelect.innerHTML = '<option value="">-- Chọn Cột Tra Cứu --</option>';
+            targetSelect.innerHTML = __( '<option value=\"\">-- Select Lookup Column --</option>', 'ska-data-pro' );
             
             if (!targetTable || !this.value) {
                 targetSelect.disabled = true;
@@ -149,13 +150,13 @@ export function attachModalHandlers() {
             }
 
             targetSelect.disabled = true;
-            targetSelect.innerHTML = '<option value="">-- Đang tải dữ liệu... --</option>';
+            targetSelect.innerHTML = __( '<option value=\"\">-- Loading data... --</option>', 'ska-data-pro' );
 
             try {
                 // Tận dụng apiFetch fetch columns vật lý của TargetTable
                 const response = await apiFetch('ska_data_get_table_columns', { target_table: targetTable });
                 
-                targetSelect.innerHTML = '<option value="">-- Chọn Cột Tra Cứu --</option>';
+                targetSelect.innerHTML = __( '<option value=\"\">-- Select Lookup Column --</option>', 'ska-data-pro' );
                 if (response.success && response.data && response.data.columns) {
                     response.data.columns.forEach(col => {
                         targetSelect.add(new Option(col.label + ' (' + col.slug + ')', col.slug));
@@ -168,11 +169,11 @@ export function attachModalHandlers() {
                         targetSelect.removeAttribute('data-selected-val');
                     }
                 } else {
-                    targetSelect.innerHTML = '<option value="">-- Bảng không có cột rỗng --</option>';
+                    targetSelect.innerHTML = __( '<option value=\"\">-- The table does not have empty columns --</option>', 'ska-data-pro' );
                 }
                 targetSelect.disabled = false;
             } catch (err) {
-                targetSelect.innerHTML = '<option value="">-- Lỗi mạng --</option>';
+                targetSelect.innerHTML = __( '<option value=\"\">-- Network error --</option>', 'ska-data-pro' );
                 targetSelect.disabled = false;
             }
         });

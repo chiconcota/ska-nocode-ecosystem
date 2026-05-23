@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import BaseCell from '../BaseCell.js';
 
 export default class SelectCell extends BaseCell {
@@ -27,7 +28,7 @@ export default class SelectCell extends BaseCell {
         const optsSplit = (currentOptsStr || '').split(',').map(o=>o.trim()).filter(o=>o!=='');
 
         const manageOptionDb = async (action, oldVal, newVal) => {
-            alert('Tính năng đổi options Database trực tiếp sẽ được implement sau.');
+            alert(__( 'The feature to change Database options directly will be implemented later.', 'ska-data-pro' ));
             // Implement API Update Column Options...
         };
 
@@ -92,7 +93,7 @@ export default class SelectCell extends BaseCell {
             // Giao diện Add Options (Mock)
             const hint = document.createElement('div');
             hint.className = 'p-1 text-center text-xs text-gray-400 mt-2 border-t border-gray-100';
-            hint.innerText = 'Sửa Option trong cấu hình Cột';
+            hint.innerText = __( 'Edit Options in Column configuration', 'ska-data-pro' );
             popover.appendChild(hint);
         };
 

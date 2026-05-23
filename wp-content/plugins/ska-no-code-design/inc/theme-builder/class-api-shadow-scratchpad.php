@@ -146,7 +146,7 @@ class API_Shadow_Scratchpad
 		));
 
 		if (is_wp_error($post_id)) {
-			return new \WP_Error('create_failed', 'Không thể tạo Scratchpad.', array('status' => 500));
+			return new \WP_Error('create_failed', __( 'Unable to create Scratchpad.', 'ska-no-code-design' ), array('status' => 500));
 		}
 
 		// Tạo URL Iframe để Frontend nhúng vào
@@ -167,24 +167,24 @@ class API_Shadow_Scratchpad
 		$post_id = $request->get_param('post_id');
 
 		if (!$post_id) {
-			return new \WP_Error('missing_id', 'Thiếu ID.', array('status' => 400));
+			return new \WP_Error('missing_id', __( 'Missing ID.', 'ska-no-code-design' ), array('status' => 400));
 		}
 
 		$post = get_post($post_id);
 		if (!$post || $post->post_type !== 'ska_scratchpad') {
-			return new \WP_Error('invalid_id', 'ID không hợp lệ.', array('status' => 400));
+			return new \WP_Error('invalid_id', __( 'Invalid ID.', 'ska-no-code-design' ), array('status' => 400));
 		}
 
 		// Xóa vĩnh viễn không qua thùng rác
 		$deleted = wp_delete_post($post_id, true);
 
 		if (!$deleted) {
-			return new \WP_Error('delete_failed', 'Không thể xóa Scratchpad.', array('status' => 500));
+			return new \WP_Error('delete_failed', __( 'Scratchpad cannot be removed.', 'ska-no-code-design' ), array('status' => 500));
 		}
 
 		return rest_ensure_response(array(
 			'success' => true,
-			'message' => 'Đã hủy Scratchpad thành công.'
+			'message' => __( 'Scratchpad canceled successfully.', 'ska-no-code-design' )
 		));
 	}
 }

@@ -27,7 +27,7 @@ class Framework_UI
     {
         if (isset($_POST['ska_settings_nonce']) && wp_verify_nonce($_POST['ska_settings_nonce'], 'ska_save_settings')) {
             if (!current_user_can('manage_options')) {
-                wp_die('Không đủ quyền hạn.');
+                wp_die(__( 'Not enough authority.', 'ska-no-code-design' ));
             }
 
             // Lưu trạng thái checkbox (nếu checked thì tồn tại biến POST, nếu không thì vắng mặt)
@@ -53,14 +53,14 @@ class Framework_UI
         $ecosystem_modules = [
             'ska-data-pro' => [
                 'name' => 'Ska Data Pro',
-                'desc' => 'Quản trị Flat Tables (ska_data_*), Schema Manager và Strategy Pattern DataGrid. Thay thế hoàn toàn wp_postmeta.',
+                'desc' => __( 'Administer Flat Tables (ska_data_*), Schema Manager and Strategy Pattern DataGrid. ', 'ska-no-code-design' ),
                 'icon' => 'database',
                 'path' => 'ska-data-pro/ska-data-pro.php',
                 'url' => 'https://ska.vn/data-pro' // Link tải plugin
             ],
             'ska-logic-engine' => [
                 'name' => 'Ska Logic Engine',
-                'desc' => 'Xi-măng kết dính hệ sinh thái. Xử lý sự kiện (Workflows), Phân giải ngữ cảnh (Smart Context), CodeMirror UI và SkaFX AST.',
+                'desc' => __( 'Cement binds the ecosystem. ', 'ska-no-code-design' ),
                 'icon' => 'account_tree',
                 'path' => 'ska-logic-engine/ska-logic-engine.php',
                 'url' => 'https://ska.vn/logic-engine'
@@ -73,7 +73,7 @@ class Framework_UI
             if (!is_plugin_active($mod['path'])) {
                 $is_installed = file_exists(WP_PLUGIN_DIR . '/' . $mod['path']);
                 $status_class = $is_installed ? 'bg-slate-200 text-slate-700 border-slate-300' : 'bg-rose-100 text-rose-700 border-rose-200';
-                $status_text = $is_installed ? 'Chưa kích hoạt' : 'Chưa cài đặt';
+                $status_text = $is_installed ? __( 'Not activated yet', 'ska-no-code-design' ) : __( 'Not installed yet', 'ska-no-code-design' );
                 ?>
                 <div class="module-card rounded-2xl p-6 flex flex-col sm:flex-row gap-6 relative overflow-hidden mt-4 group opacity-75 grayscale-[40%] hover:grayscale-0 transition-all duration-500">
                     <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-300 group-hover:bg-indigo-400 transition-colors"></div>
@@ -119,8 +119,8 @@ class Framework_UI
             <div class="flex-1">
                 <div class="flex justify-between items-start">
                     <div>
-                        <h3 class="m-0 pt-0 pb-0 border-0 font-bold text-slate-800 text-lg">Ska Bridge (Đang phát triển)</h3>
-                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">Cầu nối kiến trúc Headless (wordpress2nextjs) & JSON Schema API Export. Giải pháp tối thượng tách biệt hoàn toàn Frontend và Backend.</p>
+                        <h3 class="m-0 pt-0 pb-0 border-0 font-bold text-slate-800 text-lg"><?php esc_html_e( 'Ska Bridge (In development)', 'ska-no-code-design' ); ?></h3>
+                        <p class="text-sm text-slate-500 mt-2 leading-relaxed"><?php esc_html_e( 'Headless architecture bridge (wordpress2nextjs) & JSON Schema API Export. ', 'ska-no-code-design' ); ?></p>
                     </div>
                     <span class="h-[24px] inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200 shadow-sm">
                         Đóng băng
@@ -159,12 +159,12 @@ class Framework_UI
                 <div class="flex justify-between items-start">
                     <div>
                         <h3 class="m-0 pt-0 pb-0 border-0 font-bold text-lg <?php echo esc_attr($t_title_style); ?>">Ska Canvas Theme</h3>
-                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">Barebone WP Theme (Zero CSS). Loại bỏ 100% rác CSS mặc định của WordPress để nhường sân khấu cho JIT Compiler.</p>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed"><?php esc_html_e( 'Barebone WP Theme (Zero CSS). ', 'ska-no-code-design' ); ?></p>
                     </div>
                     <?php if (!$theme_active): ?>
                         <?php
                         $t_status_class = $theme_exists ? 'bg-slate-100 text-slate-600 border-slate-200' : 'bg-rose-50 text-rose-600 border-rose-200';
-                        $t_status_text = $theme_exists ? 'Chưa kích hoạt' : 'Chưa cài đặt';
+                        $t_status_text = $theme_exists ? __( 'Not activated yet', 'ska-no-code-design' ) : __( 'Not installed yet', 'ska-no-code-design' );
                         ?>
                         <span class="h-[24px] inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold border shadow-sm <?php echo esc_attr($t_status_class); ?>">
                             <?php echo esc_html($t_status_text); ?>

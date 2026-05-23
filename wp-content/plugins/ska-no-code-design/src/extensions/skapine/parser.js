@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import jsep from 'jsep';
 import assignment from '@jsep-plugin/assignment';
 
@@ -13,7 +14,7 @@ export function parseInitialState(xDataString) {
         const res = fn();
         return typeof res === 'object' && res !== null ? res : {};
     } catch (err) {
-        console.error('Skapine: Lỗi parse x-data:', xDataString, err);
+        console.error(__( 'Skapine: Error parsing x-data:', 'ska-no-code-design' ), xDataString, err);
         return {};
     }
 }
@@ -29,7 +30,7 @@ export function evaluateExpression(exprString, stateContext) {
         const ast = jsep(exprString);
         return evaluateAst(ast, stateContext);
     } catch (err) {
-        console.error('Skapine: Lỗi parse AST:', exprString, err);
+        console.error(__( 'Skapine: AST parse error:', 'ska-no-code-design' ), exprString, err);
         return undefined;
     }
 }

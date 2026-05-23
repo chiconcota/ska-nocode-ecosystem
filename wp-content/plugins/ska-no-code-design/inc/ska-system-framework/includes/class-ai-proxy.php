@@ -25,8 +25,8 @@ class AI_Proxy {
                 <span class="material-symbols-outlined text-[22px]">auto_awesome</span>
             </div>
             <h3 class="m-0 border-0 pt-0 pb-0 text-base font-bold text-slate-800 mb-2">Ska AI Architect</h3>
-            <p class="text-sm text-slate-500 mb-5 flex-1">Cấu hình Gemini API Key và hiệu chỉnh System Prompts để giúp AI thấu hiểu kiến trúc dữ liệu riêng của bạn tốt hơn.</p>
-            <button onclick="alert('Module cài đặt AI đang được phát triển cho phase tiếp theo.')" class="border-0 bg-transparent cursor-pointer p-0 text-purple-600 font-medium text-sm hover:text-purple-800 transition-colors mt-auto flex items-center gap-1">
+            <p class="text-sm text-slate-500 mb-5 flex-1"><?php esc_html_e( 'Configure Gemini API Key and tune System Prompts to help AI understand your unique data architecture better.', 'ska-no-code-design' ); ?></p>
+            <button onclick=__( 'alert(\'AI installation module is being developed for the next phase.\')', 'ska-no-code-design' ) class="border-0 bg-transparent cursor-pointer p-0 text-purple-600 font-medium text-sm hover:text-purple-800 transition-colors mt-auto flex items-center gap-1">
                 Tùy chỉnh AI <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
             </button>
         </div>
@@ -42,12 +42,12 @@ class AI_Proxy {
 
         $prompt = isset( $_POST['prompt'] ) ? sanitize_textarea_field( wp_unslash( $_POST['prompt'] ) ) : '';
         if ( empty( $prompt ) ) {
-            wp_send_json_error( array( 'message' => 'Thiếu thông tin prompt.' ) );
+            wp_send_json_error( array( 'message' => __( 'Missing prompt information.', 'ska-no-code-design' ) ) );
         }
 
         $api_key = get_option( 'ska_gemini_api_key', '' );
         if ( empty( $api_key ) ) {
-            wp_send_json_error( array( 'message' => 'Thiếu Gemini API Key. Vui lòng cấu hình trường ska_gemini_api_key trong wp_options.' ) );
+            wp_send_json_error( array( 'message' => __( 'Missing Gemini API Key. ', 'ska-no-code-design' ) ) );
         }
 
         $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=' . $api_key;
@@ -70,24 +70,24 @@ class AI_Proxy {
                 'responseSchema' => array(
                     'type' => 'OBJECT',
                     'properties' => array(
-                        'appName' => array( 'type' => 'STRING', 'description' => 'Tên ứng dụng chuyên nghiệp' ),
-                        'appDescription' => array( 'type' => 'STRING', 'description' => 'Mô tả mục đích của ứng dụng' ),
+                        'appName' => array( 'type' => 'STRING', 'description' => __( 'Professional application name', 'ska-no-code-design' ) ),
+                        'appDescription' => array( 'type' => 'STRING', 'description' => __( 'Describe the purpose of the application', 'ska-no-code-design' ) ),
                         'tables' => array(
                             'type' => 'ARRAY',
-                            'description' => 'Danh sách các bảng Flat Tables',
+                            'description' => __( 'List of Flat Tables', 'ska-no-code-design' ),
                             'items' => array(
                                 'type' => 'OBJECT',
                                 'properties' => array(
-                                    'tableName' => array( 'type' => 'STRING', 'description' => 'Semantic slug của bảng, ví dụ: ska_data_spa_customers' ),
-                                    'label' => array( 'type' => 'STRING', 'description' => 'Tên hiển thị thân thiện, ví dụ: Khách hàng Spa' ),
+                                    'tableName' => array( 'type' => 'STRING', 'description' => __( 'Semantic slug of the table, for example: ska_data_spa_customers', 'ska-no-code-design' ) ),
+                                    'label' => array( 'type' => 'STRING', 'description' => __( 'Friendly display name, for example: Spa Client', 'ska-no-code-design' ) ),
                                     'fields' => array(
                                         'type' => 'ARRAY',
                                         'items' => array(
                                             'type' => 'OBJECT',
                                             'properties' => array(
-                                                'key' => array( 'type' => 'STRING', 'description' => 'Khóa của trường' ),
-                                                'label' => array( 'type' => 'STRING', 'description' => 'Tên hiển thị' ),
-                                                'type' => array( 'type' => 'STRING', 'description' => 'Loại dữ liệu (text, number, boolean, date, relation_id)' ),
+                                                'key' => array( 'type' => 'STRING', 'description' => __( 'School key', 'ska-no-code-design' ) ),
+                                                'label' => array( 'type' => 'STRING', 'description' => __( 'Display name', 'ska-no-code-design' ) ),
+                                                'type' => array( 'type' => 'STRING', 'description' => __( 'Data type (text, number, boolean, date, relation_id)', 'ska-no-code-design' ) ),
                                                 'required' => array( 'type' => 'BOOLEAN' )
                                             ),
                                             'required' => array( 'key', 'label', 'type' )
@@ -117,13 +117,13 @@ class AI_Proxy {
         $data = json_decode( $body, true );
 
         if ( wp_remote_retrieve_response_code( $response ) !== 200 ) {
-            $err_msg = isset( $data['error']['message'] ) ? $data['error']['message'] : 'Lỗi không xác định từ API';
+            $err_msg = isset( $data['error']['message'] ) ? $data['error']['message'] : __( 'Unknown error from API', 'ska-no-code-design' );
             wp_send_json_error( array( 'message' => $err_msg ) );
         }
 
         $text = isset( $data['candidates'][0]['content']['parts'][0]['text'] ) ? $data['candidates'][0]['content']['parts'][0]['text'] : '';
         if ( empty( $text ) ) {
-            wp_send_json_error( array( 'message' => 'AI không trả về kết quả hợp lệ.' ) );
+            wp_send_json_error( array( 'message' => __( 'AI does not return valid results.', 'ska-no-code-design' ) ) );
         }
 
         wp_send_json_success( array( 'blueprint' => json_decode( $text, true ) ) );

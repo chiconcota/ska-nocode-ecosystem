@@ -101,7 +101,7 @@ class Ska_Portal_Generator
 		// Lấy schema của bảng
 		$dictionary = get_option('ska_data_dictionary', array());
 		if (!isset($dictionary[$table_name])) {
-			return new \WP_Error('table_not_found', 'Không tìm thấy cấu trúc bảng.');
+			return new \WP_Error('table_not_found', __( 'Table structure not found.', 'ska-no-code-design' ));
 		}
 
 		$schema = $dictionary[$table_name];
@@ -327,7 +327,7 @@ class Ska_Portal_Generator
 		// Action Column
 		$action_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center justify-end gap-3"} -->' . "\n";
 		$action_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":">","tailwindClasses":"text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all font-bold cursor-pointer"} /-->' . "\n";
-		$action_html .= '<!-- wp:ska-builder/container {"tagName":"button","tailwindClasses":"ska-action-delete_' . esc_attr($table_slug) . ' action-btn p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center","htmlAttributes":[{"key":"data-ska-payload","value":"{\\"id\\": {{id}}}"},{"key":"data-ska-confirm","value":"Bạn có chắc chắn muốn xóa vĩnh viễn dòng này?"}]} -->' . "\n";
+		$action_html .= '<!-- wp:ska-builder/container {"tagName":"button","tailwindClasses":"ska-action-delete_' . esc_attr($table_slug) . ' action-btn p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center","htmlAttributes":[{"key":"data-ska-payload","value":"{\\"id\\": {{id}}}"},{"key":"data-ska-confirm","value":__( 'Are you sure you want to permanently delete this line?', 'ska-no-code-design' )}]} -->' . "\n";
 		$action_html .= '<!-- wp:ska-builder/icon {"iconName":"delete","tailwindClasses":"text-lg"} /-->' . "\n";
 		$action_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$action_html .= '<!-- /wp:ska-builder/container -->' . "\n";
@@ -347,7 +347,7 @@ class Ska_Portal_Generator
 						'tailwindClasses' => 'ska-action-delete_' . esc_attr($table_slug) . ' action-btn p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer flex items-center justify-center',
 						'htmlAttributes' => array(
 							array('key' => 'data-ska-payload', 'value' => '{"id": {{id}}}'),
-							array('key' => 'data-ska-confirm', 'value' => 'Bạn có chắc chắn muốn xóa vĩnh viễn dòng này?')
+							array('key' => 'data-ska-confirm', 'value' => __( 'Are you sure you want to permanently delete this line?', 'ska-no-code-design' ))
 						)
 					),
 					'innerBlocks' => array(
@@ -389,7 +389,7 @@ class Ska_Portal_Generator
 
 		$result = apply_filters('ska_data_insert_record', false, $record_data, 'ska_data_sys_organisms');
 		if (!$result) {
-			return new \WP_Error('insert_failed', 'Không thể tạo Organism.');
+			return new \WP_Error('insert_failed', __( 'Cannot create Organism.', 'ska-no-code-design' ));
 		}
 
 		return $result;
@@ -406,10 +406,10 @@ class Ska_Portal_Generator
 		$header_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"} -->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex flex-col"} -->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/text {"tagName":"h2","content":"Quản lý ' . esc_attr($table_label) . '","tailwindClasses":"text-2xl font-bold text-slate-900"} /-->' . "\n";
-		$header_html .= '<!-- wp:ska-builder/text {"tagName":"p","content":"Quản lý và theo dõi tiến độ các tác vụ.","tailwindClasses":"text-slate-500 text-sm"} /-->' . "\n";
+		$header_html .= __( '<!-- wp:ska-builder/text {\"tagName\":\"p\",\"content\":\"Manage and track progress of tasks.\",\"tailwindClasses\":\"text-slate-500 text-sm\"} //->', 'ska-no-code-design' ) . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/container {"tagName":"a","tailwindClasses":"px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold shadow-sm transition no-underline flex items-center justify-center","htmlAttributes":[{"key":"href","value":"/' . esc_attr($real_portal_slug) . '/create/"}]} -->' . "\n";
-		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"+ Thêm Bản Ghi Mới","tailwindClasses":""} /-->' . "\n";
+		$header_html .= __( '<!-- wp:ska-builder/text {\"tagName\":\"span\",\"content\":\"+ Add New Record\",\"tailwindClasses\":\"\"} //>', 'ska-no-code-design' ) . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 
@@ -418,12 +418,12 @@ class Ska_Portal_Generator
 		
 		// 3. Table Header Row (Grid)
 		$thead_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"hidden md:grid ' . $grid_class . ' gap-4 items-center p-4 border-b border-slate-200 bg-slate-50/50"} -->' . "\n";
-		$thead_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"TÊN BẢN GHI / THÔNG TIN","tailwindClasses":"text-xs font-bold text-slate-400 uppercase tracking-wider"} /-->' . "\n";
+		$thead_html .= __( '<!-- wp:ska-builder/text {\"tagName\":\"span\",\"content\":\"RECORD NAME / INFORMATION\",\"tailwindClasses\":\"text-xs font-bold text-slate-400 uppercase tracking-wider\"} //->', 'ska-no-code-design' ) . "\n";
 		foreach ($columns as $slug => $data) {
 			$col_label = isset($data['label']) ? $data['label'] : $slug;
 			$thead_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"' . esc_attr($col_label) . '","tailwindClasses":"text-xs font-bold text-slate-400 uppercase tracking-wider"} /-->' . "\n";
 		}
-		$thead_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"HÀNH ĐỘNG","tailwindClasses":"text-xs font-bold text-slate-400 uppercase tracking-wider text-right"} /-->' . "\n";
+		$thead_html .= __( '<!-- wp:ska-builder/text {\"tagName\":\"span\",\"content\":\"ACTION\",\"tailwindClasses\":\"text-xs font-bold text-slate-400 uppercase tracking-wider text-right\"} //->', 'ska-no-code-design' ) . "\n";
 		$thead_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 
 		// 4. The Loop
@@ -468,7 +468,7 @@ class Ska_Portal_Generator
 
 		$list_org_id = apply_filters('ska_data_insert_record', false, $org_data, 'ska_data_sys_organisms');
 		if (!$list_org_id) {
-			return new \WP_Error('insert_failed', 'Không thể tạo List View Organism.');
+			return new \WP_Error('insert_failed', __( 'Unable to create List View Organism.', 'ska-no-code-design' ));
 		}
 
 		// 2. Tạo Theme Template ánh xạ tới Organism vừa tạo
@@ -487,7 +487,7 @@ class Ska_Portal_Generator
 
 		$result = apply_filters('ska_data_insert_record', false, $template_data, 'ska_data_sys_theme_templates');
 		if (!$result) {
-			return new \WP_Error('insert_failed', 'Không thể tạo List View Template.');
+			return new \WP_Error('insert_failed', __( 'Cannot create List View Template.', 'ska-no-code-design' ));
 		}
 
 		return $result;
@@ -512,7 +512,7 @@ class Ska_Portal_Generator
 						'name' => 'ska-builder/container',
 						'attributes' => array('tagName' => 'a', 'tailwindClasses' => 'hover:bg-slate-100 px-2 py-1 rounded transition-colors flex items-center gap-1.5 no-underline', 'htmlAttributes' => array(array('key' => 'href', 'value' => '/' . $real_portal_slug . '/'))),
 						'innerBlocks' => array(
-							array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'span', 'content' => '← Quay lại danh sách', 'tailwindClasses' => ''))
+							array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'span', 'content' => __( '← Back to list', 'ska-no-code-design' ), 'tailwindClasses' => ''))
 						)
 					),
 					array('name' => 'ska-builder/text', 'attributes' => array('tagName' => 'span', 'content' => '/', 'tailwindClasses' => 'text-slate-300')),
@@ -528,7 +528,7 @@ class Ska_Portal_Generator
 						'attributes' => array(
 							'tagName' => 'button',
 							'actionType' => 'submit',
-							'text' => 'Lưu Thay Đổi',
+							'text' => __( 'Save Changes', 'ska-no-code-design' ),
 							'tailwindClasses' => 'bg-gradient-to-r from-cyan-400 via-amber-400 to-emerald-500 bg-[length:200%_auto] hover:bg-right text-white px-5 py-2 rounded shadow-sm text-sm font-bold transition-all min-w-[120px] opacity-90 hover:opacity-100 border-none cursor-pointer'
 						),
 						'innerBlocks' => array()
@@ -542,13 +542,13 @@ class Ska_Portal_Generator
 		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"SKA","tailwindClasses":"font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-amber-400 to-emerald-500"} /-->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"|","tailwindClasses":"text-slate-300 font-light text-sm mx-1"} /-->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/container {"tagName":"a","tailwindClasses":"hover:bg-slate-100 px-2 py-1 rounded transition-colors flex items-center gap-1.5 no-underline","htmlAttributes":[{"key":"href","value":"/' . esc_attr($real_portal_slug) . '/"}]} -->' . "\n";
-		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"← Quay lại danh sách","tailwindClasses":""} /-->' . "\n";
+		$header_html .= __( '<!-- wp:ska-builder/text {\"tagName\":\"span\",\"content\":\"← Back to list\",\"tailwindClasses\":\"\"} //->', 'ska-no-code-design' ) . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"/","tailwindClasses":"text-slate-300"} /-->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"Chi tiết: ' . esc_attr($table_label) . '","tailwindClasses":"text-slate-700 font-medium truncate max-w-[200px]"} /-->' . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex items-center gap-2"} -->' . "\n";
-		$header_html .= '<!-- wp:ska-builder/button {"tagName":"button","actionType":"submit","text":"Lưu Thay Đổi","tailwindClasses":"bg-gradient-to-r from-cyan-400 via-amber-400 to-emerald-500 bg-[length:200%_auto] hover:bg-right text-white px-5 py-2 rounded shadow-sm text-sm font-bold transition-all min-w-[120px] opacity-90 hover:opacity-100 border-none cursor-pointer"} /-->' . "\n";
+		$header_html .= __( '<!-- wp:ska-builder/button {\"tagName\":\"button\",\"actionType\":\"submit\",\"text\":\"Save Changes\",\"tailwindClasses\":\"bg-gradient-to-r from-cyan-400 via-amber-400 to-emerald-500 bg-[length:200%_auto] hover:bg-right text-white px-5 py-2 rounded shadow-sm ', 'ska-no-code-design' ) . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 
@@ -626,8 +626,8 @@ class Ska_Portal_Generator
 				} else {
 					$input_type = in_array($type, array('number', 'date', 'email', 'media_gallery')) ? $type : 'text';
 					if ($input_type === 'media_gallery') $input_type = 'text'; // Fallback
-					$field_block = array('name' => 'ska-builder/input', 'attributes' => array('fieldName' => $col_slug, 'inputType' => $input_type, 'placeholder' => 'Trống', 'isRequired' => $is_required, 'fieldValue' => $val_binding, 'tailwindClasses' => $input_classes), 'innerBlocks' => array());
-					$field_html = '<!-- wp:ska-builder/input {"fieldName":"' . esc_attr($col_slug) . '","inputType":"' . esc_attr($input_type) . '","placeholder":"Trống","isRequired":' . ($is_required ? 'true' : 'false') . ',"fieldValue":"' . esc_attr($val_binding) . '","tailwindClasses":"' . esc_attr($input_classes) . '"} /-->' . "\n";
+					$field_block = array('name' => 'ska-builder/input', 'attributes' => array('fieldName' => $col_slug, 'inputType' => $input_type, 'placeholder' => __( 'Drum', 'ska-no-code-design' ), 'isRequired' => $is_required, 'fieldValue' => $val_binding, 'tailwindClasses' => $input_classes), 'innerBlocks' => array());
+					$field_html = '<!-- wp:ska-builder/input {"fieldName":"' . esc_attr($col_slug) . '","inputType":"' . esc_attr($input_type) . __( '\",\"placeholder\":\"Empty\",\"isRequired\":', 'ska-no-code-design' ) . ($is_required ? 'true' : 'false') . ',"fieldValue":"' . esc_attr($val_binding) . '","tailwindClasses":"' . esc_attr($input_classes) . '"} /-->' . "\n";
 				}
 
 				$meta_blocks[] = array(
@@ -736,7 +736,7 @@ class Ska_Portal_Generator
 		);
 
 		$detail_org_id = apply_filters('ska_data_insert_record', false, $org_data, 'ska_data_sys_organisms');
-		if (!$detail_org_id) return new \WP_Error('insert_failed', 'Không thể tạo Detail View Organism.');
+		if (!$detail_org_id) return new \WP_Error('insert_failed', __( 'Unable to create Detail View Organism.', 'ska-no-code-design' ));
 
 		$template_data = array(
 			'name' => 'Detail View: ' . $table_label,
@@ -752,7 +752,7 @@ class Ska_Portal_Generator
 		);
 
 		$result = apply_filters('ska_data_insert_record', false, $template_data, 'ska_data_sys_theme_templates');
-		if (!$result) return new \WP_Error('insert_failed', 'Không thể tạo Detail View Template.');
+		if (!$result) return new \WP_Error('insert_failed', __( 'Cannot create Detail View Template.', 'ska-no-code-design' ));
 
 		return $result;
 	}
@@ -769,7 +769,7 @@ class Ska_Portal_Generator
 		);
 
 		$create_org_id = apply_filters('ska_data_insert_record', false, $org_data, 'ska_data_sys_organisms');
-		if (!$create_org_id) return new \WP_Error('insert_failed', 'Không thể tạo Create View Organism.');
+		if (!$create_org_id) return new \WP_Error('insert_failed', __( 'Cannot create Create View Organism.', 'ska-no-code-design' ));
 
 		$template_data = array(
 			'name' => 'Create View: ' . $table_label,
@@ -785,7 +785,7 @@ class Ska_Portal_Generator
 		);
 
 		$result = apply_filters('ska_data_insert_record', false, $template_data, 'ska_data_sys_theme_templates');
-		if (!$result) return new \WP_Error('insert_failed', 'Không thể tạo Create View Template.');
+		if (!$result) return new \WP_Error('insert_failed', __( 'Cannot create Create View Template.', 'ska-no-code-design' ));
 
 		return $result;
 	}

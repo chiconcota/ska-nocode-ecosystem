@@ -103,7 +103,7 @@ class SkaFX_Parser {
                 $expr = $this->parse_expression();
                 return new Node_Assign( $var_name_token['value'], $expr );
             } else {
-                throw new SkaFX_Syntax_Error("Lỗi khai báo: Cần một tên biến hợp lệ sau `var`.");
+                throw new SkaFX_Syntax_Error(__( 'Declaration error: Need a valid variable name after `var`.', 'ska-logic-engine' ));
             }
         }
 
@@ -159,7 +159,7 @@ class SkaFX_Parser {
             case SkaFX_Lexer::T_LPAREN:
                 // Nhóm biểu thức có ngoặc `( 1 + 2 )`
                 $expr = $this->parse_expression();
-                $this->consume( SkaFX_Lexer::T_RPAREN, "Cần hàm dấu ngoặc đóng ')'" );
+                $this->consume( SkaFX_Lexer::T_RPAREN, __( 'Need closing parenthesis function \')\'', 'ska-logic-engine' ) );
                 return $expr;
         }
 
@@ -232,7 +232,7 @@ class SkaFX_Parser {
             $this->position++;
             return $token;
         }
-        $err = $error_msg ? $error_msg : "Lỗi cú pháp: Ký tự không đúng chuẩn.";
+        $err = $error_msg ? $error_msg : __( 'Syntax error: Incorrect character.', 'ska-logic-engine' );
         throw new SkaFX_Syntax_Error( $err );
     }
 

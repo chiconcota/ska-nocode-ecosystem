@@ -213,7 +213,7 @@ class SkaFX_Evaluator {
 
             // Xử lý Short-circuit (Chặn sớm nhánh sai) cho riêng hàm IF để tránh lãng phí RAM
             if ( $fn_name === 'IF' ) {
-                if ( count($node->args) < 3 ) throw new SkaFX_Runtime_Error("Hàm IF cần 3 tham số: IF(Điều kiện, Đúng, Sai)");
+                if ( count($node->args) < 3 ) throw new SkaFX_Runtime_Error(__( 'The IF function needs 3 parameters: IF(Condition, True, False)', 'ska-logic-engine' ));
                 $condition = $this->evaluate( $node->args[0] );
                 if ( $condition ) {
                     return $this->evaluate( $node->args[1] );
@@ -253,7 +253,7 @@ class SkaFX_Evaluator {
             }
         }
 
-        throw new SkaFX_Runtime_Error("Cỗ máy không nhận diện được loại Node: Phá kiến trúc AST.");
+        throw new SkaFX_Runtime_Error(__( 'The machine cannot recognize the Node type: Breaking the AST architecture.', 'ska-logic-engine' ));
     }
     /**
      * Lấy toàn bộ biến bộ nhớ ra ngoài (Ví dụ: `data`, `visible`)

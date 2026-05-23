@@ -94,7 +94,7 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                         initialOpen={false}
                     >
                         <p style={{ fontSize: '12px', color: '#666', marginBottom: '16px' }}>
-                            {__('Quản lý thuộc tính HTML tùy chỉnh hoặc cấu hình JS như Alpine.js (x-data, x-show).', 'ska-no-code-design')}
+                            {__(__( 'Manage custom HTML attributes or JS configuration like Alpine.js (x-data, x-show).', 'ska-no-code-design' ), 'ska-no-code-design')}
                         </p>
                         {htmlAttributes.map((attr, index) => (
                             <div key={index} style={{ border: '1px solid #e2e8f0', padding: '12px', marginBottom: '12px', borderRadius: '6px', background: '#f8fafc' }}>
@@ -105,7 +105,7 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                         isSmall 
                                         onClick={() => removeAttribute(index)}
                                         style={{ minWidth: 'auto', padding: '0 4px', color: '#ef4444' }}
-                                        title={__('Xóa', 'ska-no-code-design')}
+                                        title={__(__( 'Erase', 'ska-no-code-design' ), 'ska-no-code-design')}
                                     >
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -118,17 +118,17 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                     const isInputComponent = ['ska-builder/input', 'ska-builder/select'].includes(props.name);
 
                                     let COMMON_KEYS = [
-                                        { label: '-- Chọn một thuộc tính --', value: '' },
+                                        { label: __( '-- Select an attribute --', 'ska-no-code-design' ), value: '' },
                                     ];
 
                                     // 🌟 NHÓM 1: HIỆU ỨNG & TƯƠNG TÁC (Chạy trong Preview Mode)
                                     COMMON_KEYS.push(
-                                        { label: '--- ✨ HIỆU ỨNG & ANIMATION ---', value: 'opt-group-1', disabled: true },
-                                        { label: '👁️ x-show (Ẩn/Hiện bằng Script)', value: 'x-show' },
-                                        { label: '🖱️ @click (Click Chuột)', value: '@click' },
-                                        { label: '👆 @mouseenter (Rê chuột vào)', value: '@mouseenter' },
-                                        { label: '👇 @mouseleave (Rê chuột ra)', value: '@mouseleave' },
-                                        { label: '🛑 @click.prevent (Chống Submit/Load)', value: '@click.prevent' },
+                                        { label: __( '--- ✨ EFFECTS & ANIMATION ---', 'ska-no-code-design' ), value: 'opt-group-1', disabled: true },
+                                        { label: __( '👁️ x-show (Hide/Show using Script)', 'ska-no-code-design' ), value: 'x-show' },
+                                        { label: __( '🖱️ @click (Mouse Click)', 'ska-no-code-design' ), value: '@click' },
+                                        { label: __( '👆 @mouseenter (Mouse over)', 'ska-no-code-design' ), value: '@mouseenter' },
+                                        { label: __( '👇 @mouseleave (Mouse out)', 'ska-no-code-design' ), value: '@mouseleave' },
+                                        { label: __( '🛑 @click.prevent (Prevent Submit/Load)', 'ska-no-code-design' ), value: '@click.prevent' },
                                         { label: '✨ x-transition:enter', value: 'x-transition:enter' },
                                         { label: '✨ x-transition:enter-start', value: 'x-transition:enter-start' },
                                         { label: '✨ x-transition:enter-end', value: 'x-transition:enter-end' },
@@ -140,31 +140,31 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                     // 🌟 NHÓM 2: DỮ LIỆU & LOGIC (Không ảnh hưởng Preview)
                                     if (!isInputComponent) {
                                         COMMON_KEYS.push(
-                                            { label: '--- 🔢 DỮ LIỆU & LOGIC ---', value: 'opt-group-2', disabled: true },
-                                            { label: '⚡ x-data (Khởi tạo State Component)', value: 'x-data' },
-                                            { label: '🔄 x-model (Ràng buộc 2 chiều)', value: 'x-model' },
-                                            { label: '📝 x-text (Gắn Text động)', value: 'x-text' },
-                                            { label: '🌐 x-html (Gắn HTML động)', value: 'x-html' }
+                                            { label: __( '--- 🔢 DATA & LOGIC ---', 'ska-no-code-design' ), value: 'opt-group-2', disabled: true },
+                                            { label: __( '⚡ x-data (Initialize State Component)', 'ska-no-code-design' ), value: 'x-data' },
+                                            { label: __( '🔄 x-model (2-way binding)', 'ska-no-code-design' ), value: 'x-model' },
+                                            { label: __( '📝 x-text (Add Dynamic Text)', 'ska-no-code-design' ), value: 'x-text' },
+                                            { label: __( '🌐 x-html (Dynamic HTML binding)', 'ska-no-code-design' ), value: 'x-html' }
                                         );
                                     }
 
                                     // Form-specific properties
                                     if (isFormContext) {
                                         COMMON_KEYS.push(
-                                            { label: '--- 📮 TÙY CHỈNH FORM ---', value: 'opt-group-form', disabled: true },
-                                            { label: '🔗 action (Đường dẫn gửi)', value: 'action' },
+                                            { label: __( '--- 📮 CUSTOMIZE FORM ---', 'ska-no-code-design' ), value: 'opt-group-form', disabled: true },
+                                            { label: __( '🔗 action (Send link)', 'ska-no-code-design' ), value: 'action' },
                                             { label: '📮 method (POST/GET)', value: 'method' },
-                                            { label: '📤 @submit.prevent (Khóa gửi Form)', value: '@submit.prevent' }
+                                            { label: __( '📤 @submit.prevent (Form submission key)', 'ska-no-code-design' ), value: '@submit.prevent' }
                                         );
                                     }
 
                                     // General DOM attributes
                                     COMMON_KEYS.push(
-                                        { label: '--- 🔧 HTML CƠ BẢN ---', value: 'opt-group-3', disabled: true },
-                                        { label: '🎨 style (CSS nội tuyến)', value: 'style' },
-                                        { label: '🏷️ id (Định danh riêng)', value: 'id' },
-                                        { label: '--- ✏️ TUỲ CHỈNH ---', value: 'opt-group-4', disabled: true },
-                                        { label: 'Tùy chỉnh tự gõ (Ví dụ: aria-label)', value: 'custom' }
+                                        { label: __( '--- 🔧 BASIC HTML ---', 'ska-no-code-design' ), value: 'opt-group-3', disabled: true },
+                                        { label: __( '🎨 style (inline CSS)', 'ska-no-code-design' ), value: 'style' },
+                                        { label: __( '🏷️ id (Unique identifier)', 'ska-no-code-design' ), value: 'id' },
+                                        { label: __( '--- ✏️ CUSTOMIZE ---', 'ska-no-code-design' ), value: 'opt-group-4', disabled: true },
+                                        { label: __( 'Customizable auto-typing (Example: aria-label)', 'ska-no-code-design' ), value: 'custom' }
                                     );
 
                                     const isStandard = COMMON_KEYS.some(k => k.value === (attr.key || '')) && (attr.key || '') !== 'custom';
@@ -202,7 +202,7 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                             />
                                             {isCustom && (
                                                 <TextControl
-                                                    placeholder="Nhập tên thuộc tính (VD: aria-label)"
+                                                    placeholder=__( 'Enter the attribute name (eg aria-label)', 'ska-no-code-design' )
                                                     value={attr.key === 'custom_mode_on' ? '' : (attr.key || '')}
                                                     onChange={(val) => updateAttribute(index, 'key', val)}
                                                     autoComplete="off"
@@ -217,12 +217,12 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                     // === SMART VALUE INPUT ===
                                     // Khi key là x-show → hiện dropdown preset thay vì textarea
                                     const XSHOW_PRESETS = [
-                                        { label: '-- Chọn điều kiện --', value: '' },
-                                        { label: '✅ Hiện khi Form gửi Thành công', value: "status === 'success'" },
-                                        { label: '❌ Hiện khi Form gửi Lỗi', value: "status === 'error'" },
-                                        { label: '⏳ Hiện khi Form đang Gửi', value: 'isSubmitting' },
-                                        { label: '👻 Ẩn khi Form đang Gửi', value: '!isSubmitting' },
-                                        { label: '✏️ Tùy chỉnh (Gõ tay)', value: '__custom__' },
+                                        { label: __( '-- Select condition --', 'ska-no-code-design' ), value: '' },
+                                        { label: __( '✅ Show when Form sent successfully', 'ska-no-code-design' ), value: "status === 'success'" },
+                                        { label: __( '❌ Shows when Form submit Error', 'ska-no-code-design' ), value: "status === 'error'" },
+                                        { label: __( '⏳ Shows when Form is Submitting', 'ska-no-code-design' ), value: 'isSubmitting' },
+                                        { label: __( '👻 Hide when Form is Submitting', 'ska-no-code-design' ), value: '!isSubmitting' },
+                                        { label: __( '✏️ Customize (Hand Typing)', 'ska-no-code-design' ), value: '__custom__' },
                                     ];
 
                                     const isXShow = attr.key === 'x-show';
@@ -245,7 +245,7 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                                 />
                                                 {!isPresetValue && attr.value !== undefined && (
                                                     <TextareaControl
-                                                        placeholder="Nhập biểu thức Alpine (VD: open === true)"
+                                                        placeholder=__( 'Enter an Alpine expression (eg: open === true)', 'ska-no-code-design' )
                                                         value={attr.value === 'custom_mode_on' ? '' : (attr.value || '')}
                                                         onChange={(val) => updateAttribute(index, 'value', val)}
                                                         autoComplete="off"
@@ -259,7 +259,7 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
 
                                     return (
                                         <TextareaControl
-                                            placeholder="Giá trị (VD: { open: false, items: [] })"
+                                            placeholder=__( 'Value (eg: { open: false, items: [] })', 'ska-no-code-design' )
                                             value={attr.value || ''}
                                             onChange={(val) => updateAttribute(index, 'value', val)}
                                             autoComplete="off"
@@ -271,7 +271,7 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                             </div>
                         ))}
                         <Button isSecondary onClick={addAttribute} style={{ width: '100%', justifyContent: 'center', marginTop: '10px' }}>
-                            {__('+ Thêm Thuộc Tính', 'ska-no-code-design')}
+                            {__(__( '+ Add Attributes', 'ska-no-code-design' ), 'ska-no-code-design')}
                         </Button>
                     </PanelBody>
                 </InspectorControls>

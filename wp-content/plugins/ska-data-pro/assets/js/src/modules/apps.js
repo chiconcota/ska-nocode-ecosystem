@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { apiFetch } from '../utils/api.js';
 
 export function attachAppEvents() {
@@ -8,18 +9,18 @@ export function attachAppEvents() {
             const name = document.getElementById('ska-new-app-name').value.trim();
             const icon = document.getElementById('ska-new-app-icon').value;
 
-            if(!name) { alert('Vui lòng điền tên Workspace.'); return; }
+            if(!name) { alert(__( 'Please enter Workspace name.', 'ska-data-pro' )); return; }
             createBtn.disabled = true;
-            createBtn.innerText = 'Đang khởi tạo...';
+            createBtn.innerText = __( 'Initializing...', 'ska-data-pro' );
 
             const res = await apiFetch('ska_data_create_app', { name, icon });
 
             if (res.success) {
                 window.location.reload(); 
             } else { 
-                alert(res.data?.message || 'Lỗi'); 
+                alert(res.data?.message || __( 'Error', 'ska-data-pro' )); 
                 createBtn.disabled = false; 
-                createBtn.innerHTML = '<span class="dashicons dashicons-plus-alt2 mt-0.5" style="font-size:16px;"></span> Tạo Workspace'; 
+                createBtn.innerHTML = __( '<span class=\"dashicons dashicons-plus-alt2 mt-0.5\" style=\"font-size:16px;\"></span> Create Workspace', 'ska-data-pro' ); 
             }
         });
     }
@@ -32,17 +33,17 @@ export function attachAppEvents() {
             const name = document.getElementById('ska-rename-app-name').value.trim();
             const icon = document.getElementById('ska-rename-app-icon').value;
 
-            if(!name) { alert('Vui lòng điền tên Workspace.'); return; }
+            if(!name) { alert(__( 'Please enter Workspace name.', 'ska-data-pro' )); return; }
             renameBtn.disabled = true;
-            renameBtn.innerText = 'Đang lưu...';
+            renameBtn.innerText = __( 'Saving...', 'ska-data-pro' );
 
             const res = await apiFetch('ska_data_update_app', { app_id: slug, name, icon });
 
             if (res.success) window.location.reload();
             else { 
-                alert(res.data?.message || 'Lỗi'); 
+                alert(res.data?.message || __( 'Error', 'ska-data-pro' )); 
                 renameBtn.disabled = false; 
-                renameBtn.innerText = 'Lưu Thông Tin'; 
+                renameBtn.innerText = __( 'Save Information', 'ska-data-pro' ); 
             }
         });
     }
@@ -65,15 +66,15 @@ export function attachAppEvents() {
             const slug = document.getElementById('ska-del-app-slug').value;
 
             delBtn.disabled = true;
-            delBtn.innerHTML = 'Đang giải tán...';
+            delBtn.innerHTML = __( 'Disbanding...', 'ska-data-pro' );
 
             const res = await apiFetch('ska_data_drop_app', { app_id: slug });
 
             if (res.success) window.location.reload();
             else { 
-                alert(res.data?.message || 'Lỗi'); 
+                alert(res.data?.message || __( 'Error', 'ska-data-pro' )); 
                 delBtn.disabled = false; 
-                delBtn.innerHTML = 'Chấp nhận Rủi ro & Giải Tán'; 
+                delBtn.innerHTML = __( 'Accept Risk & Dissolve', 'ska-data-pro' ); 
             }
         });
     }
@@ -94,14 +95,14 @@ export function attachAppEvents() {
                     importBtn.disabled = false;
                     importBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 } else {
-                    importFileName.innerText = 'File không hợp lệ (Phải là .json)';
+                    importFileName.innerText = __( 'Invalid file (Must be .json)', 'ska-data-pro' );
                     importFileName.classList.remove('text-emerald-600');
                     importFileName.classList.add('text-red-500');
                     importBtn.disabled = true;
                     importBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 }
             } else {
-                importFileName.innerText = 'Kéo thả hoặc Chọn File (.json)';
+                importFileName.innerText = __( 'Drag and Drop or Select File (.json)', 'ska-data-pro' );
                 importFileName.classList.remove('text-emerald-600', 'text-red-500');
                 importBtn.disabled = true;
                 importBtn.classList.add('opacity-50', 'cursor-not-allowed');
@@ -135,7 +136,7 @@ export function attachAppEvents() {
                 if ( resJson.success ) {
                     window.location.reload();
                 } else {
-                    alert(resJson.data?.message || 'Lỗi đúc cấu trúc.');
+                    alert(resJson.data?.message || __( 'Structural casting error.', 'ska-data-pro' ));
                     importBtn.disabled = false;
                     importBtn.classList.remove('hidden');
                     importLoading.classList.add('hidden');
@@ -144,7 +145,7 @@ export function attachAppEvents() {
                 }
             } catch (e) {
                 console.error('API Error:', e);
-                alert('Lỗi mạng hoặc server không phản hồi.');
+                alert(__( 'Network error or server not responding.', 'ska-data-pro' ));
                 importBtn.disabled = false;
                 importBtn.classList.remove('hidden');
                 importLoading.classList.add('hidden');

@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 /**
  * Ska Frontend Engine
  * Bộ não Alpine.js Controller cho Ska Form Builder.
@@ -133,7 +134,7 @@ function _registerSkaForm() {
 
             // Kiểm tra Required
             if (input.hasAttribute('required') && !this.fields[fieldName]?.toString().trim()) {
-                this.errors[fieldName] = 'Trường này là bắt buộc.';
+                this.errors[fieldName] = __( 'This field is required.', 'ska-no-code-design' );
                 return false;
             }
 
@@ -141,7 +142,7 @@ function _registerSkaForm() {
             if (input.type === 'email' && this.fields[fieldName]) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(this.fields[fieldName])) {
-                    this.errors[fieldName] = 'Email không hợp lệ.';
+                    this.errors[fieldName] = __( 'Invalid email.', 'ska-no-code-design' );
                     return false;
                 }
             }
@@ -186,7 +187,7 @@ function _registerSkaForm() {
             // 2. Validate toàn bộ
             if (!this.validateAll()) {
                 this.status = 'error';
-                this.message = 'Vui lòng kiểm tra lại các trường bắt buộc.';
+                this.message = __( 'Please review required fields.', 'ska-no-code-design' );
                 return;
             }
 
@@ -219,7 +220,7 @@ function _registerSkaForm() {
 
                 if (data.success) {
                     this.status = 'success';
-                    this.message = data.message || 'Gửi thành công!';
+                    this.message = data.message || __( 'Submitted successfully!', 'ska-no-code-design' );
 
                     // KÍCH HOẠT EVENT BUS - HỆ TUẦN HOÀN CHO PHÉP BACKEND RA LỆNH NGƯỢC LẠI FRONTEND
                     if (data.data && data.data._ska_events && window.$ska && window.$ska.processEventBus) {
@@ -248,7 +249,7 @@ function _registerSkaForm() {
                     }));
                 } else {
                     this.status = 'error';
-                    this.message = data.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
+                    this.message = data.message || __( 'An error occurred. ', 'ska-no-code-design' );
 
                     // Phát sự kiện lỗi
                     this.$el.dispatchEvent(new CustomEvent('ska-form-error', {
@@ -258,7 +259,7 @@ function _registerSkaForm() {
                 }
             } catch (err) {
                 this.status = 'error';
-                this.message = 'Lỗi kết nối mạng. Vui lòng thử lại.';
+                this.message = __( 'Network connection error. ', 'ska-no-code-design' );
                 console.error('[SkaForm] Network error:', err);
 
                 this.$el.dispatchEvent(new CustomEvent('ska-form-error', {
@@ -478,7 +479,7 @@ function _registerSkaScratchpad() {
                 }
             } catch (err) {
                 console.error(err);
-                alert('Lỗi kết nối khi khởi tạo Trình thiết kế.');
+                alert(__( 'Connection error when initializing Designer.', 'ska-no-code-design' ));
                 this.isOpen = false;
             }
         },
@@ -538,7 +539,7 @@ function _registerSkaScratchpad() {
                 });
                 this.postId = null;
             } catch (err) {
-                console.error('Lỗi khi dọn dẹp Scratchpad', err);
+                console.error(__( 'Error cleaning Scratchpad', 'ska-no-code-design' ), err);
             }
         }
     }));

@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, TextControl } from '@wordpress/components';
@@ -24,7 +25,7 @@ registerBlockType(metadata.name, {
                             label="Field Name (Variable)"
                             value={field}
                             onChange={(val) => setAttributes({ field: val })}
-                            help="Tên biến trong cơ sở dữ liệu (vd: noi_dung)."
+                            help=__( 'Variable name in the database (eg: name_dung).', 'ska-no-code-design' )
                         />
                         <TextControl
                             label="Label"

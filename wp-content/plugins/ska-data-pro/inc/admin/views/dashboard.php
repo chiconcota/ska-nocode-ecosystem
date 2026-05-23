@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">Ska Data Pro ⚡</h1>
-        <p class="text-gray-500 text-lg">Quản lý Dữ liệu Phẳng (Flat Tables) cực nhanh. Bắt đầu bằng cách chọn một bộ dữ liệu dự án mẫu.</p>
+        <p class="text-gray-500 text-lg"><?php esc_html_e( 'Extremely fast Flat Tables management. ', 'ska-data-pro' ); ?></p>
     </div>
 
     <!-- Template Gallery Section -->
@@ -35,7 +35,7 @@ defined( 'ABSPATH' ) || exit;
                 <span class="dashicons dashicons-cart" style="font-size: 24px; width: 24px; height: 24px;"></span>
             </div>
             <h3 class="text-xl font-bold text-gray-900 mb-2">E-Commerce App</h3>
-            <p class="text-sm text-gray-500 flex-grow mb-4">Mô hình cửa hàng bán lẻ. Tích hợp sẵn schema Giỏ hàng, Danh sách Sản phẩm, Kho và Đơn Đặt Hàng.</p>
+            <p class="text-sm text-gray-500 flex-grow mb-4"><?php esc_html_e( 'Retail store model. ', 'ska-data-pro' ); ?></p>
             <div class="bg-gray-50 rounded p-3 mb-5 border border-gray-100">
                 <p class="text-xs text-gray-600 font-mono mb-1"><strong>Bảng tự tạo: </strong>2</p>
                 <div class="flex flex-wrap gap-1 mt-2 -ml-1">
@@ -44,7 +44,7 @@ defined( 'ABSPATH' ) || exit;
                 </div>
             </div>
             <button data-template-id="ecommerce" class="ska-install-btn w-full bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
-                <span class="dashicons dashicons-download mt-0.5"></span> <span class="btn-text">Cài Đặt Mẫu Này</span>
+                <span class="dashicons dashicons-download mt-0.5"></span> <span class="btn-text"><?php esc_html_e( 'Install This Template', 'ska-data-pro' ); ?></span>
             </button>
         </div>
 
@@ -54,7 +54,7 @@ defined( 'ABSPATH' ) || exit;
                 <span class="dashicons dashicons-welcome-learn-more" style="font-size: 24px; width: 24px; height: 24px;"></span>
             </div>
             <h3 class="text-xl font-bold text-gray-900 mb-2">LMS & Academy</h3>
-            <p class="text-sm text-gray-500 flex-grow mb-4">Hệ thống giáo dục trực tuyến. Gồm cấu trúc Khóa học, Bài giảng và Tiến độ Học viên.</p>
+            <p class="text-sm text-gray-500 flex-grow mb-4"><?php esc_html_e( 'Online education system. ', 'ska-data-pro' ); ?></p>
             <div class="bg-gray-50 rounded p-3 mb-5 border border-gray-100">
                 <p class="text-xs text-gray-600 font-mono mb-1"><strong>Bảng tự tạo: </strong>3</p>
                 <div class="flex flex-wrap gap-1 mt-2 -ml-1">
@@ -64,7 +64,7 @@ defined( 'ABSPATH' ) || exit;
                 </div>
             </div>
             <button data-template-id="lms" class="ska-install-btn w-full bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
-                <span class="dashicons dashicons-download mt-0.5"></span> <span class="btn-text">Cài Đặt Mẫu Này</span>
+                <span class="dashicons dashicons-download mt-0.5"></span> <span class="btn-text"><?php esc_html_e( 'Install This Template', 'ska-data-pro' ); ?></span>
             </button>
         </div>
 
@@ -74,7 +74,7 @@ defined( 'ABSPATH' ) || exit;
                 <span class="dashicons dashicons-calendar-alt" style="font-size: 24px; width: 24px; height: 24px;"></span>
             </div>
             <h3 class="text-xl font-bold text-gray-900 mb-2">Booking Appointments</h3>
-            <p class="text-sm text-gray-500 flex-grow mb-4">Mô hình đặt lịch dịch vụ (Spa, Y tế, Khách sạn). Gồm thông tin Dịch Vụ và Slot thời gian.</p>
+            <p class="text-sm text-gray-500 flex-grow mb-4"><?php esc_html_e( 'Service booking model (Spa, Medical, Hotel). ', 'ska-data-pro' ); ?></p>
             <div class="bg-gray-50 rounded p-3 mb-5 border border-gray-100">
                 <p class="text-xs text-gray-600 font-mono mb-1"><strong>Bảng tự tạo: </strong>2</p>
                 <div class="flex flex-wrap gap-1 mt-2 -ml-1">
@@ -83,7 +83,7 @@ defined( 'ABSPATH' ) || exit;
                 </div>
             </div>
             <button data-template-id="booking" class="ska-install-btn w-full bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
-                <span class="dashicons dashicons-download mt-0.5"></span> <span class="btn-text">Cài Đặt Mẫu Này</span>
+                <span class="dashicons dashicons-download mt-0.5"></span> <span class="btn-text"><?php esc_html_e( 'Install This Template', 'ska-data-pro' ); ?></span>
             </button>
         </div>
 
@@ -93,7 +93,7 @@ defined( 'ABSPATH' ) || exit;
                 <span class="dashicons dashicons-heart" style="font-size: 24px; width: 24px; height: 24px;"></span>
             </div>
             <h3 class="text-xl font-bold text-gray-900 mb-2">Online Hospital</h3>
-            <p class="text-sm text-gray-500 flex-grow mb-4">Hệ thống Y tế, Bệnh viện trực tuyến. Quản lý danh sách Bác sĩ, chuyên khoa, lịch khám.</p>
+            <p class="text-sm text-gray-500 flex-grow mb-4"><?php esc_html_e( 'Online Health System, Hospital. ', 'ska-data-pro' ); ?></p>
             <div class="bg-gray-50 rounded p-3 mb-5 border border-gray-100">
                 <p class="text-xs text-gray-600 font-mono mb-1"><strong>Bảng tự tạo: </strong>1</p>
                 <div class="flex flex-wrap gap-1 mt-2 -ml-1">
@@ -101,7 +101,7 @@ defined( 'ABSPATH' ) || exit;
                 </div>
             </div>
             <button data-template-id="hospital" class="ska-install-btn w-full bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
-                <span class="dashicons dashicons-download mt-0.5"></span> <span class="btn-text">Cài Đặt Mẫu Này</span>
+                <span class="dashicons dashicons-download mt-0.5"></span> <span class="btn-text"><?php esc_html_e( 'Install This Template', 'ska-data-pro' ); ?></span>
             </button>
         </div>
 
@@ -110,10 +110,10 @@ defined( 'ABSPATH' ) || exit;
             <div class="w-16 h-16 bg-white border border-gray-100 text-gray-400 rounded-full flex items-center justify-center mb-4 group-hover:text-emerald-500 group-hover:scale-110 transition-transform shadow-sm">
                 <span class="dashicons dashicons-plus-alt2" style="font-size: 32px; width: 32px; height: 32px; margin-top: 4px;"></span>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Tạo Bảng Trống</h3>
-            <p class="text-sm text-gray-500 flex-grow mb-4 mt-1">Xây dựng Schema rỗng từ con số 0. Tùy ý thêm cột dữ liệu và định nghĩa quan hệ.</p>
+            <h3 class="text-xl font-bold text-gray-900 mb-2"><?php esc_html_e( 'Create a Blank Table', 'ska-data-pro' ); ?></h3>
+            <p class="text-sm text-gray-500 flex-grow mb-4 mt-1"><?php esc_html_e( 'Build an empty Schema from scratch. Optionally add data columns and define relationships.', 'ska-data-pro' ); ?></p>
             <button data-template-id="custom" class="ska-install-btn w-full bg-white border border-gray-300 group-hover:border-emerald-500 group-hover:text-emerald-600 text-gray-700 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-sm mt-auto">
-                <span class="btn-text">Bắt Đầu Ngay</span>
+                <span class="btn-text"><?php esc_html_e( 'Get Started Now', 'ska-data-pro' ); ?></span>
             </button>
         </div>
 
@@ -121,19 +121,19 @@ defined( 'ABSPATH' ) || exit;
 
     <!-- Features Bottom Area -->
     <div class="mt-12 bg-gray-50 rounded-xl p-8 border border-gray-100 shadow-inner">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">Tại sao dùng Flat Tables thay vì "Post & Meta" cũ?</h3>
+        <h3 class="text-lg font-bold text-gray-800 mb-4"><?php esc_html_e( 'Why use Flat Tables instead of the old \"Post & Meta\"?', 'ska-data-pro' ); ?></h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-                <span class="text-emerald-500 font-bold">🚀 Siêu Tốc (Blazing Fast)</span>
-                <p class="text-sm text-gray-600 mt-2">Dữ liệu được lưu trữ trên một Bảng phẳng duy nhất thay vì xé lẻ theo EAV Model của WordPress, giúp tốc độ Truy vấn (Query) tăng ít nhất x10 lần.</p>
+                <span class="text-emerald-500 font-bold"><?php esc_html_e( '🚀 Blazing Fast', 'ska-data-pro' ); ?></span>
+                <p class="text-sm text-gray-600 mt-2"><?php esc_html_e( 'Data is stored on a single flat Table instead of being split into pieces according to WordPress\'s EAV Model, helping Query speed increase at least x10 times.', 'ska-data-pro' ); ?></p>
             </div>
             <div>
-                <span class="text-emerald-500 font-bold">⚡ Query Dễ Dàng (No-code)</span>
-                <p class="text-sm text-gray-600 mt-2">Giúp Ska Builder dễ dàng nhúng dữ liệu ra Frontend qua trình tạo Vòng lặp giao diện đồ họa.</p>
+                <span class="text-emerald-500 font-bold"><?php esc_html_e( '⚡ Easy Query (No-code)', 'ska-data-pro' ); ?></span>
+                <p class="text-sm text-gray-600 mt-2"><?php esc_html_e( 'Make it easy for Ska Builder to embed data out to the Frontend via the GUI Loop builder.', 'ska-data-pro' ); ?></p>
             </div>
             <div>
-                <span class="text-emerald-500 font-bold">🧹 Sạch Tinh Tươm (Clean)</span>
-                <p class="text-sm text-gray-600 mt-2">Không bị lẫn lộn dữ liệu rác từ các plugin WordPress khác. Dữ liệu của ứng dụng bạn xây dựng hoàn toàn cách ly.</p>
+                <span class="text-emerald-500 font-bold"><?php esc_html_e( '🧹 Clean', 'ska-data-pro' ); ?></span>
+                <p class="text-sm text-gray-600 mt-2"><?php esc_html_e( 'Don\'t get mixed up with junk data from other WordPress plugins. ', 'ska-data-pro' ); ?></p>
             </div>
         </div>
     </div>
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Render cục Spinner
             const spinnerClass = isCustom ? 'ska-spinner ska-spinner-dark' : 'ska-spinner';
-            this.innerHTML = `<span class="${spinnerClass}"></span> <span class="btn-text">Đang cài đặt...</span>`;
+            this.innerHTML = `<span class="${spinnerClass}"></span> <span class="btn-text"><?php esc_html_e( 'Installing...', 'ska-data-pro' ); ?></span>`;
             
             // Gửi dữ liệu bằng form URL encoded giả lập jQuery.ajax
             const formData = new URLSearchParams();
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(res => {
                 if (res.success) {
-                    this.innerHTML = `<span class="dashicons dashicons-yes"></span> <span class="btn-text">Hoàn tất!</span>`;
+                    this.innerHTML = `<span class="dashicons dashicons-yes"></span> <span class="btn-text"><?php esc_html_e( 'Done!', 'ska-data-pro' ); ?></span>`;
                     this.classList.replace('bg-primary', 'bg-green-600');
                     
                     // Thực thi vòng lặp Redirect như yêu cầu của người dùng
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.location.href = res.data.redirect_url;
                     }, 500);
                 } else {
-                    alert('Lỗi: ' + (res.data.message || 'Hệ thống bận'));
+                    alert('Lỗi: ' + (res.data.message || __( 'System busy', 'ska-data-pro' )));
                     // Trả lại nút nếu lỗi
                     this.innerHTML = originalHtml;
                     this.disabled = false;
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error(error);
-                alert('Có lỗi mạng xảy ra khi gửi request');
+                alert(__( 'A network error occurred while sending the request', 'ska-data-pro' ));
                 this.innerHTML = originalHtml;
                 this.disabled = false;
                 this.classList.remove('opacity-75', 'cursor-not-allowed');

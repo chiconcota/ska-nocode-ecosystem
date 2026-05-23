@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { BlockControls } from '@wordpress/block-editor';
 import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
@@ -36,7 +37,7 @@ const SkapineEngineChild = ({ blockProps, BlockEdit, htmlAttributes, isPreviewMo
                 initScript($store, state || {});
                 if (window.SkapineStore) window.SkapineStore.notify(); // Emit thay đổi nếu có
             } catch (err) {
-                console.error("Skapine Preview: Lỗi khi giả lập x-init:", err);
+                console.error(__( 'Skapine Preview: Error while emulating x-init:', 'ska-no-code-design' ), err);
             }
         }
     }, [effectivePreviewMode, xInitAttr?.value]);
@@ -245,7 +246,7 @@ const withSkapineEngine = createHigherOrderComponent((BlockEdit) => {
                                     <path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.5 2.54l2.27 2.27c.78-1.4 1.23-3.04 1.23-4.81 0-5.17-4.36-9.32-9-9.95zM4.12 3.84L2.71 5.25l3.22 3.22C5.35 9.54 5 10.73 5 12c0 3.87 3.13 7 7 7 1.27 0 2.46-.35 3.53-.93l3.22 3.22 1.41-1.41L4.12 3.84zM12 17c-2.76 0-5-2.24-5-5 0-.89.24-1.72.64-2.45l6.81 6.81c-.73.4-1.56.64-2.45.64zm6.06-8.941c-.41-1.12-1.07-2.12-1.92-2.92l-2.07 2.071c.54.49.97 1.09 1.21 1.751l2.78-.902z" />
                                 </svg>
                             }
-                            title={isPreviewMode ? "Tắt Preview X-State" : "Bật Preview X-State"}
+                            title={isPreviewMode ? __( 'Turn off Preview X-State', 'ska-no-code-design' ) : __( 'Turn on Preview X-State', 'ska-no-code-design' )}
                             isActive={isPreviewMode}
                             onClick={() => setIsPreviewMode(!isPreviewMode)}
                         />

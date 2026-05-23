@@ -61,16 +61,16 @@ class Template_Registry {
 				),
 				'dummy_data' => array(
 					'ska_data_products' => array(
-						array( 'name' => 'Áo Thun Basic Trắng', 'price' => 150000, 'stock' => 50, 'status' => 'publish' ),
-						array( 'name' => 'Quần Jean Xanh Đậm', 'price' => 350000, 'stock' => 20, 'status' => 'publish' ),
-						array( 'name' => 'Giày Sneaker Thể Thao', 'price' => 650000, 'stock' => 15, 'status' => 'publish' ),
-						array( 'name' => 'Balo Du Lịch Chống Nước', 'price' => 450000, 'stock' => 5, 'status' => 'draft' ),
-						array( 'name' => 'Mũ Lưỡi Trai Đen', 'price' => 99000, 'stock' => 100, 'status' => 'publish' ),
+						array( 'name' => __( 'Basic White T-shirt', 'ska-data-pro' ), 'price' => 150000, 'stock' => 50, 'status' => 'publish' ),
+						array( 'name' => __( 'Dark Blue Jeans', 'ska-data-pro' ), 'price' => 350000, 'stock' => 20, 'status' => 'publish' ),
+						array( 'name' => __( 'Sports Sneakers', 'ska-data-pro' ), 'price' => 650000, 'stock' => 15, 'status' => 'publish' ),
+						array( 'name' => __( 'Waterproof Travel Backpack', 'ska-data-pro' ), 'price' => 450000, 'stock' => 5, 'status' => 'draft' ),
+						array( 'name' => __( 'Black Cap', 'ska-data-pro' ), 'price' => 99000, 'stock' => 100, 'status' => 'publish' ),
 					),
 					'ska_data_orders' => array(
-						array( 'customer_name' => 'Nguyễn Văn A', 'total_amount' => 500000, 'status' => 'completed', 'payment_method' => 'banking' ),
-						array( 'customer_name' => 'Trần Thị B', 'total_amount' => 150000, 'status' => 'processing', 'payment_method' => 'cod' ),
-						array( 'customer_name' => 'Lê Hữu C', 'total_amount' => 650000, 'status' => 'pending', 'payment_method' => 'cod' ),
+						array( 'customer_name' => __( 'Nguyen Van A', 'ska-data-pro' ), 'total_amount' => 500000, 'status' => 'completed', 'payment_method' => 'banking' ),
+						array( 'customer_name' => __( 'Tran Thi B', 'ska-data-pro' ), 'total_amount' => 150000, 'status' => 'processing', 'payment_method' => 'cod' ),
+						array( 'customer_name' => __( 'Le Huu C', 'ska-data-pro' ), 'total_amount' => 650000, 'status' => 'pending', 'payment_method' => 'cod' ),
 					)
 				)
 			),
@@ -106,18 +106,18 @@ class Template_Registry {
 				),
 				'dummy_data' => array(
 					'ska_data_courses' => array(
-						array( 'title' => 'HTML/CSS Cơ Bản Đến Nâng Cao', 'instructor' => 'Ska Academy', 'price' => 0, 'level' => 'beginner' ),
-						array( 'title' => 'Lập Trình JavaScript Thực Chiến', 'instructor' => 'Ska Academy', 'price' => 500000, 'level' => 'intermediate' ),
+						array( 'title' => __( 'Basic to Advanced HTML/CSS', 'ska-data-pro' ), 'instructor' => 'Ska Academy', 'price' => 0, 'level' => 'beginner' ),
+						array( 'title' => __( 'JavaScript Programming in Action', 'ska-data-pro' ), 'instructor' => 'Ska Academy', 'price' => 500000, 'level' => 'intermediate' ),
 						array( 'title' => 'ReactJS & NextJS Masterclass', 'instructor' => 'Alex Nguyen', 'price' => 1200000, 'level' => 'advanced' ),
 					),
 					'ska_data_lessons' => array(
-						array( 'course_id' => 1, 'title' => 'Bài 1: Cấu trúc HTML', 'duration_minutes' => 15, 'video_url' => 'https://youtube.com/...' ),
-						array( 'course_id' => 1, 'title' => 'Bài 2: CSS Flexbox', 'duration_minutes' => 25, 'video_url' => 'https://youtube.com/...' ),
-						array( 'course_id' => 2, 'title' => 'Bài 1: Biến và Vòng lặp JS', 'duration_minutes' => 30, 'video_url' => 'https://youtube.com/...' ),
+						array( 'course_id' => 1, 'title' => __( 'Lesson 1: HTML structure', 'ska-data-pro' ), 'duration_minutes' => 15, 'video_url' => 'https://youtube.com/...' ),
+						array( 'course_id' => 1, 'title' => __( 'Lesson 2: CSS Flexbox', 'ska-data-pro' ), 'duration_minutes' => 25, 'video_url' => 'https://youtube.com/...' ),
+						array( 'course_id' => 2, 'title' => __( 'Lesson 1: JS Variables and Loops', 'ska-data-pro' ), 'duration_minutes' => 30, 'video_url' => 'https://youtube.com/...' ),
 					),
 					'ska_data_students' => array(
-						array( 'name' => 'Phạm Văn Học', 'email' => 'hocpv@example.com' ),
-						array( 'name' => 'Đinh Thị Giỏi', 'email' => 'gioidt@example.com' ),
+						array( 'name' => __( 'Pham Van Hoc', 'ska-data-pro' ), 'email' => 'hocpv@example.com' ),
+						array( 'name' => __( 'Dinh Thi Gioi', 'ska-data-pro' ), 'email' => 'gioidt@example.com' ),
 					)
 				)
 			),
@@ -146,13 +146,13 @@ class Template_Registry {
 				),
 				'dummy_data' => array(
 					'ska_data_services' => array(
-						array( 'service_name' => 'Cắt Tóc Nam Chuẩn Điển Trai', 'duration_minutes' => 30, 'price' => 80000, 'status' => 'active' ),
-						array( 'service_name' => 'Uốn Tóc Hàn Quốc', 'duration_minutes' => 120, 'price' => 350000, 'status' => 'active' ),
-						array( 'service_name' => 'Nhuộm Tóc Màu Khói', 'duration_minutes' => 90, 'price' => 450000, 'status' => 'active' ),
+						array( 'service_name' => __( 'Handsome Men\'s Haircut', 'ska-data-pro' ), 'duration_minutes' => 30, 'price' => 80000, 'status' => 'active' ),
+						array( 'service_name' => __( 'Korean Hair Perm', 'ska-data-pro' ), 'duration_minutes' => 120, 'price' => 350000, 'status' => 'active' ),
+						array( 'service_name' => __( 'Smoky Hair Dye', 'ska-data-pro' ), 'duration_minutes' => 90, 'price' => 450000, 'status' => 'active' ),
 					),
 					'ska_data_appointments' => array(
-						array( 'service_id' => 1, 'client_name' => 'Anh Tiến', 'client_phone' => '0912345678', 'appointment_date' => date('Y-m-d H:i:s', strtotime('+1 day 09:00:00')), 'status' => 'booked' ),
-						array( 'service_id' => 2, 'client_name' => 'Bạn Long', 'client_phone' => '0987654321', 'appointment_date' => date('Y-m-d H:i:s', strtotime('+1 day 14:30:00')), 'status' => 'booked' ),
+						array( 'service_id' => 1, 'client_name' => __( 'Mr. Tien', 'ska-data-pro' ), 'client_phone' => '0912345678', 'appointment_date' => date('Y-m-d H:i:s', strtotime('+1 day 09:00:00')), 'status' => 'booked' ),
+						array( 'service_id' => 2, 'client_name' => __( 'Long friend', 'ska-data-pro' ), 'client_phone' => '0987654321', 'appointment_date' => date('Y-m-d H:i:s', strtotime('+1 day 14:30:00')), 'status' => 'booked' ),
 					)
 				)
 			),

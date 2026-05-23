@@ -79,8 +79,8 @@ defined( 'ABSPATH' ) || exit;
                     <span class="material-symbols-outlined text-[32px]">dashboard_customize</span>
                 </div>
                 <div>
-                    <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700 m-0 p-0 leading-tight">Hệ Sinh Thái Ska</h1>
-                    <p class="text-sm font-medium text-slate-500 mt-1">Quản lý trung tâm các Module và Cấu hình cốt lõi</p>
+                    <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700 m-0 p-0 leading-tight"><?php esc_html_e( 'Ska Ecosystem', 'ska-no-code-design' ); ?></h1>
+                    <p class="text-sm font-medium text-slate-500 mt-1"><?php esc_html_e( 'Central management of Modules and Core Configuration', 'ska-no-code-design' ); ?></p>
                 </div>
             </div>
             <div class="flex flex-wrap gap-3">
@@ -107,7 +107,7 @@ defined( 'ABSPATH' ) || exit;
                 <span class="material-symbols-outlined text-[28px]">error</span>
             </div>
             <div>
-                <h3 class="text-rose-800 font-bold m-0 border-0 p-0 text-base">Thiếu Module Cốt Lõi!</h3>
+                <h3 class="text-rose-800 font-bold m-0 border-0 p-0 text-base"><?php esc_html_e( 'Missing Core Module!', 'ska-no-code-design' ); ?></h3>
                 <p class="text-rose-700 text-sm mt-1.5 mb-0 leading-relaxed">Hệ sinh thái đang chạy ở chế độ giới hạn. Vui lòng cài đặt và kích hoạt <strong>Ska Data Pro</strong> & <strong>Ska Logic Engine</strong> để mở khóa sức mạnh No-code vô hạn.</p>
             </div>
         </div>
@@ -124,7 +124,7 @@ defined( 'ABSPATH' ) || exit;
                         <span class="material-symbols-outlined text-indigo-500 bg-indigo-50 p-1.5 rounded-lg">extension</span>
                         Các Module Đã Cài Đặt
                     </h2>
-                    <span class="text-xs font-bold bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800 border border-emerald-200/50 px-3 py-1 rounded-full shadow-sm">Đã đồng bộ</span>
+                    <span class="text-xs font-bold bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800 border border-emerald-200/50 px-3 py-1 rounded-full shadow-sm"><?php esc_html_e( 'Synced', 'ska-no-code-design' ); ?></span>
                 </div>
 
                 <div class="space-y-4">
@@ -152,7 +152,7 @@ defined( 'ABSPATH' ) || exit;
                         <?php if ( isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true' ) : ?>
                             <div class="bg-emerald-50 text-emerald-700 p-3 rounded-xl text-sm border border-emerald-200 flex items-center gap-2 shadow-inner">
                                 <span class="material-symbols-outlined text-[20px]">check_circle</span>
-                                <span class="font-medium">Đã cập nhật cài đặt.</span>
+                                <span class="font-medium"><?php esc_html_e( 'Updated settings.', 'ska-no-code-design' ); ?></span>
                             </div>
                         <?php endif; ?>
 
@@ -182,7 +182,7 @@ defined( 'ABSPATH' ) || exit;
                             <span class="material-symbols-outlined text-rose-500">gavel</span>
                             Khu vực nguy hiểm
                         </h3>
-                        <p class="text-xs text-rose-600/80 mb-5 font-medium">Các thao tác dưới đây tác động sâu đến Blueprint và RAM/Cache.</p>
+                        <p class="text-xs text-rose-600/80 mb-5 font-medium"><?php esc_html_e( 'The operations below deeply impact Blueprint and RAM/Cache.', 'ska-no-code-design' ); ?></p>
                         
                         <div class="space-y-3">
                             <button class="w-full py-2.5 bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-sm flex justify-center items-center gap-2">

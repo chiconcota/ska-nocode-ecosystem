@@ -54,7 +54,7 @@ if ( empty( $found_html ) ) {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                 Ska Symbol (ID: %s) Is Empty
             </strong>
-             <p style="margin-top:8px; font-size:13px; margin-bottom:0;">Bản mẫu này chưa được lưu HTML (Hoặc do nó được tạo ra trước bản cập nhật mới nhất). Vui lòng mở lại Symbol gốc và bấm Cập nhật (Update) để hệ thống tự render lại HTML Content nhé!</p>
+             <p style="margin-top:8px; font-size:13px; margin-bottom:0;"><?php esc_html_e( 'This template has not had saved HTML (Or because it was created before the latest update). ', 'ska-no-code-design' ); ?></p>
         </div>',
         esc_html( $organism_id )
     );

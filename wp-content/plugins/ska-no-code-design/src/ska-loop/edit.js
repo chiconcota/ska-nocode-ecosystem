@@ -16,13 +16,13 @@ export default function Edit( { attributes, setAttributes } ) {
             value: org.id
         }));
         setOrganisms([
-            { label: __('Chọn Symbol...', 'ska-no-code-design'), value: '' },
+            { label: __(__( 'Select Symbol...', 'ska-no-code-design' ), 'ska-no-code-design'), value: '' },
             ...options
         ]);
     }, []);
 
     const tableOptions = useMemo(() => {
-        const opts = [{ label: '-- Chọn Bảng Dữ Liệu --', value: '' }];
+        const opts = [{ label: __( '-- Select Data Table --', 'ska-no-code-design' ), value: '' }];
         if (window.skaDataDictionary) {
             Object.keys(window.skaDataDictionary).forEach(key => {
                 const table = window.skaDataDictionary[key];
@@ -78,25 +78,25 @@ export default function Edit( { attributes, setAttributes } ) {
     return (
         <div { ...blockProps }>
             <InspectorControls>
-                <PanelBody title={__('Cấu hình dữ liệu', 'ska-no-code-design')} initialOpen={true}>
+                <PanelBody title={__(__( 'Data configuration', 'ska-no-code-design' ), 'ska-no-code-design')} initialOpen={true}>
                     {window.skaDataDictionary ? (
                         <SelectControl
-                            label={__('Source Table (Bảng phẳng)', 'ska-no-code-design')}
+                            label={__(__( 'Source Table (Flat Table)', 'ska-no-code-design' ), 'ska-no-code-design')}
                             value={sourceTable}
                             options={tableOptions}
                             onChange={(val) => setAttributes({ sourceTable: val })}
-                            help={__('Chọn bảng dữ liệu được cung cấp bởi Ska Data Pro', 'ska-no-code-design')}
+                            help={__(__( 'Select the data table provided by Ska Data Pro', 'ska-no-code-design' ), 'ska-no-code-design')}
                         />
                     ) : (
                         <TextControl
-                            label={__('Source Table (Bảng phẳng)', 'ska-no-code-design')}
+                            label={__(__( 'Source Table (Flat Table)', 'ska-no-code-design' ), 'ska-no-code-design')}
                             value={sourceTable}
                             onChange={(val) => setAttributes({ sourceTable: val })}
-                            help={__('Ví dụ: ska_data_doctors', 'ska-no-code-design')}
+                            help={__(__( 'For example: ska_data_doctors', 'ska-no-code-design' ), 'ska-no-code-design')}
                         />
                     )}
                     <TextControl
-                        label={__('Giới hạn (Limit)', 'ska-no-code-design')}
+                        label={__(__( 'Limit', 'ska-no-code-design' ), 'ska-no-code-design')}
                         type="number"
                         value={limit}
                         onChange={(val) => setAttributes({ limit: parseInt(val, 10) || 10 })}
@@ -105,7 +105,7 @@ export default function Edit( { attributes, setAttributes } ) {
                     />
                 </PanelBody>
 
-                <PanelBody title={__('Điều kiện lọc (Filters)', 'ska-no-code-design')} initialOpen={false}>
+                <PanelBody title={__(__( 'Filters', 'ska-no-code-design' ), 'ska-no-code-design')} initialOpen={false}>
                     {filters && filters.map((filter, index) => (
                         <div key={index} style={{ marginBottom: '16px', padding: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', backgroundColor: '#f8fafc' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -115,19 +115,19 @@ export default function Edit( { attributes, setAttributes } ) {
                                     isSmall 
                                     icon="trash" 
                                     onClick={() => removeFilter(index)}
-                                    label={__('Xóa Filter', 'ska-no-code-design')}
+                                    label={__(__( 'Delete Filter', 'ska-no-code-design' ), 'ska-no-code-design')}
                                 />
                             </div>
                             
                             <TextControl
-                                label={__('Trường dữ liệu (Column)', 'ska-no-code-design')}
+                                label={__(__( 'Data field (Column)', 'ska-no-code-design' ), 'ska-no-code-design')}
                                 value={filter.column}
                                 onChange={(val) => updateFilter(index, 'column', val)}
                                 help={__('VD: teacher_id', 'ska-no-code-design')}
                             />
 
                             <SelectControl
-                                label={__('Toán tử (Operator)', 'ska-no-code-design')}
+                                label={__(__( 'Operator', 'ska-no-code-design' ), 'ska-no-code-design')}
                                 value={filter.operator}
                                 options={[
                                     { label: '=', value: '=' },
@@ -144,10 +144,10 @@ export default function Edit( { attributes, setAttributes } ) {
                             />
                             
                             <TextControl
-                                label={__('Giá trị (Value)', 'ska-no-code-design')}
+                                label={__(__( 'Value', 'ska-no-code-design' ), 'ska-no-code-design')}
                                 value={filter.value}
                                 onChange={(val) => updateFilter(index, 'value', val)}
-                                help={__('VD: {url:id} hoặc giá trị tĩnh', 'ska-no-code-design')}
+                                help={__(__( 'For example: {url:id} or static value', 'ska-no-code-design' ), 'ska-no-code-design')}
                             />
                         </div>
                     ))}
@@ -157,11 +157,11 @@ export default function Edit( { attributes, setAttributes } ) {
                         onClick={addFilter}
                         style={{ width: '100%', justifyContent: 'center', marginTop: '8px' }}
                     >
-                        {__('+ Thêm Filter', 'ska-no-code-design')}
+                        {__(__( '+ Add Filter', 'ska-no-code-design' ), 'ska-no-code-design')}
                     </Button>
                 </PanelBody>
 
-                <PanelBody title={__('Điều kiện hiển thị (Slots)', 'ska-no-code-design')} initialOpen={true}>
+                <PanelBody title={__(__( 'Display conditions (Slots)', 'ska-no-code-design' ), 'ska-no-code-design')} initialOpen={true}>
                     {slots && slots.map((slot, index) => (
                         <div key={index} style={{ marginBottom: '16px', padding: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', backgroundColor: '#f8fafc' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -171,22 +171,22 @@ export default function Edit( { attributes, setAttributes } ) {
                                     isSmall 
                                     icon="trash" 
                                     onClick={() => removeSlot(index)}
-                                    label={__('Xóa Slot', 'ska-no-code-design')}
+                                    label={__(__( 'Delete Slots', 'ska-no-code-design' ), 'ska-no-code-design')}
                                 />
                             </div>
                             
                             <SelectControl
-                                label={__('Chọn Symbol', 'ska-no-code-design')}
+                                label={__(__( 'Select Symbol', 'ska-no-code-design' ), 'ska-no-code-design')}
                                 value={slot.organismId}
-                                options={organisms.length > 0 ? organisms : [{label: slot.organismId ? slot.organismId : __('Chọn Symbol...', 'ska-no-code-design'), value: slot.organismId || ''}]}
+                                options={organisms.length > 0 ? organisms : [{label: slot.organismId ? slot.organismId : __(__( 'Select Symbol...', 'ska-no-code-design' ), 'ska-no-code-design'), value: slot.organismId || ''}]}
                                 onChange={(val) => updateSlot(index, 'organismId', val)}
                             />
                             
                             <TextControl
-                                label={__('Điều kiện (SkaFX)', 'ska-no-code-design')}
+                                label={__(__( 'Conditions (SkaFX)', 'ska-no-code-design' ), 'ska-no-code-design')}
                                 value={slot.condition}
                                 onChange={(val) => updateSlot(index, 'condition', val)}
-                                help={__('Để trống hoặc gõ "default" nếu là mặc định. Vd: $index == 0', 'ska-no-code-design')}
+                                help={__(__( 'Leave blank or type \"default\" if it is default. ', 'ska-no-code-design' ), 'ska-no-code-design')}
                             />
                         </div>
                     ))}
@@ -196,7 +196,7 @@ export default function Edit( { attributes, setAttributes } ) {
                         onClick={addSlot}
                         style={{ width: '100%', justifyContent: 'center', marginTop: '8px' }}
                     >
-                        {__('+ Thêm Slot Mới', 'ska-no-code-design')}
+                        {__(__( '+ Add New Slot', 'ska-no-code-design' ), 'ska-no-code-design')}
                     </Button>
                 </PanelBody>
 
@@ -218,11 +218,11 @@ export default function Edit( { attributes, setAttributes } ) {
                 <Placeholder
                     icon="update"
                     label={__('Ska Query Loop', 'ska-no-code-design')}
-                    instructions={__('Vui lòng thiết lập Bảng Nguồn (Source Table) và ít nhất 1 Slot để hiển thị dữ liệu.', 'ska-no-code-design')}
+                    instructions={__(__( 'Please set up a Source Table and at least 1 Slot to display data.', 'ska-no-code-design' ), 'ska-no-code-design')}
                 >
                     <div style={{ textAlign: 'left', width: '100%', marginTop: '16px' }}>
                         <ul style={{ listStyle: 'disc', paddingLeft: '20px', fontSize: '13px', color: '#475569' }}>
-                            <li>Bảng nguồn hiện tại: <strong>{sourceTable || 'Chưa có'}</strong></li>
+                            <li>Bảng nguồn hiện tại: <strong>{__( '{sourceTable || ', 'ska-no-code-design' )}</strong></li>
                             <li>Số lượng Slot: <strong>{slots ? slots.length : 0}</strong></li>
                         </ul>
                     </div>

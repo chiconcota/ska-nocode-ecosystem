@@ -29,7 +29,7 @@ defined( 'ABSPATH' ) || exit;
         </div>
         
         <div class="flex-1 overflow-y-auto p-4 space-y-1">
-            <p class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-3 ml-2 mt-2">Cấu hình Global</p>
+            <p class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-3 ml-2 mt-2"><?php esc_html_e( 'Global configuration', 'ska-no-code-design' ); ?></p>
             
             <template x-for="tab in tabs" :key="tab.id">
                 <button 
@@ -45,7 +45,7 @@ defined( 'ABSPATH' ) || exit;
         <div class="p-4 border-t border-slate-200">
             <button @click="saveTokens" :disabled="isSaving" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium border-0 cursor-pointer disabled:opacity-50">
                 <span class="material-symbols-outlined text-[18px]" x-text="isSaving ? 'sync' : 'save'" :class="isSaving ? 'animate-spin' : ''"></span>
-                <span x-text="isSaving ? 'Đang lưu...' : 'Lưu Thay Đổi'"></span>
+                <span x-text=__( 'isSaved ? ', 'ska-no-code-design' )></span>
             </button>
         </div>
     </div>
@@ -59,7 +59,7 @@ defined( 'ABSPATH' ) || exit;
             <div class="space-y-6">
                 <div class="border-b border-slate-200 pb-5">
                     <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Brand Identity</h2>
-                    <p class="text-slate-500 mt-2">Định nghĩa Logo và nhận diện thương hiệu chính thức của hệ thống.</p>
+                    <p class="text-slate-500 mt-2"><?php esc_html_e( 'Definition of Logo and official brand identity of the system.', 'ska-no-code-design' ); ?></p>
                 </div>
                 
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
@@ -78,7 +78,7 @@ defined( 'ABSPATH' ) || exit;
                             </div>
                         </div>
                         <div class="flex-1 space-y-3">
-                            <input type="text" x-model="formData.brand.logoUrl" placeholder="URL của Logo" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none bg-slate-50" readonly>
+                            <input type="text" x-model="formData.brand.logoUrl" placeholder=__( 'Logo URL', 'ska-no-code-design' ) class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none bg-slate-50" readonly>
                             <p class="text-xs text-slate-500 leading-relaxed">Tải lên Logo chính của dự án. Logo này sẽ được xuất ra <code class="bg-slate-100 px-1 rounded text-slate-700">tokens.json</code> để Frontend dễ dàng hiển thị tự động mà không cần truy vấn Database của WordPress.</p>
                         </div>
                     </div>
@@ -89,8 +89,8 @@ defined( 'ABSPATH' ) || exit;
             <div class="space-y-6 pt-6 border-t border-slate-200">
                 <div class="pb-2 flex justify-between items-end">
                     <div>
-                        <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Màu sắc (Colors)</h2>
-                        <p class="text-slate-500 mt-2">Bảng màu hệ thống định nghĩa Brand Identity, được áp dụng tự động qua Tailwind.</p>
+                        <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0"><?php esc_html_e( 'Colors', 'ska-no-code-design' ); ?></h2>
+                        <p class="text-slate-500 mt-2"><?php esc_html_e( 'System color palette defines Brand Identity, applied automatically via Tailwind.', 'ska-no-code-design' ); ?></p>
                     </div>
                     <button @click="addColor()" class="px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-semibold transition border-0 cursor-pointer flex items-center gap-2">
                         <span class="material-symbols-outlined text-[18px]">add</span> Thêm Màu
@@ -121,8 +121,8 @@ defined( 'ABSPATH' ) || exit;
             <div class="space-y-6 pt-6 border-t border-slate-200">
                 <div class="pb-2 flex justify-between items-end">
                     <div>
-                        <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Màu sắc Dark Mode</h2>
-                        <p class="text-slate-500 mt-2">Các giá trị màu riêng cho Dark Mode. Bạn nên dùng các Key giống với Light Mode (VD: primary, background) để hệ thống có thể chuyển đổi mượt mà.</p>
+                        <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0"><?php esc_html_e( 'Dark Mode colors', 'ska-no-code-design' ); ?></h2>
+                        <p class="text-slate-500 mt-2"><?php esc_html_e( 'Separate color values ​​for Dark Mode. ', 'ska-no-code-design' ); ?></p>
                     </div>
                     <button @click="addDarkColor()" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-900 rounded-lg text-sm font-semibold transition border-0 cursor-pointer flex items-center gap-2">
                         <span class="material-symbols-outlined text-[18px]">add</span> Thêm Màu Tối
@@ -153,26 +153,26 @@ defined( 'ABSPATH' ) || exit;
         <!-- Tab 2: Typography -->
         <div id="typography" class="p-8 max-w-4xl mx-auto space-y-8">
             <div class="border-b border-slate-200 pb-5">
-                <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Kiểu chữ (Typography)</h2>
-                <p class="text-slate-500 mt-2">Đinh nghĩa Font chữ chính (Primary) và Font phụ (Secondary) lấy từ Google Fonts hoặc Upload Font Tùy Chỉnh.</p>
+                <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0"><?php esc_html_e( 'Typography', 'ska-no-code-design' ); ?></h2>
+                <p class="text-slate-500 mt-2"><?php esc_html_e( 'Define Primary and Secondary Fonts from Google Fonts or Upload Custom Fonts.', 'ska-no-code-design' ); ?></p>
             </div>
             
             <div class="space-y-6">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Primary Font</label>
                     <input type="text" x-model="formData.typography.primary" placeholder="e.g. 'Inter', sans-serif" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
-                    <p class="text-xs text-slate-500 mt-2">Dùng cho nội dung văn bản (Body Text).</p>
+                    <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Used for body text.', 'ska-no-code-design' ); ?></p>
                 </div>
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Secondary Font (Headings)</label>
                     <input type="text" x-model="formData.typography.secondary" placeholder="e.g. 'Outfit', sans-serif" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
-                    <p class="text-xs text-slate-500 mt-2">Dùng cho các thẻ Tiêu đề H1, H2, H3...</p>
+                    <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Used for Title tags H1, H2, H3...', 'ska-no-code-design' ); ?></p>
                 </div>
                 <!-- Custom Font Upload -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Custom Font Upload (.woff2)</label>
                     <div class="flex gap-3">
-                        <input type="text" x-model="formData.typography.customFontUrl" placeholder="URL của file .woff2" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none bg-slate-50" readonly>
+                        <input type="text" x-model="formData.typography.customFontUrl" placeholder=__( 'URL of the .woff2 file', 'ska-no-code-design' ) class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none bg-slate-50" readonly>
                         <button @click.prevent="openMediaUploader" class="shrink-0 px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-900 transition border-0 cursor-pointer flex items-center gap-2">
                             <span class="material-symbols-outlined text-[18px]">upload</span> Upload
                         </button>
@@ -180,7 +180,7 @@ defined( 'ABSPATH' ) || exit;
                             Xóa
                         </button>
                     </div>
-                    <p class="text-xs text-slate-500 mt-2">Tải lên file font định dạng .woff2 để tích hợp trực tiếp vào Tailwind Compiler.</p>
+                    <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Upload font file in .woff2 format to integrate directly into Tailwind Compiler.', 'ska-no-code-design' ); ?></p>
                 </div>
                 
                 <!-- Typography Scale Presets -->
@@ -206,7 +206,7 @@ defined( 'ABSPATH' ) || exit;
         <div id="spacing" class="p-8 max-w-4xl mx-auto space-y-8">
             <div class="border-b border-slate-200 pb-5">
                 <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Advanced Tokens</h2>
-                <p class="text-slate-500 mt-2">Cấu hình Global Tokens cho Grid System cỡ lớn và UI Details.</p>
+                <p class="text-slate-500 mt-2"><?php esc_html_e( 'Configure Global Tokens for large Grid System and UI Details.', 'ska-no-code-design' ); ?></p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -214,11 +214,11 @@ defined( 'ABSPATH' ) || exit;
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Global Border Radius</label>
                     <select x-model="formData.tokens.borderRadius" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
-                        <option value="0px">Vuông vức (0px)</option>
-                        <option value="4px">Bo góc nhẹ (4px)</option>
-                        <option value="8px">Bo góc vừa (8px)</option>
-                        <option value="12px">Bo góc tròn mượt (12px)</option>
-                        <option value="9999px">Bo cong hoàn toàn (Pill shape)</option>
+                        <option value="0px"><?php esc_html_e( 'Square (0px)', 'ska-no-code-design' ); ?></option>
+                        <option value="4px"><?php esc_html_e( 'Lightly rounded corners (4px)', 'ska-no-code-design' ); ?></option>
+                        <option value="8px"><?php esc_html_e( 'Medium rounded corners (8px)', 'ska-no-code-design' ); ?></option>
+                        <option value="12px"><?php esc_html_e( 'Smooth rounded corners (12px)', 'ska-no-code-design' ); ?></option>
+                        <option value="9999px"><?php esc_html_e( 'Pill shape', 'ska-no-code-design' ); ?></option>
                     </select>
                 </div>
 
@@ -226,11 +226,11 @@ defined( 'ABSPATH' ) || exit;
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Default Elevation (Shadow)</label>
                     <select x-model="formData.tokens.boxShadow" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
-                        <option value="none">Không đổ bóng (Flat)</option>
-                        <option value="0 1px 2px 0 rgb(0 0 0 / 0.05)">Bóng mờ siêu nhẹ (sm)</option>
-                        <option value="0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)">Bóng tiêu chuẩn (md)</option>
-                        <option value="0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)">Đổ bóng sâu (lg)</option>
-                        <option value="0 25px 50px -12px rgb(0 0 0 / 0.25)">Bóng khổng lồ (2xl)</option>
+                        <option value="none"><?php esc_html_e( 'No shadow (Flat)', 'ska-no-code-design' ); ?></option>
+                        <option value="0 1px 2px 0 rgb(0 0 0 / 0.05)"><?php esc_html_e( 'Super light matte (sm)', 'ska-no-code-design' ); ?></option>
+                        <option value="0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"><?php esc_html_e( 'Standard ball (md)', 'ska-no-code-design' ); ?></option>
+                        <option value="0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"><?php esc_html_e( 'Deep shadow (lg)', 'ska-no-code-design' ); ?></option>
+                        <option value="0 25px 50px -12px rgb(0 0 0 / 0.25)"><?php esc_html_e( 'Giant ball (2xl)', 'ska-no-code-design' ); ?></option>
                     </select>
                 </div>
 
@@ -238,32 +238,32 @@ defined( 'ABSPATH' ) || exit;
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Container Max-Width</label>
                     <input type="text" x-model="formData.tokens.containerWidth" placeholder="e.g. 1280px or 80rem" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
-                    <p class="text-xs text-slate-500 mt-2">Chiều rộng tựa giới hạn tối đa cho Layout App.</p>
+                    <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Maximum title width limit for Layout App.', 'ska-no-code-design' ); ?></p>
                 </div>
 
                 <!-- Base Transition Duration -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Base Transition Duration</label>
                     <select x-model="formData.tokens.transitionDuration" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
-                        <option value="150ms">Tức thì / Snappy (150ms)</option>
-                        <option value="300ms">Mượt mà / Smooth (300ms)</option>
-                        <option value="500ms">Chậm rãi / Relaxed (500ms)</option>
+                        <option value="150ms"><?php esc_html_e( 'Instant/Snappy (150ms)', 'ska-no-code-design' ); ?></option>
+                        <option value="300ms"><?php esc_html_e( 'Smooth / Smooth (300ms)', 'ska-no-code-design' ); ?></option>
+                        <option value="500ms"><?php esc_html_e( 'Slow / Relaxed (500ms)', 'ska-no-code-design' ); ?></option>
                     </select>
-                    <p class="text-xs text-slate-500 mt-2">Tốc độ chuẩn dùng cho Hover, Animation.</p>
+                    <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Standard speed used for Hover, Animation.', 'ska-no-code-design' ); ?></p>
                 </div>
 
                 <!-- Global Block Gap -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Global Block Gap</label>
                     <input type="text" x-model="formData.tokens.blockGap" placeholder="e.g. 1.5rem or 24px" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
-                    <p class="text-xs text-slate-500 mt-2">Khoảng cách dọc mặc định giữa các khối (Block Gap).</p>
+                    <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Default vertical gap between blocks (Block Gap).', 'ska-no-code-design' ); ?></p>
                 </div>
 
                 <!-- Global Content Padding -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Global Content Padding</label>
                     <input type="text" x-model="formData.tokens.contentPadding" placeholder="e.g. 1rem or 16px" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
-                    <p class="text-xs text-slate-500 mt-2">Lề an toàn 2 bên trái/phải của nội dung (Content Padding).</p>
+                    <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Safe margins on the left/right sides of the content (Content Padding).', 'ska-no-code-design' ); ?></p>
                 </div>
             </div>
         </div>
@@ -273,7 +273,7 @@ defined( 'ABSPATH' ) || exit;
             <div class="border-b border-slate-200 pb-5 flex justify-between items-end">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">UI Presets</h2>
-                    <p class="text-slate-500 mt-2">Quản lý danh sách các UI Presets (như Button, Card, Badge). Có thể sử dụng lại trên Editor.</p>
+                    <p class="text-slate-500 mt-2"><?php esc_html_e( 'Manage list of UI Presets (such as Button, Card, Badge). ', 'ska-no-code-design' ); ?></p>
                 </div>
                 <button @click="addComponentPreset()" class="px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-semibold transition border-0 cursor-pointer flex items-center gap-2">
                     <span class="material-symbols-outlined text-[18px]">add</span> Thêm Preset
@@ -284,9 +284,9 @@ defined( 'ABSPATH' ) || exit;
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-slate-50 border-b border-slate-200">
                         <tr>
-                            <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-1/4">Tên Preset</th>
+                            <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-1/4"><?php esc_html_e( 'Preset name', 'ska-no-code-design' ); ?></th>
                             <th class="px-4 py-3 text-sm font-semibold text-slate-700">Tailwind Classes</th>
-                            <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-16 text-center">Xóa</th>
+                            <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-16 text-center"><?php esc_html_e( 'Erase', 'ska-no-code-design' ); ?></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
@@ -299,7 +299,7 @@ defined( 'ABSPATH' ) || exit;
                                     <textarea x-model="preset.value" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono" placeholder="bg-blue-500 text-white..."></textarea>
                                 </td>
                                 <td class="px-4 py-4 text-center align-top">
-                                    <button @click="formData.components.splice(index, 1)" class="text-rose-400 hover:text-rose-600 transition bg-transparent border-0 cursor-pointer mt-2" title="Xóa Preset">
+                                    <button @click="formData.components.splice(index, 1)" class="text-rose-400 hover:text-rose-600 transition bg-transparent border-0 cursor-pointer mt-2" title=__( 'Delete Presets', 'ska-no-code-design' )>
                                         <span class="material-symbols-outlined text-[20px]">delete</span>
                                     </button>
                                 </td>
@@ -307,7 +307,7 @@ defined( 'ABSPATH' ) || exit;
                         </template>
                         <tr x-show="formData.components.length === 0">
                             <td colspan="3" class="px-4 py-8 text-center text-slate-500 text-sm">
-                                Chưa có UI Preset nào. Hãy nhấn "Thêm Preset" để bắt đầu.
+                                Chưa có UI Preset nào. Hãy nhấn __( 'Add Presets', 'ska-no-code-design' ) để bắt đầu.
                             </td>
                         </tr>
                     </tbody>
@@ -435,7 +435,7 @@ function skaDesignTokensApp() {
         },
 
         addComponentPreset() {
-            const newName = prompt('Nhập tên UI Preset mới (ví dụ: Button Primary, Hero Card...):');
+            const newName = prompt(__( 'Enter a new UI Preset name (eg Button Primary, Hero Card...):', 'ska-no-code-design' ));
             if (!newName) return;
             this.formData.components.push({
                 name: newName,
@@ -450,8 +450,8 @@ function skaDesignTokensApp() {
                 return;
             }
             mediaUploader = wp.media({
-                title: 'Chọn Logo Thương Hiệu',
-                button: { text: 'Sử dụng Logo này' },
+                title: __( 'Choose Brand Logo', 'ska-no-code-design' ),
+                button: { text: __( 'Use this Logo', 'ska-no-code-design' ) },
                 multiple: false
             });
             mediaUploader.on('select', () => {
@@ -476,8 +476,8 @@ function skaDesignTokensApp() {
                 return;
             }
             mediaUploader = wp.media({
-                title: 'Chọn Custom Font (.woff2)',
-                button: { text: 'Sử dụng Font này' },
+                title: __( 'Select Custom Font (.woff2)', 'ska-no-code-design' ),
+                button: { text: __( 'Use this Font', 'ska-no-code-design' ) },
                 multiple: false,
                 // Uncomment the line below if you want to restrict to woff2 only (requires WP mime type support for woff2)
                 // library: { type: 'font/woff2' } 
@@ -559,13 +559,13 @@ function skaDesignTokensApp() {
                 const res = await response.json();
                 
                 if (res.success) {
-                    this.showToast('Lưu Token thành công & Đã sinh File Cache!');
+                    this.showToast(__( 'Successfully saved Token & Generated Cache File!', 'ska-no-code-design' ));
                 } else {
-                    this.showToast(res.message || 'Lỗi lưu dữ liệu', 'error');
+                    this.showToast(res.message || __( 'Error saving data', 'ska-no-code-design' ), 'error');
                 }
             } catch (err) {
                 console.error(err);
-                this.showToast('Lỗi Network', 'error');
+                this.showToast(__( 'Network error', 'ska-no-code-design' ), 'error');
             } finally {
                 this.isSaving = false;
             }

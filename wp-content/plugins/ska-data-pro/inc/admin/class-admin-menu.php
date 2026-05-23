@@ -65,15 +65,15 @@ class Admin_Menu {
                 <div class="flex justify-between items-start">
                     <div>
                         <h3 class="font-bold text-slate-900 text-lg m-0 p-0">Ska Data Pro</h3>
-                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">Quản trị Flat Tables (ska_data_*), Schema Manager và Strategy Pattern DataGrid. Thay thế hoàn toàn wp_postmeta.</p>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed"><?php echo esc_html__( 'Manage Flat Tables (ska_data_*), Schema Manager, and Strategy Pattern DataGrid. Completely replaces wp_postmeta.', 'ska-data-pro' ); ?></p>
                     </div>
                 </div>
                 <div class="mt-5 flex gap-4 text-sm">
                     <a href="?page=ska-data-pro" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors bg-indigo-50 px-3 py-1.5 rounded-lg no-underline">
-                        <span class="material-symbols-outlined text-[18px]">open_in_new</span> Truy cập Database
+                        <span class="material-symbols-outlined text-[18px]">open_in_new</span> <?php echo esc_html__( 'Access Database', 'ska-data-pro' ); ?>
                     </a>
                     <a href="?page=ska-data-pro-manage" class="inline-flex items-center gap-1 text-slate-600 font-medium hover:text-slate-900 transition-colors px-3 py-1.5 hover:bg-slate-50 rounded-lg no-underline">
-                        <span class="material-symbols-outlined text-[18px]">settings</span> Quản lý Semantic IDs
+                        <span class="material-symbols-outlined text-[18px]">settings</span> <?php echo esc_html__( 'Manage Semantic IDs', 'ska-data-pro' ); ?>
                     </a>
                 </div>
             </div>
@@ -89,7 +89,7 @@ class Admin_Menu {
 				<span class="material-symbols-outlined text-[24px]">web_stories</span>
 			</div>
 			<h3 class="font-bold text-base m-0 p-0 border-0 mb-2 group-hover:text-indigo-600 transition-colors relative z-10">Site Blueprint</h3>
-			<p class="text-xs text-slate-500 m-0 leading-relaxed relative z-10">Quản lý Theme Templates, Organisms & Tokens cho Web App.</p>
+			<p class="text-xs text-slate-500 m-0 leading-relaxed relative z-10"><?php echo esc_html__( 'Manage Theme Templates, Organisms & Tokens for Web App.', 'ska-data-pro' ); ?></p>
 		</a>
 		<?php
 	}

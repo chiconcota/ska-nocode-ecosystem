@@ -237,7 +237,7 @@ class Ska_App_Router {
 			}
 
 			wp_die( 
-				'Bạn không có đủ quyền (Role) truy cập vào App Portal này. Vui lòng liên hệ quản trị viên.', 
+				__( 'You do not have sufficient rights (Role) to access this App Portal. ', 'ska-no-code-design' ), 
 				'403 Forbidden', 
 				array( 'response' => 403 ) 
 			);

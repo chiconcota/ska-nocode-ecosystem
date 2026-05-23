@@ -1,11 +1,12 @@
+import { __ } from '@wordpress/i18n';
 import BaseCell from '../BaseCell.js';
 
 export default class MediaCell extends BaseCell {
     edit() {
         if (typeof wp !== 'undefined' && wp.media) {
             let file_frame = wp.media({ 
-                title: 'Chọn Hình Ảnh', 
-                button: { text: 'Dùng Ảnh Này' }, 
+                title: __( 'Select Image', 'ska-data-pro' ), 
+                button: { text: __( 'Use This Photo', 'ska-data-pro' ) }, 
                 multiple: false 
             });
             
@@ -21,7 +22,7 @@ export default class MediaCell extends BaseCell {
             });
             file_frame.open();
         } else {
-            alert('Chưa tải được thư viện wp.media');
+            alert(__( 'Unable to load wp.media library', 'ska-data-pro' ));
         }
     }
 }

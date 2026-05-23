@@ -53,7 +53,7 @@ class Organisms_API {
 
         $body = $request->get_json_params();
         if ( empty( $body ) || empty( $body['name'] ) || ! isset( $body['block_json'] ) ) {
-            return new \WP_Error( 'invalid_data', 'Thiếu dữ liệu (name hoặc block_json)', [ 'status' => 400 ] );
+            return new \WP_Error( 'invalid_data', __( 'Missing data (name or block_json)', 'ska-no-code-design' ), [ 'status' => 400 ] );
         }
 
         $table_name = 'ska_data_sys_organisms';
@@ -82,7 +82,7 @@ class Organisms_API {
             $date_format = get_option( 'date_format' );
             $record_data['updated_at'] = date_i18n( $date_format );
         } else {
-            return new \WP_Error( 'db_error', 'Không thể chèn bản ghi vào database.', [ 'status' => 500 ] );
+            return new \WP_Error( 'db_error', __( 'Unable to insert record into database.', 'ska-no-code-design' ), [ 'status' => 500 ] );
         }
 
         // Export physical cache
@@ -90,7 +90,7 @@ class Organisms_API {
 
         return rest_ensure_response( [
             'success' => true,
-            'message' => 'Lưu Organism thành công.',
+            'message' => __( 'Saved Organism successfully.', 'ska-no-code-design' ),
             'data'    => $record_data
         ] );
     }
@@ -103,7 +103,7 @@ class Organisms_API {
         $results = $wpdb->get_results( "SELECT id, name, created_at FROM {$table_name} WHERE type = 'organism' OR type = '' OR type IS NULL ORDER BY id DESC", ARRAY_A );
 
         if ( $wpdb->last_error ) {
-            return new \WP_Error( 'db_error', 'Lỗi truy vấn cơ sở dữ liệu.', [ 'status' => 500 ] );
+            return new \WP_Error( 'db_error', __( 'Database query error.', 'ska-no-code-design' ), [ 'status' => 500 ] );
         }
 
         $formatted_results = [];
@@ -126,14 +126,14 @@ class Organisms_API {
         $id = $request->get_param( 'id' );
 
         if ( empty( $id ) ) {
-            return new \WP_Error( 'invalid_id', 'Thiếu ID Organism.', [ 'status' => 400 ] );
+            return new \WP_Error( 'invalid_id', __( 'Missing Organism ID.', 'ska-no-code-design' ), [ 'status' => 400 ] );
         }
 
         $table_name = $wpdb->prefix . 'ska_data_sys_organisms';
         $deleted = $wpdb->delete( $table_name, [ 'id' => $id, 'type' => 'organism' ], [ '%d', '%s' ] );
 
         if ( false === $deleted ) {
-            return new \WP_Error( 'delete_failed', 'Không thể xóa Organism.', [ 'status' => 500 ] );
+            return new \WP_Error( 'delete_failed', __( 'Organism cannot be deleted.', 'ska-no-code-design' ), [ 'status' => 500 ] );
         }
 
         // Export physical cache
@@ -141,7 +141,7 @@ class Organisms_API {
 
         return rest_ensure_response( [
             'success' => true,
-            'message' => 'Đã xóa Organism.'
+            'message' => __( 'Organism removed.', 'ska-no-code-design' )
         ] );
     }
 

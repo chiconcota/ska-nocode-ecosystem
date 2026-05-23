@@ -20,7 +20,7 @@ $slots        = isset( $attributes['slots'] ) && is_array( $attributes['slots'] 
 
 if ( empty( $source_table ) ) {
     if ( is_admin() || ( defined('REST_REQUEST') && REST_REQUEST && isset($_REQUEST['context']) && $_REQUEST['context'] === 'edit' ) ) {
-        echo '<div class="components-placeholder"><div class="components-placeholder__label">Ska Query Loop</div><div class="components-placeholder__fieldset">Vui lòng chọn bảng nguồn (Source Table) trong Inspector.</div></div>';
+        echo __( '<div class=\"components-placeholder\"><div class=\"components-placeholder__label\">Ska Query Loop</div><div class=\"components-placeholder__fieldset\">Please select Source Table in Inspector.</div></div>', 'ska-no-code-design' );
         return;
     }
     return;
@@ -36,7 +36,7 @@ foreach ( $slots as $slot ) {
 
 if ( empty( $organism_ids ) ) {
     if ( is_admin() || ( defined('REST_REQUEST') && REST_REQUEST && isset($_REQUEST['context']) && $_REQUEST['context'] === 'edit' ) ) {
-        echo '<div class="components-placeholder"><div class="components-placeholder__label">Ska Query Loop</div><div class="components-placeholder__fieldset">Vui lòng thiết lập ít nhất 1 Slot (Organism ID).</div></div>';
+        echo __( '<div class=\"components-placeholder\"><div class=\"components-placeholder__label\">Ska Query Loop</div><div class=\"components-placeholder__fieldset\">Please set up at least 1 Slot (Organism ID).</div></div>', 'ska-no-code-design' );
         return;
     }
     return;
@@ -92,7 +92,7 @@ if ( ! isset( $ska_rendering_organisms ) ) {
 
 foreach ( $bulk_html as $org_id => $raw_html ) {
     if ( isset( $ska_rendering_organisms[ $org_id ] ) ) {
-        $compiled_templates[ $org_id ] = '<div style="color:red; padding:10px; border:1px solid red;">Error: Lặp vô hạn (Infinite Loop) phát hiện tại Symbol/Organism ID: ' . esc_html($org_id) . '</div>';
+        $compiled_templates[ $org_id ] = '<div style="color:red; padding:10px; border:1px solid red;"><?php esc_html_e( 'Error: Infinite Loop detected at Symbol/Organism ID: \' . ', 'ska-no-code-design' ); ?></div>';
         continue;
     }
     
@@ -128,7 +128,7 @@ if ( class_exists( '\Ska_Dynamic_Content' ) ) {
 
 // 3. Lấy dữ liệu thực từ Data Pro (Sử dụng bảng phẳng)
 if ( ! class_exists( '\Ska\Data\Core\Data_Fetcher' ) ) {
-    echo 'Lỗi: Ska Data Pro chưa được kích hoạt.';
+    echo __( 'Error: Ska Data Pro has not been activated.', 'ska-no-code-design' );
     return;
 }
 
@@ -164,7 +164,7 @@ if ( ! empty( $attributes['filters'] ) && is_array( $attributes['filters'] ) ) {
 $rows = \Ska\Data\Core\Data_Fetcher::get_table_rows( $actual_table_name, $args, $limit );
 if ( empty( $rows ) ) {
     if ( is_admin() || ( defined('REST_REQUEST') && REST_REQUEST && isset($_REQUEST['context']) && $_REQUEST['context'] === 'edit' ) ) {
-        echo '<div class="components-placeholder"><div class="components-placeholder__label">Ska Query Loop</div><div class="components-placeholder__fieldset">Bảng dữ liệu "' . esc_html($actual_table_name) . '" hiện chưa có dữ liệu nào. (No rows found).</div></div>';
+        echo __( '<div class=\"components-placeholder\"><div class=\"components-placeholder__label\">Ska Query Loop</div><div class=\"components-placeholder__fieldset\">Data table \"', 'ska-no-code-design' ) . esc_html($actual_table_name) . __( '\" There is currently no data. (No rows found).</div></div>', 'ska-no-code-design' );
         return;
     }
     echo '<!-- Ska Loop: No data found -->';

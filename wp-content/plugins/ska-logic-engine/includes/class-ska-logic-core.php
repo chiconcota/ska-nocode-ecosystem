@@ -162,7 +162,7 @@ class Ska_Logic_Core {
                 <div class="flex justify-between items-start">
                     <div>
                         <h3 class="font-bold text-slate-900 text-lg m-0 p-0">Ska Logic Engine</h3>
-                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">Xi-măng kết dính hệ sinh thái. Xử lý sự kiện (Workflows), Phân giải ngữ cảnh (Smart Context), CodeMirror UI và SkaFX AST.</p>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed"><?php esc_html_e( 'Cement binds the ecosystem. ', 'ska-logic-engine' ); ?></p>
                     </div>
                 </div>
                 <div class="mt-5 flex gap-4 text-sm">
@@ -195,7 +195,7 @@ class Ska_Logic_Core {
                 if (isset($workflows[$del_id])) {
                     unset($workflows[$del_id]);
                     update_option('ska_logic_simple_workflows', $workflows);
-                    echo '<div class="notice notice-success is-dismissible" style="margin-top:15px; margin-left:0; border-left-color: #ef4444;"><p><strong>Đã băm nát Băng chuyền mục tiêu!</strong></p></div>';
+                    echo __( '<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #ef4444;\"><p><strong>Target Carousel shredded!</strong></p></div>', 'ska-logic-engine' );
                 }
             } elseif ($action === 'rename') {
                 $old_id = sanitize_text_field($_POST['old_id']);
@@ -204,7 +204,7 @@ class Ska_Logic_Core {
                     $workflows[$new_id] = $workflows[$old_id];
                     unset($workflows[$old_id]);
                     update_option('ska_logic_simple_workflows', $workflows);
-                    echo '<div class="notice notice-success is-dismissible" style="margin-top:15px; margin-left:0; border-left-color: #3b82f6;"><p><strong>Biển tên đã được cập nhật!</strong></p></div>';
+                    echo __( '<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #3b82f6;\"><p><strong>Nameplate has been updated!</strong></p></div>', 'ska-logic-engine' );
                 }
             }
         }
@@ -224,7 +224,7 @@ class Ska_Logic_Core {
                 'graph' => $graph
             ];
             update_option('ska_logic_simple_workflows', $workflows);
-            echo '<div class="notice notice-success is-dismissible" style="margin-top:15px; margin-left:0; border-left-color: #059669;"><p><strong>Dây mạng đã lưu thành công cấu trúc JSON Graph phức hợp!</strong></p></div>';
+            echo __( '<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #059669;\"><p><strong>The network wire has successfully saved the complex JSON Graph structure!</strong></p></div>', 'ska-logic-engine' );
         }
 
         $current_view = isset($_GET['view']) ? sanitize_text_field($_GET['view']) : 'list';
@@ -236,7 +236,7 @@ class Ska_Logic_Core {
                 </div>
                 <div>
                     <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #111827; line-height: 1.2;">Ska Logic Engine</h1>
-                    <p style="margin: 0; color: #6b7280; font-size: 13px;">Thiết lập tự động hoá & luồng dữ liệu (Ska-xi măng)</p>
+                    <p style="margin: 0; color: #6b7280; font-size: 13px;"><?php esc_html_e( 'Setting up automation & data flow (Ska-cement)', 'ska-logic-engine' ); ?></p>
                 </div>
             </div>
 

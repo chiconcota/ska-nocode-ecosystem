@@ -149,10 +149,10 @@ registerBlockType(metadata.name, {
                     {tagName === 'form' && (
                         <PanelBody title={__('⚡ Ska Form Engine', 'ska-builder-core')} initialOpen={true}>
                             <ToggleControl
-                                label={__('Kích hoạt Form Engine', 'ska-builder-core')}
+                                label={__(__( 'Activate Form Engine', 'ska-no-code-design' ), 'ska-builder-core')}
                                 checked={isSkaForm}
                                 onChange={(val) => setAttributes({ isSkaForm: val })}
-                                help="Bật để tự động xử lý Submit, Validation, Loading State."
+                                help=__( 'Turn on to automatically handle Submit, Validation, Loading State.', 'ska-no-code-design' )
                             />
                             {isSkaForm && (
                                 <>
@@ -160,13 +160,13 @@ registerBlockType(metadata.name, {
                                         label={__('Logic Action ID', 'ska-builder-core')}
                                         value={formActionId}
                                         onChange={(val) => setAttributes({ formActionId: val })}
-                                        help="ID của Workflow trong Ska Logic Engine (VD: contact_form)."
+                                        help=__( 'Workflow ID in Ska Logic Engine (eg contact_form).', 'ska-no-code-design' )
                                     />
                                     <ToggleControl
-                                        label={__('Lưu nháp (Auto-Save)', 'ska-builder-core')}
+                                        label={__(__( 'Auto-Save', 'ska-no-code-design' ), 'ska-builder-core')}
                                         checked={usePersist}
                                         onChange={(val) => setAttributes({ usePersist: val })}
-                                        help="Lưu dữ liệu đang điền vào LocalStorage, tránh mất khi F5."
+                                        help=__( 'Save the data being filled into LocalStorage, avoid losing it when F5.', 'ska-no-code-design' )
                                     />
                                 </>
                             )}

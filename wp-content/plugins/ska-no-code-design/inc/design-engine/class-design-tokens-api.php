@@ -215,12 +215,12 @@ class Design_Tokens_API {
 
             return rest_ensure_response( [
                 'success' => true,
-                'message' => 'Lưu Design Tokens thành công.',
+                'message' => __( 'Saved Design Tokens successfully.', 'ska-no-code-design' ),
             ] );
 
         } catch ( \Exception $e ) {
             $wpdb->query( "ROLLBACK" );
-            return new \WP_Error( 'db_error', 'Không thể lưu vào CSDL', [ 'status' => 500 ] );
+            return new \WP_Error( 'db_error', __( 'Unable to save to database', 'ska-no-code-design' ), [ 'status' => 500 ] );
         }
     }
 }

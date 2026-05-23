@@ -48,12 +48,12 @@ const OptionsBuilderControl = ({ value, onChange }) => {
     return (
         <div className="ska-options-builder" style={{ marginBottom: '16px' }}>
             <div style={{ marginBottom: '10px' }}>
-                <strong style={{ fontSize: '12px', textTransform: 'uppercase', color: '#1e1e1e' }}>{__('Cấu hình Tùy chọn', 'ska-builder-core')}</strong>
+                <strong style={{ fontSize: '12px', textTransform: 'uppercase', color: '#1e1e1e' }}>{__( '{__(\'Configuration Options\', \'ska-builder-core\')}', 'ska-no-code-design' )}</strong>
             </div>
             
             {options.length === 0 && (
                 <div style={{ padding: '16px', textAlign: 'center', background: '#f8f9fa', border: '1px dashed #ccc', borderRadius: '4px', marginBottom: '8px' }}>
-                    <p style={{ color: '#666', fontSize: '13px', margin: 0 }}>Chưa có tùy chọn nào.</p>
+                    <p style={{ color: '#666', fontSize: '13px', margin: 0 }}>{__( 'There are no options yet.', 'ska-no-code-design' )}</p>
                 </div>
             )}
 
@@ -101,7 +101,7 @@ const OptionsBuilderControl = ({ value, onChange }) => {
                     onClick={() => setShowRaw(!showRaw)}
                     style={{ fontSize: '12px', textDecoration: 'none' }}
                 >
-                    {showRaw ? "Ẩn chế độ Text (Dev Mode)" : "Hiện chế độ Text (Dev Mode)"}
+                    {showRaw ? __( 'Hide Text mode (Dev Mode)', 'ska-no-code-design' ) : __( 'Show Text mode (Dev Mode)', 'ska-no-code-design' )}
                 </Button>
                 
                 {showRaw && (
@@ -111,7 +111,7 @@ const OptionsBuilderControl = ({ value, onChange }) => {
                             onChange={onChange}
                             rows={5}
                             style={{ fontSize: '12px', fontFamily: 'monospace' }}
-                            help="Cú pháp: Label:value (Mỗi tùy chọn 1 dòng)"
+                            help=__( 'Syntax: Label:value (1 line per option)', 'ska-no-code-design' )
                             __nextHasNoMarginBottom
                         />
                     </div>
@@ -156,7 +156,7 @@ registerBlockType(metadata.name, {
         }
 
         const tableOptions = useMemo(() => {
-            const opts = [{ label: '-- Chọn Bảng Dữ Liệu --', value: '' }];
+            const opts = [{ label: __( '-- Select Data Table --', 'ska-no-code-design' ), value: '' }];
             if (window.skaDataDictionary) {
                 Object.keys(window.skaDataDictionary).forEach(key => {
                     const table = window.skaDataDictionary[key];
@@ -169,7 +169,7 @@ registerBlockType(metadata.name, {
         }, []);
 
         const columnOptions = useMemo(() => {
-            const opts = [{ label: '-- Chọn Cột --', value: '' }];
+            const opts = [{ label: __( '-- Select Column --', 'ska-no-code-design' ), value: '' }];
             if (currentTable && window.skaDataDictionary) {
                 let tableDict = window.skaDataDictionary[currentTable] || window.skaDataDictionary['wp_' + currentTable];
                 if (tableDict) {
@@ -244,16 +244,16 @@ registerBlockType(metadata.name, {
         return (
             <>
                 <InspectorControls>
-                    <PanelBody title={__('Nguồn Dữ Liệu (Dynamic)', 'ska-builder-core')} initialOpen={true}>
+                    <PanelBody title={__(__( 'Data Source (Dynamic)', 'ska-no-code-design' ), 'ska-builder-core')} initialOpen={true}>
                         {!window.skaDataDictionary ? (
                             <div style={{ padding: '12px', background: '#fffbeb', color: '#b45309', fontSize: '13px', borderRadius: '4px', border: '1px solid #fcd34d' }}>
-                                <strong>Chưa kích hoạt Ska Data Pro</strong><br/>
-                                Tính năng <i>Nguồn Dữ Liệu Động</i> yêu cầu phải có hệ sinh thái <b>Ska Data Pro</b>. Vui lòng cài đặt và kích hoạt plugin này để trải nghiệm tính năng Zero N+1 Query.
+                                <strong>{__( 'Ska Data Pro has not been activated yet', 'ska-no-code-design' )}</strong><br/>
+                                Tính năng <i>{__( 'Dynamic Data Source', 'ska-no-code-design' )}</i> yêu cầu phải có hệ sinh thái <b>Ska Data Pro</b>. Vui lòng cài đặt và kích hoạt plugin này để trải nghiệm tính năng Zero N+1 Query.
                             </div>
                         ) : (
                             <>
                                 <ToggleControl
-                                    label={__('Kết nối dữ liệu động', 'ska-builder-core')}
+                                    label={__(__( 'Dynamic data connection', 'ska-no-code-design' ), 'ska-builder-core')}
                                     checked={!!skaDynamicBinding}
                                     onChange={(val) => {
                                         if (!val) {
@@ -267,14 +267,14 @@ registerBlockType(metadata.name, {
                                 {!!skaDynamicBinding && (
                                     <>
                                         <SelectControl
-                                            label={__('Bảng Dữ Liệu', 'ska-builder-core')}
+                                            label={__(__( 'Data Table', 'ska-no-code-design' ), 'ska-builder-core')}
                                             value={currentTable}
                                             options={tableOptions}
                                             onChange={(val) => updateDynamicBinding(val, '')}
                                         />
                                         {currentTable && (
                                             <SelectControl
-                                                label={__('Cột Dữ Liệu (Option)', 'ska-builder-core')}
+                                                label={__(__( 'Data Column (Option)', 'ska-no-code-design' ), 'ska-builder-core')}
                                                 value={currentColumn}
                                                 options={columnOptions}
                                                 onChange={(val) => updateDynamicBinding(currentTable, val)}
@@ -283,7 +283,7 @@ registerBlockType(metadata.name, {
                                         {skaDynamicBinding && currentTable && currentColumn && (
                                             <div style={{ padding: '8px', background: '#ecfdf5', border: '1px solid #10b981', borderRadius: '4px', fontSize: '12px', marginTop: '10px' }}>
                                                 <strong>Binding:</strong> <code>{skaDynamicBinding}</code>
-                                                <p style={{ margin: '4px 0 0', color: '#047857' }}>Dữ liệu options sẽ được nạp tự động lúc tải trang Frontend (Zero N+1).</p>
+                                                <p style={{ margin: '4px 0 0', color: '#047857' }}>{__( 'Options data will be loaded automatically when loading the Frontend page (Zero N+1).', 'ska-no-code-design' )}</p>
                                             </div>
                                         )}
                                     </>
@@ -302,9 +302,9 @@ registerBlockType(metadata.name, {
                             label={__('Display Style', 'ska-builder-core')}
                             value={displayStyle}
                             options={[
-                                { label: 'Dropdown (Mặc định)', value: 'dropdown' },
-                                { label: 'Radio List (Chọn 1)', value: 'radio' },
-                                { label: 'Checkbox List (Chọn nhiều)', value: 'checkbox' }
+                                { label: __( 'Dropdown (Default)', 'ska-no-code-design' ), value: 'dropdown' },
+                                { label: __( 'Radio List (Choose 1)', 'ska-no-code-design' ), value: 'radio' },
+                                { label: __( 'Checkbox List (Select multiple)', 'ska-no-code-design' ), value: 'checkbox' }
                             ]}
                             onChange={(val) => {
                                 setAttributes({ displayStyle: val });
@@ -314,7 +314,7 @@ registerBlockType(metadata.name, {
                         />
                         {displayStyle === 'dropdown' && (
                             <ToggleControl
-                                label={__('Cho phép chọn nhiều (Multi-select)', 'ska-builder-core')}
+                                label={__(__( 'Allows multiple selection (Multi-select)', 'ska-no-code-design' ), 'ska-builder-core')}
                                 checked={isMultiple}
                                 onChange={(val) => setAttributes({ isMultiple: val })}
                             />

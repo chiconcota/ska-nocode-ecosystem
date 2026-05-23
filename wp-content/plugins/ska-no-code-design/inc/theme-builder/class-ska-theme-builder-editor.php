@@ -55,14 +55,14 @@ class Ska_Theme_Builder_Editor {
 		$template_id = isset( $_GET['template_id'] ) ? absint( $_GET['template_id'] ) : 0;
 
 		if ( ! $template_id ) {
-			echo '<div class="wrap"><h2>Lỗi: Không tìm thấy Template ID.</h2></div>';
+			echo __( '<div class=\"wrap\"><h2>Error: Template ID not found.</h2></div>', 'ska-no-code-design' );
 			return;
 		}
 
 		// Ensure Organism dummy post exists
 		$dummy_post_id = get_option( 'ska_organism_dummy_post_id' );
 		if ( ! $dummy_post_id ) {
-			echo '<div class="wrap"><h2>Lỗi: Chưa khởi tạo Dummy Post. Vui lòng quay lại Dashboard.</h2></div>';
+			echo __( '<div class=\"wrap\"><h2>Error: Dummy Post has not been initialized. ', 'ska-no-code-design' );
 			return;
 		}
 
@@ -72,7 +72,7 @@ class Ska_Theme_Builder_Editor {
 		$theme_template = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$template_table} WHERE id = %d", $template_id ) );
 
 		if ( ! $theme_template ) {
-			echo '<div class="wrap"><h2>Lỗi: Theme Template không tồn tại.</h2></div>';
+			echo __( '<div class=\"wrap\"><h2>Error: Theme Template does not exist.</h2></div>', 'ska-no-code-design' );
 			return;
 		}
 
@@ -148,7 +148,7 @@ class Ska_Theme_Builder_Editor {
 			<div class="flex-1 w-full relative bg-slate-50">
 				<div x-show="loading" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 z-20">
 					<span class="material-symbols-outlined text-4xl text-indigo-500 animate-spin mb-3">data_usage</span>
-					<span class="text-slate-500 font-medium text-sm">Đang tải Editor...</span>
+					<span class="text-slate-500 font-medium text-sm"><?php esc_html_e( 'Loading Editor...', 'ska-no-code-design' ); ?></span>
 				</div>
 				<iframe 
 					src="<?php echo esc_url( $iframe_url ); ?>" 

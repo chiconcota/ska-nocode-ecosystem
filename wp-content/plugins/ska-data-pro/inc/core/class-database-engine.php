@@ -36,7 +36,7 @@ class Database_Engine
 		$template = Template_Registry::get_template($template_id);
 
 		if (!$template) {
-			return new \WP_Error('invalid_template', 'Template dữ liệu không tồn tại.');
+			return new \WP_Error('invalid_template', __( 'Template data does not exist.', 'ska-data-pro' ));
 		}
 
 		// 1. Chạy dbDelta để đúc Bảng (Flat Tables)
@@ -157,7 +157,7 @@ class Database_Engine
 
 		// Kiểm tra an toàn bảo mật tên bảng
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
-			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
 		// Dùng SQL raw vì $wpdb->insert không hiểu array rỗng (Báo lỗi Unknown column '')
@@ -189,7 +189,7 @@ class Database_Engine
 		global $wpdb;
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
-			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
 		$row_id = absint($row_id);
@@ -204,7 +204,7 @@ class Database_Engine
 		}
 
 		if (!in_array($column_name, $valid_columns)) {
-			return new \WP_Error('invalid_column', 'Bảo mật: Cột không tồn tại.');
+			return new \WP_Error('invalid_column', __( 'Security: Column does not exist.', 'ska-data-pro' ));
 		}
 
 		// Sử dụng cơ chế Update chuẩn của WP (Đã bao hàm cơ chế Escape/Sanitize SQL an toàn cho `$value`)
@@ -236,12 +236,12 @@ class Database_Engine
 		global $wpdb;
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
-			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
 		$label = sanitize_text_field($label);
 		if (empty($label)) {
-			return new \WP_Error('empty_label', 'Tên cột không được để trống.');
+			return new \WP_Error('empty_label', __( 'Column names cannot be empty.', 'ska-data-pro' ));
 		}
 
 		// Phiên dịch Tiếng Việt -> Cấu trúc không dấu cách (Ví dụ: "Giá Bán" -> "gia-ban" -> "gia_ban")
@@ -260,7 +260,7 @@ class Database_Engine
 		}
 
 		if (in_array($col_slug, $existing_slugs)) {
-			return new \WP_Error('column_exists', "Hệ thống báo: Đã có một cột bị trùng tên [{$col_slug}] trong bảng.");
+			return new \WP_Error('column_exists', __( 'The system reports: There is a column with the same name [{$col_slug}] in the table.', 'ska-data-pro' ));
 		}
 
 		// Map Mệnh Lệnh của User sang Ngôn Ngữ MySQL Vật lý
@@ -369,16 +369,16 @@ class Database_Engine
 		global $wpdb;
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
-			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
 		if ($col_slug === 'id') {
-			return new \WP_Error('protected_col', 'Không thể sửa đổi Cột ID (Khóa chính hệ thống).');
+			return new \WP_Error('protected_col', __( 'The ID Column (System Primary Key) cannot be modified.', 'ska-data-pro' ));
 		}
 
 		$new_label = sanitize_text_field($new_label);
 		if (empty($new_label)) {
-			return new \WP_Error('empty_label', 'Tên hiển thị không được để trống.');
+			return new \WP_Error('empty_label', __( 'Display name cannot be blank.', 'ska-data-pro' ));
 		}
 
 		// Ánh xạ Type
@@ -474,11 +474,11 @@ class Database_Engine
 		global $wpdb;
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
-			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
 		if ($col_slug === 'id') {
-			return new \WP_Error('protected_col', 'Tuyệt đối không được xóa Cột ID khóa chính.');
+			return new \WP_Error('protected_col', __( 'Absolutely do not delete the Primary Key ID Column.', 'ska-data-pro' ));
 		}
 
 		// Cưa đổ cột DB
@@ -511,7 +511,7 @@ class Database_Engine
 		global $wpdb;
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
-			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
 		$result = $wpdb->delete(
@@ -544,7 +544,7 @@ class Database_Engine
 		// 1. Tạo Slug chuẩn
 		$slug = sanitize_title($friendly_name);
 		if (empty($slug)) {
-			return new \WP_Error('invalid_name', 'Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_name', __( 'Invalid table name.', 'ska-data-pro' ));
 		}
 
 		// 1A. Nhúng App ID vào để ngăn chặn dẫm đạp Schema (Collision Resolving)
@@ -562,7 +562,7 @@ class Database_Engine
 		// Kiểm tra Trùng
 		$exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name));
 		if ($exists === $table_name) {
-			return new \WP_Error('table_exists', 'Bảng này đã tồn tại.');
+			return new \WP_Error('table_exists', __( 'This table already exists.', 'ska-data-pro' ));
 		}
 
 		// 2. Chạy Lệnh Tạo (Base Columns: id, created_at)
@@ -604,7 +604,7 @@ class Database_Engine
 		global $wpdb;
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
-			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
 		// Bức tường thép: Chặn xóa System Tables
@@ -614,7 +614,7 @@ class Database_Engine
 			$wpdb->prefix . 'ska_data_sys_presets'
 		);
 		if (in_array($table_name, $protected_tables)) {
-			return new \WP_Error('protected_table', 'Bảo mật: Không được phép xóa bảng thuộc Hệ thống Lõi.');
+			return new \WP_Error('protected_table', __( 'Security: Deleting tables belonging to the Core System is not allowed.', 'ska-data-pro' ));
 		}
 
 		// Xóa DB
@@ -636,7 +636,7 @@ class Database_Engine
 		global $wpdb;
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
-			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
 		// Bức tường thép: Chặn đổi tên/di chuyển System Tables
@@ -646,7 +646,7 @@ class Database_Engine
 			$wpdb->prefix . 'ska_data_sys_presets'
 		);
 		if (in_array($table_name, $protected_tables)) {
-			return new \WP_Error('protected_table', 'Bảo mật: Không được phép sửa đổi cấu hình bảng thuộc Hệ thống Lõi.');
+			return new \WP_Error('protected_table', __( 'Security: Modification of Core System board configuration is not allowed.', 'ska-data-pro' ));
 		}
 
 		$dictionary = get_option('ska_data_dictionary', array());
@@ -680,17 +680,17 @@ class Database_Engine
 		global $wpdb;
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
-			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
 		$dictionary = get_option('ska_data_dictionary', array());
 		if (!isset($dictionary[$table_name][$col_slug])) {
-			return new \WP_Error('invalid_column', 'Cột này chưa nằm trong từ điển.');
+			return new \WP_Error('invalid_column', __( 'This column is not yet in the dictionary.', 'ska-data-pro' ));
 		}
 
 		$meta = $dictionary[$table_name][$col_slug];
 		if ($meta['type'] !== 'select' && $meta['type'] !== 'multi_select') {
-			return new \WP_Error('not_select', 'Chỉ được phép gọi trên cột dạng (Multi) Select.');
+			return new \WP_Error('not_select', __( 'Calls are only allowed on (Multi) Select columns.', 'ska-data-pro' ));
 		}
 
 		$opts_str = isset($meta['options']) ? $meta['options'] : '';
@@ -769,13 +769,13 @@ class Database_Engine
 		global $wpdb;
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
-			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
 		$dictionary = get_option('ska_data_dictionary', array());
 
 		if (!isset($dictionary[$table_name])) {
-			return new \WP_Error('invalid_table', 'Bảng không tồn tại trong từ điển.');
+			return new \WP_Error('invalid_table', __( 'The table does not exist in the dictionary.', 'ska-data-pro' ));
 		}
 
 		// Quét kiểm tra Collision (Trùng lặp URL Slug)
@@ -783,7 +783,7 @@ class Database_Engine
 		$slug = isset($settings['slug']) ? sanitize_title($settings['slug']) : '';
 		
 		if ($active && empty($slug)) {
-			return new \WP_Error('empty_slug', 'URL Slug không được để trống khi kích hoạt App Portal.');
+			return new \WP_Error('empty_slug', __( 'URL Slug cannot be empty when activating App Portal.', 'ska-data-pro' ));
 		}
 
 		if ($active) {
@@ -793,7 +793,7 @@ class Database_Engine
 				}
 				if (isset($schema['__table_info']['portal_settings']) && !empty($schema['__table_info']['portal_settings']['active'])) {
 					if ($schema['__table_info']['portal_settings']['slug'] === $slug) {
-						return new \WP_Error('slug_collision', 'URL Slug này đã được sử dụng bởi một bảng khác. Vui lòng chọn Slug khác.');
+						return new \WP_Error('slug_collision', __( 'This Slug URL is already in use by another table. ', 'ska-data-pro' ));
 					}
 				}
 			}
@@ -833,12 +833,12 @@ class Database_Engine
 		global $wpdb;
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
-			return new \WP_Error('invalid_table', 'Bảo mật: Tên bảng không hợp lệ.');
+			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
 		$dictionary = get_option('ska_data_dictionary', array());
 		if (!isset($dictionary[$table_name])) {
-			return new \WP_Error('invalid_table', 'Bảng không tồn tại trong từ điển.');
+			return new \WP_Error('invalid_table', __( 'The table does not exist in the dictionary.', 'ska-data-pro' ));
 		}
 
 		// 1. Tự động thêm cột Nội dung (Gutenberg) nếu người dùng yêu cầu
@@ -852,7 +852,7 @@ class Database_Engine
 			}
 
 			if (!$has_long_text) {
-				$add_result = $this->add_column($table_name, 'Nội dung', 'long_text', '');
+				$add_result = $this->add_column($table_name, __( 'Content', 'ska-data-pro' ), 'long_text', '');
 				if (is_wp_error($add_result)) {
 					return $add_result;
 				}
@@ -864,7 +864,7 @@ class Database_Engine
 		$result = apply_filters('ska_design_generate_portal_assets', false, $table_name, $options);
 
 		if (false === $result) {
-			return new \WP_Error('missing_design_engine', 'Ska No-Code Design Plugin chưa được kích hoạt hoặc không phản hồi.');
+			return new \WP_Error('missing_design_engine', __( 'Ska No-Code Design Plugin is not activated or not responding.', 'ska-data-pro' ));
 		}
 
 		return $result;

@@ -84,7 +84,7 @@ class Ska_Theme_Builder {
 		if ( file_exists( $view_path ) ) {
 			require_once $view_path;
 		} else {
-			echo '<div class="wrap"><h2>Lỗi: Không tìm thấy giao diện Theme Builder.</h2></div>';
+			echo __( '<div class=\"wrap\"><h2>Error: Theme Builder interface not found.</h2></div>', 'ska-no-code-design' );
 		}
 	}
 

@@ -335,7 +335,7 @@ class App_Manager {
 	public static function create_app( $name, $icon = 'dashicons-portfolio' ) {
 		$name = sanitize_text_field( $name );
 		if ( empty( $name ) ) {
-			return new \WP_Error( 'invalid_name', 'Tên ứng dụng không được để trống.' );
+			return new \WP_Error( 'invalid_name', __( 'Application name cannot be empty.', 'ska-data-pro' ) );
 		}
 
 		$apps   = self::get_apps();
@@ -347,7 +347,7 @@ class App_Manager {
 
 		// Bức tường thép: Chặn đụng độ App name
 		if ( isset( $apps[ $app_id ] ) ) {
-			return new \WP_Error( 'app_exists', 'Tên Ứng dụng này đã được sử dụng (Ký danh đụng độ). Vui lòng chọn một tên Tôn sùng sự Độc nhất!' );
+			return new \WP_Error( 'app_exists', __( 'This Application name is already in use (Clash Alias). ', 'ska-data-pro' ) );
 		}
 		
 		$apps[ $app_id ] = array(
@@ -369,12 +369,12 @@ class App_Manager {
 		$name   = sanitize_text_field( $name );
 		
 		if ( $app_id === self::UNCATEGORIZED_APP || $app_id === self::SYSTEM_APP ) {
-			return new \WP_Error( 'protected', 'Không thể sửa đổi Workspace Hệ thống.' );
+			return new \WP_Error( 'protected', __( 'The System Workspace cannot be modified.', 'ska-data-pro' ) );
 		}
 
 		$apps = self::get_apps();
 		if ( ! isset( $apps[ $app_id ] ) ) {
-			return new \WP_Error( 'not_found', 'Ứng dụng không tồn tại.' );
+			return new \WP_Error( 'not_found', __( 'Application does not exist.', 'ska-data-pro' ) );
 		}
 
 		$apps[ $app_id ]['name'] = $name;
@@ -389,12 +389,12 @@ class App_Manager {
 	public static function drop_app( $app_id ) {
 		$app_id = sanitize_text_field( $app_id );
 		if ( $app_id === self::UNCATEGORIZED_APP || $app_id === self::SYSTEM_APP ) {
-			return new \WP_Error( 'protected', 'Không thể xóa Workspace Hệ thống.' );
+			return new \WP_Error( 'protected', __( 'Cannot delete System Workspace.', 'ska-data-pro' ) );
 		}
 
 		$apps = self::get_apps();
 		if ( ! isset( $apps[ $app_id ] ) ) {
-			return new \WP_Error( 'not_found', 'Ứng dụng không tồn tại.' );
+			return new \WP_Error( 'not_found', __( 'Application does not exist.', 'ska-data-pro' ) );
 		}
 
 		// 1. Chuyển nhà (Tables)

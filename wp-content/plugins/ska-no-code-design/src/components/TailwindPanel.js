@@ -206,7 +206,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
             
             // Prevent duplicate preset names
             if (currentComponents.some(c => c.name && c.name.toLowerCase() === newPreset.name.toLowerCase())) {
-                setSaveError(__('Tên preset này đã tồn tại. Vui lòng chọn tên khác.', 'ska-builder-core'));
+                setSaveError(__(__( 'This preset name already exists. ', 'ska-no-code-design' ), 'ska-builder-core'));
                 setIsSaving(false);
                 return;
             }
@@ -227,13 +227,13 @@ export const TailwindPanel = ({ className, setClassName }) => {
                 setIsSavingPreset(false);
                 setPresetName('');
                 setSaveError('');
-                alert(__('Lưu Preset thành công!', 'ska-builder-core'));
+                alert(__(__( 'Preset saved successfully!', 'ska-no-code-design' ), 'ska-builder-core'));
             } else {
-                setSaveError(postRes?.message || __('Lỗi không lưu được Preset.', 'ska-builder-core'));
+                setSaveError(postRes?.message || __(__( 'Error unable to save Preset.', 'ska-no-code-design' ), 'ska-builder-core'));
             }
         } catch (err) {
             console.error(err);
-            setSaveError(__('Lỗi mạng khi lưu Preset.', 'ska-builder-core'));
+            setSaveError(__(__( 'Network error when saving Preset.', 'ska-no-code-design' ), 'ska-builder-core'));
         } finally {
             setIsSaving(false);
         }
@@ -400,7 +400,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
 
             {isSavingPreset && (
                 <Modal
-                    title={__('Lưu UI Preset mới', 'ska-builder-core')}
+                    title={__(__( 'Save the new UI Preset', 'ska-no-code-design' ), 'ska-builder-core')}
                     onRequestClose={() => {
                         setIsSavingPreset(false);
                         setSaveError('');
@@ -410,7 +410,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
                 >
                     <div style={{ marginBottom: '16px' }}>
                         <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '12px' }}>
-                            {__('Preset này sẽ gom các class hiện tại lại và bạn có thể tái sử dụng dễ dàng sau này. Hãy đặt tên dễ nhớ (vd: Button Primary).', 'ska-builder-core')}
+                            {__(__( 'This preset will collect current classes and you can easily reuse them later. ', 'ska-no-code-design' ), 'ska-builder-core')}
                         </p>
                         
                         {saveError && (
@@ -420,7 +420,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
                         )}
 
                         <TextControl
-                            label={__('Tên Preset', 'ska-builder-core')}
+                            label={__(__( 'Preset name', 'ska-no-code-design' ), 'ska-builder-core')}
                             value={presetName}
                             onChange={(val) => {
                                 setPresetName(val);
@@ -437,10 +437,10 @@ export const TailwindPanel = ({ className, setClassName }) => {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                         <Button isSecondary onClick={() => setIsSavingPreset(false)} disabled={isSaving}>
-                            {__('Hủy', 'ska-builder-core')}
+                            {__(__( 'Cancel', 'ska-no-code-design' ), 'ska-builder-core')}
                         </Button>
                         <Button isPrimary onClick={handleSavePreset} disabled={!presetName.trim() || isSaving}>
-                            {isSaving ? __('Đang lưu...', 'ska-builder-core') : __('Lưu Preset', 'ska-builder-core')}
+                            {isSaving ? __(__( 'Saving...', 'ska-no-code-design' ), 'ska-builder-core') : __(__( 'Save Presets', 'ska-no-code-design' ), 'ska-builder-core')}
                         </Button>
                     </div>
                 </Modal>

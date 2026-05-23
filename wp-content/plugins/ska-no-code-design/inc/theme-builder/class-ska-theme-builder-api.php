@@ -122,7 +122,7 @@ class Ska_Theme_Builder_API {
 		$body = $request->get_json_params();
 
 		if ( empty( $body ) || empty( $body['title'] ) || empty( $body['location'] ) ) {
-			return new \WP_Error( 'invalid_data', 'Thiếu dữ liệu bắt buộc (title hoặc location)', array( 'status' => 400 ) );
+			return new \WP_Error( 'invalid_data', __( 'Missing required data (title or location)', 'ska-no-code-design' ), array( 'status' => 400 ) );
 		}
 
 		$table_name = 'ska_data_sys_theme_templates';
@@ -156,12 +156,12 @@ class Ska_Theme_Builder_API {
 		if ( ! $id && $result ) {
 			$id = $result; // new ID
 		} elseif ( ! $result ) {
-			return new \WP_Error( 'db_error', 'Không thể lưu bản ghi vào database.', array( 'status' => 500 ) );
+			return new \WP_Error( 'db_error', __( 'Unable to save record to database.', 'ska-no-code-design' ), array( 'status' => 500 ) );
 		}
 
 		return rest_ensure_response( array(
 			'success' => true,
-			'message' => 'Lưu Theme Template thành công.',
+			'message' => __( 'Saved Theme Template successfully.', 'ska-no-code-design' ),
 			'id'      => $id,
 		) );
 	}
@@ -173,7 +173,7 @@ class Ska_Theme_Builder_API {
 		$id = $request->get_param( 'id' );
 
 		if ( empty( $id ) ) {
-			return new \WP_Error( 'invalid_id', 'ID không hợp lệ.', array( 'status' => 400 ) );
+			return new \WP_Error( 'invalid_id', __( 'Invalid ID.', 'ska-no-code-design' ), array( 'status' => 400 ) );
 		}
 
 		global $wpdb;
@@ -187,7 +187,7 @@ class Ska_Theme_Builder_API {
 		$deleted = $wpdb->delete( $table_name, array( 'id' => $id ), array( '%d' ) );
 
 		if ( false === $deleted ) {
-			return new \WP_Error( 'db_error', 'Không thể xóa bản ghi.', array( 'status' => 500 ) );
+			return new \WP_Error( 'db_error', __( 'Record cannot be deleted.', 'ska-no-code-design' ), array( 'status' => 500 ) );
 		}
 
 		// 3. Tự động xóa Organism liên kết để tránh tích lũy dữ liệu rác trong database
@@ -202,7 +202,7 @@ class Ska_Theme_Builder_API {
 
 		return rest_ensure_response( array(
 			'success' => true,
-			'message' => 'Xóa Theme Template và Organism liên kết thành công.',
+			'message' => __( 'Deleted Theme Template and Organism link successfully.', 'ska-no-code-design' ),
 		) );
 	}
 }

@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import BooleanCell from './types/BooleanCell.js';
 import MediaCell from './types/MediaCell.js';
 import GalleryCell from './types/GalleryCell.js';
@@ -38,7 +39,7 @@ export default class CellRegistry {
         document.querySelectorAll('.ska-editable-cell').forEach(cell => {
             if ( cell.getAttribute('data-col') === 'id' ) {
                 cell.classList.remove('ska-editable-cell', 'cursor-text', 'hover:bg-gray-100/80');
-                cell.title = "Khoá chính (ID) không thể sửa";
+                cell.title = __( 'The primary key (ID) cannot be edited', 'ska-data-pro' );
                 cell.style.cursor = 'not-allowed';
                 return;
             }

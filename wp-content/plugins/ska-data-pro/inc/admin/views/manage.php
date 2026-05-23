@@ -83,7 +83,7 @@ $table_dict  = isset($all_dict[$current_table]) ? $all_dict[$current_table] : ar
         <?php if ( empty( $current_table ) ) : ?>
             <div class="flex items-center justify-center h-full text-gray-400 flex-col">
                 <span class="dashicons dashicons-warning" style="font-size: 48px; width: 48px; height: 48px;"></span>
-                <p class="mt-4 text-lg">Vui lòng chọn hoặc cài đặt một Bảng dữ liệu.</p>
+                <p class="mt-4 text-lg"><?php esc_html_e( 'Please select or install a Data Sheet.', 'ska-data-pro' ); ?></p>
             </div>
         <?php else : ?>
 
@@ -127,7 +127,7 @@ $table_dict  = isset($all_dict[$current_table]) ? $all_dict[$current_table] : ar
             <!-- Khối DataGrid (Bảng tính thực thụ với thanh cuộn) -->
             <div class="flex-1 overflow-auto ska-datagrid-scroll bg-gray-50 relative z-10 w-full" style="max-height: 100%;">
                 <?php if ( empty( $columns ) ) : ?>
-                    <p class="p-6 text-gray-500">Bảng này chưa có định dạng Cột (Schema trống).</p>
+                    <p class="p-6 text-gray-500"><?php esc_html_e( 'This table does not have Column format (empty Schema).', 'ska-data-pro' ); ?></p>
                 <?php else : ?>
                     <table class="w-full text-left text-sm whitespace-nowrap border-spacing-0 table-fixed" style="border-collapse: separate; min-width: max-content;">
                         <!-- Vòng lặp Header Cột -->
@@ -184,9 +184,9 @@ $table_dict  = isset($all_dict[$current_table]) ? $all_dict[$current_table] : ar
                                                 } else if ( $type_to_check === 'multi_select' ) {
                                                     echo '<span class="dashicons dashicons-list-view text-gray-400 opacity-80" style="font-size: 16px;" title="Multi-Select"></span>';
                                                 } else if ( $type_to_check === 'relation' ) {
-                                                    echo '<span class="dashicons dashicons-external text-indigo-500 opacity-80" style="font-size: 16px;" title="Tham Chiếu (Relation)"></span>';
+                                                    echo __( '<span class=\"dashicons dashicons-external text-indigo-500 opacity-80\" style=\"font-size: 16px;\" ', 'ska-data-pro' );
                                                 } else if ( $type_to_check === 'rollup' ) {
-                                                    echo '<span class="dashicons dashicons-search text-orange-500 opacity-80" style="font-size: 16px;" title="Tra Cứu (Lookup / Rollup)"></span>';
+                                                    echo __( '<span class=\"dashicons dashicons-search text-orange-500 opacity-80\" style=\"font-size: 16px;\" ', 'ska-data-pro' );
                                                 } else {
                                                     echo '<span class="dashicons dashicons-text text-gray-400 opacity-80" style="font-size: 16px; margin-top:2px;" title="Text"></span>';
                                                 }
@@ -222,7 +222,7 @@ $table_dict  = isset($all_dict[$current_table]) ? $all_dict[$current_table] : ar
                                 
                                 <!-- NÚT [+] THÊM CỘT ẢO DIỆU -->
                                 <th class="w-16 px-1 py-2.5 bg-slate-100 border-b border-gray-300 text-center sticky right-0 z-40 bg-slate-100 group shadow-[-1px_0_0_#cbd5e1] border-l border-gray-300">
-                                    <button class="w-full h-full text-gray-400 hover:text-emerald-500 hover:bg-slate-200 transition-colors rounded" title="Thêm Trường Mới" onclick="document.getElementById('ska-add-col-modal').classList.remove('hidden'); document.getElementById('ska-col-label').focus();">
+                                    <button class="w-full h-full text-gray-400 hover:text-emerald-500 hover:bg-slate-200 transition-colors rounded" title=__( 'Add New Field', 'ska-data-pro' ) onclick="document.getElementById('ska-add-col-modal').classList.remove('hidden'); document.getElementById('ska-col-label').focus();">
                                         <span class="dashicons dashicons-plus-alt2 mt-1"></span>
                                     </button>
                                 </th>
@@ -248,8 +248,8 @@ $table_dict  = isset($all_dict[$current_table]) ? $all_dict[$current_table] : ar
                                             $prev_group_val = $curr_val;
                                             echo '<tr class="bg-indigo-50/80">';
                                             echo '<td colspan="'.(count($columns) + 1).'" class="px-3 py-2 border-b border-indigo-100 text-indigo-800 font-bold text-xs sticky left-0 z-20 shadow-[1px_0_0_#e0e7ff] uppercase tracking-wide">';
-                                            $disp_group_val = ($curr_val==='') ? '(Trống rỗng)' : esc_html($curr_val);
-                                            echo '<span class="dashicons dashicons-networking align-middle mr-1" style="font-size:16px;"></span> Nhóm: <span class="text-indigo-900 bg-white px-2 py-0.5 rounded shadow-sm border border-indigo-100 ml-1">' . $disp_group_val . '</span>';
+                                            $disp_group_val = ($curr_val==='') ? __( '(Empty)', 'ska-data-pro' ) : esc_html($curr_val);
+                                            echo __( '<span class=\"dashicons dashicons-networking align-middle mr-1\" style=\"font-size:16px;\"></span> Group: <span class=\"text-indigo-900 bg-white px-2 py-0.5 rounded shadow-sm border border-indigo-100 ml-1\">', 'ska-data-pro' ) . $disp_group_val . '</span>';
                                             echo '</td></tr>';
                                         }
                                     }
@@ -259,7 +259,7 @@ $table_dict  = isset($all_dict[$current_table]) ? $all_dict[$current_table] : ar
                                         <!-- Cột đếm STT giống Spreadsheet (Luôn bám trái màn hình) - Bổ sung Nút Xoá lúc Hover -->
                                         <td class="w-12 text-center text-gray-400 font-mono text-[11px] bg-white sticky left-0 z-20 group-hover:bg-blue-50/50 shadow-[1px_0_0_#e2e8f0] border-b border-gray-200">
                                             <span class="group-hover:hidden"><?php echo ( $index + 1 ); ?></span>
-                                            <span class="hidden group-hover:inline-block dashicons dashicons-trash text-red-500 cursor-pointer hover:text-red-700 hover:scale-110 transition-transform ska-delete-row-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="font-size: 16px;" title="Xóa dòng này"></span>
+                                            <span class="hidden group-hover:inline-block dashicons dashicons-trash text-red-500 cursor-pointer hover:text-red-700 hover:scale-110 transition-transform ska-delete-row-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="font-size: 16px;" title=__( 'Delete this line', 'ska-data-pro' )></span>
                                         </td>
                                         
                                         <!-- Vòng lặp Ô Data Cell -->
@@ -361,7 +361,7 @@ $table_dict  = isset($all_dict[$current_table]) ? $all_dict[$current_table] : ar
                                                                 echo '</div>';
                                                             }
                                                         } elseif ( $html_type === 'long_text' ) {
-                                                            echo '<span class="dashicons dashicons-editor-justify text-gray-400 origin-left scale-75 mr-1 align-middle"></span><span class="text-gray-400 italic text-xs">Nội dung văn bản...</span>';
+                                                            echo __( '<span class=\"dashicons dashicons-editor-justify text-gray-400 origin-left scale-75 mr-1 align-middle\"></span><span class=\"text-gray-400 italic text-xs\">Text content...</span>', 'ska-data-pro' );
                                                         } elseif ( $html_type === 'number' && ( $dict_type === 'currency' || strpos( $raw_type, 'decimal' ) !== false ) && is_numeric( $val ) ) {
                                                             echo number_format( $val, 0, ',', '.' ) . ' đ'; // Định dạng tiền tệ VNĐ demo
                                                         } else {

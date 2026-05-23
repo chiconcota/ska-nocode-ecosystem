@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { apiFetch, getConfig } from '../utils/api.js';
 
 export default class BaseCell {
@@ -35,7 +36,7 @@ export default class BaseCell {
             this.val = newVal;
             return true;
         } else {
-            alert(res.data?.message || 'Có lỗi xảy ra');
+            alert(res.data?.message || __( 'An error occurred', 'ska-data-pro' ));
             return false;
         }
     }

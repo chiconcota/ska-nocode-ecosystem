@@ -236,7 +236,7 @@ class Rest_Api {
 		if ( ! class_exists( '\Ska\Data\Core\Database_Engine' ) ) {
 			return new WP_REST_Response( array(
 				'success' => false,
-				'message' => 'Lỗi hệ thống: Engine dữ liệu chưa sẵn sàng.'
+				'message' => __( 'System error: Data engine is not ready.', 'ska-data-pro' )
 			), 500 );
 		}
 
@@ -253,13 +253,13 @@ class Rest_Api {
 		if ( ! $result ) {
 			return new WP_REST_Response( array(
 				'success' => false,
-				'message' => 'Không thể xóa dòng hoặc dòng không tồn tại.'
+				'message' => __( 'The line cannot be deleted or the line does not exist.', 'ska-data-pro' )
 			), 400 );
 		}
 
 		return new WP_REST_Response( array(
 			'success' => true,
-			'message' => 'Xóa dòng thành công.'
+			'message' => __( 'Successfully deleted line.', 'ska-data-pro' )
 		), 200 );
 	}
 }

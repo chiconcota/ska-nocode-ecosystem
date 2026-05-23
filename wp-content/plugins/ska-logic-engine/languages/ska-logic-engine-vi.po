@@ -1,0 +1,220 @@
+# Translation for ska-logic-engine
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0.0\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Cement binds the ecosystem. "
+msgstr "Xi-măng kết dính hệ sinh thái. Xử lý sự kiện (Workflows), Phân giải ngữ cảnh (Smart Context), CodeMirror UI và SkaFX AST."
+
+msgid "Cancel"
+msgstr "Hủy"
+
+msgid "Created date (created_at)"
+msgstr "Ngày tạo (created_at)"
+
+msgid "🧰 Data Format (Junk Standardization)"
+msgstr "🧰 Định Dạng Dữ Liệu (Chuẩn hóa Rác)"
+
+msgid "🗄️ Save Data (Any Table)"
+msgstr "🗄️ Lưu Xuống Data (Bất kỳ Bảng nào)"
+
+msgid "📝 Update Record (Update)"
+msgstr "📝 Cập Nhật Record (Update)"
+
+msgid "✉️ Send Email (There are {{variations}})"
+msgstr "✉️ Gửi Email (Có {{biến_động}})"
+
+msgid "Come back out"
+msgstr "Trở ra"
+
+msgid "Logic Carousel List"
+msgstr "Danh sách Băng Chuyền Logic"
+
+msgid "Enter the new ID name (eg: lead_form)"
+msgstr "Nhập tên ID mới (vd: lead_form)"
+
+msgid "Contains only unaccented letters, numbers, dashes and underlines"
+msgstr "Chỉ chứa chữ không dấu, số, gạch ngang và gạch dưới"
+
+msgid "+ Initialize empty Stream"
+msgstr "+ Khởi tạo Luồng vắng"
+
+msgid "No Conveyor Belt has been installed yet. "
+msgstr "Chưa có Băng Chuyền nào được lắp đặt. Hãy tạo cái mới ở phía trên!"
+
+msgid "Stream ID (Form Action)"
+msgstr "ID Luồng (Form Action)"
+
+msgid "Number of Steps (Nodes)"
+msgstr "Số lượng Bước (Nodes)"
+
+msgid "Operation"
+msgstr "Thao tác"
+
+msgid "✏️ Change ID"
+msgstr "✏️ Đổi ID"
+
+msgid "Save"
+msgstr "Lưu"
+
+msgid "Station"
+msgstr "Trạm"
+
+msgid "Empty"
+msgstr "Trống Rỗng"
+
+msgid "Stream Design"
+msgstr "Thiết kế Luồng"
+
+msgid "return confirm('WARNING: This action will delete the stream's Json Graph. If the Frontend is still submitting, the cable will break. Are you sure?')"
+msgstr "return confirm('CẢNH BÁO: Hành động này sẽ xoá mất Json Graph của luồng. Nếu Frontend vẫn đang submit thì sẽ đứt cáp. Bạn chắc chứ?')"
+
+msgid "Delete"
+msgstr "Xóa bỏ"
+
+msgid "Record deleted successfully!"
+msgstr "Đã xóa bản ghi thành công!"
+
+msgid "Miracle! "
+msgstr "Nhiệm màu! Dữ liệu đã được lưu thành công!"
+
+msgid "Wrong Password: Logic id '{$form_id}' not found. "
+msgstr "Sai Mật Mã: Không tìm thấy Logic id '{$form_id}'. Vui lòng check thuộc tính data-ska-action= trên chữ HTML."
+
+msgid "Blocking Error at Warehouse: Wrong Column Mapping or Empty Data, Table {$completed_payload['_latest_insert']['table_name']} refused reception!"
+msgstr "Lỗi Chặn Ở Kho: Mapping Cột sai hoặc Dữ liệu rỗng, Bảng {$completed_payload['_latest_insert']['table_name']} từ chối tiếp nhận!"
+
+msgid "<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #ef4444;\"><p><strong>Target Carousel shredded!</strong></p></div>"
+msgstr "<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #ef4444;\"><p><strong>Đã băm nát Băng chuyền mục tiêu!</strong></p></div>"
+
+msgid "The Target Carousel has been shredded!"
+msgstr "Đã băm nát Băng chuyền mục tiêu!"
+
+msgid "<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #3b82f6;\"><p><strong>Nameplate has been updated!</strong></p></div>"
+msgstr "<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #3b82f6;\"><p><strong>Biển tên đã được cập nhật!</strong></p></div>"
+
+msgid "The nameplate has been updated!"
+msgstr "Biển tên đã được cập nhật!"
+
+msgid "<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #059669;\"><p><strong>The network wire has successfully saved the complex JSON Graph structure!</strong></p></div>"
+msgstr "<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #059669;\"><p><strong>Dây mạng đã lưu thành công cấu trúc JSON Graph phức hợp!</strong></p></div>"
+
+msgid "The network wire successfully saved the complex JSON Graph structure!"
+msgstr "Dây mạng đã lưu thành công cấu trúc JSON Graph phức hợp!"
+
+msgid "Setting up automation & data flow (Ska-cement)"
+msgstr "Thiết lập tự động hoá & luồng dữ liệu (Ska-xi măng)"
+
+msgid "Ska_Workflow_Runner: Graph is empty or workflow_id = not found"
+msgstr "Ska_Workflow_Runner: Graph rỗng hoặc không tìm thấy workflow_id ="
+
+msgid "Ska_Workflow_Runner: Loaded graph for"
+msgstr "Ska_Workflow_Runner: Đã load graph cho"
+
+msgid ") at node"
+msgstr ") tại node"
+
+msgid "Ska_Workflow_Runner: CIRCUIT BREAKER TRIGGERED - Stack depth exceeded (50) at node"
+msgstr "Ska_Workflow_Runner: CIRCUIT BREAKER TRIGGERED - Stack depth exceeded (50) tại node"
+
+msgid "Operation successful!"
+msgstr "Thao tác thành công!"
+
+msgid "Ska_Logic_DB_Action: Skipped because Table was not selected."
+msgstr "Ska_Logic_DB_Action: Bỏ qua do chưa chọn Table."
+
+msgid "Ska_Logic_DB_Action: Start processing for Table {$table}. "
+msgstr "Ska_Logic_DB_Action: Bắt đầu xử lý cho Table {$table}. Action: {$actionType}"
+
+msgid "Ska_Logic_DB_Action: Successfully inserted into {$table}, ID:"
+msgstr "Ska_Logic_DB_Action: Đã Insert thành công vào {$table}, ID:"
+
+msgid "Ska_Logic_DB_Action: Error Insert Table {$table} -"
+msgstr "Ska_Logic_DB_Action: Lỗi Insert Table {$table} -"
+
+msgid "Ska_Logic_DB_Action: Skip Insert due to empty data."
+msgstr "Ska_Logic_DB_Action: Bỏ qua Insert do Data trống."
+
+msgid "Ska_Logic_DB_Action: Error Update Table {$table} -"
+msgstr "Ska_Logic_DB_Action: Lỗi Update Table {$table} -"
+
+msgid "Ska_Logic_DB_Action: Successfully updated record {$record_id} in {$table}."
+msgstr "Ska_Logic_DB_Action: Đã Update thành công bản ghi {$record_id} trong {$table}."
+
+msgid "Ska_Logic_DB_Action: Aborted Update due to missing Record ID or empty Data."
+msgstr "Ska_Logic_DB_Action: Bỏ qua Update do thiếu Record ID hoặc Data trống."
+
+msgid "Ska_Logic_DB_Action: Error Delete Table {$table} -"
+msgstr "Ska_Logic_DB_Action: Lỗi Delete Table {$table} -"
+
+msgid "Ska_Logic_DB_Action: Successfully deleted record {$record_id} in {$table}."
+msgstr "Ska_Logic_DB_Action: Đã Delete thành công bản ghi {$record_id} trong {$table}."
+
+msgid "Ska_Logic_DB_Action: Skip Delete due to missing Record ID."
+msgstr "Ska_Logic_DB_Action: Bỏ qua Delete do thiếu Record ID."
+
+msgid "Ska_Logic_DB_Query: Skipped because Table was not selected."
+msgstr "Ska_Logic_DB_Query: Bỏ qua do chưa chọn Table."
+
+msgid "Ska_Logic_DB_Query: Start processing for Table {$table}. "
+msgstr "Ska_Logic_DB_Query: Bắt đầu xử lý cho Table {$table}. ReturnType: {$returnType}"
+
+msgid "Ska_Logic_DB_Query: Get 1 record from {$table}."
+msgstr "Ska_Logic_DB_Query: Lấy 1 bản ghi từ {$table}."
+
+msgid "Ska_Logic_DB_Query: Get"
+msgstr "Ska_Logic_DB_Query: Lấy"
+
+msgid "records from {$table}."
+msgstr "bản ghi từ {$table}."
+
+msgid "Ska Logic Iterator: Error evaluating array_source -"
+msgstr "Ska Logic Iterator: Lỗi khi evaluate array_source -"
+
+msgid "Ska Logic Set Data: Error evaluating -"
+msgstr "Ska Logic Set Data: Lỗi evaluate -"
+
+msgid "Duplicate Context: Found %d tables with extension '%s' (%s). "
+msgstr "Trùng lặp Context: Tìm thấy %d bảng có đuôi '%s' (%s). Vui lòng gõ rõ Tên App (VD: [appA.%s.tencot]) để hệ thống phân biệt."
+
+msgid "The IF function needs 3 parameters: IF(Condition, True, False)"
+msgstr "Hàm IF cần 3 tham số: IF(Điều kiện, Đúng, Sai)"
+
+msgid "Function does not exist in SkaFX dictionary:"
+msgstr "Hàm không tồn tại trong từ điển SkaFX:"
+
+msgid "The machine cannot recognize the Node type: Breaking the AST architecture."
+msgstr "Cỗ máy không nhận diện được loại Node: Phá kiến trúc AST."
+
+msgid "Unknown syntax error: Character '%s' at line %d"
+msgstr "Lỗi cú pháp không xác định: Ký tự '%s' tại dòng %d"
+
+msgid "Syntax error: Missing double/single quote closing string at line"
+msgstr "Lỗi cú pháp: Thiếu nháy kép/đơn đóng chuỗi tại dòng"
+
+msgid "Syntax error: Missing square bracket `]` at line"
+msgstr "Lỗi cú pháp: Thiếu ngoặc vuông `]` tại dòng"
+
+msgid "Declaration error: Need `=` sign after variable name in line"
+msgstr "Lỗi khai báo: Cần dấu `=` sau tên biến ở dòng"
+
+msgid "Declaration error: Need a valid variable name after `var`."
+msgstr "Lỗi khai báo: Cần một tên biến hợp lệ sau `var`."
+
+msgid "Wait for the closing parenthesis ')' for the function"
+msgstr "Đợi dấu ngoặc đóng ')' cho hàm"
+
+msgid "Need closing parenthesis function ')'"
+msgstr "Cần hàm dấu ngoặc đóng ')'"
+
+msgid "Uncertain characters cannot be extracted from the Prefix at the line"
+msgstr "Ký tự bất định không thể bóc tách Prefix tại dòng"
+
+msgid "Syntax error: Incorrect character."
+msgstr "Lỗi cú pháp: Ký tự không đúng chuẩn."
+

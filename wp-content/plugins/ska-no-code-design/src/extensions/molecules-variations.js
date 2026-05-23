@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { registerBlockVariation } from '@wordpress/blocks';
 
 // Helper function to extract attributes from our PHP pattern definition or just recreate them here.
@@ -26,10 +27,10 @@ registerBlockVariation(
 			]],
 			['ska-builder/container', { tailwindClasses: "p-6", templateLock: false }, [
 				['ska-builder/container', { tailwindClasses: "prose text-gray-600", htmlAttributes: [{ key: 'x-show', value: "activeTab === 'tab1'" }, { key: 'x-transition:enter', value: "transition ease-out duration-200" }, { key: 'x-transition:enter-start', value: "opacity-0 translate-y-2" }, { key: 'x-transition:enter-end', value: "opacity-100 translate-y-0" }] }, [
-					['ska-builder/text', { content: 'Nội dung của Tab 1. Click vào Tab 2 để đổi.', tagName: 'p' }]
+					['ska-builder/text', { content: __( 'Contents of Tab 1. Click on Tab 2 to change.', 'ska-no-code-design' ), tagName: 'p' }]
 				]],
 				['ska-builder/container', { tailwindClasses: "prose text-gray-600", htmlAttributes: [{ key: 'x-show', value: "activeTab === 'tab2'" }, { key: 'x-transition:enter', value: "transition ease-out duration-200" }, { key: 'x-transition:enter-start', value: "opacity-0 translate-y-2" }, { key: 'x-transition:enter-end', value: "opacity-100 translate-y-0" }, { key: 'style', value: "display: none;" }] }, [
-					['ska-builder/text', { content: 'Nội dung của Tab 2 đã hiển thị!', tagName: 'p' }]
+					['ska-builder/text', { content: __( 'The content of Tab 2 is displayed!', 'ska-no-code-design' ), tagName: 'p' }]
 				]]
 			]]
 		],
@@ -78,8 +79,8 @@ registerBlockVariation(
 // 3. Molecule: Standard Form (Mẫu chứa đa dạng các trường nhập liệu cơ bản)
 registerBlockVariation('ska-builder/container', {
 	name: 'ska-molecule-standard-form',
-	title: 'Ska Form Mẫu',
-	description: 'Form giao diện mẫu kèm các loại trường nhập liệu: text, ngày, số, multi-select, true/false.',
+	title: __( 'Ska Form Sample', 'ska-no-code-design' ),
+	description: __( 'Sample interface form with input field types: text, date, number, multi-select, true/false.', 'ska-no-code-design' ),
 	icon: 'media-document',
 	category: 'ska-molecules',
 	attributes: {
@@ -93,31 +94,31 @@ registerBlockVariation('ska-builder/container', {
 	innerBlocks: [
 		// Header
 		['ska-builder/container', { tailwindClasses: "pb-4 border-b border-gray-100" }, [
-			['ska-builder/text', { content: 'Đăng ký thông tin', tagName: 'h2', tailwindClasses: "text-2xl font-bold text-gray-900" }],
-			['ska-builder/text', { content: 'Vui lòng điền đầy đủ các thông tin bên dưới.', tagName: 'p', tailwindClasses: "mt-1 text-sm text-gray-500" }]
+			['ska-builder/text', { content: __( 'Register information', 'ska-no-code-design' ), tagName: 'h2', tailwindClasses: "text-2xl font-bold text-gray-900" }],
+			['ska-builder/text', { content: __( 'Please completely fill in the information below.', 'ska-no-code-design' ), tagName: 'p', tailwindClasses: "mt-1 text-sm text-gray-500" }]
 		]],
 		// Row 1: Text
 		['ska-builder/container', { tailwindClasses: "flex flex-col space-y-1.5" }, [
-			['ska-builder/text', { content: 'Họ và tên', tagName: 'label', tailwindClasses: "text-sm font-semibold text-gray-700" }],
-			['ska-builder/input', { inputType: 'text', fieldName: 'full_name', placeholder: 'VD: Nguyễn Văn A...', tailwindClasses: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-gray-900 outline-none" }]
+			['ska-builder/text', { content: __( 'Full name', 'ska-no-code-design' ), tagName: 'label', tailwindClasses: "text-sm font-semibold text-gray-700" }],
+			['ska-builder/input', { inputType: 'text', fieldName: 'full_name', placeholder: __( 'Example: Nguyen Van A...', 'ska-no-code-design' ), tailwindClasses: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-gray-900 outline-none" }]
 		]],
 		// Row 2: Layout 2 columns (Date + Number)
 		['ska-builder/container', { tailwindClasses: "grid grid-cols-1 md:grid-cols-2 gap-6" }, [
 			// Col 1: Date
 			['ska-builder/container', { tailwindClasses: "flex flex-col space-y-1.5" }, [
-				['ska-builder/text', { content: 'Ngày sinh', tagName: 'label', tailwindClasses: "text-sm font-semibold text-gray-700" }],
+				['ska-builder/text', { content: __( 'Date of birth', 'ska-no-code-design' ), tagName: 'label', tailwindClasses: "text-sm font-semibold text-gray-700" }],
 				['ska-builder/input', { inputType: 'date', fieldName: 'birth_date', tailwindClasses: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-gray-900 outline-none" }]
 			]],
 			// Col 2: Number
 			['ska-builder/container', { tailwindClasses: "flex flex-col space-y-1.5" }, [
-				['ska-builder/text', { content: 'Độ tuổi', tagName: 'label', tailwindClasses: "text-sm font-semibold text-gray-700" }],
-				['ska-builder/input', { inputType: 'number', fieldName: 'age', placeholder: 'Nhập số tuổi...', tailwindClasses: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-gray-900 outline-none" }]
+				['ska-builder/text', { content: __( 'Age', 'ska-no-code-design' ), tagName: 'label', tailwindClasses: "text-sm font-semibold text-gray-700" }],
+				['ska-builder/input', { inputType: 'number', fieldName: 'age', placeholder: __( 'Enter age...', 'ska-no-code-design' ), tailwindClasses: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-gray-900 outline-none" }]
 			]]
 		]],
 		// Row 3: Multi-Select (Using checkbox grid to fix dropdown background styling issue)
 		['ska-builder/container', { tailwindClasses: "flex flex-col space-y-3" }, [
-			['ska-builder/text', { content: 'Dịch vụ quan tâm', tagName: 'label', tailwindClasses: "text-sm font-semibold text-gray-700" }],
-			['ska-builder/select', { isMultiple: true, displayStyle: 'checkbox', fieldName: 'preferences', optionsText: "Dịch vụ A:opt_a\nDịch vụ B:opt_b\nDịch vụ C:opt_c\nDịch vụ D:opt_d", tailwindClasses: "grid grid-cols-1 sm:grid-cols-2 gap-3" }]
+			['ska-builder/text', { content: __( 'Caring service', 'ska-no-code-design' ), tagName: 'label', tailwindClasses: "text-sm font-semibold text-gray-700" }],
+			['ska-builder/select', { isMultiple: true, displayStyle: 'checkbox', fieldName: 'preferences', optionsText: __( 'Service A:opt_a\nService B:opt_b\nService C:opt_c\nService D:opt_d', 'ska-no-code-design' ), tailwindClasses: "grid grid-cols-1 sm:grid-cols-2 gap-3" }]
 		]],
 		// Row 4: True/False (Toggle Switch)
 		['ska-builder/container', { tagName: 'label', tailwindClasses: "inline-flex items-center cursor-pointer pt-2" }, [
@@ -125,11 +126,11 @@ registerBlockVariation('ska-builder/container', {
 			['ska-builder/container', {
 				tailwindClasses: "relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
 			}, []],
-			['ska-builder/text', { content: 'Tôi đồng ý với các điều khoản và chính sách', tagName: 'span', tailwindClasses: "ms-3 text-sm font-medium text-gray-700 select-none" }]
+			['ska-builder/text', { content: __( 'I agree to the terms and policies', 'ska-no-code-design' ), tagName: 'span', tailwindClasses: "ms-3 text-sm font-medium text-gray-700 select-none" }]
 		]],
 		// Row 5: Submit Button
 		['ska-builder/container', { tailwindClasses: "pt-6 border-t border-gray-100 flex justify-end" }, [
-			['ska-builder/button', { tagName: 'button', text: 'Gửi Thông Tin Ngay', tailwindClasses: "w-full md:w-auto px-8 py-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]", htmlAttributes: [{ key: 'type', value: 'submit' }] }]
+			['ska-builder/button', { tagName: 'button', text: __( 'Send Information Now', 'ska-no-code-design' ), tailwindClasses: "w-full md:w-auto px-8 py-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]", htmlAttributes: [{ key: 'type', value: 'submit' }] }]
 		]]
 	],
 	scope: ['inserter']
@@ -203,8 +204,8 @@ registerBlockVariation('ska-builder/container', {
 			}, [
 					['ska-builder/image', { url: 'https://placehold.co/1200x800/4F46E5/white?text=Slide+1', tailwindClasses: "object-cover w-full h-full" }],
 					['ska-builder/container', { tailwindClasses: "absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/20 to-transparent flex flex-col justify-end p-8" }, [
-						['ska-builder/text', { content: 'Trải Nghiệm Mượt Mà', tagName: 'h3', tailwindClasses: "text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-md" }],
-						['ska-builder/text', { content: 'Ska Carousel kết hợp sức mạnh của Alpine.js và Tailwind CSS mang đến tốc độ chớp nhoáng.', tagName: 'p', tailwindClasses: "text-gray-100 text-lg max-w-2xl" }]
+						['ska-builder/text', { content: __( 'Smooth Experience', 'ska-no-code-design' ), tagName: 'h3', tailwindClasses: "text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-md" }],
+						['ska-builder/text', { content: __( 'Ska Carousel combines the power of Alpine.js and Tailwind CSS for lightning speed.', 'ska-no-code-design' ), tagName: 'p', tailwindClasses: "text-gray-100 text-lg max-w-2xl" }]
 					]]
 				]],
 			// Slide 2
@@ -214,8 +215,8 @@ registerBlockVariation('ska-builder/container', {
 			}, [
 					['ska-builder/image', { url: 'https://placehold.co/1200x800/059669/white?text=Slide+2', tailwindClasses: "object-cover w-full h-full" }],
 					['ska-builder/container', { tailwindClasses: "absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/20 to-transparent flex flex-col justify-end p-8" }, [
-						['ska-builder/text', { content: 'Thiết Kế Đẳng Cấp', tagName: 'h3', tailwindClasses: "text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-md" }],
-						['ska-builder/text', { content: 'Không chỉ là ảnh nội dung được làm nổi bật với mask tuyệt đẹp.', tagName: 'p', tailwindClasses: "text-gray-100 text-lg max-w-2xl" }]
+						['ska-builder/text', { content: __( 'Classy Design', 'ska-no-code-design' ), tagName: 'h3', tailwindClasses: "text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-md" }],
+						['ska-builder/text', { content: __( 'More than just content photos highlighted with beautiful masks.', 'ska-no-code-design' ), tagName: 'p', tailwindClasses: "text-gray-100 text-lg max-w-2xl" }]
 					]]
 				]],
 			// Slide 3
@@ -225,8 +226,8 @@ registerBlockVariation('ska-builder/container', {
 			}, [
 					['ska-builder/image', { url: 'https://placehold.co/1200x800/E11D48/white?text=Slide+3', tailwindClasses: "object-cover w-full h-full" }],
 					['ska-builder/container', { tailwindClasses: "absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/20 to-transparent flex flex-col justify-end p-8" }, [
-						['ska-builder/text', { content: 'Tùy Biến Thả Ga', tagName: 'h3', tailwindClasses: "text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-md" }],
-						['ska-builder/text', { content: 'Hoàn toàn No-code. Chỉ cần thay block là chạy!', tagName: 'p', tailwindClasses: "text-gray-100 text-lg max-w-2xl" }]
+						['ska-builder/text', { content: __( 'Free Customization', 'ska-no-code-design' ), tagName: 'h3', tailwindClasses: "text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-md" }],
+						['ska-builder/text', { content: __( 'Completely No-code. ', 'ska-no-code-design' ), tagName: 'p', tailwindClasses: "text-gray-100 text-lg max-w-2xl" }]
 					]]
 			]]
 		]],
@@ -264,8 +265,8 @@ registerBlockVariation('ska-builder/container', {
 		['ska-builder/container', { tagName: 'label', tailwindClasses: "flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 transition-colors" }, [
 			['ska-builder/input', { inputType: 'radio', fieldName: 'my_radio_group', tailwindClasses: "w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500" }],
 			['ska-builder/container', { tailwindClasses: "ml-3" }, [
-				['ska-builder/text', { content: 'Tiếng Việt', tagName: 'span', tailwindClasses: "block text-sm font-medium text-gray-900" }],
-				['ska-builder/text', { content: 'Ngôn ngữ hiển thị mặc định.', tagName: 'span', tailwindClasses: "block text-sm text-gray-500" }]
+				['ska-builder/text', { content: __( 'Vietnamese', 'ska-no-code-design' ), tagName: 'span', tailwindClasses: "block text-sm font-medium text-gray-900" }],
+				['ska-builder/text', { content: __( 'Default display language.', 'ska-no-code-design' ), tagName: 'span', tailwindClasses: "block text-sm text-gray-500" }]
 			]]
 		]],
 		// Radio Item 2
@@ -295,16 +296,16 @@ registerBlockVariation('ska-builder/container', {
 		['ska-builder/container', { tagName: 'label', tailwindClasses: "flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 transition-colors" }, [
 			['ska-builder/input', { inputType: 'checkbox', fieldName: 'my_checkbox_group[]', tailwindClasses: "w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" }],
 			['ska-builder/container', { tailwindClasses: "ml-3" }, [
-				['ska-builder/text', { content: 'Dịch vụ A', tagName: 'span', tailwindClasses: "block text-sm font-medium text-gray-900" }],
-				['ska-builder/text', { content: 'Bao gồm hỗ trợ qua email 24/7.', tagName: 'span', tailwindClasses: "block text-sm text-gray-500" }]
+				['ska-builder/text', { content: __( 'Service A', 'ska-no-code-design' ), tagName: 'span', tailwindClasses: "block text-sm font-medium text-gray-900" }],
+				['ska-builder/text', { content: __( 'Includes 24/7 email support.', 'ska-no-code-design' ), tagName: 'span', tailwindClasses: "block text-sm text-gray-500" }]
 			]]
 		]],
 		// Checkbox Item 2
 		['ska-builder/container', { tagName: 'label', tailwindClasses: "flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 transition-colors" }, [
 			['ska-builder/input', { inputType: 'checkbox', fieldName: 'my_checkbox_group[]', tailwindClasses: "w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" }],
 			['ska-builder/container', { tailwindClasses: "ml-3" }, [
-				['ska-builder/text', { content: 'Dịch vụ B', tagName: 'span', tailwindClasses: "block text-sm font-medium text-gray-900" }],
-				['ska-builder/text', { content: 'Tùy chọn bổ sung thiết kế cao cấp.', tagName: 'span', tailwindClasses: "block text-sm text-gray-500" }]
+				['ska-builder/text', { content: __( 'Service B', 'ska-no-code-design' ), tagName: 'span', tailwindClasses: "block text-sm font-medium text-gray-900" }],
+				['ska-builder/text', { content: __( 'Additional premium design options.', 'ska-no-code-design' ), tagName: 'span', tailwindClasses: "block text-sm text-gray-500" }]
 			]]
 		]]
 	],
@@ -359,7 +360,7 @@ registerBlockVariation('ska-builder/container', {
 registerBlockVariation('ska-builder/container', {
 	name: 'ska-molecule-offcanvas',
 	title: 'Ska Offcanvas',
-	description: 'Trượt từ cạnh màn hình. Phù hợp làm Mobile Menu hoặc Filter.',
+	description: __( 'Slide from the edge of the screen. ', 'ska-no-code-design' ),
 	icon: 'menu',
 	category: 'ska-molecules',
 	attributes: {
@@ -374,7 +375,7 @@ registerBlockVariation('ska-builder/container', {
 		// Trigger Button
 		['ska-builder/button', {
 			tagName: 'button',
-			text: 'Mở Offcanvas',
+			text: __( 'Open Offcanvas', 'ska-no-code-design' ),
 			tailwindClasses: "px-6 py-2.5 bg-gray-900 text-white font-medium rounded-lg shadow-sm hover:bg-gray-800 focus:ring-4 focus:ring-gray-200 transition-all",
 			htmlAttributes: [{ key: '@click', value: "isOffcanvasOpen = true" }]
 		}],
@@ -432,8 +433,8 @@ registerBlockVariation('ska-builder/container', {
 				]],
 				// Actual Content Area (Unlocked)
 				['ska-builder/container', { tailwindClasses: "p-6 flex-1 overflow-y-auto" }, [
-					['ska-builder/text', { content: 'Menu Điều Hướng', tagName: 'h2', tailwindClasses: "text-xl font-bold text-gray-900 mb-2" }],
-					['ska-builder/text', { content: 'Sử dụng khung này để thêm danh sách liên kết, form tìm kiếm hoặc bất kỳ nội dung nào bạn muốn.', tagName: 'p', tailwindClasses: "text-sm text-gray-500 mb-6 pb-6 border-b border-gray-100" }],
+					['ska-builder/text', { content: __( 'Navigation Menu', 'ska-no-code-design' ), tagName: 'h2', tailwindClasses: "text-xl font-bold text-gray-900 mb-2" }],
+					['ska-builder/text', { content: __( 'Use this box to add a list of links, a search form, or anything else you want.', 'ska-no-code-design' ), tagName: 'p', tailwindClasses: "text-sm text-gray-500 mb-6 pb-6 border-b border-gray-100" }],
 				]]
 			]]
 		]]

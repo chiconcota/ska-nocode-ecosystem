@@ -7,7 +7,7 @@
                     <span class="material-symbols-outlined text-4xl text-pink-500">category</span>
                     Design Workspace
                 </h1>
-                <p class="text-slate-500 mt-2">Trình quản lý Component (Organisms / Symbols) tái sử dụng cho hệ sinh thái Ska.</p>
+                <p class="text-slate-500 mt-2"><?php esc_html_e( 'Reusable Component Manager (Organisms / Symbols) for the Ska ecosystem.', 'ska-no-code-design' ); ?></p>
             </div>
             <div>
                 <button @click="openCreateModal()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-sm transition-all flex items-center gap-2 border-0 cursor-pointer">
@@ -61,7 +61,7 @@
             <!-- Empty State -->
             <div x-show="organisms.length === 0" class="col-span-full py-12 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-white/50">
                 <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">extension</span>
-                <p class="text-slate-500 font-medium">Chưa có Component / Symbol nào.</p>
+                <p class="text-slate-500 font-medium"><?php esc_html_e( 'There are no Components / Symbols yet.', 'ska-no-code-design' ); ?></p>
                 <button @click="openCreateModal()" class="mt-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-2 px-4 rounded-lg shadow-sm transition-all border-0 cursor-pointer">
                     Tạo Symbol đầu tiên
                 </button>
@@ -72,7 +72,7 @@
         <div x-show="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm" style="display: none;">
             <div @click.outside="closeModal()" class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden transform transition-all" x-transition.scale.origin.bottom>
                 <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="text-lg font-bold text-slate-800 m-0">Tạo Symbol Mới</h3>
+                    <h3 class="text-lg font-bold text-slate-800 m-0"><?php esc_html_e( 'Create New Symbol', 'ska-no-code-design' ); ?></h3>
                     <button @click="closeModal()" class="text-slate-400 hover:text-slate-600 bg-transparent border-0 cursor-pointer">
                         <span class="material-symbols-outlined">close</span>
                     </button>
@@ -81,8 +81,8 @@
                 <div class="p-6 space-y-4">
                     <!-- Tên Symbol -->
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1">Tên Symbol (Component)</label>
-                        <input type="text" x-model="currentName" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-none transition-all" placeholder="Ví dụ: Nút bấm Primary">
+                        <label class="block text-sm font-bold text-slate-700 mb-1"><?php esc_html_e( 'Symbol Name (Component)', 'ska-no-code-design' ); ?></label>
+                        <input type="text" x-model="currentName" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-none transition-all" placeholder=__( 'Example: Primary button', 'ska-no-code-design' )>
                     </div>
                 </div>
 
@@ -92,7 +92,7 @@
                     </button>
                     <button @click="saveOrganism()" class="px-5 py-2 rounded-xl text-white font-bold bg-pink-600 hover:bg-pink-700 shadow-sm border-0 cursor-pointer transition-all flex items-center gap-2">
                         <span x-show="isLoading" class="material-symbols-outlined animate-spin text-[18px]">sync</span>
-                        <span x-text="'Tạo Mới'"></span>
+                        <span x-text=__( '\'Create New\'', 'ska-no-code-design' )></span>
                     </button>
                 </div>
             </div>
@@ -145,7 +145,7 @@ document.addEventListener('alpine:init', () => {
 
         async saveOrganism() {
             if (!this.currentName.trim()) {
-                alert('Vui lòng nhập tên Symbol.');
+                alert(__( 'Please enter a Symbol name.', 'ska-no-code-design' ));
                 return;
             }
 
@@ -170,18 +170,18 @@ document.addEventListener('alpine:init', () => {
                     await this.loadOrganisms();
                     this.closeModal();
                 } else {
-                    alert(result.message || 'Có lỗi xảy ra khi tạo Symbol.');
+                    alert(result.message || __( 'An error occurred while creating Symbol.', 'ska-no-code-design' ));
                 }
             } catch (error) {
                 console.error(error);
-                alert('Lỗi kết nối.');
+                alert(__( 'Connection error.', 'ska-no-code-design' ));
             } finally {
                 this.isLoading = false;
             }
         },
 
         async deleteOrganism(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa Symbol này? Hành động này không thể hoàn tác.')) {
+            if (confirm(__( 'Are you sure you want to delete this Symbol? ', 'ska-no-code-design' ))) {
                 try {
                     const response = await fetch(`${this.apiUrl}/${id}`, {
                         method: 'DELETE',
@@ -193,11 +193,11 @@ document.addEventListener('alpine:init', () => {
                     if (response.ok && result.success) {
                         this.organisms = this.organisms.filter(t => t.id !== id);
                     } else {
-                        alert(result.message || 'Không thể xóa Symbol.');
+                        alert(result.message || __( 'Symbol cannot be deleted.', 'ska-no-code-design' ));
                     }
                 } catch (error) {
                     console.error(error);
-                    alert('Lỗi kết nối.');
+                    alert(__( 'Connection error.', 'ska-no-code-design' ));
                 }
             }
         },

@@ -71,7 +71,7 @@ class Admin_Ajax {
 		$options = isset( $_POST['options'] ) ? sanitize_text_field( wp_unslash( $_POST['options'] ) ) : '';
 
 		if ( empty( $table ) || empty( $label ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: Tên bảng và Tên cột không được để trống.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Table Name and Column Name cannot be blank.', 'ska-data-pro' ) ) );
 		}
 
 		$engine = Database_Engine::get_instance();
@@ -81,7 +81,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => 'Đã thêm Cột thành công.' ) );
+		wp_send_json_success( array( 'message' => __( 'Column added successfully.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -97,7 +97,7 @@ class Admin_Ajax {
 		$options = isset( $_POST['options'] ) ? sanitize_text_field( wp_unslash( $_POST['options'] ) ) : '';
 
 		if ( empty( $table ) || empty( $col ) || empty( $label ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: Tên bảng, Mã cột và Tên hiển thị không được để trống.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Table Name, Column Code and Display Name cannot be blank.', 'ska-data-pro' ) ) );
 		}
 
 		$engine = Database_Engine::get_instance();
@@ -107,7 +107,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => 'Đã cập nhật Tên và Kiểu cột thành công.' ) );
+		wp_send_json_success( array( 'message' => __( 'Updated Column Name and Type successfully.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -120,7 +120,7 @@ class Admin_Ajax {
 		$col   = isset( $_POST['col'] ) ? sanitize_text_field( wp_unslash( $_POST['col'] ) ) : '';
 
 		if ( empty( $table ) || empty( $col ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: Không xác định được Cột cần xóa.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Unable to determine Column to delete.', 'ska-data-pro' ) ) );
 		}
 
 		$engine = Database_Engine::get_instance();
@@ -130,7 +130,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => 'Đã vứt bỏ Cột này vĩnh viễn.' ) );
+		wp_send_json_success( array( 'message' => __( 'This Column has been permanently discarded.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -146,7 +146,7 @@ class Admin_Ajax {
 		$new_val = isset( $_POST['new_val'] ) ? wp_unslash( $_POST['new_val'] ) : '';
 
 		if ( empty( $table ) || empty( $col ) || empty( $action ) || empty( $new_val ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: Thiếu dữ liệu cấu hình Option.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Missing Option configuration data.', 'ska-data-pro' ) ) );
 		}
 
 		$engine = Database_Engine::get_instance();
@@ -157,7 +157,7 @@ class Admin_Ajax {
 		}
 
 		wp_send_json_success( array( 
-			'message' => 'Cập nhật thành công.',
+			'message' => __( 'Updated successfully.', 'ska-data-pro' ),
 			'options' => $result['options'] 
 		) );
 	}
@@ -168,7 +168,7 @@ class Admin_Ajax {
 	public function install_data_template() {
 		// 1. Kiểm tra Quyền Hạn
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => 'Bảo mật: Bạn không có quyền Administrator.' ) );
+			wp_send_json_error( array( 'message' => __( 'Security: You do not have Administrator rights.', 'ska-data-pro' ) ) );
 		}
 		
 		// 2. Kiểm tra Nonce tránh lỗi bảo mật giả mạo CSRF
@@ -178,7 +178,7 @@ class Admin_Ajax {
 		$template_id = isset( $_POST['template_id'] ) ? sanitize_text_field( wp_unslash( $_POST['template_id'] ) ) : '';
 
 		if ( empty( $template_id ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: Không xác định được Mẫu dữ liệu (Template ID bị trống).' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Data Template cannot be determined (Template ID is empty).', 'ska-data-pro' ) ) );
 		}
 
 		// 4. Kích hoạt Cỗ Máy cài đặt Database (Logic nặng chuyển sang Core)
@@ -195,7 +195,7 @@ class Admin_Ajax {
 		$redirect_url = admin_url( 'admin.php?page=ska-data-pro-manage&table=' . $main_table );
 
 		wp_send_json_success( array(
-			'message'      => 'Khởi tạo Bảng dữ liệu thành công!',
+			'message'      => __( 'Data Table initialization successful!', 'ska-data-pro' ),
 			'redirect_url' => $redirect_url,
 		) );
 	}
@@ -205,7 +205,7 @@ class Admin_Ajax {
 	 */
 	private function verify_crud_request() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => 'Bảo mật: Bạn không có quyền thao tác dữ liệu.' ) );
+			wp_send_json_error( array( 'message' => __( 'Security: You do not have permission to manipulate the data.', 'ska-data-pro' ) ) );
 		}
 		check_ajax_referer( 'ska_data_nonce', 'security' );
 	}
@@ -218,7 +218,7 @@ class Admin_Ajax {
 		
 		$table = isset( $_POST['table'] ) ? sanitize_text_field( wp_unslash( $_POST['table'] ) ) : '';
 		if ( empty( $table ) ) {
-			wp_send_json_error( array( 'message' => 'Tham số tên bảng bị thiếu.' ) );
+			wp_send_json_error( array( 'message' => __( 'The table name parameter is missing.', 'ska-data-pro' ) ) );
 		}
 
 		$engine = Database_Engine::get_instance();
@@ -228,7 +228,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $id->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'id' => $id, 'message' => 'Thêm dòng thành công.' ) );
+		wp_send_json_success( array( 'id' => $id, 'message' => __( 'Line added successfully.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -246,7 +246,7 @@ class Admin_Ajax {
 		$value  = isset( $_POST['value'] ) ? wp_unslash( $_POST['value'] ) : '';
 
 		if ( empty( $table ) || empty( $id ) || empty( $column ) ) {
-			wp_send_json_error( array( 'message' => 'Sai cấu trúc tải dữ liệu lên Server.' ) );
+			wp_send_json_error( array( 'message' => __( 'Wrong structure of data upload to Server.', 'ska-data-pro' ) ) );
 		}
 
 		$engine = Database_Engine::get_instance();
@@ -256,7 +256,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => 'Đã tự động lưu.' ) );
+		wp_send_json_success( array( 'message' => __( 'Saved automatically.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -269,7 +269,7 @@ class Admin_Ajax {
 		$id    = isset( $_POST['id'] ) ? absint( wp_unslash( $_POST['id'] ) ) : 0;
 
 		if ( empty( $table ) || empty( $id ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi thiếu ID để xóa.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error missing ID to delete.', 'ska-data-pro' ) ) );
 		}
 
 		$engine = Database_Engine::get_instance();
@@ -279,7 +279,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => 'Xóa vĩnh viễn thành công.' ) );
+		wp_send_json_success( array( 'message' => __( 'Permanent deletion successful.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -293,7 +293,7 @@ class Admin_Ajax {
 		$app_id = isset( $_POST['app_id'] ) ? sanitize_text_field( wp_unslash( $_POST['app_id'] ) ) : 'uncategorized';
 
 		if ( empty( $name ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: Tên bảng không được để trống.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Table name cannot be empty.', 'ska-data-pro' ) ) );
 		}
 
 		$engine = Database_Engine::get_instance();
@@ -319,7 +319,7 @@ class Admin_Ajax {
 		$app_id = isset( $_POST['app_id'] ) ? sanitize_text_field( wp_unslash( $_POST['app_id'] ) ) : 'uncategorized';
 
 		if ( empty( $table ) || empty( $name ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: Thông tin bảng không hợp lệ.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Invalid table information.', 'ska-data-pro' ) ) );
 		}
 
 		$engine = Database_Engine::get_instance();
@@ -329,7 +329,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => 'Cập nhật bảng thành công.' ) );
+		wp_send_json_success( array( 'message' => __( 'Table updated successfully.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -341,7 +341,7 @@ class Admin_Ajax {
 		$table = isset( $_POST['table'] ) ? sanitize_text_field( wp_unslash( $_POST['table'] ) ) : '';
 
 		if ( empty( $table ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: Không xác định được bảng cần Xóa.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Unable to determine table to Delete.', 'ska-data-pro' ) ) );
 		}
 
 		$engine = Database_Engine::get_instance();
@@ -351,7 +351,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => 'Đã tan biến.' ) );
+		wp_send_json_success( array( 'message' => __( 'Has disappeared.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -378,7 +378,7 @@ class Admin_Ajax {
 		$unauthorized_redirect = isset( $_POST['unauthorized_redirect_url'] ) ? sanitize_text_field( wp_unslash( $_POST['unauthorized_redirect_url'] ) ) : '';
 
 		if ( empty( $table ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: Không xác định được Bảng dữ liệu.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Unable to determine Data Table.', 'ska-data-pro' ) ) );
 		}
 
 		if ( is_array( $roles_raw ) ) {
@@ -402,7 +402,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => 'Cập nhật cấu hình App Portal thành công.' ) );
+		wp_send_json_success( array( 'message' => __( 'App Portal configuration updated successfully.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -423,7 +423,7 @@ class Admin_Ajax {
 		}
 
 		if ( empty( $table ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: Không xác định được Bảng dữ liệu.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Unable to determine Data Table.', 'ska-data-pro' ) ) );
 		}
 
 		$engine = Database_Engine::get_instance();
@@ -463,7 +463,7 @@ class Admin_Ajax {
 		}
 
 		wp_send_json_success( array( 
-			'message'           => 'Tự động tạo UI cho Portal thành công.',
+			'message'           => __( 'Automatically create UI for Portal successfully.', 'ska-data-pro' ),
 			'portal_url'        => isset( $result['portal_url'] ) ? $result['portal_url'] : '',
 			'theme_builder_url' => isset( $result['theme_builder_url'] ) ? $result['theme_builder_url'] : '',
 			'list_view_editor_url'   => isset( $result['list_view_editor_url'] ) ? $result['list_view_editor_url'] : '',
@@ -488,7 +488,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => 'Tạo Workspace thành công.' ) );
+		wp_send_json_success( array( 'message' => __( 'Workspace created successfully.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -506,7 +506,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => 'Cập nhật Workspace thành công.' ) );
+		wp_send_json_success( array( 'message' => __( 'Workspace updated successfully.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -522,7 +522,7 @@ class Admin_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => 'Xoá Workspace thành công.' ) );
+		wp_send_json_success( array( 'message' => __( 'Deleted Workspace successfully.', 'ska-data-pro' ) ) );
 	}
 
 	/**
@@ -533,12 +533,12 @@ class Admin_Ajax {
 
 		$app_id = isset( $_GET['app_id'] ) ? sanitize_text_field( wp_unslash( $_GET['app_id'] ) ) : '';
 		if ( empty( $app_id ) ) {
-			wp_die( 'Thiếu ID Workspace.' );
+			wp_die( __( 'Missing Workspace ID.', 'ska-data-pro' ) );
 		}
 
 		$apps = \Ska\Data\Core\App_Manager::get_apps();
 		if ( ! isset( $apps[ $app_id ] ) ) {
-			wp_die( 'Workspace không tồn tại.' );
+			wp_die( __( 'Workspace does not exist.', 'ska-data-pro' ) );
 		}
 
 		$app_info = $apps[ $app_id ];
@@ -668,14 +668,14 @@ class Admin_Ajax {
 
 		// Handle file upload
 		if ( empty( $_FILES['blueprint_file']['tmp_name'] ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: Không tìm thấy file JSON upload.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Cannot find uploaded JSON file.', 'ska-data-pro' ) ) );
 		}
 
 		$json_data = file_get_contents( $_FILES['blueprint_file']['tmp_name'] );
 		$blueprint = json_decode( $json_data, true );
 
 		if ( ! is_array( $blueprint ) || ! isset( $blueprint['objects'] ) ) {
-			wp_send_json_error( array( 'message' => 'Lỗi: File JSON cấu trúc không hợp lệ.' ) );
+			wp_send_json_error( array( 'message' => __( 'Error: Invalid JSON file structure.', 'ska-data-pro' ) ) );
 		}
 
 		// 0. Version Check
@@ -786,7 +786,7 @@ class Admin_Ajax {
 		do_action( 'ska_import_smart_object', $blueprint, $app_id );
 
 		wp_send_json_success( array( 
-			'message' => 'Import Blueprint thành công!',
+			'message' => __( 'Import Blueprint successfully!', 'ska-data-pro' ),
 			'app_id'  => $app_id
 		) );
 	}
@@ -801,7 +801,7 @@ class Admin_Ajax {
 		$keyword      = isset( $_POST['keyword'] ) ? sanitize_text_field( wp_unslash( $_POST['keyword'] ) ) : '';
 		
 		if ( empty( $target_table ) ) {
-			wp_send_json_error( array( 'message' => 'Thiếu thông số Bảng Đích.' ) );
+			wp_send_json_error( array( 'message' => __( 'Missing Destination Table parameter.', 'ska-data-pro' ) ) );
 		}
 		
 		global $wpdb;
@@ -809,7 +809,7 @@ class Admin_Ajax {
 		// Bảo mật SQL Injection mở rộng (Nới rào cản cho Core WP)
 		$is_core_wp_table = ( $target_table === $wpdb->posts || $target_table === $wpdb->users );
 		if ( strpos( $target_table, $wpdb->prefix . 'ska_data_' ) !== 0 && ! $is_core_wp_table ) {
-			wp_send_json_error( array( 'message' => 'Bảng không hợp lệ trong Hệ sinh thái.' ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid table in Ecosystem.', 'ska-data-pro' ) ) );
 		}
 
 		// 1. Phân tích cột Name/Title (Lấy cột Varchar đầu tiên làm Nhãn)
@@ -828,7 +828,7 @@ class Admin_Ajax {
 			// Cơ chế Dò Schema rùa bò dành cho Custom Flat Tables
 			$columns = $wpdb->get_results( "DESCRIBE `{$target_table}`" );
 			if ( empty( $columns ) ) {
-				wp_send_json_error( array( 'message' => 'Bảng đích không tồn tại hoặc rỗng Schema.' ) );
+				wp_send_json_error( array( 'message' => __( 'The destination table does not exist or is empty.', 'ska-data-pro' ) ) );
 			}
 			foreach ( $columns as $col ) {
 				if ( strpos( strtolower( $col->Type ), 'varchar' ) !== false || strpos( strtolower( $col->Type ), 'text' ) !== false ) {
@@ -851,7 +851,7 @@ class Admin_Ajax {
 			foreach ( $rows as $row ) {
 				$results[] = array(
 					'id'    => (int) $row['id_val'],
-					'label' => ! empty( $row['label'] ) ? $row['label'] : 'Bản ghi #' . $row['id_val'],
+					'label' => ! empty( $row['label'] ) ? $row['label'] : __( 'Record #', 'ska-data-pro' ) . $row['id_val'],
 				);
 			}
 		}
@@ -867,7 +867,7 @@ class Admin_Ajax {
 		
 		$target_table = isset( $_POST['target_table'] ) ? sanitize_text_field( wp_unslash( $_POST['target_table'] ) ) : '';
 		if ( empty( $target_table ) ) {
-			wp_send_json_error( array( 'message' => 'Thiếu thông số Bảng Đích.' ) );
+			wp_send_json_error( array( 'message' => __( 'Missing Destination Table parameter.', 'ska-data-pro' ) ) );
 		}
 		
 		global $wpdb;
@@ -876,12 +876,12 @@ class Admin_Ajax {
 		if ( $target_table === $wpdb->posts ) {
 			$columns = array(
 				array( 'slug' => 'ID', 'label' => 'ID' ),
-				array( 'slug' => 'post_title', 'label' => 'Tiêu đề (post_title)' ),
-				array( 'slug' => 'post_name', 'label' => 'Link bài viết Slug (post_name)' ),
-				array( 'slug' => 'post_author', 'label' => 'ID Tác giả (post_author)' ),
-				array( 'slug' => 'post_content', 'label' => 'Nội dung (post_content)' ),
-				array( 'slug' => 'post_excerpt', 'label' => 'Mô tả ngắn (post_excerpt)' ),
-				array( 'slug' => 'post_date', 'label' => 'Ngày tạo (post_date)' ),
+				array( 'slug' => 'post_title', 'label' => __( 'Title (post_title)', 'ska-data-pro' ) ),
+				array( 'slug' => 'post_name', 'label' => __( 'Link to Slug article (post_name)', 'ska-data-pro' ) ),
+				array( 'slug' => 'post_author', 'label' => __( 'Author ID (post_author)', 'ska-data-pro' ) ),
+				array( 'slug' => 'post_content', 'label' => __( 'Content (post_content)', 'ska-data-pro' ) ),
+				array( 'slug' => 'post_excerpt', 'label' => __( 'Short description (post_excerpt)', 'ska-data-pro' ) ),
+				array( 'slug' => 'post_date', 'label' => __( 'Creation date (post_date)', 'ska-data-pro' ) ),
 			);
 			
 			// Lấy các meta_key từ postmeta (bỏ các meta ẩn của hệ thống WP cho gọn, chỉ giữ lại các Meta sạch từ ACF/WooCommerce/Thumnbail)
@@ -907,9 +907,9 @@ class Admin_Ajax {
 		if ( $target_table === $wpdb->users ) {
 			$columns = array(
 				array( 'slug' => 'ID', 'label' => 'ID' ),
-				array( 'slug' => 'user_login', 'label' => 'Tài khoản (user_login)' ),
+				array( 'slug' => 'user_login', 'label' => __( 'Account (user_login)', 'ska-data-pro' ) ),
 				array( 'slug' => 'user_email', 'label' => 'Email (user_email)' ),
-				array( 'slug' => 'display_name', 'label' => 'Tên hiển thị (display_name)' ),
+				array( 'slug' => 'display_name', 'label' => __( 'Display name (display_name)', 'ska-data-pro' ) ),
 			);
 			
 			// Lấy usermeta, lọc các meta hệ thống (session, dashboard, nav_menu...)
@@ -937,7 +937,7 @@ class Admin_Ajax {
 		// Lấy Schema Vật lý bù trừ cho lỗi rớt Dictionary
 		$columns = $wpdb->get_results( "DESCRIBE `{$target_table}`" );
 		if ( empty( $columns ) ) {
-			wp_send_json_error( array( 'message' => 'Bảng đích không tồn tại hoặc Rỗng.' ) );
+			wp_send_json_error( array( 'message' => __( 'Destination table does not exist or is Empty.', 'ska-data-pro' ) ) );
 		}
 
 		$all_dict    = get_option('ska_data_dictionary', array());

@@ -119,7 +119,7 @@ class SkaFX_Lexer {
             }
 
             // Nếu không lọt vào bất kỳ Trạm quét nào => Ném Exception ngay lập tức.
-            throw new SkaFX_Syntax_Error( sprintf("Lỗi cú pháp không xác định: Ký tự '%s' tại dòng %d", $char, $this->line) );
+            throw new SkaFX_Syntax_Error( sprintf(__( 'Unknown syntax error: Character \'%s\' at line %d', 'ska-logic-engine' ), $char, $this->line) );
         }
 
         $tokens[] = $this->make_token( self::T_EOF, null );

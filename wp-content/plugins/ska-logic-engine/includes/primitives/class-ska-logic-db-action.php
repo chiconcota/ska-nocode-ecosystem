@@ -17,11 +17,11 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
 
         // Phải có table mới chạy được
         if (empty($table)) {
-            error_log("Ska_Logic_DB_Action: Bỏ qua do chưa chọn Table.");
+            error_log(__( 'Ska_Logic_DB_Action: Skipped because Table was not selected.', 'ska-logic-engine' ));
             return ['payload' => $payload, 'port' => 'main']; 
         }
 
-        error_log("Ska_Logic_DB_Action: Bắt đầu xử lý cho Table {$table}. Action: {$actionType}");
+        error_log(__( 'Ska_Logic_DB_Action: Start processing for Table {$table}. ', 'ska-logic-engine' ));
         error_log("Mappings: " . print_r($mappings, true));
 
         // Tự động giải nén các ánh xạ (Auto-map) qua SkaFX
@@ -112,7 +112,7 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
                         $payload['_latest_insert'] = ['result' => false, 'table_name' => $table];
                     }
                 } else {
-                    error_log("Ska_Logic_DB_Action: Bỏ qua Insert do Data trống.");
+                    error_log(__( 'Ska_Logic_DB_Action: Skip Insert due to empty data.', 'ska-logic-engine' ));
                 }
                 break;
 
@@ -124,10 +124,10 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
                     if ($result === false) {
                         error_log("Ska_Logic_DB_Action: Lỗi Update Table {$table} - " . $wpdb->last_error);
                     } else {
-                        error_log("Ska_Logic_DB_Action: Đã Update thành công bản ghi {$record_id} trong {$table}.");
+                        error_log(__( 'Ska_Logic_DB_Action: Successfully updated record {$record_id} in {$table}.', 'ska-logic-engine' ));
                     }
                 } else {
-                    error_log("Ska_Logic_DB_Action: Bỏ qua Update do thiếu Record ID hoặc Data trống.");
+                    error_log(__( 'Ska_Logic_DB_Action: Aborted Update due to missing Record ID or empty Data.', 'ska-logic-engine' ));
                 }
                 break;
 
@@ -139,10 +139,10 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
                     if ($result === false) {
                         error_log("Ska_Logic_DB_Action: Lỗi Delete Table {$table} - " . $wpdb->last_error);
                     } else {
-                        error_log("Ska_Logic_DB_Action: Đã Delete thành công bản ghi {$record_id} trong {$table}.");
+                        error_log(__( 'Ska_Logic_DB_Action: Successfully deleted record {$record_id} in {$table}.', 'ska-logic-engine' ));
                     }
                 } else {
-                    error_log("Ska_Logic_DB_Action: Bỏ qua Delete do thiếu Record ID.");
+                    error_log(__( 'Ska_Logic_DB_Action: Skip Delete due to missing Record ID.', 'ska-logic-engine' ));
                 }
                 break;
         }

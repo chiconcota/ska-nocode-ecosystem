@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import BaseCell from '../BaseCell.js';
 import { apiFetch, getConfig } from '../../utils/api.js';
 
@@ -49,13 +50,13 @@ export default class RelationCell extends BaseCell {
             } else {
                 const emptyBox = document.createElement('div');
                 emptyBox.className = 'text-[11px] text-gray-400 italic mb-1 px-1';
-                emptyBox.innerText = 'Trống (Chưa tham chiếu ai).';
+                emptyBox.innerText = __( 'Blank (No reference yet).', 'ska-data-pro' );
                 popover.appendChild(emptyBox);
             }
 
             const searchInput = document.createElement('input');
             searchInput.type = 'text';
-            searchInput.placeholder = 'Gõ tìm kiếm bản ghi...';
+            searchInput.placeholder = __( 'Type search records...', 'ska-data-pro' );
             searchInput.className = 'w-full px-2 py-1.5 text-xs border border-gray-300 rounded shadow-inner outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400';
             popover.appendChild(searchInput);
 
@@ -64,7 +65,7 @@ export default class RelationCell extends BaseCell {
             popover.appendChild(resContainer);
 
             const performSearch = async (keyword) => {
-                resContainer.innerHTML = '<div class="p-2 text-center text-[10px] text-gray-400"><span class="dashicons dashicons-update-alt" style="animation: spin 1s infinite linear;"></span> Đang tải...</div>';
+                resContainer.innerHTML = __( '<div class=\"p-2 text-center text-[10px] text-gray-400\"><span class=\"dashicons dashicons-update-alt\" style=\"animation: spin 1s infinite linear;\"></span> Loading...</div>', 'ska-data-pro' );
                 resContainer.classList.remove('hidden');
 
                 const res = await apiFetch('ska_data_search_relation', {
@@ -94,10 +95,10 @@ export default class RelationCell extends BaseCell {
                         resContainer.appendChild(row);
                     });
                     if (resContainer.innerHTML === '') {
-                        resContainer.innerHTML = '<div class="p-2 text-center text-[10px] text-gray-400 bg-gray-50 italic">Hết kết quả khả dụng.</div>';
+                        resContainer.innerHTML = __( '<div class=\"p-2 text-center text-[10px] text-gray-400 bg-gray-50 italic\">No available results.</div>', 'ska-data-pro' );
                     }
                 } else {
-                    resContainer.innerHTML = `<div class="p-2 text-xs text-red-500">${res.data?.message || 'Lỗi'}</div>`;
+                    resContainer.innerHTML = `<div class="p-2 text-xs text-red-500">{__( '${res.data?.message || ', 'ska-data-pro' )}</div>`;
                 }
             };
 
@@ -115,7 +116,7 @@ export default class RelationCell extends BaseCell {
 
             const applyBtn = document.createElement('button');
             applyBtn.className = 'w-full bg-indigo-500 hover:bg-indigo-600 text-white rounded text-xs py-1.5 font-bold transition-colors flex justify-center items-center shadow-sm';
-            applyBtn.innerHTML = '<span class="dashicons dashicons-saved" style="font-size: 14px; margin-top: -1px; margin-right: 4px;"></span> Lưu Tham Chiếu';
+            applyBtn.innerHTML = __( '<span class=\"dashicons dashicons-saved\" style=\"font-size: 14px; margin-top: -1px; margin-right: 4px;\"></span> Save Reference', 'ska-data-pro' );
             
             applyBtn.onclick = async (e) => {
                 e.stopPropagation();
@@ -137,7 +138,7 @@ export default class RelationCell extends BaseCell {
                     if (res.success) {
                         window.location.reload(); 
                     } else {
-                        alert(res.data?.message || 'Mạng bị xịt!');
+                        alert(res.data?.message || __( 'Network crashed!', 'ska-data-pro' ));
                     }
                 } else {
                     popover.remove();

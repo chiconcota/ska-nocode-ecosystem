@@ -5,7 +5,7 @@
             <div class="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-4 sticky top-6">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-sm font-bold text-slate-800 m-0 uppercase tracking-wider">App Folders</h2>
-                    <button @click="openFolderModal()" class="text-indigo-600 hover:bg-indigo-50 p-1 rounded-md border-0 bg-transparent cursor-pointer transition-colors" title="Thêm Thư Mục">
+                    <button @click="openFolderModal()" class="text-indigo-600 hover:bg-indigo-50 p-1 rounded-md border-0 bg-transparent cursor-pointer transition-colors" title=__( 'Add Folder', 'ska-no-code-design' )>
                         <span class="material-symbols-outlined text-[18px]">add</span>
                     </button>
                 </div>
@@ -117,13 +117,13 @@
                                 <span class="material-symbols-outlined text-[14px] text-amber-400">folder</span>
                                 <span x-text="getFolderName(getTemplateFolderId(template))"></span>
                             </p>
-                            <p class="text-sm text-slate-500 m-0" x-text="'Organism: ' + (template.organism_id || 'Chưa chọn')"></p>
+                            <p class="text-sm text-slate-500 m-0" x-text=__( '\'Organism: \' + (template.organism_id || \'Not selected\')', 'ska-no-code-design' )></p>
                         </div>
 
                         <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
                             <span class="text-xs text-slate-400 flex items-center gap-1">
                                 <span class="material-symbols-outlined text-[14px]">schedule</span>
-                                Cập nhật: <span x-text="template.updated_at || 'Mới đây'"></span>
+                                Cập nhật: <span x-text=__( 'template.updated_at || ', 'ska-no-code-design' )></span>
                             </span>
                             <a :href="getEditorUrl(template.id)" class="text-indigo-600 hover:text-indigo-800 font-bold text-sm flex items-center gap-1 no-underline">
                                 <span class="material-symbols-outlined text-[18px]">design_services</span>
@@ -136,7 +136,7 @@
                 <!-- Empty State -->
                 <div x-show="filteredTemplates.length === 0" class="col-span-full py-12 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-white/50">
                     <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">inventory_2</span>
-                    <p class="text-slate-500 font-medium">Chưa có template nào trong danh mục này.</p>
+                    <p class="text-slate-500 font-medium"><?php esc_html_e( 'There are no templates in this category yet.', 'ska-no-code-design' ); ?></p>
                     <button @click="openCreateModal()" class="mt-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-2 px-4 rounded-lg shadow-sm transition-all border-0 cursor-pointer">
                         Tạo template đầu tiên
                     </button>
@@ -148,7 +148,7 @@
         <div x-show="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm" style="display: none;">
             <div @click.outside="closeModal()" class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden transform transition-all" x-transition.scale.origin.bottom>
                 <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="text-lg font-bold text-slate-800 m-0" x-text="modalMode === 'create' ? 'Tạo Template Mới' : 'Sửa Template'"></h3>
+                    <h3 class="text-lg font-bold text-slate-800 m-0" x-text=__( 'modalMode === \'create\' ? ', 'ska-no-code-design' )></h3>
                     <button @click="closeModal()" class="text-slate-400 hover:text-slate-600 bg-transparent border-0 cursor-pointer">
                         <span class="material-symbols-outlined">close</span>
                     </button>
@@ -157,14 +157,14 @@
                 <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                     <!-- Tên Template -->
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1">Tên Template</label>
-                        <input type="text" x-model="currentTemplate.title" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all" placeholder="Ví dụ: Header Mặc Định">
+                        <label class="block text-sm font-bold text-slate-700 mb-1"><?php esc_html_e( 'Template name', 'ska-no-code-design' ); ?></label>
+                        <input type="text" x-model="currentTemplate.title" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all" placeholder=__( 'For example: Default Header', 'ska-no-code-design' )>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4">
                         <!-- App Folder -->
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1">Thuộc App / Thư mục</label>
+                            <label class="block text-sm font-bold text-slate-700 mb-1"><?php esc_html_e( 'Belongs to App/Folder', 'ska-no-code-design' ); ?></label>
                             <select x-model="currentTemplate.folder_id" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all bg-white">
                                 <option value="">Core / Global</option>
                                 <template x-for="folder in folders" :key="folder.id">
@@ -175,7 +175,7 @@
 
                         <!-- Vị trí (Location) -->
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1">Vị trí (Location)</label>
+                            <label class="block text-sm font-bold text-slate-700 mb-1"><?php esc_html_e( 'Location', 'ska-no-code-design' ); ?></label>
                             <select x-model="currentTemplate.location" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all bg-white">
                                 <template x-for="tab in tabs.filter(t => t.id !== 'all')" :key="tab.id">
                                     <option :value="tab.id" x-text="tab.name"></option>
@@ -186,22 +186,22 @@
 
                     <!-- Component (Organism) -->
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1">Thiết kế (Organism Component)</label>
+                        <label class="block text-sm font-bold text-slate-700 mb-1"><?php esc_html_e( 'Design (Organism Component)', 'ska-no-code-design' ); ?></label>
                         <select x-model="currentTemplate.organism_id" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all bg-white">
-                            <option value="">-- Chọn Component --</option>
+                            <option value=""><?php esc_html_e( '-- Select Component --', 'ska-no-code-design' ); ?></option>
                             <template x-for="org in organisms" :key="org.id">
                                 <option :value="org.id" x-text="org.name"></option>
                             </template>
                         </select>
-                        <p class="text-xs text-slate-500 mt-1">Chọn component từ Design Workspace để gán vào vị trí này.</p>
+                        <p class="text-xs text-slate-500 mt-1"><?php esc_html_e( 'Select the component from Design Workspace to assign to this location.', 'ska-no-code-design' ); ?></p>
                     </div>
 
                     <!-- Điều kiện (Conditions) Rule Builder -->
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
                         <div class="flex justify-between items-center mb-3">
                             <div>
-                                <label class="block text-sm font-bold text-slate-700 m-0">Điều kiện hiển thị (Display Conditions)</label>
-                                <p class="text-[11px] text-slate-500 m-0 mt-0.5">Xác định nơi Template này được xuất hiện.</p>
+                                <label class="block text-sm font-bold text-slate-700 m-0"><?php esc_html_e( 'Display Conditions', 'ska-no-code-design' ); ?></label>
+                                <p class="text-[11px] text-slate-500 m-0 mt-0.5"><?php esc_html_e( 'Determines where this Template appears.', 'ska-no-code-design' ); ?></p>
                             </div>
                             <button @click.prevent="addRule()" class="text-xs bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-2 py-1.5 rounded-md font-bold border-0 cursor-pointer flex items-center gap-1 transition-colors">
                                 <span class="material-symbols-outlined text-[14px]">add</span> Thêm Rule
@@ -231,7 +231,7 @@
                                     
                                     <template x-if="['specific_portal', 'specific_portal_list', 'specific_portal_detail', 'specific_portal_create'].includes(rule.rule)">
                                         <select x-model="rule.value" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm focus:border-indigo-500 outline-none min-w-48 bg-white">
-                                            <option value="">-- Chọn App Portal --</option>
+                                            <option value=""><?php esc_html_e( '-- Select App Portal --', 'ska-no-code-design' ); ?></option>
                                             <template x-for="portal in portals" :key="portal.slug">
                                                 <option :value="portal.slug" x-text="portal.label"></option>
                                             </template>
@@ -257,7 +257,7 @@
                             <input type="checkbox" x-model="currentTemplate.is_active" class="sr-only peer">
                             <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                         </label>
-                        <span class="text-sm font-bold text-slate-700">Kích hoạt Template (Active)</span>
+                        <span class="text-sm font-bold text-slate-700"><?php esc_html_e( 'Activate Template (Active)', 'ska-no-code-design' ); ?></span>
                     </div>
                 </div>
 
@@ -267,7 +267,7 @@
                     </button>
                     <button @click="saveTemplate()" class="px-5 py-2 rounded-xl text-white font-bold bg-indigo-600 hover:bg-indigo-700 shadow-sm border-0 cursor-pointer transition-all flex items-center gap-2">
                         <span x-show="isLoading" class="material-symbols-outlined animate-spin text-[18px]">sync</span>
-                        <span x-text="modalMode === 'create' ? 'Tạo Mới' : 'Lưu Thay Đổi'"></span>
+                        <span x-text=__( 'modalMode === \'create\' ? ', 'ska-no-code-design' )></span>
                     </button>
                 </div>
             </div>
@@ -277,19 +277,19 @@
         <div x-show="isFolderModalOpen" class="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm" style="display: none;">
             <div @click.outside="closeFolderModal()" class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform transition-all" x-transition.scale.origin.bottom>
                 <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="text-lg font-bold text-slate-800 m-0" x-text="folderModalMode === 'create' ? 'Thêm Thư Mục Mới' : 'Sửa Tên Thư Mục'"></h3>
+                    <h3 class="text-lg font-bold text-slate-800 m-0" x-text=__( 'folderModalMode === \'create\' ? ', 'ska-no-code-design' )></h3>
                     <button @click="closeFolderModal()" class="text-slate-400 hover:text-slate-600 bg-transparent border-0 cursor-pointer">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
                 
                 <div class="p-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-1">Tên Thư Mục (VD: LMS App)</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-1"><?php esc_html_e( 'Folder Name (Example: LMS App)', 'ska-no-code-design' ); ?></label>
                     <input type="text" x-model="currentFolder.name" @keydown.enter="saveFolder()" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
                 </div>
 
                 <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-slate-50">
-                    <button @click="closeFolderModal()" class="px-4 py-2 rounded-xl text-slate-600 font-bold hover:bg-slate-200 bg-slate-100 border-0 cursor-pointer transition-all">Hủy</button>
+                    <button @click="closeFolderModal()" class="px-4 py-2 rounded-xl text-slate-600 font-bold hover:bg-slate-200 bg-slate-100 border-0 cursor-pointer transition-all"><?php esc_html_e( 'Cancel', 'ska-no-code-design' ); ?></button>
                     <button @click="saveFolder()" class="px-4 py-2 rounded-xl text-white font-bold bg-indigo-600 hover:bg-indigo-700 shadow-sm border-0 cursor-pointer transition-all flex items-center gap-2">
                         <span x-show="isFolderLoading" class="material-symbols-outlined animate-spin text-[18px]">sync</span>
                         Lưu
@@ -326,7 +326,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('themeBuilderData', () => ({
         portals: <?php echo wp_json_encode($portals); ?>,
         tabs: [
-            { id: 'all', name: 'Tất cả', icon: 'grid_view' },
+            { id: 'all', name: __( 'All', 'ska-no-code-design' ), icon: 'grid_view' },
             { id: 'header', name: 'Header', icon: 'vertical_align_top' },
             { id: 'footer', name: 'Footer', icon: 'vertical_align_bottom' },
             { id: 'single', name: 'Single', icon: 'article' },
@@ -361,16 +361,16 @@ document.addEventListener('alpine:init', () => {
         },
         rules: [],
         ruleOptions: [
-            { value: 'all', label: 'Toàn bộ trang (Entire Site)' },
-            { value: 'is_front_page', label: 'Trang chủ (Front Page)' },
-            { value: 'is_archive', label: 'Tất cả Lưu trữ (All Archives)' },
-            { value: 'is_single', label: 'Tất cả Bài viết/Trang (Singular)' },
-            { value: 'post_type', label: 'Theo Loại bài viết (Post Type)' },
-            { value: 'specific_post', label: 'Bài cụ thể (Post/Page ID)' },
-            { value: 'is_404', label: 'Trang lỗi (404)' },
-            { value: 'is_search', label: 'Kết quả tìm kiếm (Search)' },
-            { value: 'is_portal', label: 'Tất cả App Portal' },
-            { value: 'specific_portal', label: 'App Portal cụ thể (Theo Slug)' },
+            { value: 'all', label: __( 'Entire Site', 'ska-no-code-design' ) },
+            { value: 'is_front_page', label: __( 'Home page (Front Page)', 'ska-no-code-design' ) },
+            { value: 'is_archive', label: __( 'All Archives', 'ska-no-code-design' ) },
+            { value: 'is_single', label: __( 'All Posts/Pages (Singular)', 'ska-no-code-design' ) },
+            { value: 'post_type', label: __( 'By Post Type (Post Type)', 'ska-no-code-design' ) },
+            { value: 'specific_post', label: __( 'Specific post (Post/Page ID)', 'ska-no-code-design' ) },
+            { value: 'is_404', label: __( 'Error page (404)', 'ska-no-code-design' ) },
+            { value: 'is_search', label: __( 'Search results (Search)', 'ska-no-code-design' ) },
+            { value: 'is_portal', label: __( 'All App Portals', 'ska-no-code-design' ) },
+            { value: 'specific_portal', label: __( 'Specific App Portal (According to Slug)', 'ska-no-code-design' ) },
             { value: 'specific_portal_list', label: 'App Portal List View (Theo Slug)' },
             { value: 'specific_portal_detail', label: 'App Portal Detail View (Theo Slug)' },
             { value: 'specific_portal_create', label: 'App Portal Create View (Theo Slug)' }
@@ -528,7 +528,7 @@ document.addEventListener('alpine:init', () => {
 
         async saveTemplate() {
             if (!this.currentTemplate.title.trim()) {
-                alert('Vui lòng nhập tên template.');
+                alert(__( 'Please enter a template name.', 'ska-no-code-design' ));
                 return;
             }
 
@@ -555,18 +555,18 @@ document.addEventListener('alpine:init', () => {
                     await this.loadTemplates();
                     this.closeModal();
                 } else {
-                    alert(result.message || 'Có lỗi xảy ra khi lưu template.');
+                    alert(result.message || __( 'An error occurred while saving the template.', 'ska-no-code-design' ));
                 }
             } catch (error) {
                 console.error(error);
-                alert('Lỗi kết nối.');
+                alert(__( 'Connection error.', 'ska-no-code-design' ));
             } finally {
                 this.isLoading = false;
             }
         },
 
         async deleteTemplate(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa template này? Hành động này không thể hoàn tác.')) {
+            if (confirm(__( 'Are you sure you want to delete this template? ', 'ska-no-code-design' ))) {
                 try {
                     const response = await fetch(`${this.apiUrl}/${id}`, {
                         method: 'DELETE',
@@ -578,11 +578,11 @@ document.addEventListener('alpine:init', () => {
                     if (response.ok && result.success) {
                         this.templates = this.templates.filter(t => t.id !== id);
                     } else {
-                        alert(result.message || 'Không thể xóa template.');
+                        alert(result.message || __( 'Templates cannot be deleted.', 'ska-no-code-design' ));
                     }
                 } catch (error) {
                     console.error(error);
-                    alert('Lỗi kết nối.');
+                    alert(__( 'Connection error.', 'ska-no-code-design' ));
                 }
             }
         },
@@ -635,7 +635,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         async deleteFolder(id) {
-            if (confirm('Xóa thư mục này? Các template bên trong sẽ được chuyển về Core/Global.')) {
+            if (confirm(__( 'Delete this folder? ', 'ska-no-code-design' ))) {
                 let newFolders = this.folders.filter(f => f.id !== id);
                 
                 // Cần dọn folder_id ở template, Frontend dọn UI trước, Backend dọn sau nếu cần
@@ -681,7 +681,7 @@ document.addEventListener('alpine:init', () => {
                     alert('Lỗi lưu thư mục: ' + (res.data || ''));
                 }
             } catch (e) {
-                alert('Lỗi kết nối khi lưu thư mục.');
+                alert(__( 'Connection error when saving folder.', 'ska-no-code-design' ));
             } finally {
                 this.isFolderLoading = false;
             }

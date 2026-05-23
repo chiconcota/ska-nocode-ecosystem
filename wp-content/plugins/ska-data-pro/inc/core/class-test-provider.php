@@ -36,21 +36,21 @@ class Test_Provider implements \Ska\Builder\Data\Provider {
 
 		// 2. NGHIỆP VỤ TRẢ DỮ LIỆU TÙY THEO ID BÊN TRONG VÒNG LẶP
 		if ( $id === 101 ) {
-			if ( $key === 'name' ) return 'Nguyễn Văn A (Fake)';
-			if ( $key === 'role' ) return 'Quản Trị Viên';
+			if ( $key === 'name' ) return __( 'Nguyen Van A (Fake)', 'ska-data-pro' );
+			if ( $key === 'role' ) return __( 'Administrator', 'ska-data-pro' );
 		}
 		if ( $id === 102 ) {
-			if ( $key === 'name' ) return 'Lê Thị B (Fake)';
-			if ( $key === 'role' ) return 'Khách Hàng (VIP)';
+			if ( $key === 'name' ) return __( 'Le Thi B (Fake)', 'ska-data-pro' );
+			if ( $key === 'role' ) return __( 'Customers (VIP)', 'ska-data-pro' );
 		}
 		if ( $id === 103 ) {
-			if ( $key === 'name' ) return 'Trần C (Fake)';
-			if ( $key === 'role' ) return 'Nhân Viên';
+			if ( $key === 'name' ) return __( 'Tran C (Fake)', 'ska-data-pro' );
+			if ( $key === 'role' ) return __( 'Staff', 'ska-data-pro' );
 		}
 
 		// 3. NGHIỆP VỤ TEST DỮ LIỆU ĐƠN LẺ NGÀY BÊN NGOÀI
 		// Cú pháp: {{test:status}}
-		if ( $key === 'status' ) return '✅ KẾT NỐI ADAPTER NGOẠI LAI (EXTENSIBILITY) THÀNH CÔNG!';
+		if ( $key === 'status' ) return __( '✅ CONNECTING EXTERNAL ADAPTER (EXTENSIBILITY) SUCCESSFULLY!', 'ska-data-pro' );
 		if ( $key === 'version' ) return 'v2.0 - Core Provider Engine';
 		if ( $key === 'time' ) return current_time('mysql');
 

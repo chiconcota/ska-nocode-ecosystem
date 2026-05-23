@@ -28,10 +28,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
             if (parsedBlocks && parsedBlocks.length > 0) {
                 replaceBlocks(clientId, parsedBlocks);
             } else {
-                alert(__('Không thể phân rã nội dung HTML của Symbol này. Nội dung rỗng.', 'ska-no-code-design'));
+                alert(__(__( 'The HTML content of this Symbol cannot be parsed. ', 'ska-no-code-design' ), 'ska-no-code-design'));
             }
         } else {
-            alert(__('Không tìm thấy dữ liệu của Symbol này trong System Cache. Vui lòng tải lại trang.', 'ska-no-code-design'));
+            alert(__(__( 'No data for this Symbol was found in System Cache. ', 'ska-no-code-design' ), 'ska-no-code-design'));
         }
     };
     
@@ -60,7 +60,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                 const { dispatch } = wp.data;
                 if (dispatch && dispatch('core/notices')) {
                     dispatch('core/notices').createSuccessNotice(
-                        __('Symbol đã được cập nhật toàn hệ thống! Bạn không cần lưu lại trang này.', 'ska-no-code-design'),
+                        __(__( 'Symbol has been updated systemwide! ', 'ska-no-code-design' ), 'ska-no-code-design'),
                         { type: 'snackbar', id: 'ska-symbol-saved-notice' }
                     );
                 }
@@ -83,7 +83,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
             value: org.id
         }));
         setOrganisms([
-            { label: 'Chọn Organism...', value: '' },
+            { label: __( 'Select Organism...', 'ska-no-code-design' ), value: '' },
             ...options
         ]);
     }, []);
@@ -108,7 +108,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                     <ToolbarGroup>
                         <ToolbarButton
                             icon={<span className="material-symbols-outlined" style={{fontSize: '20px'}}>edit_square</span>}
-                            label={__('Sửa bản gốc (Global Edit)', 'ska-no-code-design')}
+                            label={__(__( 'Edit the original (Global Edit)', 'ska-no-code-design' ), 'ska-no-code-design')}
                             onClick={handleGlobalEdit}
                         />
                     </ToolbarGroup>
@@ -118,47 +118,47 @@ export default function Edit({ attributes, setAttributes, clientId }) {
             <InspectorControls>
                 <PanelBody title={__('Ska Symbol Settings', 'ska-no-code-design')} initialOpen={true}>
                     <SelectControl
-                        label={__('Chọn Ska Symbol', 'ska-no-code-design')}
+                        label={__(__( 'Select Ska Symbol', 'ska-no-code-design' ), 'ska-no-code-design')}
                         value={organismId}
-                        options={organisms.length > 0 ? organisms : [{label: organismId ? organismId : 'Chọn Organism...', value: organismId || ''}]}
+                        options={organisms.length > 0 ? organisms : [{label: organismId ? organismId : __( 'Select Organism...', 'ska-no-code-design' ), value: organismId || ''}]}
                         onChange={(val) => setAttributes({ organismId: String(val) })}
-                        help={__('Chọn mẫu Symbol đã lưu để render nội dung.', 'ska-no-code-design')}
+                        help={__(__( 'Select the saved Symbol template to render the content.', 'ska-no-code-design' ), 'ska-no-code-design')}
                     />
                     <TextControl
                         label={__('Manual ID Override', 'ska-no-code-design')}
                         value={organismId}
                         onChange={(val) => setAttributes({ organismId: val })}
-                        help="Ghi đè thủ công ID Tham Chiếu nếu list trên chưa kịp cập nhật"
+                        help=__( 'Manually overwrite Reference IDs if the above list has not been updated', 'ska-no-code-design' )
                     />
 
                     {organismId && (
                         <>
                             <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px' }}>
-                                <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#1d4ed8' }}>{__('Global Edit (Sửa toàn hệ thống)', 'ska-no-code-design')}</h4>
+                                <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#1d4ed8' }}>{__( '{__(\'Global Edit\', \'ska-no-code-design\')}', 'ska-no-code-design' )}</h4>
                                 <p style={{ margin: '0 0 12px 0', fontSize: '12px', color: '#64748b' }}>
-                                    {__('Mở bản nháp độc lập để sửa mẫu gốc. Các thay đổi sẽ cập nhật lên tất cả các trang dùng Symbol này.', 'ska-no-code-design')}
-                                    <span style={{ display: 'block', color: '#ef4444', fontWeight: 'bold', marginTop: '4px' }}>Dàn trang hơi lâu 1 TÝ NHƯNG YÊN TÂM &lt;3S</span>
+                                    {__(__( 'Open an independent draft to edit the original template. ', 'ska-no-code-design' ), 'ska-no-code-design')}
+                                    <span style={{ display: 'block', color: '#ef4444', fontWeight: 'bold', marginTop: '4px' }}>{__( 'Laying out the page takes a little while, BUT PEACE OF MIND <3S', 'ska-no-code-design' )}</span>
                                 </p>
                                 <Button
                                     variant="primary"
                                     onClick={handleGlobalEdit}
                                     style={{ width: '100%', justifyContent: 'center' }}
                                 >
-                                    {__('Sửa Bản Gốc', 'ska-no-code-design')}
+                                    {__(__( 'Edit Original', 'ska-no-code-design' ), 'ska-no-code-design')}
                                 </Button>
                             </div>
 
                             <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px' }}>
-                                <h4 style={{ margin: '0 0 8px 0', fontSize: '13px' }}>{__('Local Edit (Chỉnh sửa tại chỗ)', 'ska-no-code-design')}</h4>
+                                <h4 style={{ margin: '0 0 8px 0', fontSize: '13px' }}>{__( '{__(\'Local Edit\', \'ska-no-code-design\')}', 'ska-no-code-design' )}</h4>
                                 <p style={{ margin: '0 0 12px 0', fontSize: '12px', color: '#64748b' }}>
-                                    {__('Phân rã Symbol này thành các khối cục bộ. Giúp bạn thay sửa nội dung bài viết này mà không ảnh hưởng tới mẫu gốc.', 'ska-no-code-design')}
+                                    {__(__( 'Decompose this Symbol into local blocks. ', 'ska-no-code-design' ), 'ska-no-code-design')}
                                 </p>
                                 <Button
                                     variant="secondary"
                                     onClick={handleDetach}
                                     style={{ width: '100%', justifyContent: 'center' }}
                                 >
-                                    {__('Phân Rã Symbol (Detach)', 'ska-no-code-design')}
+                                    {__(__( 'Symbol Decay (Detach)', 'ska-no-code-design' ), 'ska-no-code-design')}
                                 </Button>
                             </div>
                         </>
@@ -181,7 +181,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                         <strong style={{ fontSize: '16px', color: '#1e293b' }}>Ska Symbol Placeholder</strong>
                     </div>
                     <div style={{ fontSize: '13px' }}>
-                        ID Tham Chiếu: <code>Chưa có ID</code>
+                        ID Tham Chiếu: <code>{__( 'No ID yet', 'ska-no-code-design' )}</code>
                     </div>
                     <p style={{ marginTop: '12px', fontSize: '12px', fontStyle: 'italic', color: '#64748b' }}>
                         Vui lòng chọn Ska Symbol bên cột Settings để render nội dung.

@@ -52,7 +52,7 @@ export const SkaLinkControl = ({ link, onChange }) => {
                                     updateLink({ url: 'https://' + val });
                                 }
                             }}
-                            placeholder="https://... hoặc /path"
+                            placeholder=__( 'https://... or /path', 'ska-no-code-design' )
                             __nextHasNoMarginBottom
                         />
                     ) : (

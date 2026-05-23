@@ -44,7 +44,7 @@ class Design_Workspace_UI {
         add_submenu_page(
             'ska-system-dashboard', 
             'Design Workspace',     
-            'Trình thiết kế',     
+            __( 'Designer submission', 'ska-no-code-design' ),     
             'manage_options',       
             'ska-design-workspace', 
             [ $this, 'render_page' ], 
@@ -57,7 +57,7 @@ class Design_Workspace_UI {
         if ( file_exists( $view_path ) ) {
             require_once $view_path;
         } else {
-            echo '<div class="wrap"><h2>Lỗi: Không tìm thấy giao diện Workspace.</h2></div>';
+            echo __( '<div class=\"wrap\"><h2>Error: Workspace interface not found.</h2></div>', 'ska-no-code-design' );
         }
     }
 }

@@ -32,7 +32,7 @@ const withOrganismSaveButton = createHigherOrderComponent((BlockEdit) => {
 
         const handleSaveOrganism = async () => {
             if (!organismName.trim()) {
-                alert('Vui lòng nhập tên Organism');
+                alert(__( 'Please enter the name Organism', 'ska-no-code-design' ));
                 return;
             }
 
@@ -89,11 +89,11 @@ const withOrganismSaveButton = createHigherOrderComponent((BlockEdit) => {
                         );
                     }
                 } else {
-                    throw new Error(response?.data?.message || 'Lỗi không xác định');
+                    throw new Error(response?.data?.message || __( 'Unknown error', 'ska-no-code-design' ));
                 }
             } catch (error) {
                 console.error(error);
-                alert(`Lỗi khi lưu Organism: ${error.message || 'Lỗi server'}`);
+                alert(`Lỗi khi lưu Organism: ${error.message || __( 'Server error', 'ska-no-code-design' )}`);
             } finally {
                 setIsSaving(false);
             }
@@ -106,7 +106,7 @@ const withOrganismSaveButton = createHigherOrderComponent((BlockEdit) => {
                     <ToolbarGroup>
                         <ToolbarButton
                             icon={<span className="material-symbols-outlined" style={{fontFamily: 'Material Symbols Outlined'}}>magic_button</span>}
-                            label={__('Lưu Organism (Ska Symbol)', 'ska-no-code-design')}
+                            label={__(__( 'Save Organism (Ska Symbol)', 'ska-no-code-design' ), 'ska-no-code-design')}
                             onClick={togglePopover}
                             isActive={isPopoverVisible}
                         />
@@ -124,10 +124,10 @@ const withOrganismSaveButton = createHigherOrderComponent((BlockEdit) => {
                                 Lưu thành Ska Organism
                             </div>
                             <TextControl
-                                label="Tên Organism"
+                                label=__( 'Name Organism', 'ska-no-code-design' )
                                 value={organismName}
                                 onChange={(value) => setOrganismName(value)}
-                                placeholder="Nhập tên..."
+                                placeholder=__( 'Enter name...', 'ska-no-code-design' )
                             />
                             {(() => {
                                 const data = window.skaOrganismsCache || {};
@@ -135,7 +135,7 @@ const withOrganismSaveButton = createHigherOrderComponent((BlockEdit) => {
                                     org.name && org.name.trim().toLowerCase() === organismName.trim().toLowerCase()
                                 );
                                 if (isDuplicate) {
-                                    return <div style={{ color: '#ef4444', fontSize: '12px', marginTop: '-8px' }}>Tên này đã tồn tại!</div>;
+                                    return <div style={{ color: '#ef4444', fontSize: '12px', marginTop: '-8px' }}>{__( 'This name already exists!', 'ska-no-code-design' )}</div>;
                                 }
                                 return null;
                             })()}
@@ -158,7 +158,7 @@ const withOrganismSaveButton = createHigherOrderComponent((BlockEdit) => {
                                         color: '#fff'
                                     }}
                                 >
-                                    {isSaving ? 'Đang lưu...' : 'Lưu Block'}
+                                    {isSaving ? __( 'Saving...', 'ska-no-code-design' ) : __( 'Save Block', 'ska-no-code-design' )}
                                 </Button>
                             </div>
                             <p style={{ margin: '0', fontSize: '11px', color: '#64748b' }}>

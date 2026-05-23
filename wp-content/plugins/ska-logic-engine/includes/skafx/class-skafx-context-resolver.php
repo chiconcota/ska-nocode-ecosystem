@@ -180,7 +180,7 @@ class SkaFX_Context_Resolver {
 
         // Phát hiện XUNG ĐỘT (Collision)
         if ( count( $matches ) > 1 ) {
-            throw new \Exception( sprintf( "Trùng lặp Context: Tìm thấy %d bảng có đuôi '%s' (%s). Vui lòng gõ rõ Tên App (VD: [appA.%s.tencot]) để hệ thống phân biệt.", count($matches), $model_query, implode(', ', $matches), $model_query ) );
+            throw new \Exception( sprintf( __( 'Duplicate Context: Found %d tables with extension \'%s\' (%s). ', 'ska-logic-engine' ), count($matches), $model_query, implode(', ', $matches), $model_query ) );
         }
         
         if ( count( $matches ) === 1 ) {

@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { apiFetch } from '../utils/api.js';
 
 export function attachSchemaEvents() {
@@ -11,13 +12,13 @@ export function attachSchemaEvents() {
             
             const labelValue = labelInput.value.trim();
             if(!labelValue) {
-                alert('Tên cột không được để trống.');
+                alert(__( 'Column names cannot be empty.', 'ska-data-pro' ));
                 labelInput.focus();
                 return;
             }
 
             addColBtn.disabled = true;
-            addColBtn.innerHTML = '<span class="dashicons dashicons-update-alt" style="animation: spin 1s infinite linear;"></span> Đang kết nối...';
+            addColBtn.innerHTML = __( '<span class=\"dashicons dashicons-update-alt\" style=\"animation: spin 1s infinite linear;\"></span> Connecting...', 'ska-data-pro' );
 
             let optsValue = '';
             if (typeInput.value === 'relation') {
@@ -27,9 +28,9 @@ export function attachSchemaEvents() {
                 const tgtVal = document.getElementById('ska-col-options-rollup-target').value;
                 optsValue = relVal + ',' + tgtVal;
                 if (!relVal || !tgtVal) {
-                    alert('Bạn cần chọn đầy đủ Cột Tham Chiếu và Cột Tra Cứu cho chức năng Rollup!');
+                    alert(__( 'You need to select the full Reference Column and Lookup Column for the Rollup function!', 'ska-data-pro' ));
                     addColBtn.disabled = false;
-                    addColBtn.innerHTML = 'Tạo Trường Dữ Liệu';
+                    addColBtn.innerHTML = __( 'Create Data Field', 'ska-data-pro' );
                     return;
                 }
             } else {
@@ -45,9 +46,9 @@ export function attachSchemaEvents() {
             if (res.success) {
                 window.location.reload(); 
             } else {
-                alert(res.data?.message || 'Có lỗi xảy ra');
+                alert(res.data?.message || __( 'An error occurred', 'ska-data-pro' ));
                 addColBtn.disabled = false;
-                addColBtn.innerHTML = 'Tạo Trường Dữ Liệu';
+                addColBtn.innerHTML = __( 'Create Data Field', 'ska-data-pro' );
             }
         });
     }
@@ -69,17 +70,17 @@ export function attachSchemaEvents() {
                 opts = relVal + ',' + tgtVal;
                 
                 if (!relVal || !tgtVal) {
-                    alert('Bạn cần chọn đầy đủ Cột Tham Chiếu và Cột Tra Cứu cho chức năng Rollup!');
+                    alert(__( 'You need to select the full Reference Column and Lookup Column for the Rollup function!', 'ska-data-pro' ));
                     return;
                 }
             } else {
                 opts = document.getElementById('ska-edit-col-options').value;
             }
 
-            if(!label) { alert('Tên không được trống.'); return; }
+            if(!label) { alert(__( 'Name cannot be empty.', 'ska-data-pro' )); return; }
 
             updateColBtn.disabled = true;
-            updateColBtn.innerText = 'Đang đúc lại lò...';
+            updateColBtn.innerText = __( 'Recasting furnace...', 'ska-data-pro' );
 
             const res = await apiFetch('ska_data_update_column', {
                 col: slug,
@@ -90,9 +91,9 @@ export function attachSchemaEvents() {
 
             if (res.success) window.location.reload();
             else { 
-                alert(res.data?.message || 'Có lỗi xảy ra'); 
+                alert(res.data?.message || __( 'An error occurred', 'ska-data-pro' )); 
                 updateColBtn.disabled = false; 
-                updateColBtn.innerText = 'Lưu Thuộc Tính'; 
+                updateColBtn.innerText = __( 'Save Attributes', 'ska-data-pro' ); 
             }
         });
     }
@@ -104,7 +105,7 @@ export function attachSchemaEvents() {
             const slug = document.getElementById('ska-del-col-slug').value;
 
             exDelColBtn.disabled = true;
-            exDelColBtn.innerText = 'Đang thi hành án...';
+            exDelColBtn.innerText = __( 'Judgment in progress...', 'ska-data-pro' );
 
             const res = await apiFetch('ska_data_drop_column', {
                 col: slug
@@ -112,9 +113,9 @@ export function attachSchemaEvents() {
 
             if (res.success) window.location.reload();
             else { 
-                alert(res.data?.message || 'Lỗi'); 
+                alert(res.data?.message || __( 'Error', 'ska-data-pro' )); 
                 exDelColBtn.disabled = false; 
-                exDelColBtn.innerText = 'Trảm (Xóa Mãi Mãi)'; 
+                exDelColBtn.innerText = __( 'Beheaded (Deleted Forever)', 'ska-data-pro' ); 
             }
         });
     }
@@ -127,9 +128,9 @@ export function attachSchemaEvents() {
             const icon   = document.getElementById('ska-new-table-icon').value;
             const app_id = document.getElementById('ska-new-table-group').value;
 
-            if(!name) { alert('Vui lòng điền tên bảng (vd: Khách Hàng).'); return; }
+            if(!name) { alert(__( 'Please fill in the table name (eg: Customer).', 'ska-data-pro' )); return; }
             exCreateTblBtn.disabled = true;
-            exCreateTblBtn.innerText = 'Đang khởi tạo...';
+            exCreateTblBtn.innerText = __( 'Initializing...', 'ska-data-pro' );
 
             const res = await apiFetch('ska_data_create_table', {
                 name: name,
@@ -141,9 +142,9 @@ export function attachSchemaEvents() {
                 const baseUrl = window.location.href.split('&table=')[0];
                 window.location.href = baseUrl + '&table=' + res.data.table;
             } else { 
-                alert(res.data?.message || 'Lỗi'); 
+                alert(res.data?.message || __( 'Error', 'ska-data-pro' )); 
                 exCreateTblBtn.disabled = false; 
-                exCreateTblBtn.innerText = 'Tạo Bảng'; 
+                exCreateTblBtn.innerText = __( 'Create Table', 'ska-data-pro' ); 
             }
         });
     }
@@ -157,9 +158,9 @@ export function attachSchemaEvents() {
             const icon   = document.getElementById('ska-rename-table-icon').value;
             const app_id = document.getElementById('ska-rename-table-group').value;
 
-            if(!name) { alert('Vui lòng điền tên bảng.'); return; }
+            if(!name) { alert(__( 'Please fill in the table name.', 'ska-data-pro' )); return; }
             exRenameTblBtn.disabled = true;
-            exRenameTblBtn.innerText = 'Đang cập nhật...';
+            exRenameTblBtn.innerText = __( 'Updating...', 'ska-data-pro' );
 
             const res = await apiFetch('ska_data_rename_table', {
                 table: slug, // Rename action usually requires table override if it operates on different table, apiFetch auto appends config.tableId, so we pass explicit 'table' var here.
@@ -170,9 +171,9 @@ export function attachSchemaEvents() {
 
             if (res.success) window.location.reload();
             else { 
-                alert(res.data?.message || 'Lỗi'); 
+                alert(res.data?.message || __( 'Error', 'ska-data-pro' )); 
                 exRenameTblBtn.disabled = false; 
-                exRenameTblBtn.innerText = 'Lưu Thông Tin'; 
+                exRenameTblBtn.innerText = __( 'Save Information', 'ska-data-pro' ); 
             }
         });
     }
@@ -195,7 +196,7 @@ export function attachSchemaEvents() {
             const slug = document.getElementById('ska-del-tbl-slug').value;
 
             exDelTblBtn.disabled = true;
-            exDelTblBtn.innerHTML = 'Đang phi tang...';
+            exDelTblBtn.innerHTML = __( 'Destroying...', 'ska-data-pro' );
 
             const res = await apiFetch('ska_data_drop_table', {
                 table: slug
@@ -204,9 +205,9 @@ export function attachSchemaEvents() {
             if (res.success) {
                 window.location.href = window.location.href.split('&table=')[0];
             } else { 
-                alert(res.data?.message || 'Lỗi'); 
+                alert(res.data?.message || __( 'Error', 'ska-data-pro' )); 
                 exDelTblBtn.disabled = false; 
-                exDelTblBtn.innerHTML = 'Chấp nhận Rủi ro & Xóa'; 
+                exDelTblBtn.innerHTML = __( 'Accept Risk & Delete', 'ska-data-pro' ); 
             }
         });
     }
@@ -263,7 +264,7 @@ export function attachSchemaEvents() {
             const redirectUrl = document.getElementById('ska-portal-unauthorized-redirect') ? document.getElementById('ska-portal-unauthorized-redirect').value.trim() : '';
 
             if (active && !slug) {
-                alert('Vui lòng điền URL Slug cho Portal.');
+                alert(__( 'Please fill in the Slug URL for Portal.', 'ska-data-pro' ));
                 return;
             }
 
@@ -275,7 +276,7 @@ export function attachSchemaEvents() {
 
             exPortalSettingsBtn.disabled = true;
             const originalText = exPortalSettingsBtn.innerHTML;
-            exPortalSettingsBtn.innerHTML = 'Đang lưu...';
+            exPortalSettingsBtn.innerHTML = __( 'Saving...', 'ska-data-pro' );
 
             const res = await apiFetch('ska_data_update_portal_settings', {
                 table: tableId,
@@ -289,7 +290,7 @@ export function attachSchemaEvents() {
             if (res.success) {
                 window.location.reload();
             } else {
-                alert(res.data?.message || 'Có lỗi xảy ra trong quá trình lưu.');
+                alert(res.data?.message || __( 'An error occurred during saving.', 'ska-data-pro' ));
                 exPortalSettingsBtn.disabled = false;
                 exPortalSettingsBtn.innerHTML = originalText;
             }

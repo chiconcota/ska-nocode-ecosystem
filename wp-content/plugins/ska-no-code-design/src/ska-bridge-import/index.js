@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
 import { useState } from '@wordpress/element';
@@ -29,7 +30,7 @@ registerBlockType( metadata.name, {
                 <Placeholder 
                     icon="cloud-upload" 
                     label="Ska html2tailwind"
-                    instructions="Dán mã HTML/Tailwind của bạn vào đây để tự động chuyển đổi sang Ska Blocks."
+                    instructions=__( 'Paste your HTML/Tailwind code here to automatically convert to Ska Blocks.', 'ska-no-code-design' )
                 >
                     <TextareaControl
                         label="Source HTML"

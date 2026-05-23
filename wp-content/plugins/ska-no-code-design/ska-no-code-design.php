@@ -15,6 +15,11 @@ defined( 'ABSPATH' ) || exit;
 define( 'SKA_DESIGN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SKA_DESIGN_URL', plugin_dir_url( __FILE__ ) );
 
+// Load Text Domain
+add_action( 'plugins_loaded', function() {
+    load_plugin_textdomain( 'ska-no-code-design', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+} );
+
 // 4. Load System Framework (Drop-in, Must load early)
 require_once SKA_DESIGN_PATH . 'inc/ska-system-framework/init.php';
 

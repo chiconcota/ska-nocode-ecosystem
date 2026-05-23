@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import BaseCell from '../BaseCell.js';
 
 export default class GalleryCell extends BaseCell {
@@ -52,7 +53,7 @@ export default class GalleryCell extends BaseCell {
             
             if (selectedArray.length === 0) {
                 grid.className = 'text-center p-4 text-xs text-gray-400 italic bg-gray-50 rounded border border-dashed border-gray-200';
-                grid.innerText = 'Trống. Xin hãy thêm ảnh vào.';
+                grid.innerText = __( 'Drum. ', 'ska-data-pro' );
             }
             
             popover.appendChild(grid);
@@ -62,11 +63,11 @@ export default class GalleryCell extends BaseCell {
             
             const addBtn = document.createElement('button');
             addBtn.className = 'flex-1 bg-white border border-emerald-500 text-emerald-600 hover:bg-emerald-50 text-xs py-1.5 rounded font-bold transition-colors flex justify-center items-center shadow-sm';
-            addBtn.innerHTML = '<span class="dashicons dashicons-plus" style="font-size: 14px; margin-top: -1px; margin-right: 2px;"></span> Thêm Ảnh';
+            addBtn.innerHTML = __( '<span class=\"dashicons dashicons-plus\" style=\"font-size: 14px; margin-top: -1px; margin-right: 2px;\"></span> Add Photo', 'ska-data-pro' );
             addBtn.onclick = (e) => {
                 e.stopPropagation();
                 if (typeof wp !== 'undefined' && wp.media) {
-                    let file_frame = wp.media({ title: 'Chọn Ảnh', button: { text: 'Thêm' }, multiple: false });
+                    let file_frame = wp.media({ title: __( 'Select Photo', 'ska-data-pro' ), button: { text: __( 'More', 'ska-data-pro' ) }, multiple: false });
                     
                     file_frame.on('open', () => { isMediaOpen = true; });
                     file_frame.on('close', () => { setTimeout(() => { isMediaOpen = false; }, 200); });
@@ -78,13 +79,13 @@ export default class GalleryCell extends BaseCell {
                     });
                     file_frame.open();
                 } else {
-                    alert('Chưa tải được wp.media');
+                    alert(__( 'Wp.media has not been loaded yet', 'ska-data-pro' ));
                 }
             };
             
             const applyBtn = document.createElement('button');
             applyBtn.className = 'flex-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs py-1.5 rounded font-bold transition-colors flex justify-center items-center shadow-sm';
-            applyBtn.innerHTML = '<span class="dashicons dashicons-saved" style="font-size: 14px; margin-top: -1px; margin-right: 2px;"></span> Đóng Dấu';
+            applyBtn.innerHTML = __( '<span class=\"dashicons dashicons-saved\" style=\"font-size: 14px; margin-top: -1px; margin-right: 2px;\"></span> Stamp', 'ska-data-pro' );
             applyBtn.onclick = async (e) => {
                 e.stopPropagation();
                 const newCsv = selectedArray.join(', ');
