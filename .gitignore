@@ -28,3 +28,9 @@ node_modules/
 .DS_Store
 .vscode/
 Thumbs.db
+.gemini/
+
+# WP Generated / Log files
+wp-content/debug.log
+wp-content/languages/
+
