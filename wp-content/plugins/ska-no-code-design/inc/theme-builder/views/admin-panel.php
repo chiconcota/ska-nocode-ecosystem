@@ -17,7 +17,7 @@
                             class="w-full text-left px-3 py-2 rounded-lg text-sm border-0 cursor-pointer flex items-center justify-between transition-colors">
                             <span class="flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[18px]">apps</span>
-                                Tất cả App
+                                <?php esc_html_e( 'All Apps', 'ska-no-code-design' ); ?>
                             </span>
                             <span class="bg-slate-100 text-slate-500 text-xs py-0.5 px-2 rounded-full font-bold" x-text="templates.length"></span>
                         </button>
@@ -75,7 +75,7 @@
                 <!-- Create Button -->
                 <button @click="openCreateModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-sm border-0 cursor-pointer transition-all flex items-center gap-2">
                     <span class="material-symbols-outlined text-[20px]">add</span>
-                    Tạo Template
+                    <?php esc_html_e( 'Create Template', 'ska-no-code-design' ); ?>
                 </button>
             </div>
 
@@ -102,11 +102,11 @@
                                     <div x-show="openMenu" x-transition.opacity class="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-lg z-10 py-1">
                                         <button @click="editTemplate(template.id)" class="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 border-0 bg-transparent cursor-pointer">
                                             <span class="material-symbols-outlined text-[18px]">edit</span>
-                                            Sửa Settings
+                                            <?php esc_html_e( 'Edit Settings', 'ska-no-code-design' ); ?>
                                         </button>
                                         <button @click="deleteTemplate(template.id)" class="w-full text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 flex items-center gap-2 border-0 bg-transparent cursor-pointer">
                                             <span class="material-symbols-outlined text-[18px]">delete</span>
-                                            Xóa Template
+                                            <?php esc_html_e( 'Delete Template', 'ska-no-code-design' ); ?>
                                         </button>
                                     </div>
                                 </div>
@@ -123,11 +123,11 @@
                         <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
                             <span class="text-xs text-slate-400 flex items-center gap-1">
                                 <span class="material-symbols-outlined text-[14px]">schedule</span>
-                                 Cập nhật: <span x-text="template.updated_at || '<?php echo esc_js( __( 'Recently', 'ska-no-code-design' ) ); ?>'"></span>
+                                 <?php esc_html_e( 'Updated:', 'ska-no-code-design' ); ?> <span x-text="template.updated_at || '<?php echo esc_js( __( 'Recently', 'ska-no-code-design' ) ); ?>'"></span>
                             </span>
                             <a :href="getEditorUrl(template.id)" class="text-indigo-600 hover:text-indigo-800 font-bold text-sm flex items-center gap-1 no-underline">
                                 <span class="material-symbols-outlined text-[18px]">design_services</span>
-                                Mở Editor
+                                <?php esc_html_e( 'Open Editor', 'ska-no-code-design' ); ?>
                             </a>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
                     <span class="material-symbols-outlined text-4xl text-slate-300 mb-2 block">inventory_2</span>
                     <p class="text-slate-500 font-medium"><?php esc_html_e( 'There are no templates in this category yet.', 'ska-no-code-design' ); ?></p>
                     <button @click="openCreateModal()" class="mt-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-2 px-4 rounded-lg shadow-sm transition-all border-0 cursor-pointer">
-                        Tạo template đầu tiên
+                        <?php esc_html_e( 'Create first template', 'ska-no-code-design' ); ?>
                     </button>
                 </div>
             </div>
@@ -204,7 +204,7 @@
                                 <p class="text-[11px] text-slate-500 m-0 mt-0.5"><?php esc_html_e( 'Determines where this Template appears.', 'ska-no-code-design' ); ?></p>
                             </div>
                             <button @click.prevent="addRule()" class="text-xs bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-2 py-1.5 rounded-md font-bold border-0 cursor-pointer flex items-center gap-1 transition-colors">
-                                <span class="material-symbols-outlined text-[14px]">add</span> Thêm Rule
+                                <span class="material-symbols-outlined text-[14px]">add</span> <?php esc_html_e( 'Add Rule', 'ska-no-code-design' ); ?>
                             </button>
                         </div>
                         
@@ -246,7 +246,7 @@
                             </template>
                             
                             <div x-show="rules.length === 0" class="text-center py-4 text-sm text-slate-500 italic bg-white rounded-lg border border-slate-200 border-dashed">
-                                Chưa có điều kiện nào. Template sẽ hiển thị theo Location mặc định.
+                                <?php esc_html_e( 'No conditions yet. Template will display on default Location.', 'ska-no-code-design' ); ?>
                             </div>
                         </div>
                     </div>
@@ -263,7 +263,7 @@
 
                 <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-slate-50">
                     <button @click="closeModal()" class="px-5 py-2 rounded-xl text-slate-600 font-bold hover:bg-slate-200 bg-slate-100 border-0 cursor-pointer transition-all">
-                        Hủy
+                        <?php esc_html_e( 'Cancel', 'ska-no-code-design' ); ?>
                     </button>
                     <button @click="saveTemplate()" class="px-5 py-2 rounded-xl text-white font-bold bg-indigo-600 hover:bg-indigo-700 shadow-sm border-0 cursor-pointer transition-all flex items-center gap-2">
                         <span x-show="isLoading" class="material-symbols-outlined animate-spin text-[18px]">sync</span>
@@ -292,7 +292,7 @@
                     <button @click="closeFolderModal()" class="px-4 py-2 rounded-xl text-slate-600 font-bold hover:bg-slate-200 bg-slate-100 border-0 cursor-pointer transition-all"><?php esc_html_e( 'Cancel', 'ska-no-code-design' ); ?></button>
                     <button @click="saveFolder()" class="px-4 py-2 rounded-xl text-white font-bold bg-indigo-600 hover:bg-indigo-700 shadow-sm border-0 cursor-pointer transition-all flex items-center gap-2">
                         <span x-show="isFolderLoading" class="material-symbols-outlined animate-spin text-[18px]">sync</span>
-                        Lưu
+                        <?php esc_html_e( 'Save', 'ska-no-code-design' ); ?>
                     </button>
                 </div>
             </div>
@@ -371,9 +371,9 @@ document.addEventListener('alpine:init', () => {
             { value: 'is_search', label: '<?php echo esc_js( __( 'Search results (Search)', 'ska-no-code-design' ) ); ?>' },
             { value: 'is_portal', label: '<?php echo esc_js( __( 'All App Portals', 'ska-no-code-design' ) ); ?>' },
             { value: 'specific_portal', label: '<?php echo esc_js( __( 'Specific App Portal (According to Slug)', 'ska-no-code-design' ) ); ?>' },
-            { value: 'specific_portal_list', label: 'App Portal List View (Theo Slug)' },
-            { value: 'specific_portal_detail', label: 'App Portal Detail View (Theo Slug)' },
-            { value: 'specific_portal_create', label: 'App Portal Create View (Theo Slug)' }
+            { value: 'specific_portal_list', label: '<?php echo esc_js( __( 'App Portal List View (By Slug)', 'ska-no-code-design' ) ); ?>' },
+            { value: 'specific_portal_detail', label: '<?php echo esc_js( __( 'App Portal Detail View (By Slug)', 'ska-no-code-design' ) ); ?>' },
+            { value: 'specific_portal_create', label: '<?php echo esc_js( __( 'App Portal Create View (By Slug)', 'ska-no-code-design' ) ); ?>' }
         ],
 
         apiUrl: '<?php echo esc_url( rest_url( 'ska-builder/v1/theme-templates' ) ); ?>',
@@ -678,7 +678,7 @@ document.addEventListener('alpine:init', () => {
                 if (res.success) {
                     this.folders = newFolders;
                 } else {
-                    alert('Lỗi lưu thư mục: ' + (res.data || ''));
+                    alert('<?php echo esc_js( __( 'Folder save error:', 'ska-no-code-design' ) ); ?> ' + (res.data || ''));
                 }
             } catch (e) {
                 alert('<?php echo esc_js( __( 'Connection error when saving folder.', 'ska-no-code-design' ) ); ?>');

@@ -614,7 +614,7 @@ msgstr "Không thể xóa template."
 msgid "Delete this folder? "
 msgstr "Xóa thư mục này? Các template bên trong sẽ được chuyển về Core/Global."
 
-msgid "Error saving folder:"
+msgid "Folder save error:"
 msgstr "Lỗi lưu thư mục:"
 
 msgid "Connection error when saving folder."
@@ -1138,4 +1138,43 @@ msgstr "Checkbox List (Chọn nhiều)"
 
 msgid "Allows multiple selection (Multi-select)"
 msgstr "Cho phép chọn nhiều (Multi-select)"
+
+msgid "Save"
+msgstr "Lưu"
+
+msgid "All Apps"
+msgstr "Tất cả App"
+
+msgid "Create Template"
+msgstr "Tạo Template"
+
+msgid "Edit Settings"
+msgstr "Sửa Settings"
+
+msgid "Delete Template"
+msgstr "Xóa Template"
+
+msgid "Updated:"
+msgstr "Cập nhật:"
+
+msgid "Open Editor"
+msgstr "Mở Editor"
+
+msgid "Create first template"
+msgstr "Tạo template đầu tiên"
+
+msgid "Add Rule"
+msgstr "Thêm Rule"
+
+msgid "No conditions yet. Template will display on default Location."
+msgstr "Chưa có điều kiện nào. Template sẽ hiển thị theo Location mặc định."
+
+msgid "App Portal List View (By Slug)"
+msgstr "App Portal List View (Theo Slug)"
+
+msgid "App Portal Detail View (By Slug)"
+msgstr "App Portal Detail View (Theo Slug)"
+
+msgid "App Portal Create View (By Slug)"
+msgstr "App Portal Create View (Theo Slug)"
 
