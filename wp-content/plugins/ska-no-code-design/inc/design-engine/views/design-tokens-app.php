@@ -45,7 +45,7 @@ defined( 'ABSPATH' ) || exit;
         <div class="p-4 border-t border-slate-200">
             <button @click="saveTokens" :disabled="isSaving" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium border-0 cursor-pointer disabled:opacity-50">
                 <span class="material-symbols-outlined text-[18px]" x-text="isSaving ? 'sync' : 'save'" :class="isSaving ? 'animate-spin' : ''"></span>
-                <span x-text=__( 'isSaved ? ', 'ska-no-code-design' )></span>
+                <span x-text="isSaving ? '<?php echo esc_js( __( 'Saving...', 'ska-no-code-design' ) ); ?>' : '<?php echo esc_js( __( 'Save Changes', 'ska-no-code-design' ) ); ?>'"></span>
             </button>
         </div>
     </div>
@@ -63,23 +63,23 @@ defined( 'ABSPATH' ) || exit;
                 </div>
                 
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Site Logo (Brand)</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Site Logo (Brand)', 'ska-no-code-design' ); ?></label>
                     <div class="flex gap-4 items-start">
                         <div class="w-32 h-32 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center bg-slate-50 overflow-hidden relative group">
                             <img x-show="formData.brand.logoUrl" :src="formData.brand.logoUrl" class="max-w-full max-h-full object-contain" />
                             <span x-show="!formData.brand.logoUrl" class="material-symbols-outlined text-[40px] text-slate-300">image</span>
                             <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
-                                <button @click.prevent="openLogoUploader" class="w-8 h-8 rounded-full bg-white text-slate-800 flex items-center justify-center border-0 cursor-pointer shadow-sm hover:scale-110 transition" title="Upload">
+                                <button @click.prevent="openLogoUploader" class="w-8 h-8 rounded-full bg-white text-slate-800 flex items-center justify-center border-0 cursor-pointer shadow-sm hover:scale-110 transition" title="<?php echo esc_attr( __( 'Upload', 'ska-no-code-design' ) ); ?>">
                                     <span class="material-symbols-outlined text-[18px]">upload</span>
                                 </button>
-                                <button x-show="formData.brand.logoUrl" @click.prevent="formData.brand.logoUrl = ''" class="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center border-0 cursor-pointer shadow-sm hover:scale-110 transition" title="Remove">
+                                <button x-show="formData.brand.logoUrl" @click.prevent="formData.brand.logoUrl = ''" class="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center border-0 cursor-pointer shadow-sm hover:scale-110 transition" title="<?php echo esc_attr( __( 'Remove', 'ska-no-code-design' ) ); ?>">
                                     <span class="material-symbols-outlined text-[18px]">delete</span>
                                 </button>
                             </div>
                         </div>
                         <div class="flex-1 space-y-3">
-                            <input type="text" x-model="formData.brand.logoUrl" placeholder=__( 'Logo URL', 'ska-no-code-design' ) class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none bg-slate-50" readonly>
-                            <p class="text-xs text-slate-500 leading-relaxed">Tải lên Logo chính của dự án. Logo này sẽ được xuất ra <code class="bg-slate-100 px-1 rounded text-slate-700">tokens.json</code> để Frontend dễ dàng hiển thị tự động mà không cần truy vấn Database của WordPress.</p>
+                            <input type="text" x-model="formData.brand.logoUrl" placeholder="<?php echo esc_attr( __( 'Logo URL', 'ska-no-code-design' ) ); ?>" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none bg-slate-50" readonly>
+                            <p class="text-xs text-slate-500 leading-relaxed"><?php echo sprintf( esc_html__( 'Upload the main logo of the project. This logo will be exported to %s for Frontend to easily display automatically without querying WordPress Database.', 'ska-no-code-design' ), '<code class="bg-slate-100 px-1 rounded text-slate-700">tokens.json</code>' ); ?></p>
                         </div>
                     </div>
                 </div>
@@ -93,7 +93,7 @@ defined( 'ABSPATH' ) || exit;
                         <p class="text-slate-500 mt-2"><?php esc_html_e( 'System color palette defines Brand Identity, applied automatically via Tailwind.', 'ska-no-code-design' ); ?></p>
                     </div>
                     <button @click="addColor()" class="px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-semibold transition border-0 cursor-pointer flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">add</span> Thêm Màu
+                        <span class="material-symbols-outlined text-[18px]">add</span> <?php esc_html_e( 'Add Color', 'ska-no-code-design' ); ?>
                     </button>
                 </div>
                 
@@ -125,7 +125,7 @@ defined( 'ABSPATH' ) || exit;
                         <p class="text-slate-500 mt-2"><?php esc_html_e( 'Separate color values ​​for Dark Mode. ', 'ska-no-code-design' ); ?></p>
                     </div>
                     <button @click="addDarkColor()" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-900 rounded-lg text-sm font-semibold transition border-0 cursor-pointer flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">add</span> Thêm Màu Tối
+                        <span class="material-symbols-outlined text-[18px]">add</span> <?php esc_html_e( 'Add Dark Color', 'ska-no-code-design' ); ?>
                     </button>
                 </div>
                 
@@ -159,25 +159,25 @@ defined( 'ABSPATH' ) || exit;
             
             <div class="space-y-6">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Primary Font</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Primary Font', 'ska-no-code-design' ); ?></label>
                     <input type="text" x-model="formData.typography.primary" placeholder="e.g. 'Inter', sans-serif" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
                     <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Used for body text.', 'ska-no-code-design' ); ?></p>
                 </div>
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Secondary Font (Headings)</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Secondary Font (Headings)', 'ska-no-code-design' ); ?></label>
                     <input type="text" x-model="formData.typography.secondary" placeholder="e.g. 'Outfit', sans-serif" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
                     <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Used for Title tags H1, H2, H3...', 'ska-no-code-design' ); ?></p>
                 </div>
                 <!-- Custom Font Upload -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Custom Font Upload (.woff2)</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Custom Font Upload (.woff2)', 'ska-no-code-design' ); ?></label>
                     <div class="flex gap-3">
-                        <input type="text" x-model="formData.typography.customFontUrl" placeholder=__( 'URL of the .woff2 file', 'ska-no-code-design' ) class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none bg-slate-50" readonly>
-                        <button @click.prevent="openMediaUploader" class="shrink-0 px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-900 transition border-0 cursor-pointer flex items-center gap-2">
+                        <input type="text" x-model="formData.typography.customFontUrl" placeholder="<?php echo esc_attr( __( 'URL of the .woff2 file', 'ska-no-code-design' ) ); ?>" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none bg-slate-50" readonly>
+                        <button @click.prevent="openFontUploader" class="shrink-0 px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-900 transition border-0 cursor-pointer flex items-center gap-2">
                             <span class="material-symbols-outlined text-[18px]">upload</span> Upload
                         </button>
                         <button x-show="formData.typography.customFontUrl" @click.prevent="formData.typography.customFontUrl = ''" class="shrink-0 px-4 py-2 bg-rose-100 text-rose-700 rounded-lg text-sm font-medium hover:bg-rose-200 transition border-0 cursor-pointer flex items-center gap-2">
-                            Xóa
+                            <?php esc_html_e( 'Remove', 'ska-no-code-design' ); ?>
                         </button>
                     </div>
                     <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Upload font file in .woff2 format to integrate directly into Tailwind Compiler.', 'ska-no-code-design' ); ?></p>
@@ -185,7 +185,7 @@ defined( 'ABSPATH' ) || exit;
                 
                 <!-- Typography Scale Presets -->
                 <div class="mt-8 border-t border-slate-200 pt-8">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Typography Scale Presets</h3>
+                    <h3 class="text-lg font-bold text-slate-800 mb-4"><?php esc_html_e( 'Typography Scale Presets', 'ska-no-code-design' ); ?></h3>
                     <div class="space-y-4">
                         <template x-for="(val, key) in formData.typography_scale" :key="key">
                             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
@@ -205,14 +205,14 @@ defined( 'ABSPATH' ) || exit;
         <!-- Tab 3: Spacing & Tokens -->
         <div id="spacing" class="p-8 max-w-4xl mx-auto space-y-8">
             <div class="border-b border-slate-200 pb-5">
-                <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">Advanced Tokens</h2>
+                <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0"><?php esc_html_e( 'Advanced Tokens', 'ska-no-code-design' ); ?></h2>
                 <p class="text-slate-500 mt-2"><?php esc_html_e( 'Configure Global Tokens for large Grid System and UI Details.', 'ska-no-code-design' ); ?></p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Border Radius -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Global Border Radius</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Global Border Radius', 'ska-no-code-design' ); ?></label>
                     <select x-model="formData.tokens.borderRadius" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
                         <option value="0px"><?php esc_html_e( 'Square (0px)', 'ska-no-code-design' ); ?></option>
                         <option value="4px"><?php esc_html_e( 'Lightly rounded corners (4px)', 'ska-no-code-design' ); ?></option>
@@ -224,7 +224,7 @@ defined( 'ABSPATH' ) || exit;
 
                 <!-- Box Shadow -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Default Elevation (Shadow)</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Default Elevation (Shadow)', 'ska-no-code-design' ); ?></label>
                     <select x-model="formData.tokens.boxShadow" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
                         <option value="none"><?php esc_html_e( 'No shadow (Flat)', 'ska-no-code-design' ); ?></option>
                         <option value="0 1px 2px 0 rgb(0 0 0 / 0.05)"><?php esc_html_e( 'Super light matte (sm)', 'ska-no-code-design' ); ?></option>
@@ -236,14 +236,14 @@ defined( 'ABSPATH' ) || exit;
 
                 <!-- Container Width -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Container Max-Width</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Container Max-Width', 'ska-no-code-design' ); ?></label>
                     <input type="text" x-model="formData.tokens.containerWidth" placeholder="e.g. 1280px or 80rem" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
                     <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Maximum title width limit for Layout App.', 'ska-no-code-design' ); ?></p>
                 </div>
 
                 <!-- Base Transition Duration -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Base Transition Duration</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Base Transition Duration', 'ska-no-code-design' ); ?></label>
                     <select x-model="formData.tokens.transitionDuration" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
                         <option value="150ms"><?php esc_html_e( 'Instant/Snappy (150ms)', 'ska-no-code-design' ); ?></option>
                         <option value="300ms"><?php esc_html_e( 'Smooth / Smooth (300ms)', 'ska-no-code-design' ); ?></option>
@@ -254,14 +254,14 @@ defined( 'ABSPATH' ) || exit;
 
                 <!-- Global Block Gap -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Global Block Gap</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Global Block Gap', 'ska-no-code-design' ); ?></label>
                     <input type="text" x-model="formData.tokens.blockGap" placeholder="e.g. 1.5rem or 24px" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
                     <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Default vertical gap between blocks (Block Gap).', 'ska-no-code-design' ); ?></p>
                 </div>
 
                 <!-- Global Content Padding -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Global Content Padding</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Global Content Padding', 'ska-no-code-design' ); ?></label>
                     <input type="text" x-model="formData.tokens.contentPadding" placeholder="e.g. 1rem or 16px" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
                     <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Safe margins on the left/right sides of the content (Content Padding).', 'ska-no-code-design' ); ?></p>
                 </div>
@@ -272,11 +272,11 @@ defined( 'ABSPATH' ) || exit;
         <div id="components" class="p-8 max-w-4xl mx-auto space-y-8">
             <div class="border-b border-slate-200 pb-5 flex justify-between items-end">
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0">UI Presets</h2>
+                    <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0"><?php esc_html_e( 'UI Presets', 'ska-no-code-design' ); ?></h2>
                     <p class="text-slate-500 mt-2"><?php esc_html_e( 'Manage list of UI Presets (such as Button, Card, Badge). ', 'ska-no-code-design' ); ?></p>
                 </div>
                 <button @click="addComponentPreset()" class="px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-semibold transition border-0 cursor-pointer flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px]">add</span> Thêm Preset
+                    <span class="material-symbols-outlined text-[18px]">add</span> <?php esc_html_e( 'Add Preset', 'ska-no-code-design' ); ?>
                 </button>
             </div>
 
@@ -285,7 +285,7 @@ defined( 'ABSPATH' ) || exit;
                     <thead class="bg-slate-50 border-b border-slate-200">
                         <tr>
                             <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-1/4"><?php esc_html_e( 'Preset name', 'ska-no-code-design' ); ?></th>
-                            <th class="px-4 py-3 text-sm font-semibold text-slate-700">Tailwind Classes</th>
+                            <th class="px-4 py-3 text-sm font-semibold text-slate-700"><?php esc_html_e( 'Tailwind Classes', 'ska-no-code-design' ); ?></th>
                             <th class="px-4 py-3 text-sm font-semibold text-slate-700 w-16 text-center"><?php esc_html_e( 'Erase', 'ska-no-code-design' ); ?></th>
                         </tr>
                     </thead>
@@ -299,7 +299,7 @@ defined( 'ABSPATH' ) || exit;
                                     <textarea x-model="preset.value" rows="2" class="w-full border border-slate-300 rounded p-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none font-mono" placeholder="bg-blue-500 text-white..."></textarea>
                                 </td>
                                 <td class="px-4 py-4 text-center align-top">
-                                    <button @click="formData.components.splice(index, 1)" class="text-rose-400 hover:text-rose-600 transition bg-transparent border-0 cursor-pointer mt-2" title=__( 'Delete Presets', 'ska-no-code-design' )>
+                                    <button @click="formData.components.splice(index, 1)" class="text-rose-400 hover:text-rose-600 transition bg-transparent border-0 cursor-pointer mt-2" title="<?php echo esc_attr( __( 'Delete Preset', 'ska-no-code-design' ) ); ?>">
                                         <span class="material-symbols-outlined text-[20px]">delete</span>
                                     </button>
                                 </td>
@@ -307,7 +307,7 @@ defined( 'ABSPATH' ) || exit;
                         </template>
                         <tr x-show="formData.components.length === 0">
                             <td colspan="3" class="px-4 py-8 text-center text-slate-500 text-sm">
-                                Chưa có UI Preset nào. Hãy nhấn __( 'Add Presets', 'ska-no-code-design' ) để bắt đầu.
+                                <?php echo sprintf( esc_html__( 'There are no UI Presets yet. Please click %s to start.', 'ska-no-code-design' ), esc_html__( 'Add Preset', 'ska-no-code-design' ) ); ?>
                             </td>
                         </tr>
                     </tbody>
@@ -329,10 +329,10 @@ function skaDesignTokensApp() {
         activeTab: 'colors',
         isSaving: false,
         tabs: [
-            { id: 'colors', name: 'Brand & Colors', icon: 'palette' },
-            { id: 'typography', name: 'Typography', icon: 'match_case' },
-            { id: 'spacing', name: 'Advanced Tokens', icon: 'space_dashboard' },
-            { id: 'components', name: 'UI Components', icon: 'interests' },
+            { id: 'colors', name: '<?php echo esc_js( __( 'Brand & Colors', 'ska-no-code-design' ) ); ?>', icon: 'palette' },
+            { id: 'typography', name: '<?php echo esc_js( __( 'Typography', 'ska-no-code-design' ) ); ?>', icon: 'match_case' },
+            { id: 'spacing', name: '<?php echo esc_js( __( 'Advanced Tokens', 'ska-no-code-design' ) ); ?>', icon: 'space_dashboard' },
+            { id: 'components', name: '<?php echo esc_js( __( 'UI Components', 'ska-no-code-design' ) ); ?>', icon: 'interests' },
         ],
         formData: {
             brand: {
@@ -435,7 +435,7 @@ function skaDesignTokensApp() {
         },
 
         addComponentPreset() {
-            const newName = prompt(__( 'Enter a new UI Preset name (eg Button Primary, Hero Card...):', 'ska-no-code-design' ));
+            const newName = prompt('<?php echo esc_js( __( 'Enter a new UI Preset name (eg Button Primary, Hero Card...):', 'ska-no-code-design' ) ); ?>');
             if (!newName) return;
             this.formData.components.push({
                 name: newName,
@@ -443,22 +443,24 @@ function skaDesignTokensApp() {
             });
         },
 
+        logoUploaderInstance: null,
+        fontUploaderInstance: null,
+
         openLogoUploader() {
-            let mediaUploader;
-            if (mediaUploader) {
-                mediaUploader.open();
+            if (this.logoUploaderInstance) {
+                this.logoUploaderInstance.open();
                 return;
             }
-            mediaUploader = wp.media({
-                title: __( 'Choose Brand Logo', 'ska-no-code-design' ),
-                button: { text: __( 'Use this Logo', 'ska-no-code-design' ) },
+            this.logoUploaderInstance = wp.media({
+                title: '<?php echo esc_js( __( 'Choose Brand Logo', 'ska-no-code-design' ) ); ?>',
+                button: { text: '<?php echo esc_js( __( 'Use this Logo', 'ska-no-code-design' ) ); ?>' },
                 multiple: false
             });
-            mediaUploader.on('select', () => {
-                const attachment = mediaUploader.state().get('selection').first().toJSON();
+            this.logoUploaderInstance.on('select', () => {
+                const attachment = this.logoUploaderInstance.state().get('selection').first().toJSON();
                 this.formData.brand.logoUrl = attachment.url;
             });
-            mediaUploader.open();
+            this.logoUploaderInstance.open();
         },
 
         addColor() {
@@ -469,24 +471,21 @@ function skaDesignTokensApp() {
             this.darkColorsList.push({ key: 'new-color', value: '#1e293b' });
         },
 
-        openMediaUploader() {
-            let mediaUploader;
-            if (mediaUploader) {
-                mediaUploader.open();
+        openFontUploader() {
+            if (this.fontUploaderInstance) {
+                this.fontUploaderInstance.open();
                 return;
             }
-            mediaUploader = wp.media({
-                title: __( 'Select Custom Font (.woff2)', 'ska-no-code-design' ),
-                button: { text: __( 'Use this Font', 'ska-no-code-design' ) },
-                multiple: false,
-                // Uncomment the line below if you want to restrict to woff2 only (requires WP mime type support for woff2)
-                // library: { type: 'font/woff2' } 
+            this.fontUploaderInstance = wp.media({
+                title: '<?php echo esc_js( __( 'Select Custom Font (.woff2)', 'ska-no-code-design' ) ); ?>',
+                button: { text: '<?php echo esc_js( __( 'Use this Font', 'ska-no-code-design' ) ); ?>' },
+                multiple: false
             });
-            mediaUploader.on('select', () => {
-                const attachment = mediaUploader.state().get('selection').first().toJSON();
+            this.fontUploaderInstance.on('select', () => {
+                const attachment = this.fontUploaderInstance.state().get('selection').first().toJSON();
                 this.formData.typography.customFontUrl = attachment.url;
             });
-            mediaUploader.open();
+            this.fontUploaderInstance.open();
         },
 
         showToast(message, type = 'success') {
@@ -559,13 +558,13 @@ function skaDesignTokensApp() {
                 const res = await response.json();
                 
                 if (res.success) {
-                    this.showToast(__( 'Successfully saved Token & Generated Cache File!', 'ska-no-code-design' ));
+                    this.showToast('<?php echo esc_js( __( 'Successfully saved Token & Generated Cache File!', 'ska-no-code-design' ) ); ?>');
                 } else {
-                    this.showToast(res.message || __( 'Error saving data', 'ska-no-code-design' ), 'error');
+                    this.showToast(res.message || '<?php echo esc_js( __( 'Error saving data', 'ska-no-code-design' ) ); ?>', 'error');
                 }
             } catch (err) {
                 console.error(err);
-                this.showToast(__( 'Network error', 'ska-no-code-design' ), 'error');
+                this.showToast('<?php echo esc_js( __( 'Network error', 'ska-no-code-design' ) ); ?>', 'error');
             } finally {
                 this.isSaving = false;
             }

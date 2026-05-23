@@ -1,19 +1,19 @@
-# CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v2.0.0)
+# CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v2.1.0)
 *Ngày cập nhật: 2026-05-23*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Công việc**: Quốc tế hóa (i18n) hoàn toàn các nhãn UI và các tùy chọn điều kiện hiển thị trên Dashboard Theme Builder và Design Workspace.
+- **Công việc**: Quốc tế hóa (i18n) hoàn toàn trang Design Tokens (`ska-design-tokens`) và sửa lỗi không upload được Logo / Font.
 - **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH & KIỂM THỬ THÀNH CÔNG 100%.
 - **Kết quả E2E**: 
-  - Toàn bộ các nhãn tiếng Việt viết cứng trên Dashboard Theme Builder (như `Tất cả App`, `Tạo Template`, `Cập nhật:`, `Mở Editor`, `Sửa Settings`, `Xóa Template`, `Thêm Rule`, `Hủy`, `Lưu`, v.v.) đã được bọc vào các hàm dịch chuẩn của WordPress (`esc_html_e`, `__`, `esc_js`).
-  - Trang Design Workspace đã được refactor để sửa lỗi cú pháp Alpine.js do thiếu nháy kép và gọi hàm JS `__` không khai báo (`Unexpected token '}'`), thay thế bằng các block code PHP sạch (`placeholder="<?php echo esc_attr( ... ); ?>"` và `<span><?php esc_html_e( ... ); ?></span>`), đồng thời bọc hoàn chỉnh các nhãn `Tạo Symbol Mới`, `Cập nhật:`, `Mở Editor`, `Hủy`, `Tạo Mới` vào gettext.
-  - Đã cập nhật từ điển dịch song ngữ `translation_map.json` và `vietnamese_strings.json`.
-  - Chạy compiler Node.js tái tạo thành công file `.po` và `.mo` dịch thuật sang tiếng Việt của `ska-no-code-design` (tổng số chuỗi dịch nâng từ 377 lên 393).
-  - Không phát sinh lỗi cú pháp PHP (`php -l` sạch) hoặc lỗi JavaScript console crash nào trên cả hai trang Dashboard.
+  - Đã bọc 100% các nhãn tĩnh và nhãn mảng tabs của Alpine JS trên trang Design Tokens vào các hàm dịch chuẩn WordPress (`esc_html_e`, `__`, `esc_js`).
+  - Sửa đổi hàm `openLogoUploader()` và `openFontUploader()` (được đổi tên từ `openMediaUploader()`) để lưu cache uploader instance trực tiếp trên Alpine component state (`logoUploaderInstance`, `fontUploaderInstance`) thay vì tạo mới ở local scope mỗi lần click. Điều này giải quyết triệt để vấn đề rò rỉ bộ nhớ (memory leaks) khi click liên tục.
+  - Sửa lỗi parser cú pháp Alpine/JS do thiếu nháy kép và placeholders không đóng gói thô, giúp trình giả lập Alpine JS biên dịch thành công và khôi phục sự kiện click cho các nút Upload.
+  - Cập nhật cơ sở dữ liệu map dịch song ngữ `translation_map.json` và `vietnamese_strings.json`.
+  - Chạy compiler Node.js tái tạo thành công file `.po` và `.mo` dịch thuật sang tiếng Việt của `ska-no-code-design` (tổng số chuỗi dịch nâng từ 393 lên 415).
+  - Đã kiểm tra qua DevTools và verify: Không còn lỗi JS compiler crash, wp.media modal mở thành công khi click Upload Logo, và API lưu tokens `/wp-json/ska-design/v1/tokens` hoạt động hoàn hảo (trả về status 200).
 
 ## 2. Chi tiết các tệp đã sửa đổi (Modified Files)
-- **Theme Builder View**: [admin-panel.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/theme-builder/views/admin-panel.php)
-- **Design Workspace View**: [workspace-panel.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/design-engine/views/workspace-panel.php)
+- **Design Tokens View**: [design-tokens-app.php](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/design-engine/views/design-tokens-app.php)
 - **Localization Files**:
   - [ska-no-code-design-vi.po](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/languages/ska-no-code-design-vi.po)
   - [ska-no-code-design-vi.mo](file:///c:/Users/ADMIN/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/languages/ska-no-code-design-vi.mo)
@@ -23,6 +23,7 @@
 ## 3. Nhật ký và Tài liệu đi kèm
 - Cập nhật **Decision Log**: `.ska-ai/2-memory/decision-log.md`
 - Cập nhật **System Map Recent Logs**: `.ska-ai/1-overview/system_map.md`
+- Cập nhật **Design Engine Documentation**: `.ska-ai/3-ecosystem/ska-no-code-design/design-engine.md`
 
 ## 4. Công việc tiếp theo (Next Steps)
 - Tiến hành đóng gói MVP (Packaging & Release) và bàn giao hệ thống.

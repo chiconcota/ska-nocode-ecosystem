@@ -212,13 +212,13 @@ msgstr "Quản lý danh sách các UI Presets (như Button, Card, Badge). Có th
 msgid "Preset name"
 msgstr "Tên Preset"
 
-msgid "Erase"
+msgid "Remove"
 msgstr "Xóa"
 
-msgid "Delete Presets"
+msgid "Delete Preset"
 msgstr "Xóa Preset"
 
-msgid "Add Presets"
+msgid "Add Preset"
 msgstr "Thêm Preset"
 
 msgid "Enter a new UI Preset name (eg Button Primary, Hero Card...):"
@@ -1186,4 +1186,70 @@ msgstr "Tạo Symbol đầu tiên"
 
 msgid "Create New"
 msgstr "Tạo Mới"
+
+msgid "Site Logo (Brand)"
+msgstr "Logo dự án (Brand)"
+
+msgid "Upload"
+msgstr "Tải lên"
+
+msgid "Brand Identity"
+msgstr "Nhận diện thương hiệu"
+
+msgid "Upload the main logo of the project. This logo will be exported to %s for Frontend to easily display automatically without querying WordPress Database."
+msgstr "Tải lên Logo chính của dự án. Logo này sẽ được xuất ra %s để Frontend dễ dàng hiển thị tự động mà không cần truy vấn Database của WordPress."
+
+msgid "Add Color"
+msgstr "Thêm Màu"
+
+msgid "Add Dark Color"
+msgstr "Thêm Màu Tối"
+
+msgid "Primary Font"
+msgstr "Font chữ chính (Primary)"
+
+msgid "Secondary Font (Headings)"
+msgstr "Font phụ (Secondary Font)"
+
+msgid "Custom Font Upload (.woff2)"
+msgstr "Tải lên Font tùy chỉnh (.woff2)"
+
+msgid "Typography Scale Presets"
+msgstr "Presets Tỷ Lệ Kiểu Chữ"
+
+msgid "Advanced Tokens"
+msgstr "Tokens nâng cao (Advanced Tokens)"
+
+msgid "Global Border Radius"
+msgstr "Bo góc mặc định (Border Radius)"
+
+msgid "Default Elevation (Shadow)"
+msgstr "Đổ bóng mặc định (Shadow)"
+
+msgid "Container Max-Width"
+msgstr "Chiều rộng tối đa Container"
+
+msgid "Base Transition Duration"
+msgstr "Thời gian hiệu ứng mặc định"
+
+msgid "Global Block Gap"
+msgstr "Khoảng cách khối mặc định"
+
+msgid "Global Content Padding"
+msgstr "Padding nội dung mặc định"
+
+msgid "UI Presets"
+msgstr "UI Presets mặc định"
+
+msgid "Tailwind Classes"
+msgstr "Lớp Tailwind"
+
+msgid "There are no UI Presets yet. Please click %s to start."
+msgstr "Chưa có UI Preset nào. Hãy nhấn %s để bắt đầu."
+
+msgid "Brand & Colors"
+msgstr "Thương hiệu & Màu sắc"
+
+msgid "UI Components"
+msgstr "Thành phần UI"
 
