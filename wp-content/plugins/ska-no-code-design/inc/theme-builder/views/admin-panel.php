@@ -5,7 +5,7 @@
             <div class="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-4 sticky top-6">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-sm font-bold text-slate-800 m-0 uppercase tracking-wider">App Folders</h2>
-                    <button @click="openFolderModal()" class="text-indigo-600 hover:bg-indigo-50 p-1 rounded-md border-0 bg-transparent cursor-pointer transition-colors" title=__( 'Add Folder', 'ska-no-code-design' )>
+                    <button @click="openFolderModal()" class="text-indigo-600 hover:bg-indigo-50 p-1 rounded-md border-0 bg-transparent cursor-pointer transition-colors" title="<?php esc_attr_e( 'Add Folder', 'ska-no-code-design' ); ?>">
                         <span class="material-symbols-outlined text-[18px]">add</span>
                     </button>
                 </div>
@@ -117,13 +117,13 @@
                                 <span class="material-symbols-outlined text-[14px] text-amber-400">folder</span>
                                 <span x-text="getFolderName(getTemplateFolderId(template))"></span>
                             </p>
-                            <p class="text-sm text-slate-500 m-0" x-text=__( '\'Organism: \' + (template.organism_id || \'Not selected\')', 'ska-no-code-design' )></p>
+                            <p class="text-sm text-slate-500 m-0" x-text="'<?php echo esc_js( __( 'Organism:', 'ska-no-code-design' ) ); ?> ' + (template.organism_id || '<?php echo esc_js( __( 'Not selected', 'ska-no-code-design' ) ); ?>')"></p>
                         </div>
 
                         <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
                             <span class="text-xs text-slate-400 flex items-center gap-1">
                                 <span class="material-symbols-outlined text-[14px]">schedule</span>
-                                Cập nhật: <span x-text=__( 'template.updated_at || ', 'ska-no-code-design' )></span>
+                                 Cập nhật: <span x-text="template.updated_at || '<?php echo esc_js( __( 'Recently', 'ska-no-code-design' ) ); ?>'"></span>
                             </span>
                             <a :href="getEditorUrl(template.id)" class="text-indigo-600 hover:text-indigo-800 font-bold text-sm flex items-center gap-1 no-underline">
                                 <span class="material-symbols-outlined text-[18px]">design_services</span>
@@ -148,7 +148,7 @@
         <div x-show="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm" style="display: none;">
             <div @click.outside="closeModal()" class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden transform transition-all" x-transition.scale.origin.bottom>
                 <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="text-lg font-bold text-slate-800 m-0" x-text=__( 'modalMode === \'create\' ? ', 'ska-no-code-design' )></h3>
+                    <h3 class="text-lg font-bold text-slate-800 m-0" x-text="modalMode === 'create' ? '<?php echo esc_js( __( 'Create New Template', 'ska-no-code-design' ) ); ?>' : '<?php echo esc_js( __( 'Edit Template', 'ska-no-code-design' ) ); ?>'"></h3>
                     <button @click="closeModal()" class="text-slate-400 hover:text-slate-600 bg-transparent border-0 cursor-pointer">
                         <span class="material-symbols-outlined">close</span>
                     </button>
@@ -158,7 +158,7 @@
                     <!-- Tên Template -->
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-1"><?php esc_html_e( 'Template name', 'ska-no-code-design' ); ?></label>
-                        <input type="text" x-model="currentTemplate.title" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all" placeholder=__( 'For example: Default Header', 'ska-no-code-design' )>
+                        <input type="text" x-model="currentTemplate.title" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all" placeholder="<?php esc_attr_e( 'For example: Default Header', 'ska-no-code-design' ); ?>">
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4">
@@ -267,7 +267,7 @@
                     </button>
                     <button @click="saveTemplate()" class="px-5 py-2 rounded-xl text-white font-bold bg-indigo-600 hover:bg-indigo-700 shadow-sm border-0 cursor-pointer transition-all flex items-center gap-2">
                         <span x-show="isLoading" class="material-symbols-outlined animate-spin text-[18px]">sync</span>
-                        <span x-text=__( 'modalMode === \'create\' ? ', 'ska-no-code-design' )></span>
+                        <span x-text="modalMode === 'create' ? '<?php echo esc_js( __( 'Create Template', 'ska-no-code-design' ) ); ?>' : '<?php echo esc_js( __( 'Save Changes', 'ska-no-code-design' ) ); ?>'"></span>
                     </button>
                 </div>
             </div>
@@ -277,7 +277,7 @@
         <div x-show="isFolderModalOpen" class="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm" style="display: none;">
             <div @click.outside="closeFolderModal()" class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform transition-all" x-transition.scale.origin.bottom>
                 <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="text-lg font-bold text-slate-800 m-0" x-text=__( 'folderModalMode === \'create\' ? ', 'ska-no-code-design' )></h3>
+                    <h3 class="text-lg font-bold text-slate-800 m-0" x-text="folderModalMode === 'create' ? '<?php echo esc_js( __( 'Add New Folder', 'ska-no-code-design' ) ); ?>' : '<?php echo esc_js( __( 'Edit Folder Name', 'ska-no-code-design' ) ); ?>'"></h3>
                     <button @click="closeFolderModal()" class="text-slate-400 hover:text-slate-600 bg-transparent border-0 cursor-pointer">
                         <span class="material-symbols-outlined">close</span>
                     </button>
@@ -326,7 +326,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('themeBuilderData', () => ({
         portals: <?php echo wp_json_encode($portals); ?>,
         tabs: [
-            { id: 'all', name: __( 'All', 'ska-no-code-design' ), icon: 'grid_view' },
+            { id: 'all', name: '<?php echo esc_js( __( 'All', 'ska-no-code-design' ) ); ?>', icon: 'grid_view' },
             { id: 'header', name: 'Header', icon: 'vertical_align_top' },
             { id: 'footer', name: 'Footer', icon: 'vertical_align_bottom' },
             { id: 'single', name: 'Single', icon: 'article' },
@@ -361,16 +361,16 @@ document.addEventListener('alpine:init', () => {
         },
         rules: [],
         ruleOptions: [
-            { value: 'all', label: __( 'Entire Site', 'ska-no-code-design' ) },
-            { value: 'is_front_page', label: __( 'Home page (Front Page)', 'ska-no-code-design' ) },
-            { value: 'is_archive', label: __( 'All Archives', 'ska-no-code-design' ) },
-            { value: 'is_single', label: __( 'All Posts/Pages (Singular)', 'ska-no-code-design' ) },
-            { value: 'post_type', label: __( 'By Post Type (Post Type)', 'ska-no-code-design' ) },
-            { value: 'specific_post', label: __( 'Specific post (Post/Page ID)', 'ska-no-code-design' ) },
-            { value: 'is_404', label: __( 'Error page (404)', 'ska-no-code-design' ) },
-            { value: 'is_search', label: __( 'Search results (Search)', 'ska-no-code-design' ) },
-            { value: 'is_portal', label: __( 'All App Portals', 'ska-no-code-design' ) },
-            { value: 'specific_portal', label: __( 'Specific App Portal (According to Slug)', 'ska-no-code-design' ) },
+            { value: 'all', label: '<?php echo esc_js( __( 'Entire Site', 'ska-no-code-design' ) ); ?>' },
+            { value: 'is_front_page', label: '<?php echo esc_js( __( 'Home page (Front Page)', 'ska-no-code-design' ) ); ?>' },
+            { value: 'is_archive', label: '<?php echo esc_js( __( 'All Archives', 'ska-no-code-design' ) ); ?>' },
+            { value: 'is_single', label: '<?php echo esc_js( __( 'All Posts/Pages (Singular)', 'ska-no-code-design' ) ); ?>' },
+            { value: 'post_type', label: '<?php echo esc_js( __( 'By Post Type (Post Type)', 'ska-no-code-design' ) ); ?>' },
+            { value: 'specific_post', label: '<?php echo esc_js( __( 'Specific post (Post/Page ID)', 'ska-no-code-design' ) ); ?>' },
+            { value: 'is_404', label: '<?php echo esc_js( __( 'Error page (404)', 'ska-no-code-design' ) ); ?>' },
+            { value: 'is_search', label: '<?php echo esc_js( __( 'Search results (Search)', 'ska-no-code-design' ) ); ?>' },
+            { value: 'is_portal', label: '<?php echo esc_js( __( 'All App Portals', 'ska-no-code-design' ) ); ?>' },
+            { value: 'specific_portal', label: '<?php echo esc_js( __( 'Specific App Portal (According to Slug)', 'ska-no-code-design' ) ); ?>' },
             { value: 'specific_portal_list', label: 'App Portal List View (Theo Slug)' },
             { value: 'specific_portal_detail', label: 'App Portal Detail View (Theo Slug)' },
             { value: 'specific_portal_create', label: 'App Portal Create View (Theo Slug)' }
@@ -528,7 +528,7 @@ document.addEventListener('alpine:init', () => {
 
         async saveTemplate() {
             if (!this.currentTemplate.title.trim()) {
-                alert(__( 'Please enter a template name.', 'ska-no-code-design' ));
+                alert('<?php echo esc_js( __( 'Please enter a template name.', 'ska-no-code-design' ) ); ?>');
                 return;
             }
 
@@ -555,18 +555,18 @@ document.addEventListener('alpine:init', () => {
                     await this.loadTemplates();
                     this.closeModal();
                 } else {
-                    alert(result.message || __( 'An error occurred while saving the template.', 'ska-no-code-design' ));
+                    alert(result.message || '<?php echo esc_js( __( 'An error occurred while saving the template.', 'ska-no-code-design' ) ); ?>');
                 }
             } catch (error) {
                 console.error(error);
-                alert(__( 'Connection error.', 'ska-no-code-design' ));
+                alert('<?php echo esc_js( __( 'Connection error.', 'ska-no-code-design' ) ); ?>');
             } finally {
                 this.isLoading = false;
             }
         },
 
         async deleteTemplate(id) {
-            if (confirm(__( 'Are you sure you want to delete this template? ', 'ska-no-code-design' ))) {
+            if (confirm('<?php echo esc_js( __( 'Are you sure you want to delete this template? ', 'ska-no-code-design' ) ); ?>')) {
                 try {
                     const response = await fetch(`${this.apiUrl}/${id}`, {
                         method: 'DELETE',
@@ -578,11 +578,11 @@ document.addEventListener('alpine:init', () => {
                     if (response.ok && result.success) {
                         this.templates = this.templates.filter(t => t.id !== id);
                     } else {
-                        alert(result.message || __( 'Templates cannot be deleted.', 'ska-no-code-design' ));
+                        alert(result.message || '<?php echo esc_js( __( 'Templates cannot be deleted.', 'ska-no-code-design' ) ); ?>');
                     }
                 } catch (error) {
                     console.error(error);
-                    alert(__( 'Connection error.', 'ska-no-code-design' ));
+                    alert('<?php echo esc_js( __( 'Connection error.', 'ska-no-code-design' ) ); ?>');
                 }
             }
         },
@@ -635,7 +635,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         async deleteFolder(id) {
-            if (confirm(__( 'Delete this folder? ', 'ska-no-code-design' ))) {
+            if (confirm('<?php echo esc_js( __( 'Delete this folder? ', 'ska-no-code-design' ) ); ?>')) {
                 let newFolders = this.folders.filter(f => f.id !== id);
                 
                 // Cần dọn folder_id ở template, Frontend dọn UI trước, Backend dọn sau nếu cần
@@ -681,7 +681,7 @@ document.addEventListener('alpine:init', () => {
                     alert('Lỗi lưu thư mục: ' + (res.data || ''));
                 }
             } catch (e) {
-                alert(__( 'Connection error when saving folder.', 'ska-no-code-design' ));
+                alert('<?php echo esc_js( __( 'Connection error when saving folder.', 'ska-no-code-design' ) ); ?>');
             } finally {
                 this.isFolderLoading = false;
             }
