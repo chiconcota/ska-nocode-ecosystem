@@ -46,8 +46,8 @@
     * `wp-content/themes/ska-canvas/`
   - Loại bỏ hoàn toàn mã nguồn WordPress Core khỏi repo này để tối ưu dung lượng (chỉ giữ các thư mục plugin và theme kể trên).
 
-### 3.4. Kích hoạt Public & Quảng bá (Độ ưu tiên: Thấp)
-- [ ] **Task 6: Chuyển đổi trạng thái Repo:**
+### 3.4. Kích hoạt Public & Quảng bá (khỏi làm)
+- [-] **Task 6: Chuyển đổi trạng thái Repo:**
   - Truy cập mục Settings trên GitHub của repo và thực hiện "Change repository visibility" sang **Public**.
-- [ ] **Task 7: Giới thiệu cộng đồng:**
+- [-] **Task 7: Giới thiệu cộng đồng:**
   - Viết bài giới thiệu hệ sinh thái Ska No-code Ecosystem trên các cộng đồng lập trình viên No-code và WordPress trong và ngoài nước.
