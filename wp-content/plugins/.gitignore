@@ -1,9 +1,0 @@
-# Dependencies
-node_modules/
-
-# IDE/OS files
-.DS_Store
-.vscode/
-
-# Ignore other plugins if needed, but right now we include all folders in this directory
-# Specifically tracking .ska-ai, ska-builder-core, and secure-custom-fields

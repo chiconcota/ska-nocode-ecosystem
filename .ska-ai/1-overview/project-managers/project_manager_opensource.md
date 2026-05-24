@@ -36,15 +36,14 @@
   - Hướng dẫn cộng tác (Contributing guidelines) và cách sử dụng `.ska-ai` cho các AI agents để phát triển tiếp.
 
 ### 3.3. Tách biệt dự án sang Repository phân phối (Độ ưu tiên: Trung bình)
-- [ ] **Task 5: Tạo Repo chứa mã nguồn lõi:**
+- [x] **Task 5: Tạo Repo chứa mã nguồn lõi:**
   - Khởi tạo repo GitHub mới (hoặc dọn dẹp repo cũ) chỉ bao gồm:
     * `.ska-ai/` (Tài liệu kiến trúc AI).
     * `.agent/` (Quy tắc cho AI coding).
-    * `wp-content/plugins/ska-no-code-design/`
+    * `wp-content/plugins/ska-no-code-design/` (đã tích hợp module import html2tailwind).
     * `wp-content/plugins/ska-data-pro/`
     * `wp-content/plugins/ska-logic-engine/`
-    * `wp-content/plugins/ska-bridge/`
-    * `wp-content/themes/ska-blank-theme/`
+    * `wp-content/themes/ska-canvas/`
   - Loại bỏ hoàn toàn mã nguồn WordPress Core khỏi repo này để tối ưu dung lượng (chỉ giữ các thư mục plugin và theme kể trên).
 
 ### 3.4. Kích hoạt Public & Quảng bá (Độ ưu tiên: Thấp)

@@ -62,9 +62,10 @@ If you are using AI agents (such as Cursor, GitHub Copilot, or Gemini) to write 
 
 1. **Rules Alignment**: Instruct your AI agent to read the rules defined in [`.agent/rules/`](file://./.agent/rules/) before generating code.
 2. **No Markdown Clutter**: Do not allow your AI to create random Markdown (`.md`) files in the root folder or elsewhere. All architectural files must reside in the four core buckets inside [`.ska-ai/`](file://./.ska-ai/).
-3. **Update Docs**: Every commit that introduces architectural changes, database updates, or new hooks must also update:
+3. **Docs Update & Git Conflicts Prevention**: Every commit that introduces architectural changes, database updates, or new hooks should update:
    * [`.ska-ai/1-overview/system_map.md`](file://./.ska-ai/1-overview/system_map.md) (Status & Recent Logs).
    * [`.ska-ai/2-memory/decision-log.md`](file://./.ska-ai/2-memory/decision-log.md) (Architectural Decisions).
+   * ⚠️ **CRITICAL**: Do **NOT** modify or commit changes to [`.ska-ai/2-memory/checkpoint.md`](file://./.ska-ai/2-memory/checkpoint.md) or files under [`.ska-ai/1-overview/project-managers/`](file://./.ska-ai/1-overview/project-managers/). These files manage local session states and roadmap tracking; committing them will cause unnecessary Git merge conflicts.
 
 ---
 

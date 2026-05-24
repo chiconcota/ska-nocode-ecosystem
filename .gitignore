@@ -1,28 +1,33 @@
-# Core WP
-wp-admin/
-wp-includes/
-wp-config.php
-wp-config-sample.php
-readme.html
-license.txt
-xmlrpc.php
+# Ignore everything at root by default
+/*
 
-# wp-content standard
-wp-content/uploads/
-wp-content/upgrade/
-wp-content/cache/
-wp-content/mu-plugins/
-wp-content/themes/twentytwenty*
-wp-content/themes/index.php
-wp-content/plugins/akismet/
-wp-content/plugins/hello.php
-wp-content/plugins/index.php
+# But don't ignore these files/folders at root:
+!/.gitignore
+!/.agent/
+!/.ska-ai/
+!/README.md
+!/LICENSE
+!/CONTRIBUTING.md
+!/docs/
+!/wp-content/
 
-# Other plugins not related to Ska
-# (We will only track ska-* and .ska-ai and .agent)
+# Now ignore everything under wp-content except our specific plugin/theme folders
+/wp-content/*
+!/wp-content/plugins/
+!/wp-content/themes/
 
-# Node
-node_modules/
+# Ignore all plugins except the Ska ones
+/wp-content/plugins/*
+!/wp-content/plugins/ska-no-code-design/
+!/wp-content/plugins/ska-data-pro/
+!/wp-content/plugins/ska-logic-engine/
+
+# Ignore all themes except the Ska ones
+/wp-content/themes/*
+!/wp-content/themes/ska-canvas/
+
+# Node modules inside plugins and themes should be ignored
+**/node_modules/
 
 # IDE/OS files
 .DS_Store
@@ -32,5 +37,3 @@ Thumbs.db
 
 # WP Generated / Log files
 wp-content/debug.log
-wp-content/languages/
-
