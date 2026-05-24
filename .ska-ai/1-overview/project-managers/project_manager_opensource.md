@@ -20,16 +20,16 @@
 ## 3. DANH SÁCH NHIỆM VỤ (TASK LIST)
 
 ### 3.1. Dọn dẹp bảo mật & API Keys (Độ ưu tiên: Khẩn cấp)
-- [ ] **Task 1: Rà quét và Rotate API Keys:**
+- [x] **Task 1: Rà quét và Rotate API Keys:**
   - Kiểm tra xem có bất kỳ API key nào của OpenAI, Gemini API, AI Proxy đang được hardcode trong plugin `ska-no-code-design` không.
   - Chuyển toàn bộ cấu hình API Keys thành biến Option API hoặc Constants nạp từ `wp-config.php`.
-- [ ] **Task 2: Quét lịch sử Git (Git History Sanitization):**
+- [x] **Task 2: Quét lịch sử Git (Git History Sanitization):**
   - Sử dụng `git-filter-repo` để loại bỏ vĩnh viễn các file cấu hình tạm thời, các file database dump hoặc logs cũ chứa thông tin nhạy cảm có trong lịch sử commit.
 
 ### 3.2. Chuẩn bị tài liệu cộng đồng (Độ ưu tiên: Cao)
-- [ ] **Task 3: Viết file `LICENSE`:**
-  - Khởi tạo tệp `LICENSE` ở thư mục gốc sử dụng giấy phép **GPLv2** hoặc **MIT**.
-- [ ] **Task 4: Tạo file `README.md` chuyên nghiệp:**
+- [x] **Task 3: Viết file `LICENSE`:**
+  - Khởi tạo tệp `LICENSE` ở thư mục gốc sử dụng giấy phép **GPLv2** hoặc **MIT** (Đã chọn GPLv3).
+- [x] **Task 4: Tạo file `README.md` chuyên nghiệp:**
   - Giới thiệu tổng quan hệ sinh thái 4 Plugins + 1 Theme.
   - Hướng dẫn cài đặt nhanh (cách cài đặt và kích hoạt từng thành phần).
   - Hướng dẫn thiết lập môi trường phát triển (LocalWP, docker-compose, compile assets).

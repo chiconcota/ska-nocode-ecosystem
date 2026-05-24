@@ -7,6 +7,11 @@
 - **4. SkaFX DSL & Universal Binding (Ska Logic Engine):** Thống nhất Data Fetch và Logic Rule vào 1 cỗ máy biểu thức duy nhất (SkaFX). Bất kể giao diện nào cũng hỗ trợ Nội suy dữ liệu {{...}}. Cache toàn bộ Cấu trúc Bảng ska_data_dictionary vào RAM tĩnh của PHP (thời gian quét Suffix <1ms) để hỗ trợ Định danh ngữ cảnh siêu mượt mà.
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
+## 2026-05-24 - 🟢 Hoàn thành: Rà quét bảo mật và Làm sạch lịch sử Git (Open-source Preparation)
+- **Decision (API Keys Verification):** Thực hiện rà quét mã nguồn và xác nhận không có API Key nhạy cảm nào bị hardcode. API Key của Gemini được quản lý an toàn qua Options API của WordPress (`ska_gemini_api_key`), đảm bảo tính bảo mật khi công khai mã nguồn.
+- **Decision (Git History Cleaning):** Sử dụng công cụ `git-filter-repo` để xóa vĩnh viễn các tệp tin tạm và nhạy cảm khỏi toàn bộ lịch sử commit, bao gồm: `wp-content/debug.log`, `ska-no-code-design.zip`, các file `diff.txt`, `test_output.txt`, và các file zip/log cũ khác làm phình dung lượng.
+- **Decision (Git Garbage Collection):** Thực thi dọn rác Git tối ưu (`git gc --prune=now --aggressive`) sau khi viết lại lịch sử để giải phóng hoàn toàn dung lượng lưu trữ cục bộ của repository.
+
 ## 2026-05-24 - 🟢 Hoàn thành: Kết nối GitHub bằng SSH Key và Chuẩn hóa Git Line Endings
 - **Decision (Establish SSH Connection):** Do GitHub đã chính thức khai tử xác thực bằng mật khẩu tài khoản trực tiếp qua giao thức HTTPS (báo lỗi `Password authentication is not supported`), hệ thống chuyển đổi hoàn toàn địa chỉ remote sang giao thức SSH (`git@github.com:chiconcota/ska-nocode-ecosystem.git`).
 - **Decision (SSH Key Pair Generation):** Tạo mới một cặp khóa SSH an toàn theo chuẩn Ed25519 (`id_ed25519`) và hỗ trợ người dùng tích hợp Public Key vào cấu hình tài khoản GitHub cá nhân để xác thực không cần mật khẩu.
