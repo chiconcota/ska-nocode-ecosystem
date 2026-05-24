@@ -47,7 +47,7 @@ To maintain consistency and security, all contributions must strictly adhere to 
 * **CSS & Tailwind**: All styling attributes should map to Tailwind CSS v4 utility classes. Avoid inline `<style>` blocks or hardcoded absolute styles unless dynamically generated.
 
 ### 3. Internationalization (i18n)
-* **Default Language**: Mọi chuỗi giao diện hiển thị mặc định **bắt buộc phải viết bằng tiếng Anh (English)**.
+* **Default Language**: All user interface strings must be written in **English** by default.
 * **i18n Functions**: Wrap all UI strings in standard WordPress translation functions:
   ```php
   __( 'My string', 'plugin-domain' )
