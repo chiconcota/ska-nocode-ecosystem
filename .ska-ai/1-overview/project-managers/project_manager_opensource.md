@@ -51,3 +51,10 @@
   - Truy cập mục Settings trên GitHub của repo và thực hiện "Change repository visibility" sang **Public**.
 - [-] **Task 7: Giới thiệu cộng đồng:**
   - Viết bài giới thiệu hệ sinh thái Ska No-code Ecosystem trên các cộng đồng lập trình viên No-code và WordPress trong và ngoài nước.
+
+### 3.5. Tái cấu trúc Hệ thống & Tối ưu hóa Database (Lên kế hoạch cho phiên tới)
+- [ ] **Task 8: Refactor Lưu trữ Logic Engine (Chuyển đổi từ wp_options sang Bảng phẳng MySQL):**
+  - Thiết kế Schema cho bảng phẳng `ska_logic_workflows` (chứa các cột: `id`, `workflow_id`, `name`, `status`, `graph` [JSON], `updated_at`).
+  - Viết logic tự động tạo bảng (migration) khi kích hoạt plugin `ska-logic-engine` (tận dụng `dbDelta` hoặc `$wpdb`).
+  - Thay đổi các phương thức đọc/ghi workflows trong `Ska_Logic_Core` và `Ska_Workflow_Runner`: từ `get_option`/`update_option` sang truy vấn trực tiếp dòng tương ứng theo `workflow_id`.
+  - Viết hàm tự động chuyển đổi (migration script) dữ liệu cũ từ `wp_options` sang bảng phẳng để bảo toàn các workflow hiện tại của dự án.

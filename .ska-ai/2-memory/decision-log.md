@@ -7,6 +7,12 @@
 - **4. SkaFX DSL & Universal Binding (Ska Logic Engine):** Thống nhất Data Fetch và Logic Rule vào 1 cỗ máy biểu thức duy nhất (SkaFX). Bất kể giao diện nào cũng hỗ trợ Nội suy dữ liệu {{...}}. Cache toàn bộ Cấu trúc Bảng ska_data_dictionary vào RAM tĩnh của PHP (thời gian quét Suffix <1ms) để hỗ trợ Định danh ngữ cảnh siêu mượt mà.
 - **5. Native Backend Integration:** Hệ thống quản lý của người dùng (App Portals) sử dụng Chung giao diện Unified Canvas với thẻ Tailwind, nhưng bảo mật qua cờ publicly_queryable = false. Bất cứ API tương tác nào từ Frontend đều trả về dữ liệu bảo vệ kỹ lưỡng bằng Nonce và Data Healing (Cứu thương mảng Array bị lỗi).
 
+## 2026-05-25 - 🟢 Hoàn thành: Khảo sát kiến trúc Blueprint & Lên kế hoạch Refactor Logic Engine Storage (Phase 4.6)
+- **Decision (MySQL Database for Workflows):** Quyết định loại bỏ việc lưu trữ đồ thị Workflows trong `wp_options` của WordPress. Thay vào đó, thiết kế bảng phẳng MySQL chuyên biệt mang tên `ska_logic_workflows` (chứa các cột: `id`, `workflow_id`, `name`, `status`, `graph` [JSON], `updated_at`).
+- **Decision (Isolated API Query):** Sửa đổi cơ chế đọc/ghi của `Ska_Logic_Core` và `Ska_Workflow_Runner` để query riêng lẻ từng bản ghi theo `workflow_id` thay vì load/save nguyên mảng PHP Array serialized từ options, giải quyết triệt để nguy cơ Autoload Bloat và Race Condition khi nhiều admin lưu dữ liệu cùng lúc.
+- **Decision (Database Migration Script):** Xây dựng module tự động chuyển đổi dữ liệu khi kích hoạt phiên bản mới, đọc option `ska_logic_simple_workflows` cũ, bóc tách và chèn vào bảng phẳng mới, sau đó xóa option cũ để dọn dẹp hệ thống sạch sẽ.
+- **Decision (Data Pro & Design Storage Verification):** Xác nhận dữ liệu Organisms (UI Blocks), Theme Templates, Presets (Ska No-Code Design) và dữ liệu Smart Object (Ska Data Pro) đã lưu trữ 100% bằng bảng phẳng MySQL, đảm bảo tính tối ưu hiệu năng và an toàn cao.
+
 ## 2026-05-24 - 🟢 Hoàn thành: Tách biệt mã nguồn Ska Ecosystem ra khỏi WordPress Core (Open-source Preparation)
 - **Decision (Strict Git Ignore Rules):** Áp dụng quy tắc ignore triệt để trong `.gitignore` (`/*`) và whitelist chọn lọc (`!/wp-content/plugins/ska-*`, `!/wp-content/themes/ska-canvas/`, và các file tài liệu `.agent/`, `.ska-ai/`, `README.md`, `LICENSE`, `CONTRIBUTING.md`, `docs/`).
 - **Decision (Git Index Cleaning):** Dọn dẹp Git cache index bằng cách chạy `git rm -r --cached .` để gỡ bỏ toàn bộ tệp tin WordPress Core và cấu hình LocalWP khỏi Git tracking mà không làm ảnh hưởng đến các tệp tin vật lý thực tế trên máy cục bộ của nhà phát triển.
