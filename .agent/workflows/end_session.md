@@ -18,13 +18,15 @@ Bước 3. **Ghi sổ quyết định (Decision Log , System Map, roadmap & Upda
    - Đọc và cập nhật file `.ska-ai/1-overview/system_map.md`:
      - **Tình trạng Plugin/Theme:** Chuyển trạng thái từ 🔴 Pending -> 🟡 In Progress -> 🟢 Done trong bảng Module Registry.
      - **Change Log:** Thêm dòng gạch đầu dòng ngắn ngọn cho ngày cập nhật.
-   -  Tìm, Đọc và cập nhật file module tương ứng trong folder '.ska-ai\3-ecosystem' đã sửa trong phiên làm việc.
-   -  - Mở và GHI ĐÈ dữ liệu vào file tương ứng với module tương ứng `..ska-ai\1-overview\project-managers` để lưu lại tiến độ đang dự án.
-   - Mở và GHI ĐÈ dữ liệu vào file `.ska-ai/2-memory/checkpoint.md` để lưu lại tiến độ đang code dở, danh sách file, hoặc note các bug để bàn giao cho Agent phiên sau.
-   - Cập nhật git và push lên github cho dự án sau mỗi phiên làm việc.
+   - Tìm, Đọc và cập nhật file module tương ứng trong folder '.ska-ai\3-ecosystem' đã sửa trong phiên làm việc.
+   - Mở và GHI ĐÈ dữ liệu vào file tương ứng với module tương ứng `..ska-ai\1-overview\project-managers` để lưu lại tiến độ đang dự án.
+   - Mở và GHI ĐÈ dữ liệu vào file `.ska-ai/2-memory/checkpoint.md` để lưu lại tiến độ đang code dở, danh sách file, các lỗi hiện tại, và đặc biệt phải ghi rõ tên nhánh Git hiện tại đang làm việc để bàn giao cho Agent phiên sau.
+   - Cập nhật Git: Hỏi ý kiến User xem có nên commit và push lên GitHub không? Nếu đang ở nhánh feature, có cần tạo Pull Request hoặc merge vào `main` luôn không? Thực hiện theo quyết định của User.
  
 Bước 4. **Xác nhận kết thúc:**
    - Thông báo rõ ràng: "Sổ bộ nhớ App Builder đã được niêm phong. 
+     - Nhánh Git làm việc: [Tên Nhánh] (Đã ghi nhận tại checkpoint.md)
+     - Trạng thái Push/Merge: [Quyết định và kết quả đã thực hiện]
      - File bàn giao (Checkpoint) đã được lưu mốc an toàn.
      - Danh sách công việc (project manager) đã được cập nhật.
      - Docs lưu tại: `.ska-ai/3-ecosystem/`

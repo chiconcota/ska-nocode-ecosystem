@@ -33,3 +33,11 @@ Trước khi Code, Agent BẮT BUỘC nhận diện code mình viết sẽ rơi 
 - Nếu có Tailwind, chỉ xài Design Engine.
 - Ở ngoài Editor (Backend JSX), hạn chế hardcode CSS, bắt mọi thuộc tính phải quy về class Tailwind (Nguồn gốc: Single Source Of Truth). Không được tự ý nhúng mã `<style>` nội tuyến nếu không có sự phê duyệt.
 - Tránh ghi đè global nếu không có phạm vi cách ly (scoped). Dùng `.ska-builder [class*='wp-block-ska-builder']`. Tránh làm gãy Theme khác.
+
+## 5. VERSIONING RULES (QUY TẮC ĐÁNH DẤU PHIÊN BẢN)
+- **Chuẩn Semantic Versioning (SemVer):** Tất cả Plugin/Theme trong hệ sinh thái Ska bắt buộc tuân thủ định dạng `MAJOR.MINOR.PATCH` (Ví dụ: `1.0.0`).
+- **Tự động tăng phiên bản (Auto-Increment):** Mỗi khi Agent sửa đổi/cập nhật tệp nguồn của Plugin/Theme nào, **bắt buộc** phải nâng số phiên bản tương ứng trong file định nghĩa chính (như comment Header của file PHP chính, `style.css` của theme, hoặc `block.json`, `package.json`):
+  - **Tăng PATCH (Số thứ 3, ví dụ `1.0.0` -> `1.0.1`):** Đối với các sửa đổi nhỏ, sửa lỗi (bug fixes, hotfixes) tương thích ngược.
+  - **Tăng MINOR (Số thứ 2, ví dụ `1.0.0` -> `1.1.0`):** Khi triển khai nhánh tính năng (`feature/`) mới, thêm component, hoặc mở rộng API tương thích ngược.
+  - **Tăng MAJOR (Số thứ 1, ví dụ `1.0.0` -> `2.0.0`):** Khi tái cấu trúc hoặc thay đổi lõi làm mất tương thích ngược (breaking changes).
+- **Ghi nhận lịch sử (Changelog):** Ghi chú rõ ràng số phiên bản mới và các thay đổi cốt lõi tại `Recent Logs` của `system_map.md` và `decision-log.md` sau khi hoàn thành.

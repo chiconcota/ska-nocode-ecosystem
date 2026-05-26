@@ -15,6 +15,7 @@ trigger: always_on
 │   └── project-managers/       (Thư mục chứa các Roadmap, Kế hoạch cho từng Phase)
 ├── 2-memory/
 │   ├── decision-log.md         (Quy định Kiến trúc lớn, Lịch sử thay đổi cốt lõi)
+│   ├── checkpoint.md           (Bàn giao tiến độ dở dang và nhánh Git hiện tại cho phiên sau)
 │   └── archive/                (Lưu trữ các quyết định và log cũ của các Phase trước)
 ├── 3-ecosystem/
 │   ├── ska-no-code-design/     (Tài liệu kiến trúc Design, UI/UX, Blocks, JIT)
@@ -31,11 +32,12 @@ trigger: always_on
 
 ## 3. LUẬT NGUYÊN TẮC /END_SESSION BẮT BUỘC
 - Khi gọi luồng `/end_session`, AI phải Mở (View_file) và Sửa nội dung TRỰC TIẾP lên các file cũ.
-- Chỉ cập nhật **Tối đa 4 điểm chạm:**
+- Chỉ cập nhật **Tối đa 5 điểm chạm:**
   1. `1-overview/system_map.md` (Sửa trạng thái Status & Recent Logs).
   2. `2-memory/decision-log.md` (Chèn Note lên đầu file, di chuyển log quá hạn vào `archive/` nếu dài).
-  3. `3-ecosystem/[tên-plugin]/tên-file.md` (Chỉnh sửa Kiến trúc cục bộ vừa Code xong).
-  4. `1-overview/project-managers/` Cập nhật tiến độ làm việc tương ứng với file phase đang làm việc.
+  3. `2-memory/checkpoint.md` (Bàn giao tiến độ dở dang và nhánh Git hiện tại cho phiên sau).
+  4. `3-ecosystem/[tên-plugin]/tên-file.md` (Chỉnh sửa Kiến trúc cục bộ vừa Code xong).
+  5. `1-overview/project-managers/` Cập nhật tiến độ làm việc tương ứng với file phase đang làm việc.
 
 ## 4. CLEANSING CHECK (BƯỚC CHUẨN BỊ COMMIT GIT)
 - Trước khi push code lên Git, AI phải tự phán xét: "Mình có bị lỡ tay đẻ ra cái file .md nào nằm ngoài hệ thống 4 folder không?". Nếu có thì tự động dùng Lệnh Xóa (Remove) hoặc hỏi ý kiến User ngay lập tức.

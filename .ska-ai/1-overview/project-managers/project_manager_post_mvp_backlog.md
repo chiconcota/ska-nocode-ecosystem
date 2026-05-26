@@ -1,0 +1,103 @@
+# Kế hoạch Hành động & Backlog Post-MVP (Milestone 1)
+
+> [!NOTE]
+> Tài liệu này lưu trữ danh sách các hạng mục phát triển sau giai đoạn MVP, được sắp xếp theo thứ tự ưu tiên từ quan trọng/gấp nhất đến ít quan trọng/chưa cần gấp, nhằm chuẩn bị nền tảng vững chắc cho hệ sinh thái Ska Ecosystem tiến lên Milestone 1.
+
+---
+
+## 1. MỤC TIÊU TỔNG QUÁT (MASTER GOALS)
+- **Tối ưu hóa & Đóng gói:** Chuẩn bị các cấu phần mở rộng cho phân hệ Giao diện, Biên dịch và Tự động hóa.
+- **Tiêu chuẩn hóa:** Tổ chức tài liệu và mã nguồn theo hướng mô-đun hóa cao, giảm thiểu phụ thuộc chéo giữa 4 Plugins chính.
+- **Trải nghiệm Nocode Nâng cao:** Đưa các cấu hình phức tạp (như script, tương tác, phân quyền) về dạng trực quan trên Gutenberg.
+
+---
+
+## 2. MA TRẬN SẮP XẾP ƯU TIÊN CÔNG VIỆC
+
+### 🔴 ƯU TIÊN 1: QUAN TRỌNG & RẤT GẤP (Milestone 1 Lõi - Bắt buộc làm ngay)
+
+#### A. Refactor Cơ Sở Dữ Liệu Logic Engine (MySQL Flat Table)
+*Giải quyết nợ kỹ thuật lưu trữ của hệ thống tự động hóa.*
+- [ ] **Di chuyển Storage sang bảng phẳng:**
+  - [ ] Di chuyển toàn bộ dữ liệu đồ thị workflow đang lưu trữ trong `wp_options` (`ska_logic_simple_workflows`) sang bảng phẳng MySQL `ska_logic_workflows`.
+  - [ ] Giúp loại bỏ hoàn toàn hiện tượng tự động nạp (autoload bloat) khi đồ thị phình to và triệt tiêu race condition khi lưu nhiều luồng.
+
+#### B. Phân loại Ska Organisms (Ska Organisms Categorization & Folder Management)
+*Khắc phục khẩn cấp tình trạng rối loạn UI quản trị khi số lượng Organisms (Symbols/Reusable Blocks) phình to.*
+- [ ] **Mở rộng Schema lưu trữ:**
+  - [ ] Nâng cấp bảng flat table `ska_data_sys_organisms` bằng cách bổ sung cột `category` (chuỗi định danh/slug) hoặc thiết lập hệ thống tag phân loại.
+- [ ] **Tối ưu UI Quản lý (Organisms Dashboard):**
+  - [ ] Xây dựng bộ lọc theo Thư mục/Danh mục (Category Filter Tabs) trực quan trên Dashboard quản trị Organisms.
+  - [ ] Cho phép người dùng tạo, sửa, xóa các Danh mục phân loại động và kéo thả Organisms vào danh mục tương ứng.
+- [ ] **Nâng cấp Gutenberg Inserter (+):**
+  - [ ] Phân chia danh sách Organisms trong tab Inserter của Gutenberg thành các nhóm rõ ràng (ví dụ: `Header`, `Footer`, `Hero Section`, `Data Cards`, `Forms`) thay vì đổ đống toàn bộ danh sách, giúp tăng tốc độ tìm kiếm block.
+
+#### C. AI JSON Blueprint Import (Logic Engine)
+*Nền tảng giao tiếp với AI, biến Logic Engine thành Execution Runtime.*
+- [ ] **Chuẩn hóa & Import:**
+  - [ ] Chuẩn hóa schema JSON của đồ thị DAG.
+  - [ ] Triển khai tính năng Import trực tiếp mã JSON Blueprint do AI tự động sinh (qua giao diện hoặc endpoint REST API) để tự động dựng nodes và connections tương ứng trên Canvas.
+
+#### D. Hoàn thiện Node Render HTML (Render Template)
+*Cấu phần render email/modal động hiện đang trống trơn.*
+- [ ] **Nâng cấp UI Settings:**
+  - [ ] Xây dựng giao diện cấu hình trực quan trên Settings Panel (hỗ trợ code editor nhỏ cho Raw HTML và preview trực quan trước khi lưu kết quả render vào biến payload).
+
+---
+
+### 🟡 ƯU TIÊN 2: QUAN TRỌNG NHƯNG CHƯA GẤP (Milestone 1 Phụ - Triển khai sau khi xong các tác vụ lõi)
+
+#### E. Hoàn thiện UI cho SkaFX AST Evaluator (Data Picker)
+*Đơn giản hóa trải nghiệm lập công thức biểu thức của Power User.*
+- [ ] **Autocomplete & Data Picker:**
+  - [ ] Xây dựng giao diện Autocomplete/Gợi ý biến (Data Picker) ở `SettingsPanel.jsx` để giúp người dùng Nocode viết cú pháp SkaFX dễ dàng hơn.
+
+#### F. Kế thừa Chuyển hướng cấp độ App (App-Level Redirect Fallback)
+*Quản trị bảo mật tập trung ở mức Workspace.*
+- [ ] **Workspace Security Fallback:**
+  - [ ] Thiết lập bảng cấu hình redirect chung cho toàn bộ App (Workspace).
+  - [ ] Cơ chế tự động fallback về `wp-login.php` hoặc URL tùy chọn khi người dùng không đủ quyền truy cập App View.
+
+#### G. Thư viện mã nguồn tập trung (Ska Scripts Library) & Khối `ska-code`
+*Giải quyết bài toán nhúng và quản lý custom JS/CSS an toàn, hiệu năng cao.*
+- [ ] **Ska Scripts Library:**
+  - [ ] Giao diện quản lý các đoạn mã (như Alpine store, CDN Chart, Google Analytics).
+  - [ ] Cấu hình nạp code: Header, Footer, Inline, nạp Global hay nạp theo điều kiện trang.
+- [ ] **Khối `ska-code`:**
+  - [ ] Thay thế Custom HTML block. Hỗ trợ code editor trực quan (Monaco/CodeMirror) hoặc liên kết script từ Thư viện.
+  - [ ] Cơ chế Server-side Deduplication: Chống nạp lặp CSS/JS trùng nhau khi render nhiều khối trên cùng một trang.
+
+---
+
+### 🔵 ƯU TIÊN 3: PHÁT TRIỂN TIẾP THEO (Post-MVP Backlog - Milestone 1 mở rộng)
+
+#### H. Tích hợp UI cho Async Worker/Queue (Logic Engine)
+- [ ] **Edge/Node Async Flag:**
+  - [ ] Xây dựng Edge custom UI hoặc Node setting trên React Flow để người dùng có thể bật/tắt cờ `async` trực quan trên các liên kết.
+
+#### I. Phân quyền hiển thị (RBAC UI - Block-level)
+*Ẩn/hiện thành phần UI dựa trên Role người dùng ở Frontend.*
+- [ ] **RBAC Tầng hiển thị:**
+  - [ ] Thiết kế React Inspector panel cho phép chọn User Roles được phép xem block.
+  - [ ] Xử lý logic PHP Server side: Kiểm tra `current_user_can()` hoặc đối chiếu role trước khi render HTML block.
+
+#### J. Tối ưu hóa Skapine Engine (Interaction Simulator)
+- [ ] **Hạng mục tối ưu tương lai:**
+  - [ ] Nâng cấp tương thích đầy đủ cho cơ chế liên kết dữ liệu hai chiều `x-model` đối với thẻ input text và text-area (hiện mới ổn định cho checkbox/radio).
+  - [ ] Xử lý tự động đóng/mở các panel block lồng nhau (Nested Components) mà không gây gián đoạn luồng kéo thả của React.
+
+---
+
+### 🟢 ƯU TIÊN 4: ĐỊNH HƯỚNG TƯƠNG LAI (Roadmap Phase 6+)
+
+#### K. Trình biên dịch Editor (SkaWind JS Core)
+- [ ] **Tailwind Compiler Client-side:**
+  - [ ] Viết bộ parser Tailwind JIT bằng Vanilla JS chạy trực tiếp trên browser của Gutenberg Editor.
+  - [ ] Loại bỏ hoàn toàn sự phụ thuộc vào Tailwind CDN ngoài editor để tăng tốc độ load và bảo mật offline.
+  - [ ] Đồng bộ hóa màu Dark Mode (`darkMode: 'class'`) thời gian thực ngay trong màn hình thiết kế.
+
+#### L. Mở rộng Trigger & Circuit Breaker (Logic Engine)
+- [ ] **Trigger ngoại vi & Bảo vệ:**
+  - [ ] Triển khai `[T2] Webhook In` đón nhận payload từ bên thứ ba (Stripe, Momo, Zalo).
+  - [ ] Triển khai `Cron Trigger` lập lịch chạy định kỳ sử dụng Action Scheduler.
+  - [ ] Viết bộ lọc chặn đệ quy vô hạn (Circuit Breaker) trong workflow và dọn dẹp state trung gian sau khi chạy để tránh tràn RAM.
