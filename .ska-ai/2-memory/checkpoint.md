@@ -45,3 +45,12 @@
 - Tiến hành ghép nối API JSON Blueprint Import cho các đồ thị JSON do AI tự động sinh (Milestone 1 tiếp theo).
 - Bổ sung giao diện autocomplete cho biểu thức SkaFX và cờ cấu hình Async trên Canvas.
 - Khảo sát mở rộng thêm các bảng hệ thống khác cần áp dụng schema protection.
+
+## 5. Môi trường thực thi lệnh CLI (CLI Execution Environment)
+- **PHP CLI**: Có sẵn toàn cục bằng lệnh `php` (phiên bản `8.5.4` trên host Ubuntu 26.04).
+- **WP-CLI**: Có sẵn toàn cục bằng lệnh `wp` (phiên bản `2.12.0` trên host).
+- **MySQL Socket**: `/home/chiconcota/.config/Local/run/jBm37nt1f/mysql/mysqld.sock`
+- **Cú pháp chạy WP-CLI kết nối CSDL**:
+  ```bash
+  php -d mysqli.default_socket=/home/chiconcota/.config/Local/run/jBm37nt1f/mysql/mysqld.sock $(which wp) <lệnh>
+  ```
