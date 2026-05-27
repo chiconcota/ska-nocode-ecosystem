@@ -13,9 +13,9 @@ defined( 'ABSPATH' ) || exit;
     <div class="px-3 py-3 uppercase text-[11px] font-bold text-gray-400 tracking-wider flex items-center justify-between shrink-0 bg-gray-100/50">
         <span><?php esc_html_e( 'Database space', 'ska-data-pro' ); ?></span>
         <div class="flex gap-2">
-            <span class="dashicons dashicons-upload hover:text-indigo-500 cursor-pointer transition text-gray-400" title=__( 'Import (Import) Workspace from JSON file', 'ska-data-pro' ) onclick="document.getElementById('ska-import-app-modal').classList.remove('hidden');" style="font-size: 16px; width: 16px; height: 16px;"></span>
-            <span class="dashicons dashicons-portfolio hover:text-indigo-500 cursor-pointer transition text-gray-400" title=__( 'Create a new Workspace', 'ska-data-pro' ) onclick="document.getElementById('ska-create-app-modal').classList.remove('hidden'); document.getElementById('ska-new-app-name').focus();" style="font-size: 16px; width: 16px; height: 16px;"></span>
-            <span class="dashicons dashicons-plus hover:text-emerald-500 cursor-pointer transition text-gray-400" title=__( 'Initialize the sample table', 'ska-data-pro' ) onclick="document.getElementById('ska-create-table-modal').classList.remove('hidden'); document.getElementById('ska-new-table-name').focus();" style="font-size: 16px; width: 16px; height: 16px;"></span>
+            <span class="dashicons dashicons-upload hover:text-indigo-500 cursor-pointer transition text-gray-400" title="<?php echo esc_attr__( 'Import Workspace from JSON file', 'ska-data-pro' ); ?>" onclick="document.getElementById('ska-import-app-modal').classList.remove('hidden');" style="font-size: 16px; width: 16px; height: 16px;"></span>
+            <span class="dashicons dashicons-portfolio hover:text-indigo-500 cursor-pointer transition text-gray-400" title="<?php echo esc_attr__( 'Create a new Workspace', 'ska-data-pro' ); ?>" onclick="document.getElementById('ska-create-app-modal').classList.remove('hidden'); document.getElementById('ska-new-app-name').focus();" style="font-size: 16px; width: 16px; height: 16px;"></span>
+            <span class="dashicons dashicons-plus hover:text-emerald-500 cursor-pointer transition text-gray-400" title="<?php echo esc_attr__( 'Initialize the sample table', 'ska-data-pro' ); ?>" onclick="document.getElementById('ska-create-table-modal').classList.remove('hidden'); document.getElementById('ska-new-table-name').focus();" style="font-size: 16px; width: 16px; height: 16px;"></span>
         </div>
     </div>
 
@@ -66,6 +66,9 @@ defined( 'ABSPATH' ) || exit;
                         $group = $all_dict[$table]['__table_info']['group'];
                     }
                     ?>
+                    <?php 
+                    $is_protected_tbl = \Ska\Data\Core\Database_Engine::get_instance()->is_table_protected( $table );
+                    ?>
                     <li class="mb-0.5 ml-1 relative group">
                         <a href="<?php echo esc_url( $link ); ?>" class="flex items-center gap-2 px-2 py-1.5 text-sm font-medium rounded-md transition-colors <?php echo $is_active ? 'bg-emerald-100/50 text-emerald-700' : 'text-gray-600 hover:bg-gray-200/50 hover:text-gray-900 border border-transparent'; ?>">
                             <span class="dashicons <?php echo esc_attr( $custom_icon ); ?> opacity-70" style="font-size: 15px; margin-top: 1px;"></span>
@@ -73,6 +76,7 @@ defined( 'ABSPATH' ) || exit;
                         </a>
                         
                         <!-- Kebab Menu (Table Actions) -->
+                        <?php if ( ! $is_protected_tbl ) : ?>
                         <span class="dashicons dashicons-ellipsis opacity-0 group-hover:opacity-100 absolute right-2 top-1.5 text-gray-400 hover:text-gray-700 cursor-pointer z-10 pl-1 rounded pointer-events-auto" style="font-size: 16px; margin-top: 2px;" onclick="document.getElementById('dd-tbl-<?php echo esc_attr($table); ?>').classList.toggle('hidden')"></span>
                         <div id="dd-tbl-<?php echo esc_attr($table); ?>" class="hidden absolute top-7 left-10 w-48 bg-white rounded-md shadow-[0_10px_25px_rgba(0,0,0,0.1)] border border-gray-100 z-[60] text-gray-700 py-1 font-normal overflow-hidden animate-[pulse_0.1s_ease-out]">
                             <button onclick="skaOpenRenameTable('<?php echo esc_js($table); ?>', '<?php echo esc_js($display_name); ?>', '<?php echo esc_js($custom_icon); ?>', '<?php echo esc_js(isset($all_dict[$table]['__table_info']['app_id']) ? $all_dict[$table]['__table_info']['app_id'] : 'uncategorized'); ?>'); document.getElementById('dd-tbl-<?php echo esc_attr($table); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2 transition-colors">
@@ -83,6 +87,7 @@ defined( 'ABSPATH' ) || exit;
                                 <span class="dashicons dashicons-trash text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Xóa Vĩnh Viễn Bảng
                             </button>
                         </div>
+                        <?php endif; ?>
                     </li>
                     <?php
                 }
@@ -101,7 +106,7 @@ defined( 'ABSPATH' ) || exit;
                         
                         <?php if ( $app_key !== \Ska\Data\Core\App_Manager::UNCATEGORIZED_APP ) : ?>
                         <!-- Icon setting App -->
-                        <span class="dashicons dashicons-admin-generic opacity-0 group-hover:opacity-100 cursor-pointer text-gray-400 hover:text-indigo-500 transition ml-auto" style="font-size: 14px; width: 14px; height: 14px; margin-top:-2px" title=__( 'Space Setting', 'ska-data-pro' ) onclick="document.getElementById('dd-app-<?php echo esc_attr($app_key); ?>').classList.toggle('hidden')"></span>
+                        <span class="dashicons dashicons-admin-generic opacity-0 group-hover:opacity-100 cursor-pointer text-gray-400 hover:text-indigo-500 transition ml-auto" style="font-size: 14px; width: 14px; height: 14px; margin-top:-2px" title="<?php echo esc_attr__( 'Space Setting', 'ska-data-pro' ); ?>" onclick="document.getElementById('dd-app-<?php echo esc_attr($app_key); ?>').classList.toggle('hidden')"></span>
                         <div id="dd-app-<?php echo esc_attr($app_key); ?>" class="hidden absolute top-8 right-2 w-48 bg-white rounded-md shadow-[0_10px_25px_rgba(0,0,0,0.1)] border border-gray-100 z-[60] text-gray-700 py-1 font-normal overflow-hidden animate-[pulse_0.1s_ease-out] lowercase normal-case">
                             <a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=ska_data_export_app&app_id=' . $app_key . '&security=' . wp_create_nonce( 'ska_data_nonce' ) ) ); ?>" class="w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2 transition-colors">
                                 <span class="dashicons dashicons-download text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Xuất Blueprint (JSON)

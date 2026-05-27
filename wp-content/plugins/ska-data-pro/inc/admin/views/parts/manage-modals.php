@@ -211,15 +211,15 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-delete-col-modal" class="hidden fixed inset-0 bg-red-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-red-50 text-red-600">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-warning"></span> Cảnh Báo Phá Hủy</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-warning"></span> <?php esc_html_e( 'Destruction Warning', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-delete-col-modal').classList.add('hidden');"></span>
         </div>
         
         <div class="p-5">
             <input type="hidden" id="ska-del-col-slug">
-            <p class="text-sm text-gray-700 mb-3">Bạn đang vung rìu tính chém đứt cột <strong>"<span id="ska-del-col-name" class="font-bold text-red-600"></span>"</strong>.</p>
+            <p class="text-sm text-gray-700 mb-3"><?php printf( esc_html__( 'You are about to delete the column %s.', 'ska-data-pro' ), '<strong>"<span id="ska-del-col-name" class="font-bold text-red-600"></span>"</strong>' ); ?></p>
             <p class="text-sm text-gray-500 m-0 leading-relaxed bg-red-50/50 p-2 rounded">
-                Mọi dòng dữ liệu lưu trữ bên trong cột này sẽ tan biến vào hư không (Không Thể Chọn Hoàn Tác). Bạn đã suy xét kỹ chưa?
+                <?php esc_html_e( 'All data stored inside this column will vanish into thin air (Undo is NOT possible). Have you carefully considered this?', 'ska-data-pro' ); ?>
             </p>
         </div>
 

@@ -18,9 +18,9 @@
 
 #### A. Refactor Cơ Sở Dữ Liệu Logic Engine (MySQL Flat Table)
 *Giải quyết nợ kỹ thuật lưu trữ của hệ thống tự động hóa.*
-- [ ] **Di chuyển Storage sang bảng phẳng:**
-  - [ ] Di chuyển toàn bộ dữ liệu đồ thị workflow đang lưu trữ trong `wp_options` (`ska_logic_simple_workflows`) sang bảng phẳng MySQL `ska_logic_workflows`.
-  - [ ] Giúp loại bỏ hoàn toàn hiện tượng tự động nạp (autoload bloat) khi đồ thị phình to và triệt tiêu race condition khi lưu nhiều luồng.
+- [x] **Di chuyển Storage sang bảng phẳng:**
+  - [x] Di chuyển toàn bộ dữ liệu đồ thị workflow đang lưu trữ trong `wp_options` (`ska_logic_simple_workflows`) sang bảng phẳng MySQL `ska_data_sys_workflows` (v1.1.0).
+  - [x] Giúp loại bỏ hoàn toàn hiện tượng tự động nạp (autoload bloat) khi đồ thị phình to và triệt tiêu race condition khi lưu nhiều luồng.
 
 #### B. Phân loại Ska Organisms (Ska Organisms Categorization & Folder Management)
 *Khắc phục khẩn cấp tình trạng rối loạn UI quản trị khi số lượng Organisms (Symbols/Reusable Blocks) phình to.*

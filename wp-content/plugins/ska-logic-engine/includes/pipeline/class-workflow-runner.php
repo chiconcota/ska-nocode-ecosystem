@@ -25,9 +25,11 @@ class Ska_Workflow_Runner {
         if ( is_array( $workflow_id_or_graph ) ) {
             $graph = $workflow_id_or_graph; 
         } else {
-            $workflows = get_option('ska_logic_simple_workflows', []);
-            if ( isset($workflows[$workflow_id]) && isset($workflows[$workflow_id]['graph']) ) {
-                $graph = $workflows[$workflow_id]['graph'];
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'ska_data_sys_workflows';
+            $graph_json = $wpdb->get_var($wpdb->prepare("SELECT graph FROM `{$table_name}` WHERE workflow_id = %s", $workflow_id));
+            if ( !empty($graph_json) ) {
+                $graph = json_decode($graph_json, true);
             }
         }
 

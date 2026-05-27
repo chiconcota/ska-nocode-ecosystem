@@ -10,6 +10,18 @@
 - **7. Shadow Scratchpad & isolated Editor:** Thực hiện thiết kế Rich Text ngoài Frontend qua môi trường Iframe cô lập của CPT ảo (`ska_scratchpad`), đồng bộ trực tiếp với form state qua JS Bridge và xóa bỏ CPT nháp ngay lập tức khi tắt modal để giữ database sạch sẽ.
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Ska Loop, Ska Text, Ska Button, Ska Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
+## 2026-05-28 - 🟢 Hoàn thành: Triển khai bảo vệ cấu trúc bảng hệ thống cốt lõi (Ska Data Pro v1.0.1 - Approach A)
+- **Decision (Unified Protect Helper):** Bổ sung phương thức `Database_Engine::is_table_protected( $table_name )` thực hiện kiểm tra động qua filter `ska_data_protected_tables`. Hàm này được gọi chọc chặn đứng mọi thay đổi (thêm/sửa/xóa cột, đổi tên, xóa bảng) tại backend.
+- **Decision (Locked Grid UI & Padlock Icon):** Cập nhật giao diện grid view (`manage.php`) thay thế nút thêm cột `[+]` bằng biểu tượng ổ khóa xám kèm chú giải khi bảng thuộc diện bảo vệ. Ẩn toàn bộ icon edit/dropdown cấu hình cột để khóa cứng cấu hình.
+- **Decision (Hidden Sidebar Table Settings):** Cập nhật `manage-sidebar.php` tự động ẩn nút ellipsis (kebab menu) ở sidebar đối với bảng hệ thống để ngăn người dùng mở hộp thoại đổi tên/xóa bảng.
+
+## 2026-05-28 - 🟢 Hoàn thành: Tái cấu trúc cơ sở dữ liệu lưu trữ Workflows sang bảng phẳng MySQL (v1.1.0)
+- **Decision (System Grouping & Protection):** Đổi tên bảng phẳng thành `wp_ska_data_sys_workflows` để liên kết đồng bộ vào nhóm Workspace hệ thống `Site Management` (`ska_system`). Triển khai WP Filter `ska_data_protected_tables` trong plugin **Ska Data Pro** và hook từ phía **Ska Logic Engine** để bảo vệ bảng cấm xóa.
+- **Decision (Dev Mode & Hybrid Routing):** Tích hợp cờ Dev Mode `ska_system_dev_mode` của hệ sinh thái:
+  - Dev Mode Bật (1): Query MySQL trực tiếp lấy danh sách ID Workflow để đăng ký admin route ẩn ngầm.
+  - Dev Mode Tắt (0): Đọc từ cache option `ska_logic_workflow_ids` giúp nâng tốc độ lên 0ms và loại bỏ hoàn toàn query SQL trên mỗi lượt tải trang admin.
+- **Decision (Lazy Loading & Node Count):** Cập nhật Manager UI chỉ select các thông tin chung (Lazy loading cột `graph` dạng JSON) và hiển thị phân nhóm theo App Workspace. Cập nhật cột node_count tự động đếm số node khi lưu đồ thị.
+
 ## 2026-05-26 - 🟢 Hoàn thành: Dọn dẹp tài liệu Hệ thống (System Map) & Cập nhật Backlog Node Render HTML (Milestone 1)
 - **Decision (Condensed System Map):** Rút gọn tệp `system_map.md` từ 167 dòng xuống cấu trúc tối giản và cô đọng. Tổng hợp toàn bộ thành tựu của Phase 3 & 4 thành một phần Checkpoint chuyên biệt và súc tích để tiện theo dõi.
 - **Decision (Backlog Entry for Render HTML Node):** Chính thức ghi nhận hạng mục nâng cấp giao diện cấu hình trực quan và live preview cho Render HTML (Render Template Node) vào tệp nháp `project_manager_post_mvp_backlog.md` để triển khai trong Milestone 1.

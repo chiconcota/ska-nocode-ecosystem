@@ -1,7 +1,24 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
-$workflows = get_option('ska_logic_simple_workflows', []);
+global $wpdb;
+$table_name = $wpdb->prefix . 'ska_data_sys_workflows';
+$workflows_raw = [];
+
+// Suppress error in case table is not created yet (though it should be)
+$wpdb->suppress_errors(true);
+$workflows_raw = $wpdb->get_results("SELECT workflow_id, name, app_id, status, node_count FROM `{$table_name}` ORDER BY app_id ASC, workflow_id ASC", ARRAY_A);
+$wpdb->suppress_errors(false);
+
+$ska_apps = get_option('ska_data_apps', []);
+
+$workflows_by_app = [];
+if (is_array($workflows_raw)) {
+    foreach ($workflows_raw as $row) {
+        $app_id = $row['app_id'] ?: 'uncategorized';
+        $workflows_by_app[$app_id][] = $row;
+    }
+}
 ?>
 
 <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); max-width: 900px;">
@@ -13,12 +30,12 @@ $workflows = get_option('ska_logic_simple_workflows', []);
         <form method="POST" style="display:flex; gap: 8px;">
             <?php wp_nonce_field('ska_logic_nonce'); ?>
             <input type="hidden" name="ska_logic_action" value="create">
-            <input type="text" name="new_workflow_id" required placeholder=__( 'Enter the new ID name (eg: lead_form)', 'ska-logic-engine' ) pattern="[a-zA-Z0-9_-]+" title=__( 'Contains only unaccented letters, numbers, dashes and underlines', 'ska-logic-engine' ) style="border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 12px; font-size:13px; line-height:28px;">
+            <input type="text" name="new_workflow_id" required placeholder="<?php esc_attr_e( 'Enter the new ID name (eg: lead_form)', 'ska-logic-engine' ); ?>" pattern="[a-zA-Z0-9_-]+" title="<?php esc_attr_e( 'Contains only unaccented letters, numbers, dashes and underlines', 'ska-logic-engine' ); ?>" style="border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 12px; font-size:13px; line-height:28px;">
             <button type="submit" class="button button-primary" style="background:#10b981; border-color:#10b981; border-radius: 6px; height:38px;"><?php esc_html_e( '+ Initialize empty Stream', 'ska-logic-engine' ); ?></button>
         </form>
     </div>
 
-    <?php if (empty($workflows)): ?>
+    <?php if (empty($workflows_by_app)): ?>
         <div style="text-align:center; padding: 40px 20px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
             <span class="dashicons dashicons-warning" style="font-size:32px; width:32px; height:32px; color:#94a3b8; display:block; margin: 0 auto 10px;"></span>
             <p style="margin:0; color:#64748b; font-size:14px;"><?php esc_html_e( 'No Conveyor Belt has been installed yet. ', 'ska-logic-engine' ); ?></p>
@@ -33,8 +50,24 @@ $workflows = get_option('ska_logic_simple_workflows', []);
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($workflows as $wf_id => $wf_data): 
-                    $node_count = isset($wf_data['graph']['nodes']) && is_array($wf_data['graph']['nodes']) ? count($wf_data['graph']['nodes']) : 0;
+                <?php 
+                foreach ($workflows_by_app as $app_id => $flows): 
+                    $app_name = 'Default Workspace';
+                    if ($app_id === 'ska_system') {
+                        $app_name = 'Site Management';
+                    } elseif (isset($ska_apps[$app_id])) {
+                        $app_name = $ska_apps[$app_id]['name'];
+                    }
+                ?>
+                <tr style="background:#f1f5f9; font-weight:600;">
+                    <td colspan="3" style="padding: 10px 16px; color: #475569; font-size:13px;">
+                        <span class="dashicons dashicons-portfolio" style="font-size:16px; width:16px; height:16px; margin-right:5px; margin-top:2px; color:#4f46e5;"></span>
+                        <?php echo esc_html($app_name); ?>
+                    </td>
+                </tr>
+                <?php foreach($flows as $flow): 
+                    $wf_id = $flow['workflow_id'];
+                    $node_count = intval($flow['node_count']);
                 ?>
                 <tr style="border-bottom: 1px solid #f1f5f9;">
                     <td style="padding: 16px; vertical-align: middle;">
@@ -63,7 +96,7 @@ $workflows = get_option('ska_logic_simple_workflows', []);
                     <td style="padding: 16px; vertical-align: middle; text-align:right;">
                         <a href="?page=ska-logic-engine&view=builder&workflow_id=<?php echo esc_attr($wf_id); ?>" class="button" style="color: #4f46e5; border-color: #4f46e5; font-weight: 500; margin-right:8px;"><span class="dashicons dashicons-edit" style="margin-top:3px; font-size:16px;"></span> Thiết kế Luồng</a>
                         
-                        <form method="POST" style="display:inline-block; margin:0;" onsubmit=__( 'return confirm(\'WARNING: This action will delete the stream\'s Json Graph. If the Frontend is still submitting, the cable will break. Are you sure?\')', 'ska-logic-engine' )>
+                        <form method="POST" style="display:inline-block; margin:0;" onsubmit="return confirm('<?php esc_attr_e( 'WARNING: This action will delete the stream\'s Json Graph. If the Frontend is still submitting, the cable will break. Are you sure?', 'ska-logic-engine' ); ?>')">
                             <?php wp_nonce_field('ska_logic_nonce'); ?>
                             <input type="hidden" name="ska_logic_action" value="delete">
                             <input type="hidden" name="workflow_id" value="<?php echo esc_attr($wf_id); ?>">
@@ -71,6 +104,7 @@ $workflows = get_option('ska_logic_simple_workflows', []);
                         </form>
                     </td>
                 </tr>
+                <?php endforeach; ?>
                 <?php endforeach; ?>
             </tbody>
         </table>

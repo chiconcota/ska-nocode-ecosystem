@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v2.0.0)
-@status: MILESTONE 1 (POST-MVP) | @git_branch: feature/refactor-logic-db | @last_update: 2026-05-26
+@status: MILESTONE 1 (POST-MVP) | @git_branch: feature/refactor-logic-db | @last_update: 2026-05-28
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core 6.x + PHP 8.2+ (Host & API)
@@ -31,7 +31,7 @@ wp-content/
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Loại bỏ CSS/JS rác của WP, tạo khung canvas sạch. | 🟢 Stable (v1.0.0) |
 | **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.5.0) |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.2.0) |
-| **Ska Logic Engine** | `plugins/ska-logic-engine/` | DAG Workflows, Event Pipeline, SkaFX Compiler. | 🟡 Refactoring (v1.1.0) |
+| **Ska Logic Engine** | `plugins/ska-logic-engine/` | DAG Workflows, Event Pipeline, SkaFX Compiler. | 🟢 Stable (v1.1.0) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API endpoints. | 🟢 Stable (v1.0.0) |
 
 ---
@@ -68,6 +68,8 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-05-28 - 🟢 Done:** Triển khai cơ chế bảo vệ cấu trúc bảng hệ thống (System Table Schema Protection - Approach A) cho plugin Ska Data Pro (v1.0.1), cấm mọi chỉnh sửa cấu trúc (thêm/sửa/xóa cột, đổi tên, xóa bảng) của các bảng hệ thống phẳng và ẩn toàn bộ UI cấu hình liên quan.
+- **2026-05-28 - 🟢 Done:** Hoàn thành refactor lưu trữ Ska Logic Engine sang bảng phẳng MySQL `wp_ska_data_sys_workflows`, liên kết vào Workspace Site Management (`ska_system`) và cấu hình bảo vệ cấm xóa, Hybrid Routing hỗ trợ Dev Mode.
 - **2026-05-26 - 🟢 Done:** Khảo sát kiến trúc Blueprint & Phát hiện nợ kỹ thuật Logic Engine (lưu Workflows bằng `wp_options`). Thiết lập backlog Milestone 1 đưa việc Refactor MySQL và AI Import làm trọng tâm.
 - **2026-05-24 - 🟢 Done:** Tách biệt hoàn toàn mã nguồn hệ sinh thái Ska khỏi nhân WordPress Core, tối ưu hóa tệp `.gitignore` và làm sạch lịch sử Git (xóa file zip, debug logs cũ).
 - **2026-05-23 - 🟢 Done:** Sắp xếp lại Admin Menu (Theme Options -> Organisms -> Theme Builder). Ẩn toàn bộ menu phụ của Logic Engine để dọn dẹp Sidebar.
@@ -78,7 +80,6 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 7. FUTURE ROADMAP (MILESTONE 1)
-- **Ska Logic Engine MySQL Refactor:** Di chuyển cấu trúc lưu trữ workflows từ `wp_options` sang flat table MySQL `ska_logic_workflows`.
 - **AI JSON Blueprint Import:** Cung cấp endpoint REST API và nút UI để import trực tiếp cấu hình đồ thị JSON do AI tự động sinh.
 - **Giao diện cấu hình SkaFX & Async:** Bổ sung UI Autocomplete/Data Picker cho biểu thức SkaFX và UI Edge Customization để bật cờ `async` trực quan trên Canvas.
 - **Organisms Categorization:** Phân loại và chia nhóm thư mục/tag cho Ska Organisms (Symbols) để dọn dẹp giao diện quản lý và Inserter.

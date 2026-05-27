@@ -26,11 +26,13 @@ class Ska_Logic_Async_Worker {
      */
     public function process_async_task( $workflow_id, $node_id, $payload ) {
         // Đọc lại graph từ DB
-        $workflows = get_option('ska_logic_simple_workflows', []);
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ska_data_sys_workflows';
+        $graph_json = $wpdb->get_var($wpdb->prepare("SELECT graph FROM `{$table_name}` WHERE workflow_id = %s", $workflow_id));
         
         $graph = [];
-        if ( isset($workflows[$workflow_id]) && isset($workflows[$workflow_id]['graph']) ) {
-            $graph = $workflows[$workflow_id]['graph'];
+        if ( !empty($graph_json) ) {
+            $graph = json_decode($graph_json, true);
         }
 
         // Nếu workflow bị xóa giữa chừng thì drop.

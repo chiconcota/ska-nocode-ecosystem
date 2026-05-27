@@ -81,8 +81,11 @@ class Ska_Form_Receiver
         }
 
         // 2. Tự động sinh/đăng ký Workflow nếu là CRUD Portal tự động
-        $workflows = get_option('ska_logic_simple_workflows', []);
-        if (!isset($workflows[$form_id])) {
+        global $wpdb;
+        $table_workflows = $wpdb->prefix . 'ska_data_sys_workflows';
+        $wf_exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM `{$table_workflows}` WHERE workflow_id = %s", $form_id));
+
+        if (!$wf_exists) {
             $action_type = '';
             $table_slug = '';
             if (strpos($form_id, 'insert_') === 0) {
@@ -97,13 +100,18 @@ class Ska_Form_Receiver
             }
 
             if (!empty($action_type) && !empty($table_slug)) {
-                global $wpdb;
                 $prefix = $wpdb->prefix . get_option('ska_data_prefix', 'ska_data_');
                 $table_name = $prefix . $table_slug;
 
                 // Kiểm tra xem bảng vật lý có tồn tại không
                 $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name));
                 if ($table_exists) {
+                    $app_id = 'ska_system'; // fallback
+                    $dictionary = get_option('ska_data_dictionary', []);
+                    if (isset($dictionary[$table_name]['__table_info']['app_id'])) {
+                        $app_id = $dictionary[$table_name]['__table_info']['app_id'];
+                    }
+
                     // Tạo đồ thị Workflow
                     $graph = [
                         'nodes' => [
@@ -157,10 +165,22 @@ class Ska_Form_Receiver
                         ]
                     ];
 
-                    $workflows[$form_id] = [
-                        'graph' => $graph
-                    ];
-                    update_option('ska_logic_simple_workflows', $workflows);
+                    $node_count = count($graph['nodes']);
+                    $wpdb->insert(
+                        $table_workflows,
+                        [
+                            'workflow_id' => $form_id,
+                            'name'        => $form_id,
+                            'app_id'      => $app_id,
+                            'graph'       => wp_json_encode($graph),
+                            'node_count'  => $node_count,
+                            'status'      => 'active'
+                        ]
+                    );
+
+                    if (class_exists('Ska_Logic_Core')) {
+                        Ska_Logic_Core::sync_workflow_ids_cache();
+                    }
                 }
             }
         }
@@ -171,18 +191,19 @@ class Ska_Form_Receiver
         $completed_payload = apply_filters('ska_logic_run_pipeline', $clean_data, $form_id);
 
         // 3.1 CẢNH BÁO BẢO MẬT/DEV MODE: Check xem Workflow có tồn tại thật không? Tránh fake success
-        $workflows = get_option('ska_logic_simple_workflows', []);
-        if (!isset($workflows[$form_id])) {
+        $graph_json = $wpdb->get_var($wpdb->prepare("SELECT graph FROM `{$table_workflows}` WHERE workflow_id = %s", $form_id));
+        if ($graph_json === null) {
             return rest_ensure_response([
                 'success' => false,
-                'message' => __( 'Wrong Password: Logic id \'{$form_id}\' not found. ', 'ska-logic-engine' )
+                'message' => sprintf( __( 'Wrong Password: Logic id \'%s\' not found. ', 'ska-logic-engine' ), $form_id )
             ]);
         }
 
         if ( isset($data['_debug_dump_graph']) ) {
+            $decoded_graph = json_decode($graph_json, true);
             return rest_ensure_response([
                 'success' => true,
-                'graph'   => $workflows[$form_id]['graph'] ?? []
+                'graph'   => is_array($decoded_graph) ? $decoded_graph : []
             ]);
         }
 
