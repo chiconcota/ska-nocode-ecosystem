@@ -60,39 +60,61 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
             foreach ($data_to_save as $col => $val) {
                 if (isset($table_dict[$col])) {
                     $col_type = isset($table_dict[$col]['type']) ? $table_dict[$col]['type'] : '';
-                    if ($col_type === 'relation') {
-                        if (is_array($val)) {
-                            $ids = [];
-                            foreach ($val as $item) {
-                                if (is_array($item) && isset($item['id'])) {
-                                    $ids[] = $item['id'];
-                                } elseif (is_object($item) && isset($item->id)) {
-                                    $ids[] = $item->id;
-                                } else {
-                                    $ids[] = $item;
-                                }
-                            }
-                            $data_to_save[$col] = implode(',', array_filter(array_map('trim', $ids)));
-                        } elseif (is_string($val)) {
-                            $trimmed_val = trim($val);
-                            if (str_starts_with($trimmed_val, '[') || str_starts_with($trimmed_val, '{')) {
-                                $decoded = json_decode($trimmed_val, true);
-                                if (is_array($decoded)) {
-                                    $ids = [];
-                                    foreach ($decoded as $item) {
-                                        if (is_array($item) && isset($item['id'])) {
-                                            $ids[] = $item['id'];
-                                        } else {
-                                            $ids[] = $item;
-                                        }
+                    $is_json_col = in_array($col_type, ['multi_select', 'relation', 'rollup'], true);
+
+                    if ($is_json_col) {
+                        if (empty($val) && $val !== 0 && $val !== '0') {
+                            $data_to_save[$col] = null;
+                        } else {
+                            if (is_array($val)) {
+                                $ids = array_map(function($item) {
+                                    if (is_array($item) && isset($item['id'])) {
+                                        return $item['id'];
+                                    } elseif (is_object($item) && isset($item->id)) {
+                                        return $item->id;
                                     }
-                                    $data_to_save[$col] = implode(',', array_filter(array_map('trim', $ids)));
+                                    return $item;
+                                }, array_values($val));
+                                
+                                if ($col_type === 'relation') {
+                                    $data_to_save[$col] = wp_json_encode(array_filter(array_map('intval', $ids)));
+                                } else {
+                                    $data_to_save[$col] = wp_json_encode(array_values($val));
                                 }
+                            } elseif (is_string($val)) {
+                                $trimmed = trim($val);
+                                if (str_starts_with($trimmed, '[') || str_starts_with($trimmed, '{')) {
+                                    $decoded = json_decode($trimmed, true);
+                                    if (is_array($decoded)) {
+                                        if ($col_type === 'relation') {
+                                            $ids = array_map(function($item) {
+                                                if (is_array($item) && isset($item['id'])) {
+                                                    return $item['id'];
+                                                }
+                                                return $item;
+                                            }, $decoded);
+                                            $data_to_save[$col] = wp_json_encode(array_filter(array_map('intval', $ids)));
+                                        } else {
+                                            $data_to_save[$col] = $trimmed;
+                                        }
+                                    } else {
+                                        $data_to_save[$col] = null;
+                                    }
+                                } else {
+                                    if ($col_type === 'relation') {
+                                        $ids = array_filter(array_map('intval', array_map('trim', explode(',', $trimmed))));
+                                        $data_to_save[$col] = !empty($ids) ? wp_json_encode(array_values($ids)) : null;
+                                    } else {
+                                        $data_to_save[$col] = wp_json_encode([$trimmed]);
+                                    }
+                                }
+                            } else {
+                                $data_to_save[$col] = null;
                             }
                         }
                     } else {
                         if (is_array($val)) {
-                            $data_to_save[$col] = wp_json_encode($val);
+                            $data_to_save[$col] = wp_json_encode(array_values($val));
                         }
                     }
                 }

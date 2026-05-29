@@ -202,7 +202,7 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                             />
                                             {isCustom && (
                                                 <TextControl
-                                                    placeholder=__( 'Enter the attribute name (eg aria-label)', 'ska-no-code-design' )
+                                                    placeholder={__( 'Enter the attribute name (eg aria-label)', 'ska-no-code-design' )}
                                                     value={attr.key === 'custom_mode_on' ? '' : (attr.key || '')}
                                                     onChange={(val) => updateAttribute(index, 'key', val)}
                                                     autoComplete="off"
@@ -245,7 +245,7 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
                                                 />
                                                 {!isPresetValue && attr.value !== undefined && (
                                                     <TextareaControl
-                                                        placeholder=__( 'Enter an Alpine expression (eg: open === true)', 'ska-no-code-design' )
+                                                        placeholder={__( 'Enter an Alpine expression (eg: open === true)', 'ska-no-code-design' )}
                                                         value={attr.value === 'custom_mode_on' ? '' : (attr.value || '')}
                                                         onChange={(val) => updateAttribute(index, 'value', val)}
                                                         autoComplete="off"
@@ -259,7 +259,7 @@ const withHTMLAttributesPanel = createHigherOrderComponent((BlockEdit) => {
 
                                     return (
                                         <TextareaControl
-                                            placeholder=__( 'Value (eg: { open: false, items: [] })', 'ska-no-code-design' )
+                                            placeholder={__( 'Value (eg: { open: false, items: [] })', 'ska-no-code-design' )}
                                             value={attr.value || ''}
                                             onChange={(val) => updateAttribute(index, 'value', val)}
                                             autoComplete="off"

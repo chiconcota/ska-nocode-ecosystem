@@ -235,7 +235,7 @@
 ## 🧪 Test Cases
 
 ### Test Case 1: Auto-Initialization & Protected Flat Table Registration
-**Status:** `[ ] Pending Test`
+**Status:** `[X] Pending Test`
 
 **Steps:**
 1. Upgrade Ska Logic Engine plugin to version `1.1.0`.
@@ -251,7 +251,7 @@
 ---
 
 ### Test Case 2: CRUD Workflow & Graph Saving in Builder UI
-**Status:** `[ ] Pending Test`
+**Status:** `[x] DONE`
 
 **Steps:**
 1. Go to WP Admin -> Ska Logic Engine.
@@ -270,7 +270,7 @@
 ---
 
 ### Test Case 3: Auto-Generated CRUD Workflow & Workspace Synchronization
-**Status:** `[ ] Pending Test`
+**Status:** `[x] DONE`
 
 **Steps:**
 1. Ensure a custom business table exists (e.g., `leads` or `orders`) assigned to a custom App (e.g., `app_marketing`).
@@ -285,7 +285,7 @@
 ---
 
 ### Test Case 4: Hybrid Routing & Performance Optimization
-**Status:** `[ ] Pending Test`
+**Status:** `[x] DONE`
 
 **Steps:**
 1. **Testing under Dev Mode:**
@@ -327,7 +327,7 @@
 ## 🧪 Test Cases
 
 ### Test Case 1: UI Lock Visualization (Grid & Sidebar)
-**Status:** `[ ] Pending Test`
+**Status:** `[x] DONE`
 
 **Steps:**
 1. Log in to WP Admin and navigate to **Ska Data Pro** -> **Site Management**.
@@ -346,7 +346,7 @@
 ---
 
 ### Test Case 2: Backend Alteration Blockade (Database Engine Checks)
-**Status:** `[ ] Pending Test`
+**Status:** `[X] DONE`
 
 **Steps:**
 1. Open the browser DevTools Console on the admin page.

@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+const __ = ( window.wp && window.wp.i18n && window.wp.i18n.__ ) ? window.wp.i18n.__ : ( text ) => text;
 /**
  * Ska Frontend Engine
  * Bộ não Alpine.js Controller cho Ska Form Builder.
@@ -48,79 +48,76 @@ function _registerSkaForm() {
             return this.status === 'error' ? this.message : '';
         },
 
-        // === KHỞI TẠO ===
         init() {
             // Quét tất cả input bên trong form này, khởi tạo fields nếu chưa có
-            this.$nextTick(() => {
-                const inputs = this.$el.querySelectorAll('input[name], select[name], textarea[name]');
-                inputs.forEach((input) => {
-                    let name = input.getAttribute('name');
-                    if (!name) return;
+            const inputs = this.$el.querySelectorAll('input[name], select[name], textarea[name]');
+            inputs.forEach((input) => {
+                let name = input.getAttribute('name');
+                if (!name) return;
 
-                    let isArray = false;
-                    if (name.endsWith('[]')) {
-                        name = name.slice(0, -2);
-                        isArray = true;
-                    }
+                let isArray = false;
+                if (name.endsWith('[]')) {
+                    name = name.slice(0, -2);
+                    isArray = true;
+                }
 
-                    if (typeof this.fields[name] === 'undefined') {
-                        // NẾU CÓ currentData TRONG PORTAL CONTEXT, HÃY ƯU TIÊN LẤY TỪ currentData!
-                        const portalStore = Alpine.store('skaPortal');
-                        if (portalStore && portalStore.currentData && typeof portalStore.currentData[name] !== 'undefined') {
-                            let val = portalStore.currentData[name];
-                            
-                            // Nếu val là chuỗi và trông giống JSON array/object, thử parse nó trước
-                            if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
-                                try {
-                                    const parsed = JSON.parse(val);
-                                    if (parsed !== null) {
-                                        val = parsed;
-                                    }
-                                } catch (e) {
-                                    // Bỏ qua nếu parse lỗi
+                if (typeof this.fields[name] === 'undefined') {
+                    // NẾU CÓ currentData TRONG PORTAL CONTEXT, HÃY ƯU TIÊN LẤY TỪ currentData!
+                    const portalStore = Alpine.store('skaPortal');
+                    if (portalStore && portalStore.currentData && typeof portalStore.currentData[name] !== 'undefined') {
+                        let val = portalStore.currentData[name];
+                        
+                        // Nếu val là chuỗi và trông giống JSON array/object, thử parse nó trước
+                        if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
+                            try {
+                                const parsed = JSON.parse(val);
+                                if (parsed !== null) {
+                                    val = parsed;
                                 }
+                            } catch (e) {
+                                // Bỏ qua nếu parse lỗi
                             }
+                        }
 
-                            if (Array.isArray(val)) {
-                                if (val.length > 0 && typeof val[0] === 'object' && val[0] !== null && typeof val[0].id !== 'undefined') {
-                                    let ids = val.map(item => item.id.toString());
-                                    this.fields[name] = isArray ? ids : (ids[0] || '');
-                                } else {
-                                    let ids = val.map(item => (typeof item === 'object' && item !== null && typeof item.id !== 'undefined') ? item.id.toString() : item.toString());
-                                    this.fields[name] = isArray ? ids : (ids[0] || '');
-                                }
-                            } else if (typeof val === 'object' && val !== null && typeof val.id !== 'undefined') {
-                                this.fields[name] = isArray ? [val.id.toString()] : val.id.toString();
+                        if (Array.isArray(val)) {
+                            if (val.length > 0 && typeof val[0] === 'object' && val[0] !== null && typeof val[0].id !== 'undefined') {
+                                let ids = val.map(item => item.id.toString());
+                                this.fields[name] = isArray ? ids : (ids[0] || '');
                             } else {
-                                this.fields[name] = val;
+                                let ids = val.map(item => (typeof item === 'object' && item !== null && typeof item.id !== 'undefined') ? item.id.toString() : item.toString());
+                                this.fields[name] = isArray ? ids : (ids[0] || '');
                             }
+                        } else if (typeof val === 'object' && val !== null && typeof val.id !== 'undefined') {
+                            this.fields[name] = isArray ? [val.id.toString()] : val.id.toString();
                         } else {
-                            // Khởi tạo giá trị mặc định dựa theo loại input
-                            if (isArray) {
-                                this.fields[name] = [];
-                            } else if (input.type === 'checkbox') {
-                                this.fields[name] = input.checked || false;
-                            } else {
-                                this.fields[name] = input.value || '';
-                            }
+                            this.fields[name] = val;
+                        }
+                    } else {
+                        // Khởi tạo giá trị mặc định dựa theo loại input
+                        if (isArray) {
+                            this.fields[name] = [];
+                        } else if (input.type === 'checkbox') {
+                            this.fields[name] = input.checked || false;
+                        } else {
+                            this.fields[name] = input.value || '';
                         }
                     }
+                }
 
-                    // Nếu là mảng và input này được check/select mặc định, push vào mảng
-                    if (isArray) {
-                        if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) {
-                            if (!this.fields[name].includes(input.value)) {
-                                this.fields[name].push(input.value);
-                            }
-                        } else if (input.type === 'select-multiple') {
-                            Array.from(input.selectedOptions).forEach(opt => {
-                                if (!this.fields[name].includes(opt.value)) {
-                                    this.fields[name].push(opt.value);
-                                }
-                            });
+                // Nếu là mảng và input này được check/select mặc định, push vào mảng
+                if (isArray) {
+                    if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) {
+                        if (!this.fields[name].includes(input.value)) {
+                            this.fields[name].push(input.value);
                         }
+                    } else if (input.type === 'select-multiple') {
+                        Array.from(input.selectedOptions).forEach(opt => {
+                            if (!this.fields[name].includes(opt.value)) {
+                                this.fields[name].push(opt.value);
+                            }
+                        });
                     }
-                });
+                }
             });
         },
 

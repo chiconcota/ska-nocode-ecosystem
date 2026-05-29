@@ -135,7 +135,17 @@ class Ska_Dynamic_Content {
         } elseif ( preg_match( '/\{\{#foreach\s+([a-zA-Z0-9_\.]+)\s*\}\}/s', $script, $matches ) ) {
             // Trường hợp Auto-generate cho Select: không có thẻ đóng {{/foreach}}
             $path = $matches[1];
-            $template = '<option value="{{value}}">{{label}}</option>';
+            if ( strpos( $block_content, '<select' ) !== false ) {
+                $template = '<option value="{{value}}">{{label}}</option>';
+            } else {
+                if ( preg_match( '/(<label[^>]*>.*?<\/label>)/is', $block_content, $label_matches ) ) {
+                    $template = $label_matches[1];
+                    $template = preg_replace( '/(value=")[^"]*(")/i', '${1}{{value}}${2}', $template );
+                    $template = preg_replace( '/(<span>).*?(<\/span>)/i', '${1}{{label}}${2}', $template );
+                } else {
+                    $template = '<option value="{{value}}">{{label}}</option>';
+                }
+            }
         }
 
         if ( $path && $template ) {
@@ -212,7 +222,7 @@ class Ska_Dynamic_Content {
                         if ( strpos( $block_content, '<select' ) !== false ) {
                             $block_content = preg_replace( '/(<select[^>]*>)(.*?)(<\/select>)/is', '${1}' . $generated_html . '${3}', $block_content );
                         } else {
-                            $block_content = preg_replace( '/^(.*?>)(.*?)(<\/[a-zA-Z0-9]+>\s*<span.*)$/is', '${1}' . $generated_html . '${3}', $block_content );
+                            $block_content = preg_replace( '/(<div[^>]*>)(.*?)(<\/div>)/is', '${1}' . $generated_html . '${3}', $block_content );
                         }
                     }
                 } elseif ( isset( $col_config['options'] ) ) {
@@ -228,7 +238,7 @@ class Ska_Dynamic_Content {
                     if ( strpos( $block_content, '<select' ) !== false ) {
                         $block_content = preg_replace( '/(<select[^>]*>)(.*?)(<\/select>)/is', '${1}' . $generated_html . '${3}', $block_content );
                     } else {
-                        $block_content = preg_replace( '/^(.*?>)(.*?)(<\/[a-zA-Z0-9]+>\s*<span.*)$/is', '${1}' . $generated_html . '${3}', $block_content );
+                        $block_content = preg_replace( '/(<div[^>]*>)(.*?)(<\/div>)/is', '${1}' . $generated_html . '${3}', $block_content );
                     }
                 }
             }

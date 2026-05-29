@@ -1,50 +1,39 @@
-# CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v2.8.0)
-*Ngày cập nhật: 2026-05-28*
+# CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v3.3.0)
+*Ngày cập nhật: 2026-05-30*
 
 ## 1. Trạng thái hiện tại (Status)
 - **Git Branch**: `feature/refactor-logic-db`
-- **Công việc**: Triển khai bảo vệ cấu trúc bảng phẳng hệ thống (System Table Schema Protection) trong plugin **Ska Data Pro** theo Hướng tiếp cận A.
-- **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH. Tất cả thay đổi về cấu trúc (thêm/sửa/xóa cột, đổi tên, xóa bảng) đối với các bảng hệ thống (như `wp_ska_data_sys_workflows`) đều bị chặn ở cả frontend và backend.
+- **Công việc**: Rà soát toàn bộ tiến độ E2E Test Workflow, xác định test cases còn lại.
+- **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH (Review Session).
 - **Kết quả**:
-  - Triển khai phương thức `Database_Engine::is_table_protected()` chặn đứng các thay đổi tại backend, trả về mã lỗi `WP_Error`.
-  - Cập nhật giao diện Grid View (`manage.php`) thay thế nút `[+]` bằng biểu tượng ổ khóa xám và ẩn các menu cấu hình cột cho bảng hệ thống.
-  - Cập nhật Sidebar (`manage-sidebar.php`) ẩn hoàn toàn kebab menu cài đặt bảng đối với các bảng hệ thống để ngăn người dùng đổi tên/xóa bảng.
-  - i18n hóa toàn bộ chuỗi hiển thị thô sang tiếng Anh bọc hàm dịch chuẩn của WP trong `ska-data-pro`.
-  - Bổ sung quy trình E2E Test Workflow cho System Table Schema Protection (Approach A) tại tệp `.ska-ai/1-overview/project-managers/test-workflow-process.md` và dịch toàn bộ tài liệu sang tiếng Anh.
-  - Cập nhật tài liệu kiến trúc của `ska-data-pro` tại `.ska-ai/3-ecosystem/ska-data-pro/architecture.md`.
+  - Tổng hợp trạng thái 17 test cases trong [test-workflow-process.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/project-managers/test-workflow-process.md).
+  - 10/17 test cases đã hoàn thành (Logic Engine 4/4, System Table Protection 2/2, Dark Mode 2/3).
+  - 7 test cases còn lại bàn giao cho User tự kiểm thử thủ công.
+  - Theme Builder đã có 5 template sẵn (3 App Layout, 1 Header `hero gearder`, 1 404 Page `TRANG 404`).
+  - Không có thay đổi mã nguồn trong phiên này.
 
-## 2. Chi tiết các tệp đã sửa đổi (Modified Files)
-- **Ska Data Pro**:
-  - [ska-data-pro.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/ska-data-pro.php) (Tăng version lên 1.0.1)
-  - [inc/core/class-database-engine.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/inc/core/class-database-engine.php)
-  - [inc/admin/views/manage.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/inc/admin/views/manage.php)
-  - [inc/admin/views/parts/manage-sidebar.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/inc/admin/views/parts/manage-sidebar.php)
-  - [inc/admin/views/parts/manage-modals.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/inc/admin/views/parts/manage-modals.php)
-- **Ska Logic Engine**:
-  - [ska-logic-engine.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-logic-engine/ska-logic-engine.php)
-  - [includes/class-ska-logic-core.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-logic-engine/includes/class-ska-logic-core.php)
-  - [includes/api/class-form-receiver.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-logic-engine/includes/api/class-form-receiver.php)
-  - [includes/pipeline/class-workflow-runner.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-logic-engine/includes/pipeline/class-workflow-runner.php)
-  - [includes/pipeline/class-async-worker.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-logic-engine/includes/pipeline/class-async-worker.php)
-  - [includes/admin/admin-manager-ui.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-logic-engine/includes/admin/admin-manager-ui.php)
-  - [includes/admin/admin-builder-ui.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-logic-engine/includes/admin/admin-builder-ui.php)
-- **System Docs**:
-  - [.ska-ai/1-overview/system_map.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/system_map.md)
-  - [.ska-ai/2-memory/decision-log.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/2-memory/decision-log.md)
-  - [.ska-ai/2-memory/checkpoint.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/2-memory/checkpoint.md)
-  - [.ska-ai/3-ecosystem/ska-data-pro/architecture.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/3-ecosystem/ska-data-pro/architecture.md)
-  - [.ska-ai/1-overview/project-managers/test-workflow-process.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/project-managers/test-workflow-process.md)
+## 2. Tiến độ E2E Test Workflow (Summary)
+| Milestone | Test Cases | Hoàn thành | Còn lại |
+|---|---|---|---|
+| Logic Engine (MySQL Storage) | TC1-TC4 | ✅ 4/4 | 0 |
+| System Table Schema Protection | TC1-TC2 | ✅ 2/2 | 0 |
+| Dark Mode Engine (Phase 4.4) | TC1-TC3 | ✅ 2/3 | TC3 (Reactive UI Icon) |
+| Ska Link Engine (Milestone 4) | TC1-TC3 | 0/3 | TC1-TC3 |
+| Ska Theme Builder (Milestone 5) | TC1-TC3 | 0/3 | TC1-TC3 |
 
-## 3. Nhật ký và Tài liệu đi kèm
-- Cập nhật **Decision Log**: `.ska-ai/2-memory/decision-log.md`
-- Cập nhật **System Map**: `.ska-ai/1-overview/system_map.md`
-- Cập nhật **Ska Data Pro Architecture**: `.ska-ai/3-ecosystem/ska-data-pro/architecture.md`
-- Cập nhật **Test Workflows**: `.ska-ai/1-overview/project-managers/test-workflow-process.md`
+## 3. Các file đã thay đổi (từ các phiên trước, chưa commit)
+- **Ska No-Code Design (v1.0.3)**: render.php, ska-frontend.js, JSX files, build output (~40 files)
+- **Ska Logic Engine (v1.1.2)**: class-dynamic-content.php, class-ska-logic-db-action.php
+- **Ska Data Pro (v1.0.4)**: class-database-engine.php, class-data-fetcher.php, views, JS bundles
+- **Docs**: system_map.md, decision-log.md, checkpoint.md, test-workflow-process.md
 
 ## 4. Công việc tiếp theo cho phiên kế tiếp (Next Steps)
-- Tiến hành ghép nối API JSON Blueprint Import cho các đồ thị JSON do AI tự động sinh (Milestone 1 tiếp theo).
-- Bổ sung giao diện autocomplete cho biểu thức SkaFX và cờ cấu hình Async trên Canvas.
-- Khảo sát mở rộng thêm các bảng hệ thống khác cần áp dụng schema protection.
+- **User tự test 7 test cases còn lại:**
+  - Dark Mode TC3: Advanced Reactive UI (x-show Sun/Moon icon)
+  - Link Engine TC1-TC3: Static Link, System Dynamic Link, Loop Dynamic Link
+  - Theme Builder TC1-TC3: Iframe Editor, Virtual Wrapper, Rule Builder
+- **Sau khi test xong:** Đánh dấu kết quả trên test-workflow-process.md, commit toàn bộ thay đổi.
+- **Tiềm năng:** Merge nhánh `feature/refactor-logic-db` vào `main` nếu tất cả test pass.
 
 ## 5. Môi trường thực thi lệnh CLI (CLI Execution Environment)
 - **PHP CLI**: Có sẵn toàn cục bằng lệnh `php` (phiên bản `8.5.4` trên host Ubuntu 26.04).

@@ -60,13 +60,13 @@ registerBlockType(metadata.name, {
                             label={__('Field Name (Data Key)', 'ska-builder-core')}
                             value={fieldName}
                             onChange={(val) => setAttributes({ fieldName: val })}
-                            help=__( 'Variable name containing data (eg: first_name, email).', 'ska-no-code-design' )
+                            help={__( 'Variable name containing data (eg: first_name, email).', 'ska-no-code-design' )}
                         />
                         <TextControl
                             label={__('Field ID (Optional)', 'ska-builder-core')}
                             value={fieldId}
                             onChange={(val) => setAttributes({ fieldId: val })}
-                            help=__( 'Required for the Radio/Checkbox to connect to the original Label tag (for=id).', 'ska-no-code-design' )
+                            help={__( 'Required for the Radio/Checkbox to connect to the original Label tag (for=id).', 'ska-no-code-design' )}
                         />
                         <SelectControl
                             label={__('Input Type', 'ska-builder-core')}
@@ -96,7 +96,7 @@ registerBlockType(metadata.name, {
                             label={__('Static Value (Optional)', 'ska-builder-core')}
                             value={fieldValue}
                             onChange={(val) => setAttributes({ fieldValue: val })}
-                            help=__( 'Pre-assigned value for Input or fixed Value for Checkbox/Radio', 'ska-no-code-design' )
+                            help={__( 'Pre-assigned value for Input or fixed Value for Checkbox/Radio', 'ska-no-code-design' )}
                         />
                         {['checkbox', 'radio'].includes(inputType) && (
                             <ToggleControl

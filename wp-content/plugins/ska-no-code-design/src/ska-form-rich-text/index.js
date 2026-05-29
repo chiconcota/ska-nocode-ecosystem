@@ -25,7 +25,7 @@ registerBlockType(metadata.name, {
                             label="Field Name (Variable)"
                             value={field}
                             onChange={(val) => setAttributes({ field: val })}
-                            help=__( 'Variable name in the database (eg: name_dung).', 'ska-no-code-design' )
+                            help={__( 'Variable name in the database (eg: name_dung).', 'ska-no-code-design' )}
                         />
                         <TextControl
                             label="Label"

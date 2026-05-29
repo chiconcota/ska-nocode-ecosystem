@@ -124,10 +124,10 @@ const withOrganismSaveButton = createHigherOrderComponent((BlockEdit) => {
                                 Lưu thành Ska Organism
                             </div>
                             <TextControl
-                                label=__( 'Name Organism', 'ska-no-code-design' )
+                                label={__( 'Name Organism', 'ska-no-code-design' )}
                                 value={organismName}
                                 onChange={(value) => setOrganismName(value)}
-                                placeholder=__( 'Enter name...', 'ska-no-code-design' )
+                                placeholder={__( 'Enter name...', 'ska-no-code-design' )}
                             />
                             {(() => {
                                 const data = window.skaOrganismsCache || {};

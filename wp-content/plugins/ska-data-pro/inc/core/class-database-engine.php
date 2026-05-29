@@ -207,6 +207,74 @@ class Database_Engine
 			return new \WP_Error('invalid_column', __( 'Security: Column does not exist.', 'ska-data-pro' ));
 		}
 
+		// Đọc Dictionary để kiểm tra kiểu dữ liệu của cột
+		$clean_table_name = str_replace($wpdb->prefix, '', $table_name);
+		$all_dict = get_option('ska_data_dictionary', array());
+		$table_dict = array();
+		if (isset($all_dict[$table_name])) {
+			$table_dict = $all_dict[$table_name];
+		} elseif (isset($all_dict[$clean_table_name])) {
+			$table_dict = $all_dict[$clean_table_name];
+		}
+
+		if (isset($table_dict[$column_name])) {
+			$col_type = isset($table_dict[$column_name]['type']) ? $table_dict[$column_name]['type'] : '';
+			$is_json_col = in_array($col_type, ['multi_select', 'relation', 'rollup'], true);
+
+			if ($is_json_col) {
+				if (empty($value) && $value !== 0 && $value !== '0') {
+					$value = null;
+				} else {
+					if (is_array($value)) {
+						$ids = array_map(function($item) {
+							if (is_array($item) && isset($item['id'])) {
+								return $item['id'];
+							} elseif (is_object($item) && isset($item->id)) {
+								return $item->id;
+							}
+							return $item;
+						}, array_values($value));
+						
+						if ($col_type === 'relation') {
+							$value = wp_json_encode(array_filter(array_map('intval', $ids)));
+						} else {
+							$value = wp_json_encode(array_values($value));
+						}
+					} elseif (is_string($value)) {
+						$trimmed = trim($value);
+						if (str_starts_with($trimmed, '[') || str_starts_with($trimmed, '{')) {
+							$decoded = json_decode($trimmed, true);
+							if (is_array($decoded)) {
+								if ($col_type === 'relation') {
+									$ids = array_map(function($item) {
+										if (is_array($item) && isset($item['id'])) {
+											return $item['id'];
+										}
+										return $item;
+									}, $decoded);
+									$value = wp_json_encode(array_filter(array_map('intval', $ids)));
+								} else {
+									$value = $trimmed;
+								}
+							} else {
+								$value = null;
+							}
+						} else {
+							if ($col_type === 'relation') {
+								$ids = array_filter(array_map('intval', array_map('trim', explode(',', $trimmed))));
+								$value = !empty($ids) ? wp_json_encode(array_values($ids)) : null;
+							} else {
+								$vals = array_filter(array_map('trim', explode(',', $trimmed)));
+								$value = !empty($vals) ? wp_json_encode(array_values($vals)) : null;
+							}
+						}
+					} else {
+						$value = null;
+					}
+				}
+			}
+		}
+
 		// Sử dụng cơ chế Update chuẩn của WP (Đã bao hàm cơ chế Escape/Sanitize SQL an toàn cho `$value`)
 		$result = $wpdb->update(
 			$table_name,

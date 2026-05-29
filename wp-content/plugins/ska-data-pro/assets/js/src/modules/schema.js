@@ -183,7 +183,7 @@ export function attachSchemaEvents() {
     const exDelTblBtn = document.getElementById('ska-execute-del-table-btn');
     if ( confirmInput && exDelTblBtn ) {
         confirmInput.addEventListener('input', function() {
-            if (this.value === 'XACNHAN') {
+            if (this.value === 'CONFIRM') {
                 exDelTblBtn.disabled = false;
                 exDelTblBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {

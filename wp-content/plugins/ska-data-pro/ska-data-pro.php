@@ -3,7 +3,7 @@
  * Plugin Name: Ska Data Pro
  * Plugin URI: https://ska.net
  * Description: High-performance database system (Flat Tables) and schema automation via Template Gallery.
- * Version: 1.0.1
+ * Version: 1.0.4
  * Author: Ly Tat Thanh + antigravity AI
  * Author URI: https://lytatthanh.com
  * Text Domain: ska-data-pro
@@ -15,7 +15,7 @@ namespace Ska\Data;
 defined('ABSPATH') || exit;
 
 // Định nghĩa Path & URL
-define('SKA_DATA_PRO_VERSION', '1.0.1');
+define('SKA_DATA_PRO_VERSION', '1.0.4');
 define('SKA_DATA_PRO_PATH', plugin_dir_path(__FILE__));
 define('SKA_DATA_PRO_URL', plugin_dir_url(__FILE__));
 
@@ -83,7 +83,14 @@ add_filter('ska_data_insert_record', function ($result, $payload, $table_name) {
     // Đọc Dictionary để hỗ trợ phân giải Label/Alias (Tên Người Dùng Đặt) về Tên Cột Vật lý
     $clean_table_name = str_replace($wpdb->prefix, '', $table_name_with_prefix);
     $all_dict = get_option('ska_data_dictionary', array());
-    $table_dict = isset($all_dict[$clean_table_name]) ? $all_dict[$clean_table_name] : array();
+    $table_dict = array();
+    if (isset($all_dict[$table_name_with_prefix])) {
+        $table_dict = $all_dict[$table_name_with_prefix];
+    } elseif (isset($all_dict[$clean_table_name])) {
+        $table_dict = $all_dict[$clean_table_name];
+    } elseif (isset($all_dict[$table_name])) {
+        $table_dict = $all_dict[$table_name];
+    }
 
     $clean_insert_data = array();
     foreach ($payload as $key => $val) {
@@ -108,15 +115,65 @@ add_filter('ska_data_insert_record', function ($result, $payload, $table_name) {
         }
 
         if ($col_slug && in_array($col_slug, $valid_columns)) {
-            if (is_array($val)) {
-                $is_relation = (isset($table_dict[$col_slug]['type']) && $table_dict[$col_slug]['type'] === 'relation');
-                if ($is_relation) {
-                    $clean_insert_data[$col_slug] = implode(',', array_map('sanitize_text_field', array_values($val)));
+            $col_type = isset($table_dict[$col_slug]['type']) ? $table_dict[$col_slug]['type'] : '';
+            $is_json_col = in_array($col_type, ['multi_select', 'relation', 'rollup'], true);
+
+            if ($is_json_col) {
+                if (empty($val) && $val !== 0 && $val !== '0') {
+                    $clean_insert_data[$col_slug] = null;
                 } else {
-                    $clean_insert_data[$col_slug] = wp_json_encode(array_values($val));
+                    if (is_array($val)) {
+                        $ids = array_map(function($item) {
+                            if (is_array($item) && isset($item['id'])) {
+                                return $item['id'];
+                            } elseif (is_object($item) && isset($item->id)) {
+                                return $item->id;
+                            }
+                            return $item;
+                        }, array_values($val));
+                        
+                        if ($col_type === 'relation') {
+                            $clean_insert_data[$col_slug] = wp_json_encode(array_filter(array_map('intval', $ids)));
+                        } else {
+                            $clean_insert_data[$col_slug] = wp_json_encode(array_values($val));
+                        }
+                    } elseif (is_string($val)) {
+                        $trimmed = trim($val);
+                        if (str_starts_with($trimmed, '[') || str_starts_with($trimmed, '{')) {
+                            $decoded = json_decode($trimmed, true);
+                            if (is_array($decoded)) {
+                                if ($col_type === 'relation') {
+                                    $ids = array_map(function($item) {
+                                        if (is_array($item) && isset($item['id'])) {
+                                            return $item['id'];
+                                        }
+                                        return $item;
+                                    }, $decoded);
+                                    $clean_insert_data[$col_slug] = wp_json_encode(array_filter(array_map('intval', $ids)));
+                                } else {
+                                    $clean_insert_data[$col_slug] = $trimmed;
+                                }
+                            } else {
+                                $clean_insert_data[$col_slug] = null;
+                            }
+                        } else {
+                            if ($col_type === 'relation') {
+                                $ids = array_filter(array_map('intval', array_map('trim', explode(',', $trimmed))));
+                                $clean_insert_data[$col_slug] = !empty($ids) ? wp_json_encode(array_values($ids)) : null;
+                            } else {
+                                $clean_insert_data[$col_slug] = wp_json_encode([$trimmed]);
+                            }
+                        }
+                    } else {
+                        $clean_insert_data[$col_slug] = null;
+                    }
                 }
             } else {
-                $clean_insert_data[$col_slug] = $val;
+                if (is_array($val)) {
+                    $clean_insert_data[$col_slug] = wp_json_encode(array_values($val));
+                } else {
+                    $clean_insert_data[$col_slug] = $val;
+                }
             }
         }
     }
@@ -156,7 +213,14 @@ add_filter('ska_data_update_record', function ($result, $payload, $table_name, $
 
     $clean_table_name = str_replace($wpdb->prefix, '', $table_name_with_prefix);
     $all_dict = get_option('ska_data_dictionary', array());
-    $table_dict = isset($all_dict[$clean_table_name]) ? $all_dict[$clean_table_name] : array();
+    $table_dict = array();
+    if (isset($all_dict[$table_name_with_prefix])) {
+        $table_dict = $all_dict[$table_name_with_prefix];
+    } elseif (isset($all_dict[$clean_table_name])) {
+        $table_dict = $all_dict[$clean_table_name];
+    } elseif (isset($all_dict[$table_name])) {
+        $table_dict = $all_dict[$table_name];
+    }
 
     $clean_update_data = array();
     foreach ($payload as $key => $val) {
@@ -179,15 +243,65 @@ add_filter('ska_data_update_record', function ($result, $payload, $table_name, $
         }
 
         if ($col_slug && in_array($col_slug, $valid_columns)) {
-            if (is_array($val)) {
-                $is_relation = (isset($table_dict[$col_slug]['type']) && $table_dict[$col_slug]['type'] === 'relation');
-                if ($is_relation) {
-                    $clean_update_data[$col_slug] = implode(',', array_map('sanitize_text_field', array_values($val)));
+            $col_type = isset($table_dict[$col_slug]['type']) ? $table_dict[$col_slug]['type'] : '';
+            $is_json_col = in_array($col_type, ['multi_select', 'relation', 'rollup'], true);
+
+            if ($is_json_col) {
+                if (empty($val) && $val !== 0 && $val !== '0') {
+                    $clean_update_data[$col_slug] = null;
                 } else {
-                    $clean_update_data[$col_slug] = wp_json_encode(array_values($val));
+                    if (is_array($val)) {
+                        $ids = array_map(function($item) {
+                            if (is_array($item) && isset($item['id'])) {
+                                return $item['id'];
+                            } elseif (is_object($item) && isset($item->id)) {
+                                return $item->id;
+                            }
+                            return $item;
+                        }, array_values($val));
+                        
+                        if ($col_type === 'relation') {
+                            $clean_update_data[$col_slug] = wp_json_encode(array_filter(array_map('intval', $ids)));
+                        } else {
+                            $clean_update_data[$col_slug] = wp_json_encode(array_values($val));
+                        }
+                    } elseif (is_string($val)) {
+                        $trimmed = trim($val);
+                        if (str_starts_with($trimmed, '[') || str_starts_with($trimmed, '{')) {
+                            $decoded = json_decode($trimmed, true);
+                            if (is_array($decoded)) {
+                                if ($col_type === 'relation') {
+                                    $ids = array_map(function($item) {
+                                        if (is_array($item) && isset($item['id'])) {
+                                            return $item['id'];
+                                        }
+                                        return $item;
+                                    }, $decoded);
+                                    $clean_update_data[$col_slug] = wp_json_encode(array_filter(array_map('intval', $ids)));
+                                } else {
+                                    $clean_update_data[$col_slug] = $trimmed;
+                                }
+                            } else {
+                                $clean_update_data[$col_slug] = null;
+                            }
+                        } else {
+                            if ($col_type === 'relation') {
+                                $ids = array_filter(array_map('intval', array_map('trim', explode(',', $trimmed))));
+                                $clean_update_data[$col_slug] = !empty($ids) ? wp_json_encode(array_values($ids)) : null;
+                            } else {
+                                $clean_update_data[$col_slug] = wp_json_encode([$trimmed]);
+                            }
+                        }
+                    } else {
+                        $clean_update_data[$col_slug] = null;
+                    }
                 }
             } else {
-                $clean_update_data[$col_slug] = $val;
+                if (is_array($val)) {
+                    $clean_update_data[$col_slug] = wp_json_encode(array_values($val));
+                } else {
+                    $clean_update_data[$col_slug] = $val;
+                }
             }
         }
     }

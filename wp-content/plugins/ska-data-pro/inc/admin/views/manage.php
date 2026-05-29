@@ -96,21 +96,21 @@ $is_protected = \Ska\Data\Core\Database_Engine::get_instance()->is_table_protect
                         <span class="dashicons dashicons-arrow-down-alt2 text-gray-400 opacity-50 text-sm cursor-pointer" style="font-size: 14px;"></span>
                     </h1>
                     <span class="bg-gray-100 text-gray-500 text-xs px-2 py-0.5 rounded font-mono border border-gray-200">
-                        <?php echo count( $rows ); ?> bản ghi
+                        <?php echo esc_html( sprintf( _n( '%s record', '%s records', count( $rows ), 'ska-data-pro' ), count( $rows ) ) ); ?>
                     </span>
                 </div>
                 
                 <div class="flex items-center gap-3">
                     <button id="ska-btn-filter" class="px-3 py-1.5 text-sm bg-white border border-gray-300 rounded flex items-center gap-1 shadow-sm transition-colors relative <?php echo isset($_GET['filter_field']) ? 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100' : 'text-gray-600 hover:bg-gray-50'; ?>">
-                        <span class="dashicons dashicons-filter mt-0.5" style="font-size: 16px;"></span> Lọc Data
+                        <span class="dashicons dashicons-filter mt-0.5" style="font-size: 16px;"></span> <?php esc_html_e( 'Filter Data', 'ska-data-pro' ); ?>
                     </button>
                     <button id="ska-btn-group" class="px-3 py-1.5 text-sm bg-white border border-gray-300 rounded flex items-center gap-1 shadow-sm transition-colors relative <?php echo isset($_GET['group_by']) ? 'bg-indigo-50 border-indigo-300 text-indigo-700 hover:bg-indigo-100' : 'text-gray-600 hover:bg-gray-50'; ?>">
-                        <span class="dashicons dashicons-image-filter mt-0.5" style="font-size: 16px;"></span> Gộp Nhóm
+                        <span class="dashicons dashicons-image-filter mt-0.5" style="font-size: 16px;"></span> <?php esc_html_e( 'Group By', 'ska-data-pro' ); ?>
                     </button>
                     
                     <?php if ( isset($_GET['filter_field']) || isset($_GET['group_by']) || isset($_GET['orderby']) ) : ?>
                     <a href="<?php echo esc_url( admin_url( 'admin.php?page=ska-data-pro-manage&table=' . $current_table ) ); ?>" class="text-xs text-red-500 hover:text-red-700 font-medium px-1 flex items-center gap-0.5 ml-1">
-                        <span class="dashicons dashicons-dismiss" style="font-size:14px; margin-top:2px;"></span> Xóa lọc
+                        <span class="dashicons dashicons-dismiss" style="font-size:14px; margin-top:2px;"></span> <?php esc_html_e( 'Clear Filters', 'ska-data-pro' ); ?>
                     </a>
                     <?php endif; ?>
                     
@@ -120,7 +120,7 @@ $is_protected = \Ska\Data\Core\Database_Engine::get_instance()->is_table_protect
 
                     <div class="w-px h-6 bg-gray-200 mx-1"></div>
                     <button class="ska-add-row-trigger px-4 py-1.5 text-sm bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white rounded font-medium flex items-center gap-1 shadow-sm transition">
-                        <span class="dashicons dashicons-plus-alt2 mt-0.5" style="font-size: 16px;"></span> Thêm Dòng Mới
+                        <span class="dashicons dashicons-plus-alt2 mt-0.5" style="font-size: 16px;"></span> <?php esc_html_e( 'Add New Row', 'ska-data-pro' ); ?>
                     </button>
                 </div>
             </div>
@@ -208,11 +208,11 @@ $is_protected = \Ska\Data\Core\Database_Engine::get_instance()->is_table_protect
                                                 <div id="dd-<?php echo esc_attr($col_slug); ?>" class="hidden ska-col-dropdown absolute top-6 right-0 w-44 bg-white rounded-md shadow-lg border border-gray-100 z-[60] text-gray-700 py-1 font-normal overflow-hidden animate-[pulse_0.1s_ease-out]">
                                                     <?php $col_options = isset($table_dict[$col_slug]['options']) ? $table_dict[$col_slug]['options'] : ''; ?>
                                                     <button onclick="event.stopPropagation(); skaOpenEditCol('<?php echo esc_attr($col_slug); ?>', '<?php echo esc_js($display_label); ?>', '<?php echo esc_attr($dict_type ? $dict_type : 'short_text'); ?>', '<?php echo esc_js($col_options); ?>'); document.getElementById('dd-<?php echo esc_attr($col_slug); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2 transition-colors">
-                                                        <span class="dashicons dashicons-admin-generic text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Đổi Thuộc Tính
+                                                        <span class="dashicons dashicons-admin-generic text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> <?php esc_html_e( 'Edit Column', 'ska-data-pro' ); ?>
                                                     </button>
                                                     <div class="h-px bg-gray-100 my-0.5"></div>
                                                     <button onclick="event.stopPropagation(); skaOpenDeleteCol('<?php echo esc_attr($col_slug); ?>', '<?php echo esc_js($display_label); ?>'); document.getElementById('dd-<?php echo esc_attr($col_slug); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 hover:text-red-700 flex items-center gap-2 transition-colors">
-                                                        <span class="dashicons dashicons-trash text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> Tàn Sát Cột (Xóa)
+                                                        <span class="dashicons dashicons-trash text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> <?php esc_html_e( 'Delete Column', 'ska-data-pro' ); ?>
                                                     </button>
                                                 </div>
                                             </div>
@@ -238,7 +238,7 @@ $is_protected = \Ska\Data\Core\Database_Engine::get_instance()->is_table_protect
                             <?php if ( empty( $rows ) ) : ?>
                                 <tr>
                                     <td colspan="<?php echo count( $columns ) + 1; ?>" class="p-8 text-center text-gray-500 bg-white">
-                                        Lưới dữ liệu trống. Bản ghi đầu tiên của bạn sẽ xuất hiện tại đây.
+                                        <?php esc_html_e( 'Data grid is empty. Your first record will appear here.', 'ska-data-pro' ); ?>
                                     </td>
                                 </tr>
                             <?php else : ?>
@@ -385,7 +385,7 @@ $is_protected = \Ska\Data\Core\Database_Engine::get_instance()->is_table_protect
                             <tr>
                                 <td class="w-12 px-3 py-2 border-r border-b border-gray-200 bg-gray-50/30"></td>
                                 <td colspan="<?php echo count( $columns ) + 1; ?>" class="ska-add-row-trigger px-3 py-2 text-emerald-600 font-medium cursor-pointer hover:bg-emerald-50/50 bg-gray-50 shadow-inner group transition text-sm">
-                                    <span class="dashicons dashicons-plus-alt2 align-middle mr-1 group-hover:bg-emerald-100 rounded"></span> Thêm Bản Ghi Mới
+                                    <span class="dashicons dashicons-plus-alt2 align-middle mr-1 group-hover:bg-emerald-100 rounded"></span> <?php esc_html_e( 'Add New Record', 'ska-data-pro' ); ?>
                                 </td>
                             </tr>
                         </tbody>

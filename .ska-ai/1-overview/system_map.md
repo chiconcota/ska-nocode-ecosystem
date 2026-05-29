@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v2.0.0)
-@status: MILESTONE 1 (POST-MVP) | @git_branch: feature/refactor-logic-db | @last_update: 2026-05-28
+@status: MILESTONE 1 (POST-MVP) | @git_branch: feature/refactor-logic-db | @last_update: 2026-05-30
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core 6.x + PHP 8.2+ (Host & API)
@@ -29,9 +29,9 @@ wp-content/
 | Module Name | Path | Core Function | Status |
 | :--- | :--- | :--- | :--- |
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Loại bỏ CSS/JS rác của WP, tạo khung canvas sạch. | 🟢 Stable (v1.0.0) |
-| **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.5.0) |
-| **Ska Data Pro** | `plugins/ska-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.2.0) |
-| **Ska Logic Engine** | `plugins/ska-logic-engine/` | DAG Workflows, Event Pipeline, SkaFX Compiler. | 🟢 Stable (v1.1.0) |
+| **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.0.3) |
+| **Ska Data Pro** | `plugins/ska-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.0.4) |
+| **Ska Logic Engine** | `plugins/ska-logic-engine/` | DAG Workflows, Event Pipeline, SkaFX Compiler. | 🟢 Stable (v1.1.2) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API endpoints. | 🟢 Stable (v1.0.0) |
 
 ---
@@ -68,6 +68,12 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-05-30 - 🟢 Review:** Rà soát toàn bộ tiến độ E2E Test Workflow. Kết quả: 10/17 test cases đã hoàn thành (Logic Engine 4/4, System Table Protection 2/2, Dark Mode 2/3). 7 test cases còn lại (Link Engine 3, Theme Builder 3, Dark Mode TC3) bàn giao cho User tự kiểm thử thủ công.
+- **2026-05-30 - 🟢 Done:** Vá lỗi block select kết nối động trên frontend. Sửa đổi render.php của block select để trích xuất fieldName từ dynamic binding khi fieldName bị rỗng hoặc trùng giá trị mặc định 'my_select'; sửa đổi class-dynamic-content.php hỗ trợ tự động trích xuất cấu trúc thẻ label để sinh checkbox/radio list động thay vì chèn thẻ option sai cấu trúc HTML; đồng thời gỡ bỏ `$nextTick` trong form init để triệt tiêu race condition khởi tạo Alpine, và sửa 19 lỗi cú pháp JSX giúp webpack biên dịch thành công. Nâng cấp Ska No-Code Design (v1.0.3) và Ska Logic Engine (v1.1.2).
+- **2026-05-30 - 🟢 Done:** Vá lỗi lưu CSDL JSON khi sửa ô trực tiếp trên lưới (cell inline edit) của Ska Data Pro (v1.0.4) bằng cách chuẩn hóa giá trị về NULL/JSON Array trước khi cập nhật.
+- **2026-05-30 - 🟢 Done:** Khắc phục lỗi lưu CSDL JSON khi lưu mảng trống hoặc CSV thô bằng cách đưa vào cơ chế chuẩn hóa dữ liệu CSDL tự động (NULL Cast & JSON Array Encoding) tại Ska Data Pro (v1.0.3) và Ska Logic Engine (v1.1.1), cập nhật hàm giải mã dữ liệu của Data Fetcher.
+- **2026-05-30 - 🟢 Done:** Vá lỗi block validation khi sinh Portal App (Ska No-Code Design v1.0.1), sửa comment block từ `//->`/`//>` thành `/-->` và chạy script sửa đổi dữ liệu SQL.
+- **2026-05-30 - 🟢 Done:** Dịch toàn bộ các chuỗi giao diện tiếng Việt thô trong plugin Ska Data Pro sang tiếng Anh và bọc hàm i18n của WordPress (v1.0.2), cập nhật logic xác nhận từ "XACNHAN" thành "CONFIRM".
 - **2026-05-28 - 🟢 Done:** Triển khai cơ chế bảo vệ cấu trúc bảng hệ thống (System Table Schema Protection - Approach A) cho plugin Ska Data Pro (v1.0.1), cấm mọi chỉnh sửa cấu trúc (thêm/sửa/xóa cột, đổi tên, xóa bảng) của các bảng hệ thống phẳng và ẩn toàn bộ UI cấu hình liên quan.
 - **2026-05-28 - 🟢 Done:** Hoàn thành refactor lưu trữ Ska Logic Engine sang bảng phẳng MySQL `wp_ska_data_sys_workflows`, liên kết vào Workspace Site Management (`ska_system`) và cấu hình bảo vệ cấm xóa, Hybrid Routing hỗ trợ Dev Mode.
 - **2026-05-26 - 🟢 Done:** Khảo sát kiến trúc Blueprint & Phát hiện nợ kỹ thuật Logic Engine (lưu Workflows bằng `wp_options`). Thiết lập backlog Milestone 1 đưa việc Refactor MySQL và AI Import làm trọng tâm.

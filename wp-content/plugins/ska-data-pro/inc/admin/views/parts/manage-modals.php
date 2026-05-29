@@ -65,7 +65,7 @@ defined( 'ABSPATH' ) || exit;
                 <!-- Bộ đôi Cascading Selects dành riêng cho Rollup -->
                 <div id="ska-col-options-rollup-wrapper" class="hidden flex flex-col gap-3">
                     <div class="px-3 py-2 bg-orange-50 border border-orange-100 rounded text-xs text-orange-800">
-                        Bạn phải có sẵn Cột Tham Chiếu (Relation) thì mới có thể kéo dữ liệu (Rollup).
+                        <?php esc_html_e( 'You must have a Reference Column (Relation) to pull data (Rollup).', 'ska-data-pro' ); ?>
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-gray-400 mb-1"><?php esc_html_e( '1. Select Reference Column (Relation)', 'ska-data-pro' ); ?></label>
@@ -77,7 +77,7 @@ defined( 'ABSPATH' ) || exit;
                                     if ( isset($table_dict[$col->Field]) && $table_dict[$col->Field]['type'] === 'relation' ) {
                                         $lbl = $table_dict[$col->Field]['label'];
                                         $tgt = $table_dict[$col->Field]['options'];
-                                        echo '<option value="' . esc_attr($col->Field) . '" data-target="' . esc_attr($tgt) . '">' . esc_html($lbl) . ' (Trỏ tới: ' . esc_html(str_replace($wpdb->prefix.'ska_data_','',$tgt)) . ')</option>';
+                                        echo '<option value="' . esc_attr($col->Field) . '" data-target="' . esc_attr($tgt) . '">' . esc_html($lbl) . ' (' . esc_html__( 'Points to:', 'ska-data-pro' ) . ' ' . esc_html(str_replace($wpdb->prefix.'ska_data_','',$tgt)) . ')</option>';
                                     }
                                 }
                             }
@@ -95,7 +95,7 @@ defined( 'ABSPATH' ) || exit;
                 <p id="ska-col-options-hint" class="text-[11px] text-gray-400 mt-1 italic"><?php esc_html_e( 'The states are separated by commas. ', 'ska-data-pro' ); ?></p>
             </div>
             
-            <p class="text-xs text-gray-400 m-0 italic"><span class="dashicons dashicons-info" style="font-size: 12px; height: 12px; margin-top: 1px"></span> Cột sẽ được ghi thẳng vào Hệ Thống Đĩa Ổ cứng.</p>
+            <p class="text-xs text-gray-400 m-0 italic"><span class="dashicons dashicons-info" style="font-size: 12px; height: 12px; margin-top: 1px"></span> <?php esc_html_e( 'The column will be written directly to the hard disk system.', 'ska-data-pro' ); ?></p>
         </div>
 
         <!-- Cẳng cuối Action -->
@@ -110,7 +110,7 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-edit-col-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-white text-emerald-700">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-edit text-emerald-500"></span> Chỉnh Sửa Thuộc Tính</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-edit text-emerald-500"></span> <?php esc_html_e( 'Edit Attributes', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-edit-col-modal').classList.add('hidden');"></span>
         </div>
         
@@ -166,7 +166,7 @@ defined( 'ABSPATH' ) || exit;
 
                 <div id="ska-edit-col-options-rollup-wrapper" class="hidden flex flex-col gap-3">
                     <div class="px-3 py-2 bg-orange-50 border border-orange-100 rounded text-xs text-orange-800">
-                        Bạn phải có sẵn Cột Tham Chiếu (Relation) thì mới có thể kéo dữ liệu (Rollup).
+                        <?php esc_html_e( 'You must have a Reference Column (Relation) to pull data (Rollup).', 'ska-data-pro' ); ?>
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-gray-400 mb-1"><?php esc_html_e( '1. Select Reference Column (Relation)', 'ska-data-pro' ); ?></label>
@@ -178,7 +178,7 @@ defined( 'ABSPATH' ) || exit;
                                     if ( isset($table_dict[$col->Field]) && $table_dict[$col->Field]['type'] === 'relation' ) {
                                         $lbl = $table_dict[$col->Field]['label'];
                                         $tgt = $table_dict[$col->Field]['options'];
-                                        echo '<option value="' . esc_attr($col->Field) . '" data-target="' . esc_attr($tgt) . '">' . esc_html($lbl) . ' (Trỏ tới: ' . esc_html(str_replace($wpdb->prefix.'ska_data_','',$tgt)) . ')</option>';
+                                        echo '<option value="' . esc_attr($col->Field) . '" data-target="' . esc_attr($tgt) . '">' . esc_html($lbl) . ' (' . esc_html__( 'Points to:', 'ska-data-pro' ) . ' ' . esc_html(str_replace($wpdb->prefix.'ska_data_','',$tgt)) . ')</option>';
                                     }
                                 }
                             }
@@ -196,7 +196,7 @@ defined( 'ABSPATH' ) || exit;
             </div>
             
             <div class="p-3 bg-red-50 border border-red-100 rounded text-xs text-red-600">
-                <strong><span class="dashicons dashicons-warning" style="font-size:13px;height:12px;margin-top:2px;"></span> Rủi ro ép kiểu:</strong> Nếu bạn Đổi Loại Cột sai quy cách (VD đang chứa chữ mà đổi thành Ngày Tháng), MySQL có thể sẽ gọt sạch dữ liệu bên trong những ô hiện tại.
+                <strong><span class="dashicons dashicons-warning" style="font-size:13px;height:12px;margin-top:2px;"></span> <?php esc_html_e( 'Type casting risk:', 'ska-data-pro' ); ?></strong> <?php esc_html_e( 'If you change the Column Type incorrectly (e.g. from text to Date), MySQL might wipe out the data inside the existing cells.', 'ska-data-pro' ); ?>
             </div>
         </div>
 
@@ -237,7 +237,7 @@ defined( 'ABSPATH' ) || exit;
     <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <!-- Đỉnh Header -->
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-emerald-50 text-emerald-700">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-database text-emerald-500"></span> Khởi tạo Bảng Dữ Liệu</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-database text-emerald-500"></span> <?php esc_html_e( 'Initialize Data Sheet', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-create-table-modal').classList.add('hidden');"></span>
         </div>
         
@@ -285,7 +285,7 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-rename-table-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-white text-emerald-700">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-edit text-emerald-500"></span> Chỉnh Sửa Tên Bảng</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-edit text-emerald-500"></span> <?php esc_html_e( 'Edit Table Name', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-rename-table-modal').classList.add('hidden');"></span>
         </div>
         
@@ -331,25 +331,25 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-delete-table-modal" class="hidden fixed inset-0 bg-red-900/60 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[450px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-red-50 text-red-600">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-warning" style="font-size:24px;width:24px;height:24px;margin-top:-2px"></span> PHÁ HỦY TOÀN BỘ BẢNG</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-warning" style="font-size:24px;width:24px;height:24px;margin-top:-2px"></span> <?php esc_html_e( 'DESTROY ENTIRE TABLE', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-delete-table-modal').classList.add('hidden'); document.getElementById('ska-delete-confirm-input').value='';"></span>
         </div>
         
         <div class="p-6">
             <input type="hidden" id="ska-del-tbl-slug">
-            <p class="text-[15px] text-gray-700 mb-3">Hành động này sẽ Xóa Vĩnh Viễn bảng <strong class="text-red-600">"<span id="ska-del-tbl-name"></span>"</strong> khỏi Máy tính.</p>
+            <p class="text-[15px] text-gray-700 mb-3"><?php printf( esc_html__( 'This action will permanently delete the table %s from the computer.', 'ska-data-pro' ), '<strong class="text-red-600">"<span id="ska-del-tbl-name"></span>"</strong>' ); ?></p>
             <div class="bg-red-50/70 p-4 rounded text-sm text-gray-700 leading-relaxed mb-4 border border-red-100">
-                ⚠️ Cảnh báo: Mọi Cột dữ liệu và Bản ghi (dữ liệu khách hàng, đơn hàng, hóa đơn...) bên trong bảng này sẽ bị xóa không thể lấy lại.
+                <?php esc_html_e( '⚠️ Warning: All columns and records (customer data, orders, invoices...) inside this table will be deleted and cannot be recovered.', 'ska-data-pro' ); ?>
             </div>
             
-            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Nhập chữ <span class="bg-gray-200 text-red-600 px-1 py-0.5 rounded font-mono">XACNHAN</span> để hoàn thành</label>
-            <input type="text" id="ska-delete-confirm-input" class="w-full border-red-200 rounded-md shadow-inner focus:border-red-500 focus:ring-red-500 p-3 bg-red-50/30 text-red-700 font-mono tracking-widest text-center" autocomplete="off" placeholder=__( 'Type the word XACNHAN here', 'ska-data-pro' )>
+            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide"><?php printf( esc_html__( 'Type the word %s to complete', 'ska-data-pro' ), '<span class="bg-gray-200 text-red-600 px-1 py-0.5 rounded font-mono">CONFIRM</span>' ); ?></label>
+            <input type="text" id="ska-delete-confirm-input" class="w-full border-red-200 rounded-md shadow-inner focus:border-red-500 focus:ring-red-500 p-3 bg-red-50/30 text-red-700 font-mono tracking-widest text-center" autocomplete="off" placeholder="<?php echo esc_attr( __( 'Type the word CONFIRM here', 'ska-data-pro' ) ); ?>">
         </div>
 
         <div class="px-5 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
             <button onclick="document.getElementById('ska-delete-table-modal').classList.add('hidden'); document.getElementById('ska-delete-confirm-input').value='';" class="px-6 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 transition"><?php esc_html_e( 'Close', 'ska-data-pro' ); ?></button>
             <button id="ska-execute-del-table-btn" class="px-6 py-2 rounded font-medium text-white bg-red-600 hover:bg-red-700 shadow-sm transition flex items-center gap-2 opacity-50 cursor-not-allowed" disabled>
-                <span class="dashicons dashicons-trash mt-0.5" style="font-size: 16px;"></span> Chấp nhận Rủi ro & Xóa
+                <span class="dashicons dashicons-trash mt-0.5" style="font-size: 16px;"></span> <?php esc_html_e( 'Accept Risk & Delete', 'ska-data-pro' ); ?>
             </button>
         </div>
     </div>
@@ -360,7 +360,7 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-create-app-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-indigo-50 text-indigo-700">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-portfolio text-indigo-500"></span> Khởi Tạo Không Gian App</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-portfolio text-indigo-500"></span> <?php esc_html_e( 'Initialize App Space', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-create-app-modal').classList.add('hidden');"></span>
         </div>
         
@@ -383,13 +383,13 @@ defined( 'ABSPATH' ) || exit;
             </div>
             
             <p class="text-xs text-indigo-600 m-0 bg-indigo-50 p-2 rounded">
-                Smart Object sẽ nhóm nhiều Table dưới cùng 1 App Blueprint.
+                <?php esc_html_e( 'Smart Objects will group multiple Tables under the same 1 App Blueprint.', 'ska-data-pro' ); ?>
             </p>
         </div>
 
         <div class="px-5 py-3 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
             <button onclick="document.getElementById('ska-create-app-modal').classList.add('hidden');" class="px-4 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 text-sm transition"><?php esc_html_e( 'Cancel', 'ska-data-pro' ); ?></button>
-            <button id="ska-execute-create-app-btn" class="px-4 py-2 rounded font-medium text-white bg-indigo-500 hover:bg-indigo-600 shadow-sm text-sm transition flex items-center gap-1"><span class="dashicons dashicons-plus-alt2 mt-0.5" style="font-size:16px;"></span> Tạo Workspace</button>
+            <button id="ska-execute-create-app-btn" class="px-4 py-2 rounded font-medium text-white bg-indigo-500 hover:bg-indigo-600 shadow-sm text-sm transition flex items-center gap-1"><span class="dashicons dashicons-plus-alt2 mt-0.5" style="font-size:16px;"></span> <?php esc_html_e( 'Create Workspace', 'ska-data-pro' ); ?></button>
         </div>
     </div>
 </div>
@@ -398,7 +398,7 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-rename-app-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-indigo-50 text-indigo-700">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-edit text-indigo-500"></span> Đổi Tên Không Gian</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-edit text-indigo-500"></span> <?php esc_html_e( 'Rename Space', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-rename-app-modal').classList.add('hidden');"></span>
         </div>
         
@@ -433,25 +433,25 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-delete-app-modal" class="hidden fixed inset-0 bg-red-900/60 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[450px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-red-50 text-red-600">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-warning" style="font-size:24px;width:24px;height:24px;margin-top:-2px"></span> GIẢI TÁN ỨNG DỤNG</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-warning" style="font-size:24px;width:24px;height:24px;margin-top:-2px"></span> <?php esc_html_e( 'DISSOLVE APPLICATION', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-delete-app-modal').classList.add('hidden'); document.getElementById('ska-delete-app-confirm-input').value='';"></span>
         </div>
         
         <div class="p-6">
             <input type="hidden" id="ska-del-app-slug">
-            <p class="text-[15px] text-gray-700 mb-3">Hành động này sẽ Xóa Không gian <strong class="text-red-600">"<span id="ska-del-app-name"></span>"</strong>.</p>
+            <p class="text-[15px] text-gray-700 mb-3"><?php printf( esc_html__( 'This action will delete the Space %s.', 'ska-data-pro' ), '<strong class="text-red-600">"<span id="ska-del-app-name"></span>"</strong>' ); ?></p>
             <div class="bg-orange-50/70 p-4 rounded text-sm text-gray-700 leading-relaxed mb-4 border border-orange-100">
-                ⚠️ Lưu ý: Các Bảng nằm trong ứng dụng này SẼ KHÔNG BỊ XÓA. Toàn bộ bảng sẽ được dời về __( 'Default Space', 'ska-data-pro' ).
+                <?php esc_html_e( '⚠️ Note: Tables inside this application WILL NOT BE DELETED. All tables will be moved to Default Space.', 'ska-data-pro' ); ?>
             </div>
             
-            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Nhập chữ <span class="bg-gray-200 text-red-600 px-1 py-0.5 rounded font-mono">XACNHAN</span> để hoàn thành</label>
-            <input type="text" id="ska-delete-app-confirm-input" class="w-full border-red-200 rounded-md shadow-inner focus:border-red-500 focus:ring-red-500 p-3 bg-red-50/30 text-red-700 font-mono tracking-widest text-center" autocomplete="off" placeholder=__( 'Type the word XACNHAN here', 'ska-data-pro' )>
+            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide"><?php printf( esc_html__( 'Type the word %s to complete', 'ska-data-pro' ), '<span class="bg-gray-200 text-red-600 px-1 py-0.5 rounded font-mono">CONFIRM</span>' ); ?></label>
+            <input type="text" id="ska-delete-app-confirm-input" class="w-full border-red-200 rounded-md shadow-inner focus:border-red-500 focus:ring-red-500 p-3 bg-red-50/30 text-red-700 font-mono tracking-widest text-center" autocomplete="off" placeholder="<?php echo esc_attr( __( 'Type the word CONFIRM here', 'ska-data-pro' ) ); ?>">
         </div>
 
         <div class="px-5 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
             <button onclick="document.getElementById('ska-delete-app-modal').classList.add('hidden'); document.getElementById('ska-delete-app-confirm-input').value='';" class="px-6 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 transition"><?php esc_html_e( 'Close', 'ska-data-pro' ); ?></button>
             <button id="ska-execute-del-app-btn" class="px-6 py-2 rounded font-medium text-white bg-red-600 hover:bg-red-700 shadow-sm transition flex items-center gap-2 opacity-50 cursor-not-allowed" disabled>
-                <span class="dashicons dashicons-trash mt-0.5" style="font-size: 16px;"></span> Chấp nhận Rủi ro & Giải Tán
+                <span class="dashicons dashicons-trash mt-0.5" style="font-size: 16px;"></span> <?php esc_html_e( 'Accept Risk & Dissolve', 'ska-data-pro' ); ?>
             </button>
         </div>
     </div>
@@ -461,7 +461,7 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-import-app-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-emerald-50 text-emerald-700">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-upload text-emerald-500"></span> Nhập (Import) Blueprint</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-upload text-emerald-500"></span> <?php esc_html_e( 'Import Blueprint', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-import-app-modal').classList.add('hidden');"></span>
         </div>
         
@@ -496,7 +496,7 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-filter-data-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-emerald-50 text-emerald-700">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-filter text-emerald-500"></span> Lọc Dữ Liệu</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-filter text-emerald-500"></span> <?php esc_html_e( 'Filter Data', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-filter-data-modal').classList.add('hidden');"></span>
         </div>
         
@@ -530,7 +530,7 @@ defined( 'ABSPATH' ) || exit;
 
         <div class="px-5 py-3 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
             <button onclick="document.getElementById('ska-filter-data-modal').classList.add('hidden');" class="px-4 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 text-sm transition"><?php esc_html_e( 'Close', 'ska-data-pro' ); ?></button>
-            <button id="ska-execute-filter-btn" class="px-5 py-2 rounded font-medium text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm text-sm transition flex items-center gap-1"><span class="dashicons dashicons-saved mt-0.5"></span> Áp Dụng Lọc</button>
+            <button id="ska-execute-filter-btn" class="px-5 py-2 rounded font-medium text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm text-sm transition flex items-center gap-1"><span class="dashicons dashicons-saved mt-0.5"></span> <?php esc_html_e( 'Apply Filter', 'ska-data-pro' ); ?></button>
         </div>
     </div>
 </div>
@@ -539,13 +539,13 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-group-data-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[350px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-indigo-50 text-indigo-700">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-networking text-indigo-500"></span> Gộp Nhóm Bản Ghi</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-networking text-indigo-500"></span> <?php esc_html_e( 'Group Records', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-group-data-modal').classList.add('hidden');"></span>
         </div>
         
         <div class="p-5 flex flex-col gap-4">
             <p class="text-xs text-gray-500 m-0 leading-relaxed">
-                Tự động gom các dòng có chung giá trị hiện tại lại với nhau thành từng cụm.
+                <?php esc_html_e( 'Automatically group rows with the same current value together.', 'ska-data-pro' ); ?>
             </p>
             <div>
                 <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide"><?php esc_html_e( 'Select columns to merge', 'ska-data-pro' ); ?></label>
@@ -564,7 +564,7 @@ defined( 'ABSPATH' ) || exit;
 
         <div class="px-5 py-3 border-t border-indigo-100 bg-indigo-50/30 flex justify-end gap-2">
             <button onclick="document.getElementById('ska-group-data-modal').classList.add('hidden');" class="px-4 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 text-sm transition"><?php esc_html_e( 'Close', 'ska-data-pro' ); ?></button>
-            <button id="ska-execute-group-btn" class="px-5 py-2 rounded font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm text-sm transition flex items-center gap-1"><span class="dashicons dashicons-image-filter relative mt-0.5"></span> Nhóm Ngay</button>
+            <button id="ska-execute-group-btn" class="px-5 py-2 rounded font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm text-sm transition flex items-center gap-1"><span class="dashicons dashicons-image-filter relative mt-0.5"></span> <?php esc_html_e( 'Group Now', 'ska-data-pro' ); ?></button>
         </div>
     </div>
 </div>
@@ -573,13 +573,13 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-portal-settings-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[500px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50 text-blue-700">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-admin-site-alt3 text-blue-500"></span> Cấu Hình App Portal</h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-admin-site-alt3 text-blue-500"></span> <?php esc_html_e( 'App Portal Settings', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-portal-settings-modal').classList.add('hidden');"></span>
         </div>
         
         <div class="p-5 flex flex-col gap-4">
             <p class="text-xs text-gray-500 m-0 leading-relaxed">
-                Biến bảng dữ liệu này thành một App độc lập có URL riêng (vd: /khach-hang).
+                <?php esc_html_e( 'Turn this data table into an independent App with its own URL (e.g. /customers).', 'ska-data-pro' ); ?>
             </p>
             
             <input type="hidden" id="ska-portal-table-slug" value="<?php echo esc_attr(isset($_GET['table']) ? $_GET['table'] : ''); ?>">
@@ -622,15 +622,15 @@ defined( 'ABSPATH' ) || exit;
                 <div x-data="skaPortalGenerator()" x-init="initData()" id="ska-auto-generate-ui-section" class="relative mt-5 p-5 bg-gradient-to-br from-indigo-50/50 to-blue-50/30 border border-indigo-100 rounded-lg">
                     <!-- Badge/Label -->
                     <div class="absolute -top-3 left-4 bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2 py-0.5 rounded uppercase tracking-wide flex items-center gap-1">
-                        <span class="dashicons dashicons-superhero" style="font-size:12px;width:12px;height:12px;"></span> Mới
+                        <span class="dashicons dashicons-superhero" style="font-size:12px;width:12px;height:12px;"></span> <?php esc_html_e( 'New', 'ska-data-pro' ); ?>
                     </div>
 
                     <div class="mb-4 mt-1">
                         <h3 class="text-[15px] font-semibold text-gray-800 flex items-center gap-2">
-                            Tự động sinh Giao diện (Auto-Generate UI)
+                            <?php esc_html_e( 'Auto-Generate UI', 'ska-data-pro' ); ?>
                         </h3>
                         <p class="text-[13px] text-gray-500 mt-1">
-                            Hệ thống sẽ tự động tạo Organism, List View, Detail View và cấu hình liên kết dữ liệu chỉ với một nút bấm.
+                            <?php esc_html_e( 'The system will automatically create Organisms, List View, Detail View and bind data configuration with a single click.', 'ska-data-pro' ); ?>
                         </p>
                     </div>
 
@@ -643,7 +643,7 @@ defined( 'ABSPATH' ) || exit;
                             <label class="flex items-start gap-2 cursor-pointer group/tip">
                                 <input type="checkbox" x-model="addLongText" class="mt-[3px] w-4 h-4 text-amber-500 border-amber-300 rounded focus:ring-amber-500 cursor-pointer">
                                 <span class="text-[13px] text-gray-800 font-medium leading-snug group-hover/tip:text-gray-900">
-                                    Bảng này chưa có trường Nội dung. Tự động thêm trường Bài viết (Gutenberg) giúp tôi.
+                                    <?php esc_html_e( 'This table does not have a Content field yet. Automatically add the Post (Gutenberg) field for me.', 'ska-data-pro' ); ?>
                                 </span>
                             </label>
                         </div>
@@ -654,7 +654,7 @@ defined( 'ABSPATH' ) || exit;
                             class="w-full flex justify-center items-center gap-2 text-white font-medium py-2.5 px-4 rounded-md shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             :class="isGenerating ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'">
                         <span class="dashicons" :class="isGenerating ? 'dashicons-update animate-spin' : 'dashicons-admin-magic'"></span>
-                        <span x-text=__( 'isGenerating ? ', 'ska-data-pro' )></span>
+                        <span x-text="isGenerating ? '<?php echo esc_js( __( 'Generating...', 'ska-data-pro' ) ); ?>' : '<?php echo esc_js( __( 'Create UI', 'ska-data-pro' ) ); ?>'"></span>
                     </button>
 
                     <!-- Trạng thái thành công -->
@@ -668,21 +668,21 @@ defined( 'ABSPATH' ) || exit;
                         </div>
                         <div class="grid grid-cols-3 gap-3 mt-3">
                             <a :href="listViewEditorUrl" x-show="listViewEditorUrl" target="_blank" class="flex justify-center items-center gap-2 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
-                                <span class="dashicons dashicons-edit"></span> Sửa List View
+                                <span class="dashicons dashicons-edit"></span> <?php esc_html_e( 'Edit List View', 'ska-data-pro' ); ?>
                             </a>
                             <a :href="detailViewEditorUrl" x-show="detailViewEditorUrl" target="_blank" class="flex justify-center items-center gap-2 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
-                                <span class="dashicons dashicons-edit"></span> Sửa Detail View
+                                <span class="dashicons dashicons-edit"></span> <?php esc_html_e( 'Edit Detail View', 'ska-data-pro' ); ?>
                             </a>
                             <a :href="insertViewEditorUrl" x-show="insertViewEditorUrl" target="_blank" class="flex justify-center items-center gap-2 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
-                                <span class="dashicons dashicons-edit"></span> Sửa Create View
+                                <span class="dashicons dashicons-edit"></span> <?php esc_html_e( 'Edit Create View', 'ska-data-pro' ); ?>
                             </a>
                         </div>
                         <div class="grid grid-cols-2 gap-3 mt-3">
                             <a :href="portalUrl" target="_blank" class="flex justify-center items-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
-                                <span class="dashicons dashicons-external"></span> Xem Frontend
+                                <span class="dashicons dashicons-external"></span> <?php esc_html_e( 'View Frontend', 'ska-data-pro' ); ?>
                             </a>
                             <a :href="themeBuilderUrl" target="_blank" class="flex justify-center items-center gap-2 bg-gray-50 border border-gray-200 hover:bg-gray-100 text-gray-700 font-medium py-2 px-3 rounded-md text-[13px] transition-colors shadow-sm">
-                                <span class="dashicons dashicons-admin-customizer"></span> Quản lý Template
+                                <span class="dashicons dashicons-admin-customizer"></span> <?php esc_html_e( 'Manage Templates', 'ska-data-pro' ); ?>
                             </a>
                         </div>
                     </div>
@@ -796,7 +796,7 @@ defined( 'ABSPATH' ) || exit;
 
         <div class="px-5 py-3 border-t border-blue-100 bg-blue-50/30 flex justify-end gap-2">
             <button onclick="document.getElementById('ska-portal-settings-modal').classList.add('hidden');" class="px-4 py-2 border border-gray-300 rounded font-medium text-gray-700 bg-white hover:bg-gray-50 text-sm transition"><?php esc_html_e( 'Close', 'ska-data-pro' ); ?></button>
-            <button id="ska-execute-portal-settings-btn" class="px-5 py-2 rounded font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-sm text-sm transition flex items-center gap-1"><span class="dashicons dashicons-saved mt-0.5"></span> Lưu Cấu Hình</button>
+            <button id="ska-execute-portal-settings-btn" class="px-5 py-2 rounded font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-sm text-sm transition flex items-center gap-1"><span class="dashicons dashicons-saved mt-0.5"></span> <?php esc_html_e( 'Save Configuration', 'ska-data-pro' ); ?></button>
         </div>
     </div>
 </div>

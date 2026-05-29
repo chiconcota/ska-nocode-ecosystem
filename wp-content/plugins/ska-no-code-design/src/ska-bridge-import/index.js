@@ -30,7 +30,7 @@ registerBlockType( metadata.name, {
                 <Placeholder 
                     icon="cloud-upload" 
                     label="Ska html2tailwind"
-                    instructions=__( 'Paste your HTML/Tailwind code here to automatically convert to Ska Blocks.', 'ska-no-code-design' )
+                    instructions={__( 'Paste your HTML/Tailwind code here to automatically convert to Ska Blocks.', 'ska-no-code-design' )}
                 >
                     <TextareaControl
                         label="Source HTML"

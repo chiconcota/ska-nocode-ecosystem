@@ -7,6 +7,12 @@ $tailwindClasses = isset($attributes['tailwindClasses']) ? $attributes['tailwind
 $className = isset($attributes['className']) ? $attributes['className'] : '';
 $customStyle = isset($attributes['customStyle']) ? $attributes['customStyle'] : '';
 $fieldName = !empty($attributes['fieldName']) ? $attributes['fieldName'] : '';
+$skaDynamicBinding = isset($attributes['skaDynamicBinding']) ? $attributes['skaDynamicBinding'] : '';
+if ((empty($fieldName) || $fieldName === 'my_select') && !empty($skaDynamicBinding)) {
+    if (preg_match('/\{\{#foreach\s+[a-zA-Z0-9_]+\.([a-zA-Z0-9_]+)\s*\}\}/', $skaDynamicBinding, $matches)) {
+        $fieldName = $matches[1];
+    }
+}
 $optionsText = isset($attributes['optionsText']) ? $attributes['optionsText'] : '';
 $isRequired = isset($attributes['isRequired']) ? $attributes['isRequired'] : false;
 
@@ -51,6 +57,10 @@ foreach ($lines as $line) {
     $label = trim($parts[0]);
     $value = isset($parts[1]) ? trim($parts[1]) : $label;
     $optionsList[] = ['label' => $label, 'value' => $value];
+}
+
+if (empty($optionsList) && !empty($skaDynamicBinding)) {
+    $optionsList[] = ['label' => '{{label}}', 'value' => '{{value}}'];
 }
 
 // === AUTO-INJECT x-model cho Alpine skaForm ===
