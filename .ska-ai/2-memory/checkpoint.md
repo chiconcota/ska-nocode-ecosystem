@@ -1,24 +1,45 @@
-# CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v2.4.0)
-*Ngày cập nhật: 2026-05-25*
+# CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v3.3.0)
+*Ngày cập nhật: 2026-05-30*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Công việc**: Khảo sát kiến trúc Blueprint đa ngôn ngữ, phân tích và kiểm tra cơ sở lưu trữ dữ liệu của hệ sinh thái 4 Plugins.
-- **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH khảo sát và cập nhật Roadmap cho ngày mai.
+- **Git Branch**: `feature/refactor-logic-db`
+- **Công việc**: Rà soát toàn bộ tiến độ E2E Test Workflow, xác định test cases còn lại.
+- **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH (Review Session).
 - **Kết quả**:
-  - Xác nhận **Ska No-Code Design** và **Ska Data Pro** đã lưu trữ 100% dữ liệu thực tế (Organisms, Templates, Presets, Smart Object records) dưới dạng các **bảng phẳng MySQL** (`ska_data_*`), đảm bảo tính tối ưu hiệu năng.
-  - Phát hiện **Ska Logic Engine** lưu trữ toàn bộ đồ thị Workflows serialized PHP Array trong option `wp_options` của WordPress (nguy cơ race condition và autoload RAM bloat).
-  - Đưa nhiệm vụ **Refactor lưu trữ Logic Engine sang bảng phẳng MySQL** (`ska_logic_workflows`) vào Lộ trình Task List (Task 8) để triển khai ngay vào ngày mai.
+  - Tổng hợp trạng thái 17 test cases trong [test-workflow-process.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/project-managers/test-workflow-process.md).
+  - 10/17 test cases đã hoàn thành (Logic Engine 4/4, System Table Protection 2/2, Dark Mode 2/3).
+  - 7 test cases còn lại bàn giao cho User tự kiểm thử thủ công.
+  - Theme Builder đã có 5 template sẵn (3 App Layout, 1 Header `hero gearder`, 1 404 Page `TRANG 404`).
+  - Không có thay đổi mã nguồn trong phiên này.
 
-## 2. Chi tiết các tệp đã sửa đổi (Modified Files)
-- **Roadmap**: [project_manager_opensource.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/project-managers/project_manager_opensource.md) (Thêm Task 8 vào roadmap)
-- **System Map**: [system_map.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/system_map.md) (Cập nhật Recent Logs)
-- **Decision Log**: [decision-log.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/2-memory/decision-log.md) (Ghi sổ quyết định thiết kế database mới)
-- **Ecosystem Docs**: [logic-engine.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/3-ecosystem/ska-logic-engine/logic-engine.md) (Cập nhật lưu ý quy hoạch lưu trữ)
+## 2. Tiến độ E2E Test Workflow (Summary)
+| Milestone | Test Cases | Hoàn thành | Còn lại |
+|---|---|---|---|
+| Logic Engine (MySQL Storage) | TC1-TC4 | ✅ 4/4 | 0 |
+| System Table Schema Protection | TC1-TC2 | ✅ 2/2 | 0 |
+| Dark Mode Engine (Phase 4.4) | TC1-TC3 | ✅ 2/3 | TC3 (Reactive UI Icon) |
+| Ska Link Engine (Milestone 4) | TC1-TC3 | 0/3 | TC1-TC3 |
+| Ska Theme Builder (Milestone 5) | TC1-TC3 | 0/3 | TC1-TC3 |
 
-## 3. Nhật ký và Tài liệu đi kèm
-- Cập nhật **Decision Log**: `.ska-ai/2-memory/decision-log.md`
-- Cập nhật **System Map Recent Logs**: `.ska-ai/1-overview/system_map.md`
-- Cập nhật **Ecosystem Architecture Docs**: `.ska-ai/3-ecosystem/ska-logic-engine/logic-engine.md`
+## 3. Các file đã thay đổi (từ các phiên trước, chưa commit)
+- **Ska No-Code Design (v1.0.3)**: render.php, ska-frontend.js, JSX files, build output (~40 files)
+- **Ska Logic Engine (v1.1.2)**: class-dynamic-content.php, class-ska-logic-db-action.php
+- **Ska Data Pro (v1.0.4)**: class-database-engine.php, class-data-fetcher.php, views, JS bundles
+- **Docs**: system_map.md, decision-log.md, checkpoint.md, test-workflow-process.md
 
 ## 4. Công việc tiếp theo cho phiên kế tiếp (Next Steps)
-- Triển khai **Task 8**: Tiến hành refactor chuyển đổi lưu trữ workflows của Ska Logic Engine sang bảng phẳng MySQL để tối ưu hiệu năng và tránh race condition.
+- **User tự test 7 test cases còn lại:**
+  - Dark Mode TC3: Advanced Reactive UI (x-show Sun/Moon icon)
+  - Link Engine TC1-TC3: Static Link, System Dynamic Link, Loop Dynamic Link
+  - Theme Builder TC1-TC3: Iframe Editor, Virtual Wrapper, Rule Builder
+- **Sau khi test xong:** Đánh dấu kết quả trên test-workflow-process.md, commit toàn bộ thay đổi.
+- **Tiềm năng:** Merge nhánh `feature/refactor-logic-db` vào `main` nếu tất cả test pass.
+
+## 5. Môi trường thực thi lệnh CLI (CLI Execution Environment)
+- **PHP CLI**: Có sẵn toàn cục bằng lệnh `php` (phiên bản `8.5.4` trên host Ubuntu 26.04).
+- **WP-CLI**: Có sẵn toàn cục bằng lệnh `wp` (phiên bản `2.12.0` trên host).
+- **MySQL Socket**: `/home/chiconcota/.config/Local/run/jBm37nt1f/mysql/mysqld.sock`
+- **Cú pháp chạy WP-CLI kết nối CSDL**:
+  ```bash
+  php -d mysqli.default_socket=/home/chiconcota/.config/Local/run/jBm37nt1f/mysql/mysqld.sock $(which wp) <lệnh>
+  ```

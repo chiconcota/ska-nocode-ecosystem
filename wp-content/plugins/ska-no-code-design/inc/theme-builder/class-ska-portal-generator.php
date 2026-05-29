@@ -406,10 +406,10 @@ class Ska_Portal_Generator
 		$header_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"} -->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"flex flex-col"} -->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/text {"tagName":"h2","content":"Quản lý ' . esc_attr($table_label) . '","tailwindClasses":"text-2xl font-bold text-slate-900"} /-->' . "\n";
-		$header_html .= __( '<!-- wp:ska-builder/text {\"tagName\":\"p\",\"content\":\"Manage and track progress of tasks.\",\"tailwindClasses\":\"text-slate-500 text-sm\"} //->', 'ska-no-code-design' ) . "\n";
+		$header_html .= '<!-- wp:ska-builder/text {"tagName":"p","content":"' . esc_attr( __( 'Manage and track progress of tasks.', 'ska-no-code-design' ) ) . '","tailwindClasses":"text-slate-500 text-sm"} /-->' . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/container {"tagName":"a","tailwindClasses":"px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold shadow-sm transition no-underline flex items-center justify-center","htmlAttributes":[{"key":"href","value":"/' . esc_attr($real_portal_slug) . '/create/"}]} -->' . "\n";
-		$header_html .= __( '<!-- wp:ska-builder/text {\"tagName\":\"span\",\"content\":\"+ Add New Record\",\"tailwindClasses\":\"\"} //>', 'ska-no-code-design' ) . "\n";
+		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"' . esc_attr( __( '+ Add New Record', 'ska-no-code-design' ) ) . '","tailwindClasses":""} /-->' . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 
@@ -418,12 +418,12 @@ class Ska_Portal_Generator
 		
 		// 3. Table Header Row (Grid)
 		$thead_html = '<!-- wp:ska-builder/container {"tagName":"div","tailwindClasses":"hidden md:grid ' . $grid_class . ' gap-4 items-center p-4 border-b border-slate-200 bg-slate-50/50"} -->' . "\n";
-		$thead_html .= __( '<!-- wp:ska-builder/text {\"tagName\":\"span\",\"content\":\"RECORD NAME / INFORMATION\",\"tailwindClasses\":\"text-xs font-bold text-slate-400 uppercase tracking-wider\"} //->', 'ska-no-code-design' ) . "\n";
+		$thead_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"' . esc_attr( __( 'RECORD NAME / INFORMATION', 'ska-no-code-design' ) ) . '","tailwindClasses":"text-xs font-bold text-slate-400 uppercase tracking-wider"} /-->' . "\n";
 		foreach ($columns as $slug => $data) {
 			$col_label = isset($data['label']) ? $data['label'] : $slug;
 			$thead_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"' . esc_attr($col_label) . '","tailwindClasses":"text-xs font-bold text-slate-400 uppercase tracking-wider"} /-->' . "\n";
 		}
-		$thead_html .= __( '<!-- wp:ska-builder/text {\"tagName\":\"span\",\"content\":\"ACTION\",\"tailwindClasses\":\"text-xs font-bold text-slate-400 uppercase tracking-wider text-right\"} //->', 'ska-no-code-design' ) . "\n";
+		$thead_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"' . esc_attr( __( 'ACTION', 'ska-no-code-design' ) ) . '","tailwindClasses":"text-xs font-bold text-slate-400 uppercase tracking-wider text-right"} /-->' . "\n";
 		$thead_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 
 		// 4. The Loop
@@ -542,7 +542,7 @@ class Ska_Portal_Generator
 		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"SKA","tailwindClasses":"font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-amber-400 to-emerald-500"} /-->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"|","tailwindClasses":"text-slate-300 font-light text-sm mx-1"} /-->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/container {"tagName":"a","tailwindClasses":"hover:bg-slate-100 px-2 py-1 rounded transition-colors flex items-center gap-1.5 no-underline","htmlAttributes":[{"key":"href","value":"/' . esc_attr($real_portal_slug) . '/"}]} -->' . "\n";
-		$header_html .= __( '<!-- wp:ska-builder/text {\"tagName\":\"span\",\"content\":\"← Back to list\",\"tailwindClasses\":\"\"} //->', 'ska-no-code-design' ) . "\n";
+		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"' . esc_attr( __( '← Back to list', 'ska-no-code-design' ) ) . '","tailwindClasses":""} /-->' . "\n";
 		$header_html .= '<!-- /wp:ska-builder/container -->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"/","tailwindClasses":"text-slate-300"} /-->' . "\n";
 		$header_html .= '<!-- wp:ska-builder/text {"tagName":"span","content":"Chi tiết: ' . esc_attr($table_label) . '","tailwindClasses":"text-slate-700 font-medium truncate max-w-[200px]"} /-->' . "\n";

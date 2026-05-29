@@ -53,7 +53,7 @@ export function attachAppEvents() {
     const delBtn = document.getElementById('ska-execute-del-app-btn');
     if ( confirmInput && delBtn ) {
         confirmInput.addEventListener('input', function() {
-            if (this.value === 'XACNHAN') {
+            if (this.value === 'CONFIRM') {
                 delBtn.disabled = false;
                 delBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {

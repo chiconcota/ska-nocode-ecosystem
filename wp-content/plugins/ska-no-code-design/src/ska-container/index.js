@@ -152,7 +152,7 @@ registerBlockType(metadata.name, {
                                 label={__(__( 'Activate Form Engine', 'ska-no-code-design' ), 'ska-builder-core')}
                                 checked={isSkaForm}
                                 onChange={(val) => setAttributes({ isSkaForm: val })}
-                                help=__( 'Turn on to automatically handle Submit, Validation, Loading State.', 'ska-no-code-design' )
+                                help={__( 'Turn on to automatically handle Submit, Validation, Loading State.', 'ska-no-code-design' )}
                             />
                             {isSkaForm && (
                                 <>
@@ -160,13 +160,13 @@ registerBlockType(metadata.name, {
                                         label={__('Logic Action ID', 'ska-builder-core')}
                                         value={formActionId}
                                         onChange={(val) => setAttributes({ formActionId: val })}
-                                        help=__( 'Workflow ID in Ska Logic Engine (eg contact_form).', 'ska-no-code-design' )
+                                        help={__( 'Workflow ID in Ska Logic Engine (eg contact_form).', 'ska-no-code-design' )}
                                     />
                                     <ToggleControl
                                         label={__(__( 'Auto-Save', 'ska-no-code-design' ), 'ska-builder-core')}
                                         checked={usePersist}
                                         onChange={(val) => setAttributes({ usePersist: val })}
-                                        help=__( 'Save the data being filled into LocalStorage, avoid losing it when F5.', 'ska-no-code-design' )
+                                        help={__( 'Save the data being filled into LocalStorage, avoid losing it when F5.', 'ska-no-code-design' )}
                                     />
                                 </>
                             )}

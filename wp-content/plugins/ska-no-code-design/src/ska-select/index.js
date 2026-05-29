@@ -111,7 +111,7 @@ const OptionsBuilderControl = ({ value, onChange }) => {
                             onChange={onChange}
                             rows={5}
                             style={{ fontSize: '12px', fontFamily: 'monospace' }}
-                            help=__( 'Syntax: Label:value (1 line per option)', 'ska-no-code-design' )
+                            help={__( 'Syntax: Label:value (1 line per option)', 'ska-no-code-design' )}
                             __nextHasNoMarginBottom
                         />
                     </div>
@@ -189,11 +189,17 @@ registerBlockType(metadata.name, {
 
         const updateDynamicBinding = (newTable, newColumn) => {
             if (newTable && newColumn) {
-                setAttributes({ skaDynamicBinding: `{{#foreach ${newTable}.${newColumn}}}` });
+                setAttributes({ 
+                    skaDynamicBinding: `{{#foreach ${newTable}.${newColumn}}}`,
+                    fieldName: newColumn
+                });
             } else if (newTable) {
                 setAttributes({ skaDynamicBinding: `{{#foreach ${newTable}.}}` });
             } else {
-                setAttributes({ skaDynamicBinding: '' });
+                setAttributes({ 
+                    skaDynamicBinding: '',
+                    fieldName: ''
+                });
             }
         };
 

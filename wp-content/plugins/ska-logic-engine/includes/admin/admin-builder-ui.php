@@ -109,15 +109,29 @@ $available_nodes = [
     ]
 ];
 
-// Lấy danh sách Workflow hiện có
-$all_workflows = get_option('ska_logic_simple_workflows', []);
-$all_workflow_ids = array_keys($all_workflows);
+global $wpdb;
+$table_name = $wpdb->prefix . 'ska_data_sys_workflows';
+
+// Đọc danh sách workflow_id dựa trên Dev Mode
+$dev_mode = get_option( 'ska_system_dev_mode', '1' ) === '1';
+$all_workflow_ids = [];
+if ( $dev_mode ) {
+    $wpdb->suppress_errors( true );
+    $all_workflow_ids = $wpdb->get_col( "SELECT workflow_id FROM `{$table_name}`" );
+    $wpdb->suppress_errors( false );
+} else {
+    $all_workflow_ids = get_option( 'ska_logic_workflow_ids', [] );
+}
+if (!is_array($all_workflow_ids)) {
+    $all_workflow_ids = [];
+}
 
 // Nếu người dùng chọn từ dropdown, load đúng ID đó, nếu không load cái đầu tiên (hoặc default)
 $current_wf_id = isset($_GET['workflow_id']) ? sanitize_text_field($_GET['workflow_id']) : (empty($all_workflow_ids) ? 'default_form_submit' : $all_workflow_ids[0]);
 
-$current_wf = isset($all_workflows[$current_wf_id]) ? $all_workflows[$current_wf_id] : [];
-$saved_graph = empty($current_wf['graph']) ? '[]' : wp_json_encode($current_wf['graph']);
+// Query riêng graph của workflow hiện tại từ MySQL
+$graph_json = $wpdb->get_var($wpdb->prepare("SELECT graph FROM `{$table_name}` WHERE workflow_id = %s", $current_wf_id));
+$saved_graph = empty($graph_json) ? '[]' : $graph_json;
 
 ?>
 

@@ -207,6 +207,74 @@ class Database_Engine
 			return new \WP_Error('invalid_column', __( 'Security: Column does not exist.', 'ska-data-pro' ));
 		}
 
+		// Đọc Dictionary để kiểm tra kiểu dữ liệu của cột
+		$clean_table_name = str_replace($wpdb->prefix, '', $table_name);
+		$all_dict = get_option('ska_data_dictionary', array());
+		$table_dict = array();
+		if (isset($all_dict[$table_name])) {
+			$table_dict = $all_dict[$table_name];
+		} elseif (isset($all_dict[$clean_table_name])) {
+			$table_dict = $all_dict[$clean_table_name];
+		}
+
+		if (isset($table_dict[$column_name])) {
+			$col_type = isset($table_dict[$column_name]['type']) ? $table_dict[$column_name]['type'] : '';
+			$is_json_col = in_array($col_type, ['multi_select', 'relation', 'rollup'], true);
+
+			if ($is_json_col) {
+				if (empty($value) && $value !== 0 && $value !== '0') {
+					$value = null;
+				} else {
+					if (is_array($value)) {
+						$ids = array_map(function($item) {
+							if (is_array($item) && isset($item['id'])) {
+								return $item['id'];
+							} elseif (is_object($item) && isset($item->id)) {
+								return $item->id;
+							}
+							return $item;
+						}, array_values($value));
+						
+						if ($col_type === 'relation') {
+							$value = wp_json_encode(array_filter(array_map('intval', $ids)));
+						} else {
+							$value = wp_json_encode(array_values($value));
+						}
+					} elseif (is_string($value)) {
+						$trimmed = trim($value);
+						if (str_starts_with($trimmed, '[') || str_starts_with($trimmed, '{')) {
+							$decoded = json_decode($trimmed, true);
+							if (is_array($decoded)) {
+								if ($col_type === 'relation') {
+									$ids = array_map(function($item) {
+										if (is_array($item) && isset($item['id'])) {
+											return $item['id'];
+										}
+										return $item;
+									}, $decoded);
+									$value = wp_json_encode(array_filter(array_map('intval', $ids)));
+								} else {
+									$value = $trimmed;
+								}
+							} else {
+								$value = null;
+							}
+						} else {
+							if ($col_type === 'relation') {
+								$ids = array_filter(array_map('intval', array_map('trim', explode(',', $trimmed))));
+								$value = !empty($ids) ? wp_json_encode(array_values($ids)) : null;
+							} else {
+								$vals = array_filter(array_map('trim', explode(',', $trimmed)));
+								$value = !empty($vals) ? wp_json_encode(array_values($vals)) : null;
+							}
+						}
+					} else {
+						$value = null;
+					}
+				}
+			}
+		}
+
 		// Sử dụng cơ chế Update chuẩn của WP (Đã bao hàm cơ chế Escape/Sanitize SQL an toàn cho `$value`)
 		$result = $wpdb->update(
 			$table_name,
@@ -237,6 +305,10 @@ class Database_Engine
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
 			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
+		}
+
+		if ($this->is_table_protected($table_name)) {
+			return new \WP_Error('protected_table_schema', __( 'Security: Modifying the schema of tables belonging to the Core System is not allowed.', 'ska-data-pro' ));
 		}
 
 		$label = sanitize_text_field($label);
@@ -372,6 +444,10 @@ class Database_Engine
 			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
 		}
 
+		if ($this->is_table_protected($table_name)) {
+			return new \WP_Error('protected_table_schema', __( 'Security: Modifying the schema of tables belonging to the Core System is not allowed.', 'ska-data-pro' ));
+		}
+
 		if ($col_slug === 'id') {
 			return new \WP_Error('protected_col', __( 'The ID Column (System Primary Key) cannot be modified.', 'ska-data-pro' ));
 		}
@@ -475,6 +551,10 @@ class Database_Engine
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
 			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
+		}
+
+		if ($this->is_table_protected($table_name)) {
+			return new \WP_Error('protected_table_schema', __( 'Security: Modifying the schema of tables belonging to the Core System is not allowed.', 'ska-data-pro' ));
 		}
 
 		if ($col_slug === 'id') {
@@ -594,6 +674,30 @@ class Database_Engine
 	}
 
 	/**
+	 * Kiểm tra xem bảng có thuộc diện bảo vệ (System Tables) hay không.
+	 *
+	 * @param string $table_name
+	 * @return bool
+	 */
+	public function is_table_protected($table_name)
+	{
+		global $wpdb;
+
+		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
+			return false;
+		}
+
+		$protected_tables = array(
+			$wpdb->prefix . 'ska_data_sys_organisms',
+			$wpdb->prefix . 'ska_data_sys_theme_templates',
+			$wpdb->prefix . 'ska_data_sys_presets'
+		);
+		$protected_tables = apply_filters('ska_data_protected_tables', $protected_tables);
+
+		return in_array($table_name, $protected_tables);
+	}
+
+	/**
 	 * Xóa sạch sẽ một Bảng dữ liệu.
 	 *
 	 * @param string $table_name
@@ -608,12 +712,7 @@ class Database_Engine
 		}
 
 		// Bức tường thép: Chặn xóa System Tables
-		$protected_tables = array(
-			$wpdb->prefix . 'ska_data_sys_organisms',
-			$wpdb->prefix . 'ska_data_sys_theme_templates',
-			$wpdb->prefix . 'ska_data_sys_presets'
-		);
-		if (in_array($table_name, $protected_tables)) {
+		if ($this->is_table_protected($table_name)) {
 			return new \WP_Error('protected_table', __( 'Security: Deleting tables belonging to the Core System is not allowed.', 'ska-data-pro' ));
 		}
 
@@ -640,12 +739,7 @@ class Database_Engine
 		}
 
 		// Bức tường thép: Chặn đổi tên/di chuyển System Tables
-		$protected_tables = array(
-			$wpdb->prefix . 'ska_data_sys_organisms',
-			$wpdb->prefix . 'ska_data_sys_theme_templates',
-			$wpdb->prefix . 'ska_data_sys_presets'
-		);
-		if (in_array($table_name, $protected_tables)) {
+		if ($this->is_table_protected($table_name)) {
 			return new \WP_Error('protected_table', __( 'Security: Modification of Core System board configuration is not allowed.', 'ska-data-pro' ));
 		}
 
@@ -681,6 +775,10 @@ class Database_Engine
 
 		if (strpos($table_name, $wpdb->prefix . 'ska_data_') !== 0) {
 			return new \WP_Error('invalid_table', __( 'Security: Invalid table name.', 'ska-data-pro' ));
+		}
+
+		if ($this->is_table_protected($table_name)) {
+			return new \WP_Error('protected_table_schema', __( 'Security: Modifying the schema of tables belonging to the Core System is not allowed.', 'ska-data-pro' ));
 		}
 
 		$dictionary = get_option('ska_data_dictionary', array());

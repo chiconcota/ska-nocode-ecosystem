@@ -270,9 +270,21 @@ class Data_Fetcher {
 			$all_ids = array();
 			foreach ( $rows as $row ) {
 				if ( ! empty( $row[$col_name] ) ) {
-					$ids = array_map( 'trim', explode(',', $row[$col_name]) );
-					foreach ( $ids as $id ) {
-						if ( is_numeric($id) ) $all_ids[] = (int) $id;
+					$val = $row[$col_name];
+					$decoded = json_decode( $val, true );
+					if ( is_array( $decoded ) ) {
+						foreach ( $decoded as $item ) {
+							if ( is_array( $item ) && isset( $item['id'] ) ) {
+								$all_ids[] = (int) $item['id'];
+							} elseif ( is_numeric( $item ) ) {
+								$all_ids[] = (int) $item;
+							}
+						}
+					} else {
+						$ids = array_map( 'trim', explode( ',', $val ) );
+						foreach ( $ids as $id ) {
+							if ( is_numeric($id) ) $all_ids[] = (int) $id;
+						}
 					}
 				}
 			}
@@ -323,12 +335,29 @@ class Data_Fetcher {
 			// Đắp Map (Enrich) vào kết quả thô của Rows
 			foreach ( $rows as &$row ) {
 				if ( ! empty( $row[$col_name] ) ) {
-					$ids = array_map( 'trim', explode(',', $row[$col_name]) );
+					$val = $row[$col_name];
+					$decoded = json_decode( $val, true );
+					$local_ids = array();
+					if ( is_array( $decoded ) ) {
+						foreach ( $decoded as $item ) {
+							if ( is_array( $item ) && isset( $item['id'] ) ) {
+								$local_ids[] = (int) $item['id'];
+							} elseif ( is_numeric( $item ) ) {
+								$local_ids[] = (int) $item;
+							}
+						}
+					} else {
+						$ids = array_map( 'trim', explode( ',', $val ) );
+						foreach ( $ids as $id ) {
+							if ( is_numeric($id) ) $local_ids[] = (int) $id;
+						}
+					}
+
 					$enriched = array();
 					$has_valid = false;
-					foreach ( $ids as $id ) {
-						if ( is_numeric($id) && isset($map[ (int)$id ]) ) {
-							$item = array( 'id' => (int)$id, 'label' => $map[ (int)$id ] );
+					foreach ( $local_ids as $id ) {
+						if ( isset($map[ $id ]) ) {
+							$item = array( 'id' => $id, 'label' => $map[ $id ] );
 							
 							// Sinh link động nếu bảng đích có khai báo Portal
 							if ( $portal_slug !== '' ) {

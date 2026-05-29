@@ -128,7 +128,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                         label={__('Manual ID Override', 'ska-no-code-design')}
                         value={organismId}
                         onChange={(val) => setAttributes({ organismId: val })}
-                        help=__( 'Manually overwrite Reference IDs if the above list has not been updated', 'ska-no-code-design' )
+                        help={__( 'Manually overwrite Reference IDs if the above list has not been updated', 'ska-no-code-design' )}
                     />
 
                     {organismId && (

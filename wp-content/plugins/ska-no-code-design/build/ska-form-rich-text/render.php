@@ -6,7 +6,7 @@
  */
 
 $field_name = isset($attributes['field']) ? esc_attr($attributes['field']) : 'noi_dung';
-$label      = isset($attributes['label']) ? esc_html($attributes['label']) : 'Mô tả chi tiết';
+$label      = isset($attributes['label']) ? esc_html($attributes['label']) : __( 'Detailed description', 'ska-no-code-design' );
 $class_name = isset($attributes['className']) ? esc_attr($attributes['className']) : '';
 $tw_classes = isset($attributes['tailwindClasses']) ? esc_attr($attributes['tailwindClasses']) : '';
 

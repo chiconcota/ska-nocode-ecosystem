@@ -15,6 +15,7 @@ class Ska_Logic_Core {
 
     private function __construct() {
         $this->includes();
+        $this->maybe_create_tables();
         $this->init_hooks();
     }
 
@@ -73,6 +74,9 @@ class Ska_Logic_Core {
 
         // Nạp UI Component Universal Dynamic Binding vào Editor Gutenberg
         add_action('enqueue_block_editor_assets', [$this, 'enqueue_editor_scripts']);
+
+        // Đăng ký bảo vệ bảng phẳng hệ thống của Logic Engine
+        add_filter( 'ska_data_protected_tables', [ $this, 'protect_system_tables' ] );
     }
 
     public function enqueue_editor_scripts() {
@@ -134,10 +138,21 @@ class Ska_Logic_Core {
             [ $this, 'render_admin_page' ]
         );
 
-        // Render thêm submenu cho từng workflow (ẩn khỏi menu sidebar bằng cách truyền null làm parent slug)
-        $workflows = get_option('ska_logic_simple_workflows', []);
-        if (is_array($workflows)) {
-            foreach ($workflows as $id => $data) {
+        // Đọc danh sách workflow_id dựa trên Dev Mode
+        $dev_mode = get_option( 'ska_system_dev_mode', '1' ) === '1';
+        $workflow_ids = [];
+        if ( $dev_mode ) {
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'ska_data_sys_workflows';
+            $wpdb->suppress_errors( true );
+            $workflow_ids = $wpdb->get_col( "SELECT workflow_id FROM `{$table_name}`" );
+            $wpdb->suppress_errors( false );
+        } else {
+            $workflow_ids = get_option( 'ska_logic_workflow_ids', [] );
+        }
+
+        if ( is_array( $workflow_ids ) ) {
+            foreach ( $workflow_ids as $id ) {
                 add_submenu_page(
                     null,
                     $id . ' Workflow', 
@@ -179,32 +194,53 @@ class Ska_Logic_Core {
         // XỬ LÝ ACTIONS QUẢN LÝ TỪ MANAGER UI
         if ( isset($_POST['ska_logic_action']) && check_admin_referer('ska_logic_nonce') ) {
             $action = sanitize_text_field($_POST['ska_logic_action']);
-            $workflows = get_option('ska_logic_simple_workflows', []);
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'ska_data_sys_workflows';
             
             if ($action === 'create') {
                 $new_id = sanitize_title($_POST['new_workflow_id']);
-                if (!empty($new_id) && !isset($workflows[$new_id])) {
-                    $workflows[$new_id] = ['graph' => []];
-                    update_option('ska_logic_simple_workflows', $workflows);
-                    // Chuyển thẳng tới Builder
-                    echo "<script>window.location.href='?page=ska-logic-engine&view=builder&workflow_id={$new_id}';</script>";
-                    exit;
+                if (!empty($new_id)) {
+                    $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM `{$table_name}` WHERE workflow_id = %s", $new_id));
+                    if (!$exists) {
+                        $wpdb->insert(
+                            $table_name,
+                            [
+                                'workflow_id' => $new_id,
+                                'name'        => $new_id,
+                                'app_id'      => 'ska_system',
+                                'graph'       => wp_json_encode(['nodes' => [], 'edges' => []]),
+                                'node_count'  => 0,
+                                'status'      => 'active'
+                            ]
+                        );
+                        self::sync_workflow_ids_cache();
+                        // Chuyển thẳng tới Builder
+                        echo "<script>window.location.href='?page=ska-logic-engine&view=builder&workflow_id={$new_id}';</script>";
+                        exit;
+                    }
                 }
             } elseif ($action === 'delete') {
                 $del_id = sanitize_text_field($_POST['workflow_id']);
-                if (isset($workflows[$del_id])) {
-                    unset($workflows[$del_id]);
-                    update_option('ska_logic_simple_workflows', $workflows);
-                    echo __( '<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #ef4444;\"><p><strong>Target Carousel shredded!</strong></p></div>', 'ska-logic-engine' );
-                }
+                $wpdb->delete($table_name, ['workflow_id' => $del_id]);
+                self::sync_workflow_ids_cache();
+                echo __( '<div class="notice notice-success is-dismissible" style="margin-top:15px; margin-left:0; border-left-color: #ef4444;"><p><strong>Target Carousel shredded!</strong></p></div>', 'ska-logic-engine' );
             } elseif ($action === 'rename') {
                 $old_id = sanitize_text_field($_POST['old_id']);
                 $new_id = sanitize_title($_POST['new_id']);
-                if (isset($workflows[$old_id]) && !empty($new_id) && !isset($workflows[$new_id])) {
-                    $workflows[$new_id] = $workflows[$old_id];
-                    unset($workflows[$old_id]);
-                    update_option('ska_logic_simple_workflows', $workflows);
-                    echo __( '<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #3b82f6;\"><p><strong>Nameplate has been updated!</strong></p></div>', 'ska-logic-engine' );
+                if (!empty($new_id)) {
+                    $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM `{$table_name}` WHERE workflow_id = %s", $new_id));
+                    if (!$exists) {
+                        $wpdb->update(
+                            $table_name,
+                            [
+                                'workflow_id' => $new_id,
+                                'name'        => $new_id
+                            ],
+                            ['workflow_id' => $old_id]
+                        );
+                        self::sync_workflow_ids_cache();
+                        echo __( '<div class="notice notice-success is-dismissible" style="margin-top:15px; margin-left:0; border-left-color: #3b82f6;"><p><strong>Nameplate has been updated!</strong></p></div>', 'ska-logic-engine' );
+                    }
                 }
             }
         }
@@ -219,12 +255,20 @@ class Ska_Logic_Core {
                 $graph = [];
             }
 
-            $workflows = get_option('ska_logic_simple_workflows', []);
-            $workflows[ $form_id ] = [
-                'graph' => $graph
-            ];
-            update_option('ska_logic_simple_workflows', $workflows);
-            echo __( '<div class=\"notice notice-success is-dismissible\" style=\"margin-top:15px; margin-left:0; border-left-color: #059669;\"><p><strong>The network wire has successfully saved the complex JSON Graph structure!</strong></p></div>', 'ska-logic-engine' );
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'ska_data_sys_workflows';
+            $node_count = isset($graph['nodes']) && is_array($graph['nodes']) ? count($graph['nodes']) : 0;
+
+            $wpdb->update(
+                $table_name,
+                [
+                    'graph'      => wp_json_encode($graph),
+                    'node_count' => $node_count
+                ],
+                ['workflow_id' => $form_id]
+            );
+            self::sync_workflow_ids_cache();
+            echo __( '<div class="notice notice-success is-dismissible" style="margin-top:15px; margin-left:0; border-left-color: #059669;"><p><strong>The network wire has successfully saved the complex JSON Graph structure!</strong></p></div>', 'ska-logic-engine' );
         }
 
         $current_view = isset($_GET['view']) ? sanitize_text_field($_GET['view']) : 'list';
@@ -255,5 +299,72 @@ class Ska_Logic_Core {
             </div>
         </div>
         <?php
+    }
+
+    public function protect_system_tables( $protected_tables ) {
+        global $wpdb;
+        $protected_tables[] = $wpdb->prefix . 'ska_data_sys_workflows';
+        return $protected_tables;
+    }
+
+    public function maybe_create_tables() {
+        $db_version = get_option( 'ska_logic_db_version', '' );
+        if ( $db_version === '1.1.0' ) {
+            return;
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ska_data_sys_workflows';
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE `{$table_name}` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `workflow_id` varchar(191) NOT NULL,
+            `name` varchar(255) NOT NULL,
+            `app_id` varchar(100) DEFAULT 'ska_system',
+            `status` varchar(50) DEFAULT 'active',
+            `node_count` int(11) DEFAULT 0,
+            `graph` json DEFAULT NULL,
+            `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY  (`id`),
+            UNIQUE KEY `workflow_id` (`workflow_id`)
+        ) $charset_collate;";
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        dbDelta( $sql );
+
+        // Xóa option cũ
+        delete_option( 'ska_logic_simple_workflows' );
+
+        // Đăng ký vào dictionary để hiển thị trong Site Management
+        $dictionary = get_option( 'ska_data_dictionary', [] );
+        if ( ! is_array( $dictionary ) ) {
+            $dictionary = [];
+        }
+        if ( ! isset( $dictionary[ $table_name ] ) ) {
+            $dictionary[ $table_name ] = [];
+        }
+        $dictionary[ $table_name ]['__table_info'] = [
+            'name'   => 'Workflows',
+            'icon'   => 'dashicons-networking',
+            'app_id' => 'ska_system'
+        ];
+        update_option( 'ska_data_dictionary', $dictionary );
+
+        update_option( 'ska_logic_db_version', '1.1.0' );
+
+        self::sync_workflow_ids_cache();
+    }
+
+    public static function sync_workflow_ids_cache() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ska_data_sys_workflows';
+        $wpdb->suppress_errors( true );
+        $ids = $wpdb->get_col( "SELECT workflow_id FROM `{$table_name}`" );
+        $wpdb->suppress_errors( false );
+        if ( ! is_array( $ids ) ) {
+            $ids = [];
+        }
+        update_option( 'ska_logic_workflow_ids', $ids );
     }
 }

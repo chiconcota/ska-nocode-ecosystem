@@ -134,13 +134,13 @@ registerBlockType(metadata.name, {
                                     label={__('Field Name (Data Key)', 'ska-builder-core')}
                                     value={fieldName}
                                     onChange={(val) => setAttributes({ fieldName: val })}
-                                    help=__( 'Identifier of the button (Example: action_type)', 'ska-no-code-design' )
+                                    help={__( 'Identifier of the button (Example: action_type)', 'ska-no-code-design' )}
                                 />
                                 <TextControl
                                     label={__('Field Value', 'ska-builder-core')}
                                     value={fieldValue}
                                     onChange={(val) => setAttributes({ fieldValue: val })}
-                                    help=__( 'Value sent to Server (For example: publish, draft)', 'ska-no-code-design' )
+                                    help={__( 'Value sent to Server (For example: publish, draft)', 'ska-no-code-design' )}
                                 />
                             </>
                         )}
@@ -149,7 +149,7 @@ registerBlockType(metadata.name, {
                                 label={__('Workflow ID', 'ska-builder-core')}
                                 value={fieldName}
                                 onChange={(val) => setAttributes({ fieldName: val })}
-                                help=__( 'Enter the Workflow ID to run (Example: api_test)', 'ska-no-code-design' )
+                                help={__( 'Enter the Workflow ID to run (Example: api_test)', 'ska-no-code-design' )}
                             />
                         )}
                     </PanelBody>

@@ -148,7 +148,7 @@ function ska_builder_core_register_frontend_engine() {
     wp_register_script(
         'ska-frontend',
         SKA_DESIGN_URL . 'assets/js/ska-frontend.js',
-        array(),
+        array( 'wp-i18n' ),
         $version,
         true
     );

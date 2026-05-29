@@ -37,7 +37,7 @@ defined( 'ABSPATH' ) || exit;
             <h3 class="text-xl font-bold text-gray-900 mb-2">E-Commerce App</h3>
             <p class="text-sm text-gray-500 flex-grow mb-4"><?php esc_html_e( 'Retail store model. ', 'ska-data-pro' ); ?></p>
             <div class="bg-gray-50 rounded p-3 mb-5 border border-gray-100">
-                <p class="text-xs text-gray-600 font-mono mb-1"><strong>Bảng tự tạo: </strong>2</p>
+                <p class="text-xs text-gray-600 font-mono mb-1"><strong><?php esc_html_e( 'Auto-created tables:', 'ska-data-pro' ); ?> </strong>2</p>
                 <div class="flex flex-wrap gap-1 mt-2 -ml-1">
                     <span class="inline-block bg-white text-xs text-gray-600 px-2 py-1 rounded border">ska_data_products</span>
                     <span class="inline-block bg-white text-xs text-gray-600 px-2 py-1 rounded border">ska_data_orders</span>
@@ -56,7 +56,7 @@ defined( 'ABSPATH' ) || exit;
             <h3 class="text-xl font-bold text-gray-900 mb-2">LMS & Academy</h3>
             <p class="text-sm text-gray-500 flex-grow mb-4"><?php esc_html_e( 'Online education system. ', 'ska-data-pro' ); ?></p>
             <div class="bg-gray-50 rounded p-3 mb-5 border border-gray-100">
-                <p class="text-xs text-gray-600 font-mono mb-1"><strong>Bảng tự tạo: </strong>3</p>
+                <p class="text-xs text-gray-600 font-mono mb-1"><strong><?php esc_html_e( 'Auto-created tables:', 'ska-data-pro' ); ?> </strong>3</p>
                 <div class="flex flex-wrap gap-1 mt-2 -ml-1">
                     <span class="inline-block bg-white text-xs text-gray-600 px-2 py-1 rounded border">.._courses</span>
                     <span class="inline-block bg-white text-xs text-gray-600 px-2 py-1 rounded border">.._lessons</span>
@@ -76,7 +76,7 @@ defined( 'ABSPATH' ) || exit;
             <h3 class="text-xl font-bold text-gray-900 mb-2">Booking Appointments</h3>
             <p class="text-sm text-gray-500 flex-grow mb-4"><?php esc_html_e( 'Service booking model (Spa, Medical, Hotel). ', 'ska-data-pro' ); ?></p>
             <div class="bg-gray-50 rounded p-3 mb-5 border border-gray-100">
-                <p class="text-xs text-gray-600 font-mono mb-1"><strong>Bảng tự tạo: </strong>2</p>
+                <p class="text-xs text-gray-600 font-mono mb-1"><strong><?php esc_html_e( 'Auto-created tables:', 'ska-data-pro' ); ?> </strong>2</p>
                 <div class="flex flex-wrap gap-1 mt-2 -ml-1">
                     <span class="inline-block bg-white text-xs text-gray-600 px-2 py-1 rounded border">.._services</span>
                     <span class="inline-block bg-white text-xs text-gray-600 px-2 py-1 rounded border">.._appointments</span>
@@ -95,7 +95,7 @@ defined( 'ABSPATH' ) || exit;
             <h3 class="text-xl font-bold text-gray-900 mb-2">Online Hospital</h3>
             <p class="text-sm text-gray-500 flex-grow mb-4"><?php esc_html_e( 'Online Health System, Hospital. ', 'ska-data-pro' ); ?></p>
             <div class="bg-gray-50 rounded p-3 mb-5 border border-gray-100">
-                <p class="text-xs text-gray-600 font-mono mb-1"><strong>Bảng tự tạo: </strong>1</p>
+                <p class="text-xs text-gray-600 font-mono mb-1"><strong><?php esc_html_e( 'Auto-created tables:', 'ska-data-pro' ); ?> </strong>1</p>
                 <div class="flex flex-wrap gap-1 mt-2 -ml-1">
                     <span class="inline-block bg-white text-xs text-gray-600 px-2 py-1 rounded border">ska_data_doctors</span>
                 </div>
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.location.href = res.data.redirect_url;
                     }, 500);
                 } else {
-                    alert('Lỗi: ' + (res.data.message || __( 'System busy', 'ska-data-pro' )));
+                    alert('<?php echo esc_js( __( 'Error:', 'ska-data-pro' ) ); ?> ' + (res.data.message || '<?php echo esc_js( __( 'System busy', 'ska-data-pro' ) ); ?>'));
                     // Trả lại nút nếu lỗi
                     this.innerHTML = originalHtml;
                     this.disabled = false;
