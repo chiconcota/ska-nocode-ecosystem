@@ -15,18 +15,18 @@ The ecosystem is split into **4 decoupled plugins** and **1 clean canvas theme**
                   │     (Zero Legacy CSS Canvas)    │
                   └────────────────┬────────────────┘
                                    │
-┌──────────────────────────────────┼──────────────────────────────────┐
-│                             4 PLUGINS                               │
-├───────────────────┬──────────────┴──────┬───────────────────────────┤
-│  Ska Data Pro     │  Ska Logic Engine   │   Ska No-Code Design      │
-│  (Flat Database)  │ (Event & Expression)│ (Tailwind v4 JIT Canvas)  │
-└─────────┬─────────┘└──────────┬──────────┘└─────────────┬─────────────┘
+┌──────────────────────────────────┼────────────────────────────────────────┐
+│                             4 PLUGINS                                     │
+├───────────────────┬──────────────┴──────┬─────────────────────────────────┤
+│  Ska Data Pro     │  Ska Logic Engine   │   Ska No-Code Design            │
+│  (Flat Database)  │ (Event & Expression)│ (Tailwind v4, Alpine v3, JIT )  │
+└─────────┬─────────┘└──────────┬──────────┘└─────────────┬─────────────────┘
           │                     │                         │
           └─────────────────────┼─────────────────────────┘
                                 │
                   ┌─────────────┴─────────────┐
                   │        Ska Bridge         │
-                  │   (html2tailwind & API)   │
+                  │      (wordpress2nextjs)   │
                   └───────────────────────────┘
 ```
 
@@ -36,8 +36,10 @@ The ecosystem is split into **4 decoupled plugins** and **1 clean canvas theme**
 
 2. **Ska No-Code Design**
    * Handles visual block rendering (atomic container, lists, icons, forms, images, buttons).
+   * Provides compilation bridges including translation maps (`html2tailwind`).
    * Bundles the **Skapine Engine** (using Alpine.js store and directives) for instant interactive state management.
    * Integrates an editor workspace and a **Tailwind v4 JIT** compiler engine to prevent inline style bloat.
+   * Theme builder, design token manager, modern design system.
 
 3. **Ska Data Pro**
    * Abandons the slow and legacy `wp_postmeta` model.
@@ -50,7 +52,6 @@ The ecosystem is split into **4 decoupled plugins** and **1 clean canvas theme**
    * Protects state and operations using strict Nonces and automated Data Healing mechanisms.
 
 5. **Ska Bridge (Adapter)**
-   * Provides compilation bridges including translation maps (`html2tailwind`).
    * Exposes headless Rest API JSON endpoints to distribute layouts directly into external frameworks (like Next.js).
 
 ---
