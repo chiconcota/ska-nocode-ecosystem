@@ -1,7 +1,7 @@
 {
   "name": "ska-logic-engine",
-  "version": "1.1.2",
-  "description": "",
+  "version": "1.1.5",
+  "description": "The logic builder for Ska ecosystem",
   "main": "index.js",
   "scripts": {
     "dev": "vite build --watch",

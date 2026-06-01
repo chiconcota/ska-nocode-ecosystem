@@ -24,13 +24,13 @@
 
 #### B. Phân loại Ska Organisms (Ska Organisms Categorization & Folder Management)
 *Khắc phục khẩn cấp tình trạng rối loạn UI quản trị khi số lượng Organisms (Symbols/Reusable Blocks) phình to.*
-- [ ] **Mở rộng Schema lưu trữ:**
-  - [ ] Nâng cấp bảng flat table `ska_data_sys_organisms` bằng cách bổ sung cột `category` (chuỗi định danh/slug) hoặc thiết lập hệ thống tag phân loại.
-- [ ] **Tối ưu UI Quản lý (Organisms Dashboard):**
-  - [ ] Xây dựng bộ lọc theo Thư mục/Danh mục (Category Filter Tabs) trực quan trên Dashboard quản trị Organisms.
-  - [ ] Cho phép người dùng tạo, sửa, xóa các Danh mục phân loại động và kéo thả Organisms vào danh mục tương ứng.
-- [ ] **Nâng cấp Gutenberg Inserter (+):**
-  - [ ] Phân chia danh sách Organisms trong tab Inserter của Gutenberg thành các nhóm rõ ràng (ví dụ: `Header`, `Footer`, `Hero Section`, `Data Cards`, `Forms`) thay vì đổ đống toàn bộ danh sách, giúp tăng tốc độ tìm kiếm block.
+- [x] **Mở rộng Schema lưu trữ:**
+  - [x] Nâng cấp bảng flat table `ska_data_sys_organisms` bằng cách bổ sung cột `category` (chuỗi định danh/slug) hoặc thiết lập hệ thống tag phân loại.
+- [x] **Tối ưu UI Quản lý (Organisms Dashboard):**
+  - [x] Xây dựng bộ lọc theo Thư mục/Danh mục (Category Filter Tabs) trực quan trên Dashboard quản trị Organisms.
+  - [x] Cho phép người dùng tạo, sửa, xóa các Danh mục phân loại động và kéo thả Organisms vào danh mục tương ứng.
+- [x] **Nâng cấp Gutenberg Inserter (+):**
+  - [x] Phân chia danh sách Organisms trong tab Inserter của Gutenberg thành các nhóm rõ ràng (ví dụ: `Header`, `Footer`, `Hero Section`, `Data Cards`, `Forms`) thay vì đổ đống toàn bộ danh sách, giúp tăng tốc độ tìm kiếm block.
 
 #### C. AI JSON Blueprint Import (Logic Engine)
 *Nền tảng giao tiếp với AI, biến Logic Engine thành Execution Runtime.*

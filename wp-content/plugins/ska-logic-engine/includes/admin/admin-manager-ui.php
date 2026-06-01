@@ -21,18 +21,56 @@ if (is_array($workflows_raw)) {
 }
 ?>
 
-<div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); max-width: 900px;">
+<div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); max-width: 1200px;">
     
     <div style="display:flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6; padding-bottom: 16px; margin-bottom: 24px;">
-        <h3 style="margin:0; font-size: 18px; color: #111827;"><span class="dashicons dashicons-networking" style="color:#64748b; margin-top:3px;"></span> Danh sách Băng Chuyền Logic</h3>
+        <h3 style="margin:0; font-size: 18px; color: #111827;"><span class="dashicons dashicons-networking" style="color:#64748b; margin-top:3px;"></span> <?php esc_html_e( 'Logic Streams List', 'ska-logic-engine' ); ?></h3>
         
         <!-- Form Tạo Mới Ở Header -->
-        <form method="POST" style="display:flex; gap: 8px;">
-            <?php wp_nonce_field('ska_logic_nonce'); ?>
-            <input type="hidden" name="ska_logic_action" value="create">
-            <input type="text" name="new_workflow_id" required placeholder="<?php esc_attr_e( 'Enter the new ID name (eg: lead_form)', 'ska-logic-engine' ); ?>" pattern="[a-zA-Z0-9_-]+" title="<?php esc_attr_e( 'Contains only unaccented letters, numbers, dashes and underlines', 'ska-logic-engine' ); ?>" style="border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 12px; font-size:13px; line-height:28px;">
-            <button type="submit" class="button button-primary" style="background:#10b981; border-color:#10b981; border-radius: 6px; height:38px;"><?php esc_html_e( '+ Initialize empty Stream', 'ska-logic-engine' ); ?></button>
-        </form>
+        <div style="display:flex; gap: 8px;">
+            <button type="button" onclick="document.getElementById('import_blueprint_modal').style.display='flex';" class="button button-secondary" style="border-radius: 6px; height:38px; display:flex; align-items:center; gap:4px;">
+                <span class="dashicons dashicons-upload" style="margin-top:2px;"></span> <?php esc_html_e( 'Import Blueprint', 'ska-logic-engine' ); ?>
+            </button>
+            <form method="POST" style="display:flex; gap: 8px; margin:0;">
+                <?php wp_nonce_field('ska_logic_nonce'); ?>
+                <input type="hidden" name="ska_logic_action" value="create">
+                <input type="text" name="new_workflow_id" required placeholder="<?php esc_attr_e( 'Enter the new ID name (eg: lead_form)', 'ska-logic-engine' ); ?>" pattern="[a-zA-Z0-9_-]+" title="<?php esc_attr_e( 'Contains only unaccented letters, numbers, dashes and underlines', 'ska-logic-engine' ); ?>" style="border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 12px; font-size:13px; line-height:28px;">
+                <button type="submit" class="button button-primary" style="background:#10b981; border-color:#10b981; border-radius: 6px; height:38px;"><?php esc_html_e( '+ Initialize empty Stream', 'ska-logic-engine' ); ?></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Import Blueprint Modal -->
+    <div id="import_blueprint_modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; align-items:center; justify-content:center;">
+        <div style="background:white; padding:24px; border-radius:12px; width:400px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);">
+            <h3 style="margin-top:0; font-size:18px;"><?php esc_html_e( 'Import JSON Blueprint', 'ska-logic-engine' ); ?></h3>
+            <form method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:16px;">
+                <?php wp_nonce_field('ska_logic_nonce'); ?>
+                <input type="hidden" name="ska_logic_action" value="import_blueprint">
+                
+                <div>
+                    <label style="display:block; font-weight:600; margin-bottom:4px;"><?php esc_html_e( 'Workflow ID', 'ska-logic-engine' ); ?></label>
+                    <input type="text" name="import_workflow_id" required pattern="[a-zA-Z0-9_-]+" style="width:100%; border-radius:6px; border:1px solid #d1d5db; padding:6px 12px;">
+                </div>
+                
+                <div>
+                    <label style="display:block; font-weight:600; margin-bottom:4px;"><?php esc_html_e( 'JSON Blueprint File', 'ska-logic-engine' ); ?></label>
+                    <input type="file" name="blueprint_file" accept=".json" required style="width:100%;">
+                </div>
+                
+                <div>
+                    <label style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" name="overwrite" value="1" checked>
+                        <?php esc_html_e( 'Overwrite if exists', 'ska-logic-engine' ); ?>
+                    </label>
+                </div>
+                
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+                    <button type="button" class="button" onclick="document.getElementById('import_blueprint_modal').style.display='none';"><?php esc_html_e( 'Cancel', 'ska-logic-engine' ); ?></button>
+                    <button type="submit" class="button button-primary"><?php esc_html_e( 'Import', 'ska-logic-engine' ); ?></button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <?php if (empty($workflows_by_app)): ?>
@@ -44,9 +82,9 @@ if (is_array($workflows_raw)) {
         <table class="wp-list-table widefat fixed striped" style="border-radius: 8px; overflow:hidden; border: 1px solid #e2e8f0; border-collapse: separate;">
             <thead style="background:#f8fafc;">
                 <tr>
-                    <th style="padding:12px 16px; font-weight:600; width:35%;"><?php esc_html_e( 'Stream ID (Form Action)', 'ska-logic-engine' ); ?></th>
-                    <th style="padding:12px 16px; font-weight:600;"><?php esc_html_e( 'Number of Steps (Nodes)', 'ska-logic-engine' ); ?></th>
-                    <th style="padding:12px 16px; font-weight:600; width:35%; text-align:right;"><?php esc_html_e( 'Operation', 'ska-logic-engine' ); ?></th>
+                    <th style="padding:12px 16px; font-weight:600; width:45%;"><?php esc_html_e( 'Stream ID (Form Action)', 'ska-logic-engine' ); ?></th>
+                    <th style="padding:12px 16px; font-weight:600; width:15%;"><?php esc_html_e( 'Number of Steps (Nodes)', 'ska-logic-engine' ); ?></th>
+                    <th style="padding:12px 16px; font-weight:600; width:40%; text-align:right;"><?php esc_html_e( 'Operation', 'ska-logic-engine' ); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -93,15 +131,19 @@ if (is_array($workflows_raw)) {
                             <span style="background:#f1f5f9; color:#94a3b8; padding:2px 8px; border-radius:12px; font-size:12px;"><?php esc_html_e( 'Empty', 'ska-logic-engine' ); ?></span>
                         <?php endif; ?>
                     </td>
-                    <td style="padding: 16px; vertical-align: middle; text-align:right;">
-                        <a href="?page=ska-logic-engine&view=builder&workflow_id=<?php echo esc_attr($wf_id); ?>" class="button" style="color: #4f46e5; border-color: #4f46e5; font-weight: 500; margin-right:8px;"><span class="dashicons dashicons-edit" style="margin-top:3px; font-size:16px;"></span> Thiết kế Luồng</a>
-                        
-                        <form method="POST" style="display:inline-block; margin:0;" onsubmit="return confirm('<?php esc_attr_e( 'WARNING: This action will delete the stream\'s Json Graph. If the Frontend is still submitting, the cable will break. Are you sure?', 'ska-logic-engine' ); ?>')">
-                            <?php wp_nonce_field('ska_logic_nonce'); ?>
-                            <input type="hidden" name="ska_logic_action" value="delete">
-                            <input type="hidden" name="workflow_id" value="<?php echo esc_attr($wf_id); ?>">
-                            <button type="submit" class="button" style="color: #ef4444; border-color: #fca5a5; background: #fef2f2;"><?php esc_html_e( 'Delete', 'ska-logic-engine' ); ?></button>
-                        </form>
+                    <td style="padding: 16px; vertical-align: middle;">
+                        <div style="display:flex; justify-content:flex-end; align-items:center; gap:8px; white-space:nowrap;">
+                            <a href="?page=ska-logic-engine&view=builder&workflow_id=<?php echo esc_attr($wf_id); ?>" class="button" style="color: #4f46e5; border-color: #4f46e5; font-weight: 500; margin:0; display:inline-flex; align-items:center; gap:4px;"><span class="dashicons dashicons-edit" style="font-size:16px; width:16px; height:16px;"></span> <?php esc_html_e( 'Design Flow', 'ska-logic-engine' ); ?></a>
+                            
+                            <a href="<?php echo esc_url(rest_url('ska-logic/v1/export-blueprint?workflow_id=' . $wf_id . '&_wpnonce=' . wp_create_nonce('wp_rest'))); ?>" target="_blank" class="button" style="color: #0f172a; border-color: #cbd5e1; margin:0; display:inline-flex; align-items:center; gap:4px;"><span class="dashicons dashicons-download" style="font-size:16px; width:16px; height:16px;"></span> <?php esc_html_e( 'Export', 'ska-logic-engine' ); ?></a>
+
+                            <form method="POST" style="display:inline-block; margin:0;" onsubmit="return confirm('<?php esc_attr_e( 'WARNING: This action will delete the stream\'s Json Graph. If the Frontend is still submitting, the cable will break. Are you sure?', 'ska-logic-engine' ); ?>')">
+                                <?php wp_nonce_field('ska_logic_nonce'); ?>
+                                <input type="hidden" name="ska_logic_action" value="delete">
+                                <input type="hidden" name="workflow_id" value="<?php echo esc_attr($wf_id); ?>">
+                                <button type="submit" class="button" style="color: #ef4444; border-color: #fca5a5; background: #fef2f2; margin:0; display:inline-flex; align-items:center; gap:4px;"><span class="dashicons dashicons-trash" style="font-size:16px; width:16px; height:16px;"></span> <?php esc_html_e( 'Delete', 'ska-logic-engine' ); ?></button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 <?php endforeach; ?>

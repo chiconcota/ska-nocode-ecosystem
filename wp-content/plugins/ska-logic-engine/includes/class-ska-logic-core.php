@@ -41,6 +41,7 @@ class Ska_Logic_Core {
         
         // 4. Họng Đón Dữ liệu (API)
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/api/class-form-receiver.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/api/class-blueprint-api.php';
         
         // 5. Đánh chặn Giao diện (Frontend Hydration)
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/pipeline/class-dynamic-content.php';
@@ -56,6 +57,7 @@ class Ska_Logic_Core {
     private function init_hooks() {
         // Khởi động REST API Receiver
         add_action( 'rest_api_init', [ 'Ska_Form_Receiver', 'register_routes' ] );
+        add_action( 'rest_api_init', [ 'Ska_Blueprint_API', 'register_routes' ] );
         
         // Khởi động Frontend Data Hydration Pipeline
         Ska_Dynamic_Content::instance();
@@ -241,6 +243,43 @@ class Ska_Logic_Core {
                         self::sync_workflow_ids_cache();
                         echo __( '<div class="notice notice-success is-dismissible" style="margin-top:15px; margin-left:0; border-left-color: #3b82f6;"><p><strong>Nameplate has been updated!</strong></p></div>', 'ska-logic-engine' );
                     }
+                }
+            } elseif ($action === 'import_blueprint') {
+                $import_id = sanitize_title($_POST['import_workflow_id']);
+                $overwrite = isset($_POST['overwrite']) ? true : false;
+                
+                if (!empty($import_id) && isset($_FILES['blueprint_file']) && $_FILES['blueprint_file']['error'] === UPLOAD_ERR_OK) {
+                    $file_content = file_get_contents($_FILES['blueprint_file']['tmp_name']);
+                    $graph_data = json_decode($file_content, true);
+                    
+                    if (is_array($graph_data) && isset($graph_data['nodes']) && isset($graph_data['edges'])) {
+                        $node_count = count($graph_data['nodes']);
+                        $graph_json = wp_json_encode($graph_data);
+                        $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM `{$table_name}` WHERE workflow_id = %s", $import_id));
+                        
+                        if ($exists && $overwrite) {
+                            $wpdb->update($table_name, ['graph' => $graph_json, 'node_count' => $node_count], ['workflow_id' => $import_id]);
+                            self::sync_workflow_ids_cache();
+                            echo __( '<div class="notice notice-success is-dismissible" style="margin-top:15px; margin-left:0; border-left-color: #10b981;"><p><strong>Blueprint imported and overwritten successfully!</strong></p></div>', 'ska-logic-engine' );
+                        } elseif (!$exists) {
+                            $wpdb->insert($table_name, [
+                                'workflow_id' => $import_id,
+                                'name'        => $import_id,
+                                'app_id'      => 'ska_system',
+                                'graph'       => $graph_json,
+                                'node_count'  => $node_count,
+                                'status'      => 'active'
+                            ]);
+                            self::sync_workflow_ids_cache();
+                            echo __( '<div class="notice notice-success is-dismissible" style="margin-top:15px; margin-left:0; border-left-color: #10b981;"><p><strong>Blueprint imported successfully!</strong></p></div>', 'ska-logic-engine' );
+                        } else {
+                            echo __( '<div class="notice notice-error is-dismissible" style="margin-top:15px; margin-left:0;"><p><strong>Workflow ID already exists. Please check the Overwrite option.</strong></p></div>', 'ska-logic-engine' );
+                        }
+                    } else {
+                        echo __( '<div class="notice notice-error is-dismissible" style="margin-top:15px; margin-left:0;"><p><strong>Invalid Blueprint format. Must contain nodes and edges.</strong></p></div>', 'ska-logic-engine' );
+                    }
+                } else {
+                    echo __( '<div class="notice notice-error is-dismissible" style="margin-top:15px; margin-left:0;"><p><strong>Please select a valid JSON file.</strong></p></div>', 'ska-logic-engine' );
                 }
             }
         }

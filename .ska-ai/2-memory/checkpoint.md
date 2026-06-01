@@ -1,50 +1,32 @@
-# CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ (v3.4.0)
+# CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ
 *Ngày cập nhật: 2026-06-01*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Git Branch**: `feature/organisms-categorization`
-- **Công việc**: Triển khai tính năng Phân loại Ska Organisms (Ska Organisms Categorization & Folder Management).
-- **Trạng thái**: 🟢 ĐÃ HOÀN THÀNH.
-- **Kết quả**:
-  - Tích hợp thành công cột `category` (`varchar(255)`) vào bảng phẳng `wp_ska_data_sys_organisms` và đăng ký trong Data Dictionary.
-  - Xây dựng Sidebar quản lý danh mục (Categories) trên Workspace Panel của Design Engine, hỗ trợ các thao tác CRUD danh mục thông qua REST API.
-  - Hiển thị Badge counts động của symbols thuộc từng danh mục, tự động tính toán từ CSDL.
-  - Hỗ trợ menu hành động "Move to Category" trên Grid của symbols để gán danh mục mới.
-  - Cơ chế Cascading Delete an toàn: Khi xóa một danh mục custom, các symbols thuộc danh mục đó được chuyển về nhóm "Uncategorized" thay vì bị xóa mất dữ liệu.
-  - Tự động cập nhật file cache JSON vật lý `organisms-cache.json` và đồng bộ hóa trực tiếp với cache của JS Editor `window.skaOrganismsCache` ngay khi thay đổi.
-  - Nâng cấp Gutenberg Block Selector: Tự động gom nhóm dropdown chọn Symbol thành các `<optgroup>` đẹp mắt theo tên danh mục.
-  - Viết tài liệu hướng dẫn E2E Test Workflow chi tiết để User tự kiểm tra.
+- **Git Branch**: `feature/ai-json-blueprint-import`
+- **Công việc**: Hoàn tất tính năng AI JSON Blueprint Import/Export cho Ska Logic Engine.
+- **Trạng thái**: Hoàn thành toàn diện 🟢 (Backend API, Manger UI Form, Ecosystem Docs, System Map).
 
-## 2. Chi tiết các tệp đã sửa đổi (Modified Files)
-- **Ska No-Code Design (v1.0.4)**:
-  - [ska-no-code-design.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/ska-no-code-design.php) (Nâng version lên 1.0.4)
-  - [package.json](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/package.json) (Nâng version lên 1.0.4)
-  - [inc/design-engine/views/workspace-panel.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/design-engine/views/workspace-panel.php) (Giao diện Sidebar & Grid)
-  - [inc/design-engine/class-core.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/design-engine/class-core.php) (JS Cache enqueue)
-  - [inc/design-engine/class-organisms-api.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/inc/design-engine/class-organisms-api.php) (REST API & Cache sync)
-  - [src/ska-organism-ref/edit.js](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-no-code-design/src/ska-organism-ref/edit.js) (Optgroup dropdown)
-- **Ska Data Pro (v1.0.5)**:
-  - [ska-data-pro.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/ska-data-pro.php) (Nâng version lên 1.0.5)
-  - [inc/core/class-app-manager.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/inc/core/class-app-manager.php) (Database migration & Dictionary registry)
-- **System Docs**:
-  - [.ska-ai/1-overview/system_map.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/system_map.md)
-  - [.ska-ai/2-memory/decision-log.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/2-memory/decision-log.md)
-  - [.ska-ai/3-ecosystem/ska-no-code-design/design-engine.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/3-ecosystem/ska-no-code-design/design-engine.md)
-  - [.ska-ai/1-overview/project-managers/test-workflow-process.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/project-managers/test-workflow-process.md) (Thêm E2E Test Cases cho Organisms Categorization)
+## 2. Các thay đổi kỹ thuật lõi đã thực hiện:
+- **Ska Logic Engine (v1.1.5)**:
+  - Khởi tạo `class-blueprint-api.php` chứa 2 endpoint xử lý Import/Export.
+  - Sửa đổi `class-ska-logic-core.php` để đăng ký API và xử lý form upload.
+  - Cập nhật `admin-manager-ui.php` với nút Import (kích hoạt Modal chọn file JSON) và nút Export tải trực tiếp định dạng `.json`.
+  - Hỗ trợ an toàn `overwrite if exists` để tránh ghi đè nhầm workflow hiện hữu.
+  - Nới rộng Wrapper quản trị lên 1200px, phân chia lại tỉ lệ các cột (45% | 15% | 40%) và gom nhóm các nút thao tác vào flexbox `white-space: nowrap` để chống tràn, chồng đè lên nhau. Chuyển đổi nhãn sang tiếng Anh bọc i18n chuẩn.
+  - Sửa lỗi REST API `rest_forbidden` (401) khi click nút Export trực tiếp từ trình duyệt bằng cách tạo và đính kèm REST Nonce (`_wpnonce`) vào link GET tải file.
 
-## 3. Nhật ký và Tài liệu đi kèm
-- Cập nhật **Decision Log**: `.ska-ai/2-memory/decision-log.md`
-- Cập nhật **System Map**: `.ska-ai/1-overview/system_map.md`
+## 3. Danh sách file đã tác động trong phiên cuối:
+- `wp-content/plugins/ska-logic-engine/ska-logic-engine.php`
+- `wp-content/plugins/ska-logic-engine/package.json`
+- `wp-content/plugins/ska-logic-engine/includes/api/class-blueprint-api.php`
+- `wp-content/plugins/ska-logic-engine/includes/class-ska-logic-core.php`
+- `wp-content/plugins/ska-logic-engine/includes/admin/admin-manager-ui.php`
+- `.ska-ai/3-ecosystem/ska-logic-engine/blueprint-spec.md`
+- `.ska-ai/3-ecosystem/ska-logic-engine/workflow-sample.json`
 
-## 4. Công việc tiếp theo cho phiên kế tiếp (Next Steps)
-- User tiến hành chạy kiểm thử thủ công theo quy trình E2E tại [test-workflow-process.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/project-managers/test-workflow-process.md) (Mục *E2E Test Workflow: Ska Organisms Categorization & Folder Management*).
-- Gộp nhánh `feature/organisms-categorization` vào `main` sau khi kiểm thử thành công.
+## 4. Nhiệm vụ cho phiên tiếp theo (Next Session)
+- **Git**: Xin ý kiến User merge nhánh `feature/ai-json-blueprint-import` vào `main`.
+- **Kiểm thử**: Chạy thử tính năng Import và Export ở trên UI Admin.
+- **Tính năng mới**: Chuyển sang hạng mục tiếp theo (Giao diện cấu hình SkaFX & Async).
 
-## 5. Môi trường thực thi lệnh CLI (CLI Execution Environment)
-- **PHP CLI**: Có sẵn toàn cục bằng lệnh `php` (phiên bản `8.5.4` trên host Ubuntu 26.04).
-- **WP-CLI**: Có sẵn toàn cục bằng lệnh `wp` (phiên bản `2.12.0` trên host).
-- **MySQL Socket**: `/home/chiconcota/.config/Local/run/jBm37nt1f/mysql/mysqld.sock`
-- **Cú pháp chạy WP-CLI kết nối CSDL**:
-  ```bash
-  php -d mysqli.default_socket=/home/chiconcota/.config/Local/run/jBm37nt1f/mysql/mysqld.sock $(which wp) <lệnh>
-  ```
+*Note cho Agent phiên sau: Phiên này đã khép lại gọn gàng. Nhánh `feature/ai-json-blueprint-import` đã hoàn thành công việc. Hãy đọc `system_map.md` để biết tổng quan.*
