@@ -19,6 +19,7 @@ class Organisms_API {
 
     public function register_routes() {
         // GET: List organisms
+        // POST: Create organism
         register_rest_route( 'ska-design/v1', '/organisms', [
             [
                 'methods'             => \WP_REST_Server::READABLE,
@@ -32,11 +33,30 @@ class Organisms_API {
             ]
         ] );
 
-        // DELETE: Delete organism
+        // Item level REST operations (Update/Delete)
         register_rest_route( 'ska-design/v1', '/organisms/(?P<id>\d+)', [
             [
                 'methods'             => \WP_REST_Server::DELETABLE,
-                'callback'            => [ $this, 'delete_organism' ],
+                'callback' => [ $this, 'delete_organism' ],
+                'permission_callback' => [ $this, 'check_permission' ],
+            ],
+            [
+                'methods'             => \WP_REST_Server::CREATABLE,
+                'callback'            => [ $this, 'update_organism' ],
+                'permission_callback' => [ $this, 'check_permission' ],
+            ]
+        ] );
+
+        // Categories list
+        register_rest_route( 'ska-design/v1', '/categories', [
+            [
+                'methods'             => \WP_REST_Server::READABLE,
+                'callback'            => [ $this, 'get_categories' ],
+                'permission_callback' => [ $this, 'check_permission' ],
+            ],
+            [
+                'methods'             => \WP_REST_Server::CREATABLE,
+                'callback'            => [ $this, 'save_categories' ],
                 'permission_callback' => [ $this, 'check_permission' ],
             ]
         ] );
@@ -65,6 +85,7 @@ class Organisms_API {
         $record_data = [
             'type'         => 'organism',
             'name'         => sanitize_text_field( $body['name'] ),
+            'category'     => sanitize_text_field( $body['category'] ?? '' ),
             'json_content' => $json_content,
             'html_content' => $html_content
         ];
@@ -95,12 +116,49 @@ class Organisms_API {
         ] );
     }
 
+    public function update_organism( \WP_REST_Request $request ) {
+        $id = intval( $request->get_param( 'id' ) );
+        $body = $request->get_json_params();
+
+        if ( empty( $id ) ) {
+            return new \WP_Error( 'invalid_id', __( 'Missing Organism ID.', 'ska-no-code-design' ), [ 'status' => 400 ] );
+        }
+
+        $table_name = 'ska_data_sys_organisms';
+        $record_data = [];
+
+        if ( isset( $body['name'] ) ) {
+            $record_data['name'] = sanitize_text_field( $body['name'] );
+        }
+        if ( isset( $body['category'] ) ) {
+            $record_data['category'] = sanitize_text_field( $body['category'] );
+        }
+
+        if ( empty( $record_data ) ) {
+            return new \WP_Error( 'empty_data', __( 'No data to update.', 'ska-no-code-design' ), [ 'status' => 400 ] );
+        }
+
+        $result = apply_filters( 'ska_data_update_record', false, $record_data, $table_name, [ 'id' => $id ] );
+
+        if ( is_wp_error( $result ) ) {
+            return $result;
+        }
+
+        // Export physical cache
+        $this->export_physical_cache();
+
+        return rest_ensure_response( [
+            'success' => true,
+            'message' => __( 'Organism updated successfully.', 'ska-no-code-design' )
+        ] );
+    }
+
     public function get_organisms( \WP_REST_Request $request ) {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ska_data_sys_organisms';
 
         // Phục vụ tương thích ngược: Các organism cũ được tạo trước khi có cột `type` sẽ có type rỗng.
-        $results = $wpdb->get_results( "SELECT id, name, created_at FROM {$table_name} WHERE type = 'organism' OR type = '' OR type IS NULL ORDER BY id DESC", ARRAY_A );
+        $results = $wpdb->get_results( "SELECT id, name, category, created_at FROM {$table_name} WHERE type = 'organism' OR type = '' OR type IS NULL ORDER BY id DESC", ARRAY_A );
 
         if ( $wpdb->last_error ) {
             return new \WP_Error( 'db_error', __( 'Database query error.', 'ska-no-code-design' ), [ 'status' => 500 ] );
@@ -111,6 +169,7 @@ class Organisms_API {
             $date_format = get_option( 'date_format' );
             foreach ( $results as $row ) {
                 $row['updated_at'] = date_i18n( $date_format, strtotime( $row['created_at'] ?? 'now' ) );
+                $row['category'] = $row['category'] ?? '';
                 $formatted_results[] = $row;
             }
         }
@@ -157,6 +216,7 @@ class Organisms_API {
                 $cache_data[ $row['id'] ] = [
                     'id'   => $row['id'],
                     'name' => $row['name'],
+                    'category' => $row['category'] ?? '',
                     'json' => json_decode( $row['json_content'] ?? '', true ),
                     'html_content' => $row['html_content']
                 ];
@@ -204,5 +264,34 @@ class Organisms_API {
         }
         
         return $bulk;
+    }
+
+    public function get_categories( \WP_REST_Request $request ) {
+        $categories = get_option( 'ska_organism_categories', [] );
+        if ( ! is_array( $categories ) ) {
+            $categories = [];
+        }
+        return rest_ensure_response( [
+            'success' => true,
+            'data'    => array_values( array_filter( $categories ) )
+        ] );
+    }
+
+    public function save_categories( \WP_REST_Request $request ) {
+        $body = $request->get_json_params();
+        if ( ! isset( $body['categories'] ) || ! is_array( $body['categories'] ) ) {
+            return new \WP_Error( 'invalid_data', __( 'Missing categories array.', 'ska-no-code-design' ), [ 'status' => 400 ] );
+        }
+
+        $categories = array_map( 'sanitize_text_field', $body['categories'] );
+        $categories = array_values( array_unique( array_filter( $categories ) ) );
+
+        update_option( 'ska_organism_categories', $categories );
+
+        return rest_ensure_response( [
+            'success' => true,
+            'message' => __( 'Categories updated successfully.', 'ska-no-code-design' ),
+            'data'    => $categories
+        ] );
     }
 }

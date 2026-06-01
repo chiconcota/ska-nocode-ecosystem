@@ -11,6 +11,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
     const [organisms, setOrganisms] = useState([]);
     const [isEditingGlobal, setIsEditingGlobal] = useState(false);
     const [iframeUrl, setIframeUrl] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
     
     // Hack to force ServerSideRender to reload
     const [renderKey, setRenderKey] = useState(1);
@@ -28,10 +29,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
             if (parsedBlocks && parsedBlocks.length > 0) {
                 replaceBlocks(clientId, parsedBlocks);
             } else {
-                alert(__(__( 'The HTML content of this Symbol cannot be parsed. ', 'ska-no-code-design' ), 'ska-no-code-design'));
+                alert(__( 'The HTML content of this Symbol cannot be parsed.', 'ska-no-code-design' ));
             }
         } else {
-            alert(__(__( 'No data for this Symbol was found in System Cache. ', 'ska-no-code-design' ), 'ska-no-code-design'));
+            alert(__( 'No data for this Symbol was found in System Cache.', 'ska-no-code-design' ));
         }
     };
     
@@ -60,7 +61,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                 const { dispatch } = wp.data;
                 if (dispatch && dispatch('core/notices')) {
                     dispatch('core/notices').createSuccessNotice(
-                        __(__( 'Symbol has been updated systemwide! ', 'ska-no-code-design' ), 'ska-no-code-design'),
+                        __( 'Symbol has been updated systemwide!', 'ska-no-code-design' ),
                         { type: 'snackbar', id: 'ska-symbol-saved-notice' }
                     );
                 }
@@ -78,15 +79,94 @@ export default function Edit({ attributes, setAttributes, clientId }) {
     // Dùng data đã được load sẵn thay vì fetch mạng
     useEffect(() => {
         const data = window.skaOrganismsCache || {};
-        const options = Object.values(data).map(org => ({
-            label: org.name || org.id,
-            value: org.id
-        }));
-        setOrganisms([
-            { label: __( 'Select Organism...', 'ska-no-code-design' ), value: '' },
-            ...options
-        ]);
-    }, []);
+        
+        // Nhóm các organisms theo category
+        const groups = {};
+        const uncategorizedKey = __( 'Uncategorized', 'ska-no-code-design' );
+        
+        Object.values(data).forEach(org => {
+            const cat = org.category || uncategorizedKey;
+            if (!groups[cat]) {
+                groups[cat] = [];
+            }
+            groups[cat].push({
+                label: org.name || String(org.id),
+                value: String(org.id)
+            });
+        });
+
+        // Xây dựng options có phân nhóm (optgroup)
+        const groupedOptions = [];
+        
+        // Đưa Uncategorized lên đầu hoặc xử lý riêng
+        if (groups[uncategorizedKey] && groups[uncategorizedKey].length > 0) {
+            groupedOptions.push({
+                label: uncategorizedKey,
+                options: groups[uncategorizedKey]
+            });
+            delete groups[uncategorizedKey];
+        }
+
+        // Đưa các category khác vào
+        Object.keys(groups).sort().forEach(cat => {
+            groupedOptions.push({
+                label: cat,
+                options: groups[cat]
+            });
+        });
+
+        // Extract Category Options
+        const catOptions = [
+            { label: __( 'All Categories', 'ska-no-code-design' ), value: '' }
+        ];
+        
+        if (groups[uncategorizedKey]) {
+            catOptions.push({ label: uncategorizedKey, value: uncategorizedKey });
+        }
+        
+        Object.keys(groups).sort().forEach(cat => {
+            if (cat !== uncategorizedKey) {
+                catOptions.push({ label: cat, value: cat });
+            }
+        });
+
+        // Filter symbols based on selectedCategory
+        let filteredGroupedOptions = [];
+        if (selectedCategory) {
+            // Show flat list of symbols in this category without optgroup
+            if (groups[selectedCategory]) {
+                filteredGroupedOptions = groups[selectedCategory];
+            }
+        } else {
+            // Show all grouped
+            filteredGroupedOptions = groupedOptions;
+        }
+
+        // Đảm bảo Option luôn chứa giá trị hiện tại (Manual ID) nếu nó không nằm trong danh sách cache
+        let currentIdExists = false;
+        if (attributes.organismId) {
+            Object.values(groups).forEach(g => {
+                if (g.some(opt => opt.value === String(attributes.organismId))) currentIdExists = true;
+            });
+        }
+
+        const finalOptions = [
+            { label: __( '--- Select Symbol ---', 'ska-no-code-design' ), value: '' },
+            ...filteredGroupedOptions
+        ];
+
+        if (attributes.organismId && !currentIdExists) {
+            finalOptions.push({
+                label: `[Custom ID] ${attributes.organismId}`,
+                value: String(attributes.organismId)
+            });
+        }
+
+        setOrganisms({
+            categories: catOptions,
+            symbols: finalOptions
+        });
+    }, [attributes.organismId, selectedCategory]);
 
     // Tạo một khung cho khối
     const blockProps = useBlockProps();
@@ -108,7 +188,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                     <ToolbarGroup>
                         <ToolbarButton
                             icon={<span className="material-symbols-outlined" style={{fontSize: '20px'}}>edit_square</span>}
-                            label={__(__( 'Edit the original (Global Edit)', 'ska-no-code-design' ), 'ska-no-code-design')}
+                            label={__( 'Edit the original (Global Edit)', 'ska-no-code-design' )}
                             onClick={handleGlobalEdit}
                         />
                     </ToolbarGroup>
@@ -117,48 +197,69 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
             <InspectorControls>
                 <PanelBody title={__('Ska Symbol Settings', 'ska-no-code-design')} initialOpen={true}>
-                    <SelectControl
-                        label={__(__( 'Select Ska Symbol', 'ska-no-code-design' ), 'ska-no-code-design')}
-                        value={organismId}
-                        options={organisms.length > 0 ? organisms : [{label: organismId ? organismId : __( 'Select Organism...', 'ska-no-code-design' ), value: organismId || ''}]}
-                        onChange={(val) => setAttributes({ organismId: String(val) })}
-                        help={__(__( 'Select the saved Symbol template to render the content.', 'ska-no-code-design' ), 'ska-no-code-design')}
-                    />
-                    <TextControl
-                        label={__('Manual ID Override', 'ska-no-code-design')}
-                        value={organismId}
-                        onChange={(val) => setAttributes({ organismId: val })}
-                        help={__( 'Manually overwrite Reference IDs if the above list has not been updated', 'ska-no-code-design' )}
-                    />
+                    <div style={{ marginBottom: '16px' }}>
+                        <SelectControl
+                            label={__( 'Filter by Category', 'ska-no-code-design' )}
+                            value={selectedCategory}
+                            options={organisms.categories || []}
+                            onChange={(val) => setSelectedCategory(val)}
+                            help={__( 'Optional: Narrow down the symbols list below by category.', 'ska-no-code-design' )}
+                        />
+                    </div>
+
+                    <div style={{ marginBottom: '16px', borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
+                        <SelectControl
+                            label={__( 'Select Ska Symbol', 'ska-no-code-design' )}
+                            value={organismId}
+                            options={organisms.symbols && organisms.symbols.length > 0 ? organisms.symbols : [{label: organismId ? `[ID] ${organismId}` : __( '--- Select Symbol ---', 'ska-no-code-design' ), value: organismId || ''}]}
+                            onChange={(val) => setAttributes({ organismId: String(val) })}
+                            help={__( 'Select the saved Symbol template to render the content.', 'ska-no-code-design' )}
+                        />
+                    </div>
+                    
+                    <div style={{ padding: '12px', backgroundColor: '#f1f5f9', borderRadius: '6px', border: '1px dashed #cbd5e1' }}>
+                        <TextControl
+                            label={__('Manual ID Override', 'ska-no-code-design')}
+                            value={organismId}
+                            onChange={(val) => setAttributes({ organismId: val })}
+                            help={__( 'Manually enter an ID if it does not appear in the dropdown.', 'ska-no-code-design' )}
+                        />
+                    </div>
 
                     {organismId && (
                         <>
-                            <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px' }}>
-                                <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#1d4ed8' }}>{__( '{__(\'Global Edit\', \'ska-no-code-design\')}', 'ska-no-code-design' )}</h4>
-                                <p style={{ margin: '0 0 12px 0', fontSize: '12px', color: '#64748b' }}>
-                                    {__(__( 'Open an independent draft to edit the original template. ', 'ska-no-code-design' ), 'ska-no-code-design')}
-                                    <span style={{ display: 'block', color: '#ef4444', fontWeight: 'bold', marginTop: '4px' }}>{__( 'Laying out the page takes a little while, BUT PEACE OF MIND <3S', 'ska-no-code-design' )}</span>
+                            <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#1d4ed8' }}>edit_document</span>
+                                    <h4 style={{ margin: 0, fontSize: '14px', color: '#1d4ed8', fontWeight: 'bold' }}>{__( 'Global Edit', 'ska-no-code-design' )}</h4>
+                                </div>
+                                <p style={{ margin: '0 0 12px 0', fontSize: '12px', color: '#3b82f6' }}>
+                                    {__( 'Open an independent draft to edit the original template.', 'ska-no-code-design' )}
+                                    <span style={{ display: 'block', color: '#ef4444', fontWeight: 'bold', marginTop: '6px' }}>{__( '⚠️ Laying out the page takes a little while, BUT PEACE OF MIND <3S', 'ska-no-code-design' )}</span>
                                 </p>
                                 <Button
                                     variant="primary"
                                     onClick={handleGlobalEdit}
-                                    style={{ width: '100%', justifyContent: 'center' }}
+                                    style={{ width: '100%', justifyContent: 'center', backgroundColor: '#2563eb', border: 'none' }}
                                 >
-                                    {__(__( 'Edit Original', 'ska-no-code-design' ), 'ska-no-code-design')}
+                                    {__( 'Edit Original Symbol', 'ska-no-code-design' )}
                                 </Button>
                             </div>
 
-                            <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px' }}>
-                                <h4 style={{ margin: '0 0 8px 0', fontSize: '13px' }}>{__( '{__(\'Local Edit\', \'ska-no-code-design\')}', 'ska-no-code-design' )}</h4>
+                            <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#64748b' }}>account_tree</span>
+                                    <h4 style={{ margin: 0, fontSize: '14px', color: '#475569', fontWeight: 'bold' }}>{__( 'Local Edit (Detach)', 'ska-no-code-design' )}</h4>
+                                </div>
                                 <p style={{ margin: '0 0 12px 0', fontSize: '12px', color: '#64748b' }}>
-                                    {__(__( 'Decompose this Symbol into local blocks. ', 'ska-no-code-design' ), 'ska-no-code-design')}
+                                    {__( 'Decompose this Symbol into local blocks. Changes will not affect the original template.', 'ska-no-code-design' )}
                                 </p>
                                 <Button
                                     variant="secondary"
                                     onClick={handleDetach}
-                                    style={{ width: '100%', justifyContent: 'center' }}
+                                    style={{ width: '100%', justifyContent: 'center', color: '#475569', borderColor: '#cbd5e1' }}
                                 >
-                                    {__(__( 'Symbol Decay (Detach)', 'ska-no-code-design' ), 'ska-no-code-design')}
+                                    {__( 'Detach from Symbol', 'ska-no-code-design' )}
                                 </Button>
                             </div>
                         </>

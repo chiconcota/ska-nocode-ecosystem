@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v2.0.0)
-@status: MILESTONE 1 (POST-MVP) | @git_branch: feature/refactor-logic-db | @last_update: 2026-05-30
+@status: MILESTONE 1 (POST-MVP) | @git_branch: feature/organisms-categorization | @last_update: 2026-06-01
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core 6.x + PHP 8.2+ (Host & API)
@@ -29,8 +29,8 @@ wp-content/
 | Module Name | Path | Core Function | Status |
 | :--- | :--- | :--- | :--- |
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Loại bỏ CSS/JS rác của WP, tạo khung canvas sạch. | 🟢 Stable (v1.0.0) |
-| **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.0.3) |
-| **Ska Data Pro** | `plugins/ska-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.0.4) |
+| **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.0.4) |
+| **Ska Data Pro** | `plugins/ska-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.0.5) |
 | **Ska Logic Engine** | `plugins/ska-logic-engine/` | DAG Workflows, Event Pipeline, SkaFX Compiler. | 🟢 Stable (v1.1.2) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API endpoints. | 🟢 Stable (v1.0.0) |
 
@@ -68,6 +68,7 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-06-01 - 🟢 Done:** Triển khai tính năng Phân loại Ska Organisms (Ska Organisms Categorization & Folder Management). Hỗ trợ lưu category trực tiếp vào bảng phẳng CSDL, Sidebar quản lý CRUD danh mục thời gian thực trên Workspace Panel và optgroup gom nhóm dropdown chọn symbol trong Gutenberg Editor. Cập nhật E2E Test Workflow. Nâng cấp Ska No-Code Design (v1.0.4) và Ska Data Pro (v1.0.5).
 - **2026-05-30 - 🟢 Review:** Rà soát toàn bộ tiến độ E2E Test Workflow. Kết quả: 10/17 test cases đã hoàn thành (Logic Engine 4/4, System Table Protection 2/2, Dark Mode 2/3). 7 test cases còn lại (Link Engine 3, Theme Builder 3, Dark Mode TC3) bàn giao cho User tự kiểm thử thủ công.
 - **2026-05-30 - 🟢 Done:** Vá lỗi block select kết nối động trên frontend. Sửa đổi render.php của block select để trích xuất fieldName từ dynamic binding khi fieldName bị rỗng hoặc trùng giá trị mặc định 'my_select'; sửa đổi class-dynamic-content.php hỗ trợ tự động trích xuất cấu trúc thẻ label để sinh checkbox/radio list động thay vì chèn thẻ option sai cấu trúc HTML; đồng thời gỡ bỏ `$nextTick` trong form init để triệt tiêu race condition khởi tạo Alpine, và sửa 19 lỗi cú pháp JSX giúp webpack biên dịch thành công. Nâng cấp Ska No-Code Design (v1.0.3) và Ska Logic Engine (v1.1.2).
 - **2026-05-30 - 🟢 Done:** Vá lỗi lưu CSDL JSON khi sửa ô trực tiếp trên lưới (cell inline edit) của Ska Data Pro (v1.0.4) bằng cách chuẩn hóa giá trị về NULL/JSON Array trước khi cập nhật.
@@ -88,4 +89,4 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ## 7. FUTURE ROADMAP (MILESTONE 1)
 - **AI JSON Blueprint Import:** Cung cấp endpoint REST API và nút UI để import trực tiếp cấu hình đồ thị JSON do AI tự động sinh.
 - **Giao diện cấu hình SkaFX & Async:** Bổ sung UI Autocomplete/Data Picker cho biểu thức SkaFX và UI Edge Customization để bật cờ `async` trực quan trên Canvas.
-- **Organisms Categorization:** Phân loại và chia nhóm thư mục/tag cho Ska Organisms (Symbols) để dọn dẹp giao diện quản lý và Inserter.
+- [x] **Organisms Categorization:** Phân loại và chia nhóm thư mục/tag cho Ska Organisms (Symbols) để dọn dẹp giao diện quản lý và Inserter.

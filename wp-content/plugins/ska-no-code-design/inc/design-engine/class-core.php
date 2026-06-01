@@ -182,8 +182,9 @@ class Core
                         foreach ($decoded as $org) {
                             if (isset($org['id'])) {
                                 $organisms_data[$org['id']] = array(
-                                    'id' => $org['id'],
-                                    'name' => !empty($org['name']) ? $org['name'] : $org['id'],
+                                    'id'       => $org['id'],
+                                    'name'     => !empty($org['name']) ? $org['name'] : $org['id'],
+                                    'category' => !empty($org['category']) ? $org['category'] : '',
                                 );
                             }
                         }

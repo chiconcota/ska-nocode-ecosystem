@@ -143,9 +143,16 @@ class App_Manager {
 			$db_engine->add_column( $table_organisms, 'Name', 'short_text' );
 			$db_engine->add_column( $table_organisms, 'Title', 'short_text' );
 			$db_engine->add_column( $table_organisms, 'Block_Name', 'short_text' );
+			$db_engine->add_column( $table_organisms, 'Category', 'short_text' );
 			$db_engine->add_column( $table_organisms, 'JSON_Content', 'long_text' );
 			$db_engine->add_column( $table_organisms, 'HTML_Content', 'long_text' );
 			$changed = true;
+		} else {
+			// Migration: Nếu bảng đã có, kiểm tra xem cột category đã có chưa
+			$column_exists = $wpdb->get_results( $wpdb->prepare( "SHOW COLUMNS FROM {$table_organisms} LIKE %s", 'category' ) );
+			if ( empty( $column_exists ) ) {
+				$wpdb->query( "ALTER TABLE {$table_organisms} ADD COLUMN category VARCHAR(255) DEFAULT NULL" );
+			}
 		}
 
 		// Luôn đảm bảo Dictionary có mặt
@@ -165,6 +172,7 @@ class App_Manager {
 			'name' => array('label' => 'Name', 'type' => 'short_text', 'options' => ''),
 			'title' => array('label' => 'Title', 'type' => 'short_text', 'options' => ''),
 			'block_name' => array('label' => 'Block_Name', 'type' => 'short_text', 'options' => ''),
+			'category' => array('label' => 'Category', 'type' => 'short_text', 'options' => ''),
 			'json_content' => array('label' => 'JSON_Content', 'type' => 'long_text', 'options' => ''),
 			'html_content' => array('label' => 'HTML_Content', 'type' => 'long_text', 'options' => '')
 		);
