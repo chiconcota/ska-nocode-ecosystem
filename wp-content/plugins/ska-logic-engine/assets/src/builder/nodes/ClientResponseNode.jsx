@@ -30,9 +30,20 @@ export default function ClientResponseNode(props) {
         )}
 
         {data.response_type === 'open_modal' && (
-          <div className="bg-white p-2 rounded border border-slate-100 mb-1">
-            <span className="font-semibold block mb-1">Modal ID:</span>
-            <code className="text-[10px] bg-slate-50 px-1 rounded block truncate">{data.modal_id || 'Not set'}</code>
+          <div className="bg-white p-2 rounded border border-slate-100 mb-1 space-y-1">
+            {data.modal_content ? (
+              <>
+                <span className="font-semibold block text-[10px]">Content:</span>
+                <span className="text-[10px] text-slate-500 truncate block font-mono bg-slate-50 px-1 rounded" title={data.modal_content}>
+                  {data.modal_content.length > 25 ? data.modal_content.substring(0, 25) + '...' : data.modal_content}
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="font-semibold block text-[10px]">Modal ID:</span>
+                <code className="text-[10px] bg-slate-50 px-1 rounded block truncate">{data.modal_id || 'Not set'}</code>
+              </>
+            )}
           </div>
         )}
 

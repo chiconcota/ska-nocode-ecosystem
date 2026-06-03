@@ -137,11 +137,15 @@ window.$ska = {
             if (evt.type === 'redirect' && evt.url) {
                 window.location.href = evt.url;
             } 
-            else if (evt.type === 'open_modal' && evt.modal_id) {
-                // Giả định: Modal có ID và lắng nghe event "open-modal"
-                const modal = document.getElementById(evt.modal_id);
-                if (modal) {
-                    modal.dispatchEvent(new CustomEvent('open-modal'));
+            else if (evt.type === 'open_modal') {
+                if (evt.modal_content) {
+                    window.$ska.showDynamicModal(evt.modal_content);
+                } else if (evt.modal_id) {
+                    // Giả định: Modal có ID và lắng nghe event "open-modal"
+                    const modal = document.getElementById(evt.modal_id);
+                    if (modal) {
+                        modal.dispatchEvent(new CustomEvent('open-modal'));
+                    }
                 }
             } 
             else if (evt.type === 'fire_event' && evt.event_name) {
@@ -257,6 +261,128 @@ window.$ska = {
             toast.style.opacity = '0';
             setTimeout(() => toast.remove(), 400);
         }, 3000);
+    },
+
+    /**
+     * Hiển thị Modal động với nội dung HTML tùy chỉnh
+     * Giữ nguyên thiết kế Tailwind, có overlay mờ và nút đóng Close (X) tinh tế.
+     */
+    showDynamicModal: (htmlContent) => {
+        console.log('[Ska UI] ShowDynamicModal triggered');
+        
+        // 1. Tạo container cho Modal
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'ska-dynamic-modal-overlay';
+        modalOverlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 99999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        `;
+
+        // 2. Tạo khung nội dung của Modal
+        const modalContainer = document.createElement('div');
+        modalContainer.className = 'ska-dynamic-modal-container';
+        modalContainer.style.cssText = `
+            background: transparent;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        `;
+
+        // 3. Tạo nút đóng Close floating
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '✕';
+        closeBtn.title = 'Close';
+        closeBtn.style.cssText = `
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1e293b;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        `;
+        closeBtn.onmouseenter = () => {
+            closeBtn.style.background = '#ffffff';
+            closeBtn.style.transform = 'scale(1.05)';
+        };
+        closeBtn.onmouseleave = () => {
+            closeBtn.style.background = 'rgba(255, 255, 255, 0.8)';
+            closeBtn.style.transform = 'scale(1)';
+        };
+
+        // 4. Hàm đóng modal
+        const closeModal = () => {
+            modalOverlay.style.opacity = '0';
+            modalContainer.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                modalOverlay.remove();
+            }, 300);
+        };
+
+        // Gán sự kiện đóng
+        closeBtn.onclick = closeModal;
+        
+        // Click vào overlay (vùng trống ngoài container) thì đóng modal
+        modalOverlay.onclick = (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        };
+
+        // Hỗ trợ đóng bằng phím ESC
+        const escHandler = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                document.removeEventListener('keydown', escHandler);
+            }
+        };
+        document.addEventListener('keydown', escHandler);
+
+        // 5. Gắn nội dung HTML vào Container
+        const modalBody = document.createElement('div');
+        modalBody.className = 'ska-dynamic-modal-body bg-white rounded-xl overflow-hidden';
+        modalBody.innerHTML = htmlContent;
+        
+        modalContainer.appendChild(closeBtn);
+        modalContainer.appendChild(modalBody);
+        modalOverlay.appendChild(modalContainer);
+        document.body.appendChild(modalOverlay);
+
+        // 6. Animate in
+        setTimeout(() => {
+            modalOverlay.style.opacity = '1';
+            modalContainer.style.transform = 'scale(1)';
+        }, 50);
     }
 };
 

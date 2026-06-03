@@ -7,18 +7,20 @@ export default function RenderTemplateNode(props) {
     
     // Tùy chọn hiển thị nội dung trên Node
     let customContent = null;
-    const sourceType = data.source_type || 'system';
+    const templateHtml = data.template_html || data.raw_template || data.organism_id || '';
+    let displayTemplate = '';
     
-    if (sourceType === 'system' && data.organism_id) {
+    if (templateHtml) {
+        const trimmed = templateHtml.trim();
+        if (trimmed.length > 25) {
+            displayTemplate = trimmed.substring(0, 25) + '...';
+        } else {
+            displayTemplate = trimmed;
+        }
+        
         customContent = (
-            <div className="px-3 pb-3 text-xs text-sky-600 truncate">
-                <span className="font-medium">Template:</span> <span className="font-mono bg-sky-50 px-1 rounded">{data.organism_id}</span>
-            </div>
-        );
-    } else if (sourceType === 'raw' && data.raw_template) {
-        customContent = (
-            <div className="px-3 pb-3 text-xs text-sky-600 truncate">
-                <span className="font-medium">Từ biến:</span> <span className="font-mono bg-sky-50 px-1 rounded">{data.raw_template}</span>
+            <div className="px-3 pb-3 text-xs text-sky-600 max-w-[260px] overflow-hidden text-ellipsis whitespace-nowrap">
+                <span className="font-medium">Template:</span> <span className="font-mono bg-sky-50 px-1 rounded" title={templateHtml}>{displayTemplate}</span>
             </div>
         );
     }

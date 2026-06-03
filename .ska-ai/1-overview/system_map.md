@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v2.0.0)
-@status: MILESTONE 1 (POST-MVP) | @git_branch: feature/organisms-categorization | @last_update: 2026-06-01
+@status: MILESTONE 1 (POST-MVP) | @git_branch: main | @last_update: 2026-06-03
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core 6.x + PHP 8.2+ (Host & API)
@@ -29,9 +29,9 @@ wp-content/
 | Module Name | Path | Core Function | Status |
 | :--- | :--- | :--- | :--- |
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Loại bỏ CSS/JS rác của WP, tạo khung canvas sạch. | 🟢 Stable (v1.0.0) |
-| **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.0.4) |
+| **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.0.6) |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.0.5) |
-| **Ska Logic Engine** | `plugins/ska-logic-engine/` | DAG Workflows, Event Pipeline, SkaFX Compiler. | 🟢 Stable (v1.1.5) |
+| **Ska Logic Engine** | `plugins/ska-logic-engine/` | DAG Workflows, Event Pipeline, SkaFX Compiler. | 🟢 Stable (v1.1.11) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API endpoints. | 🟢 Stable (v1.0.0) |
 
 ---
@@ -68,6 +68,12 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-06-03 - 🟢 Done:** Tích hợp tính năng Switch View (Graph / JSON) cho Ska Logic Engine (v1.1.11). Cho phép xem cấu trúc đồ thị dạng JSON Blueprint thời gian thực, sao chép nhanh (Copy JSON) và dán đè/chỉnh sửa trực tiếp (Apply & Return) với bộ kiểm lỗi cú pháp (Syntax validation) an toàn chống crash. Nâng version lên `v1.1.11`.
+- **2026-06-03 - 🟢 Done:** Vá lỗi JIT Tailwind cho nội dung động bằng cách đăng ký hook `ska_design_classes_to_scan` trong Ska Logic Engine và phát triển tính năng quét CSDL bảng phẳng tự động (`scan_database_flat_tables_classes`). JIT compiler giờ tự động trích xuất mọi class Tailwind động trong các bảng phẳng MySQL của app và cache transient 12 giờ (tự động invalidate cache khi có thay đổi DB action), giải quyết triệt để lỗi vỡ giao diện 3 cột của Client Response Modal ngoài frontend. Nâng version Ska Logic Engine lên `v1.1.10`.
+- **2026-06-03 - 🟢 Done:** Nâng cấp Shadow Scratchpad Modal (v1.0.6) cho Ska No-Code Design. Loại bỏ padding của overlay, gỡ bỏ các thuộc tính giới hạn chiều rộng/chiều cao, thiết lập modal container chiếm trọn vẹn 100% chiều rộng và chiều cao màn hình (full-screen) cùng việc loại bỏ bo góc để mang lại trải nghiệm review thiết kế trung thực và tối ưu nhất.
+- **2026-06-03 - 🟢 Done:** Triển khai Dynamic Modal cho Client Response Node (v1.1.7). Hỗ trợ truyền trực tiếp nội dung HTML động đã render (`modal_content`) từ backend và tự động khởi tạo Dynamic Modal ở frontend với overlay mờ (`backdrop-filter`), nút đóng nổi và hỗ trợ phím ESC / click-outside, loại bỏ hoàn toàn việc bắt buộc khai báo Modal ID tĩnh. Nới rộng Sidebar cấu hình ClientResponseNode lên `w-[400px]`.
+- **2026-06-03 - 🟢 Done:** Triển khai và tích hợp Pure Render Template Node (v1.1.6) cho Ska Logic Engine. Loại bỏ query DB trực tiếp tới bảng organisms, thực thi Two-Pass Interpolation và tích hợp hàm `do_blocks()` trên PHP backend để tự động dịch Gutenberg Block Markup sang HTML sạch. Nâng cấp React `SettingsPanel.jsx` với giao diện cấu hình template_html, tự động nới rộng Sidebar lên w-[400px] cho Render/Api Node, tích hợp sandbox Live Testing & Preview (Visual/Raw HTML) chạy bộ nội suy 2 bước client-side.
+- **2026-06-01 - 🟡 Planning:** Phác thảo thiết kế Pure Render Template Node (hoạt động độc lập không phụ thuộc CSDL) với cơ chế nội suy 2 bước (Two-Pass Interpolation). Đồng thời hoàn thành brainstorming cho Client Response Node và thống nhất kế hoạch xây dựng hệ thống Node Cộng đồng (Community Nodes) trong Milestone 2+. Khởi tạo tài liệu tiến độ pm_render_template.md và file nháp giao diện settings_panel_mockup.html.
 - **2026-06-01 - 🟢 Done:** Tích hợp AI JSON Blueprint Import/Export cho Ska Logic Engine (v1.1.5). Cho phép tải về và upload file `.json` để nạp đồ thị cấu hình phức tạp thẳng vào cơ sở dữ liệu. Bổ sung `class-blueprint-api.php` với 2 REST endpoints. Khắc phục lỗi `rest_forbidden` (401) khi click Export trên trình duyệt bằng cách đính kèm REST Nonce (`wp_rest`) trực tiếp vào URL. Vá lỗi giao diện hẹp gây co nút Operations bằng cách nới rộng khung wrapper lên 1200px, chỉnh tỷ lệ cột, và sử dụng flexbox chống xuống dòng.
 - **2026-06-01 - 🟢 Done:** Triển khai tính năng Phân loại Ska Organisms (Ska Organisms Categorization & Folder Management). Hỗ trợ lưu category trực tiếp vào bảng phẳng CSDL, Sidebar quản lý CRUD danh mục thời gian thực trên Workspace Panel và optgroup gom nhóm dropdown chọn symbol trong Gutenberg Editor. Cập nhật E2E Test Workflow. Nâng cấp Ska No-Code Design (v1.0.4) và Ska Data Pro (v1.0.5).
 - **2026-05-30 - 🟢 Review:** Rà soát toàn bộ tiến độ E2E Test Workflow. Kết quả: 10/17 test cases đã hoàn thành (Logic Engine 4/4, System Table Protection 2/2, Dark Mode 2/3). 7 test cases còn lại (Link Engine 3, Theme Builder 3, Dark Mode TC3) bàn giao cho User tự kiểm thử thủ công.

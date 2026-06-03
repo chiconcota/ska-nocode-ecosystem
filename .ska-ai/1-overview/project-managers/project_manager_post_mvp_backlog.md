@@ -34,9 +34,9 @@
 
 #### C. AI JSON Blueprint Import (Logic Engine)
 *Nền tảng giao tiếp với AI, biến Logic Engine thành Execution Runtime.*
-- [ ] **Chuẩn hóa & Import:**
-  - [ ] Chuẩn hóa schema JSON của đồ thị DAG.
-  - [ ] Triển khai tính năng Import trực tiếp mã JSON Blueprint do AI tự động sinh (qua giao diện hoặc endpoint REST API) để tự động dựng nodes và connections tương ứng trên Canvas.
+- [x] **Chuẩn hóa & Import:**
+  - [x] Chuẩn hóa schema JSON của đồ thị DAG.
+  - [x] Triển khai tính năng Import trực tiếp mã JSON Blueprint do AI tự động sinh (qua giao diện hoặc endpoint REST API) để tự động dựng nodes và connections tương ứng trên Canvas.
 
 #### D. Hoàn thiện Node Render HTML (Render Template)
 *Cấu phần render email/modal động hiện đang trống trơn.*
@@ -101,3 +101,6 @@
   - [ ] Triển khai `[T2] Webhook In` đón nhận payload từ bên thứ ba (Stripe, Momo, Zalo).
   - [ ] Triển khai `Cron Trigger` lập lịch chạy định kỳ sử dụng Action Scheduler.
   - [ ] Viết bộ lọc chặn đệ quy vô hạn (Circuit Breaker) trong workflow và dọn dẹp state trung gian sau khi chạy để tránh tràn RAM.
+- [ ] **Hệ thống Node Cộng đồng (Community Nodes & Pluggable Actions Framework - Milestone 2+):**
+  - [ ] Thiết kế cơ chế tách biệt các hành động của Client Response và Trigger thành các Node con độc lập trên Sidebar (User Nodes / Community Nodes).
+  - [ ] Cho phép bên thứ ba đăng ký và đóng gói các custom node thành các module/add-on cài đặt riêng lẻ.

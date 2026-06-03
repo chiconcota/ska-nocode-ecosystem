@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Ska Logic Engine
  * Description: The "Ska-cement" Logic Brain of the Ska Builder Ecosystem. Handles workflows, data routing, and node-based automation features.
- * Version: 1.1.5
+ * Version: 1.1.11
  * Author: Ska Ecosystem
  * Text Domain: ska-logic-engine
  * Domain Path: /languages
@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit; // Bảo mật chuẩn WordPress
 
 // Khai báo Const
-define( 'SKA_LOGIC_ENGINE_VERSION', '1.1.5' );
+define( 'SKA_LOGIC_ENGINE_VERSION', '1.1.11' );
 define( 'SKA_LOGIC_ENGINE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SKA_LOGIC_ENGINE_URL', plugin_dir_url( __FILE__ ) ); // Phục vụ gọi JS UI nếu cần
 

@@ -128,20 +128,20 @@ $editor_id = 'ska_editor_' . str_replace('-', '_', sanitize_title($field_name));
         display: flex;
         align-items: center !important;
         justify-content: center !important;
-        padding: 1rem !important;
+        padding: 0 !important; /* Full width full height, remove padding */
     }
     .ska-designer-modal-container {
         background-color: #ffffff !important;
-        border-radius: 0.5rem !important;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+        border-radius: 0 !important; /* Full screen, remove rounded corners */
+        box-shadow: none !important;
         width: 100% !important;
         height: 100% !important;
-        max-width: 72rem !important;
-        max-height: 90vh !important;
+        max-width: 100% !important; /* Stretch to full width */
+        max-height: 100vh !important; /* Stretch to full screen height */
         display: flex !important;
         flex-direction: column !important;
         overflow: hidden !important;
-        border: 1px solid #e2e8f0 !important;
+        border: none !important;
     }
     .ska-designer-modal-header {
         padding: 0.75rem 1rem !important;
@@ -223,8 +223,8 @@ $editor_id = 'ska_editor_' . str_replace('-', '_', sanitize_title($field_name));
 
     <!-- Modal chứa Iframe Gutenberg -->
     <template x-teleport="body">
-        <div x-show="isOpen" style="display: none;" class="ska-designer-modal-overlay fixed inset-0 z-[99999] bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
-            <div class="ska-designer-modal-container bg-white rounded-lg shadow-xl w-full h-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden" @click.away="closeDesigner(false)">
+        <div x-show="isOpen" style="display: none;" class="ska-designer-modal-overlay fixed inset-0 z-[99999] bg-gray-500 bg-opacity-75 flex items-center justify-center p-0">
+            <div class="ska-designer-modal-container bg-white shadow-xl w-full h-full max-w-full max-h-screen flex flex-col overflow-hidden" @click.away="closeDesigner(false)">
                 
                 <div class="ska-designer-modal-header px-4 py-3 border-b border-gray-200 flex items-center justify-between bg-gray-50">
                     <h3 class="text-lg leading-6 font-medium text-gray-900 flex items-center gap-2" style="margin: 0;">

@@ -52,6 +52,9 @@ function DnDFlow() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [viewMode, setViewMode] = useState('graph');
+  const [jsonInput, setJsonInput] = useState('');
+  const [jsonError, setJsonError] = useState(null);
   const { screenToFlowPosition } = useReactFlow();
 
   // Load context from WordPress
@@ -295,29 +298,113 @@ function DnDFlow() {
   const selectedNode = nodes.find(n => n.id === selectedNodeId);
 
   return (
-    <div className="flex h-full w-full">
+    <div className="flex h-full w-full relative">
       <Sidebar />
-      <div className="flex-1 h-full" ref={reactFlowWrapper}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          onNodeClick={onNodeClick}
-          onNodeDragStop={onNodeDragStop}
-          onPaneClick={onPaneClick}
-          nodeTypes={nodeTypes}
-          fitView
-        >
-          <Controls />
-          <MiniMap />
-          <Background variant="dots" gap={12} size={1} />
-        </ReactFlow>
+      <div className="flex-1 h-full relative flex flex-col" ref={reactFlowWrapper}>
+        {/* Nút Switch Graph / JSON View */}
+        <div className="absolute top-4 right-4 z-10 flex bg-white/80 backdrop-blur border border-slate-200 rounded-lg p-1 shadow-sm gap-1">
+          <button
+            onClick={() => {
+              setViewMode('graph');
+              setSelectedNodeId(null);
+            }}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+              viewMode === 'graph'
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Graph View
+          </button>
+          <button
+            onClick={() => {
+              setViewMode('json');
+              setJsonInput(JSON.stringify({ nodes, edges }, null, 2));
+              setJsonError(null);
+              setSelectedNodeId(null);
+            }}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+              viewMode === 'json'
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            JSON View
+          </button>
+        </div>
+
+        {viewMode === 'graph' ? (
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            onNodeClick={onNodeClick}
+            onNodeDragStop={onNodeDragStop}
+            onPaneClick={onPaneClick}
+            nodeTypes={nodeTypes}
+            fitView
+          >
+            <Controls />
+            <MiniMap />
+            <Background variant="dots" gap={12} size={1} />
+          </ReactFlow>
+        ) : (
+          <div className="h-full w-full p-6 flex flex-col bg-slate-50 pt-20">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-semibold text-slate-700">JSON Blueprint Editor</span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(jsonInput);
+                  }}
+                  className="px-3 py-1.5 text-xs bg-slate-200 hover:bg-slate-300 text-slate-800 rounded font-medium transition cursor-pointer"
+                >
+                  Copy JSON
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    try {
+                      const parsed = JSON.parse(jsonInput);
+                      if (!parsed || !Array.isArray(parsed.nodes)) {
+                        throw new Error("Invalid structure: 'nodes' array is required.");
+                      }
+                      setNodes(parsed.nodes);
+                      if (Array.isArray(parsed.edges)) {
+                        setEdges(parsed.edges);
+                      }
+                      setJsonError(null);
+                      setViewMode('graph');
+                    } catch (e) {
+                      setJsonError("⚠️ Invalid JSON syntax: " + e.message);
+                    }
+                  }}
+                  className="px-3 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded font-medium transition cursor-pointer"
+                >
+                  Apply & Return
+                </button>
+              </div>
+            </div>
+            {jsonError && (
+              <div className="mb-3 p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded text-xs font-semibold">
+                {jsonError}
+              </div>
+            )}
+            <textarea
+              value={jsonInput}
+              onChange={(e) => setJsonInput(e.target.value)}
+              className="flex-1 w-full font-mono text-sm p-4 bg-slate-900 text-slate-100 rounded-lg border border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner resize-none"
+              placeholder="Paste your JSON Workflow Blueprint here..."
+            />
+          </div>
+        )}
       </div>
-      {selectedNode && (
+      {selectedNode && viewMode === 'graph' && (
         <SettingsPanel 
           selectedNode={selectedNode} 
           onUpdateNode={handleUpdateNode}

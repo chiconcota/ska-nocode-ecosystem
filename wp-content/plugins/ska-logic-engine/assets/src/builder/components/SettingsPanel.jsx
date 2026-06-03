@@ -1,9 +1,26 @@
-import React from 'react';
-import { Settings, X, Trash2, Code } from 'lucide-react';
+import React, { useState } from 'react';
+import { Settings, X, Trash2, Code, Eye, FileJson } from 'lucide-react';
 import TablePicker from './TablePicker';
 
 export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode, onClose }) {
   if (!selectedNode) return null;
+
+  // Khởi tạo state cho RenderTemplateNode Live Testing
+  const [mockPayload, setMockPayload] = useState(
+    JSON.stringify({
+      payload: {
+        user: {
+          name: "Alex Johnson",
+          email: "alex@example.com",
+          membership: "Gold"
+        },
+        promo_code: "WELCOME2026",
+        dynamic_html: "<div class=\"p-4 bg-amber-50 rounded border border-amber-200\">\n  <h3 class=\"text-amber-800 font-semibold\">Welcome VIP!</h3>\n  <p class=\"text-sm\">Hello {{ payload.user.name }} ({{ payload.user.email }}), your {{ payload.user.membership }} status is active.</p>\n  <p class=\"text-xs text-slate-500 mt-2\">Use coupon: <strong>{{ payload.promo_code }}</strong></p>\n</div>"
+      }
+    }, null, 2)
+  );
+  
+  const [activeTab, setActiveTab] = useState('visual'); // 'visual' | 'raw'
 
   const handleChange = (key, value) => {
     onUpdateNode(selectedNode.id, {
@@ -12,8 +29,68 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
     });
   };
 
+  const isWideNode = selectedNode.type === 'RenderTemplateNode' || selectedNode.type === 'ApiNode' || selectedNode.type === 'ClientResponseNode';
+
+  // Hàm nội suy template string phía client-side (Two-Pass Interpolation)
+  const evaluateTemplateClient = (template, payloadObj) => {
+    if (!template || typeof template !== 'string') return '';
+    if (!template.includes('{{')) return template;
+
+    const resolvePath = (path, obj) => {
+      let cleanPath = path.trim();
+      if (cleanPath.startsWith('payload.')) {
+        cleanPath = cleanPath.substring(8);
+      }
+      
+      const keys = cleanPath.split('.');
+      let current = obj?.payload || obj;
+      
+      for (const key of keys) {
+        if (current && typeof current === 'object' && key in current) {
+          current = current[key];
+        } else {
+          // Fallback to root search
+          let rootCurrent = obj;
+          let found = true;
+          for (const k of keys) {
+            if (rootCurrent && typeof rootCurrent === 'object' && k in rootCurrent) {
+              rootCurrent = rootCurrent[k];
+            } else {
+              found = false;
+              break;
+            }
+          }
+          if (found) return rootCurrent;
+          return '';
+        }
+      }
+      
+      if (typeof current === 'object') {
+        return JSON.stringify(current);
+      }
+      return current !== undefined && current !== null ? String(current) : '';
+    };
+
+    try {
+      // Pass 1: Parse outer template
+      const pass1 = template.replace(/\{\{\s*(.+?)\s*\}\}/g, (match, expression) => {
+        return resolvePath(expression, payloadObj);
+      });
+
+      // Pass 2: Parse inner template (if any)
+      if (pass1.includes('{{')) {
+        return pass1.replace(/\{\{\s*(.+?)\s*\}\}/g, (match, expression) => {
+          return resolvePath(expression, payloadObj);
+        });
+      }
+      return pass1;
+    } catch (e) {
+      return `Error: ${e.message}`;
+    }
+  };
+
   return (
-    <aside className="w-80 flex-shrink-0 bg-white border-l border-slate-200 flex flex-col h-full shadow-sm z-10">
+    <aside className={`${isWideNode ? 'w-[400px]' : 'w-80'} flex-shrink-0 bg-white border-l border-slate-200 flex flex-col h-full shadow-sm z-10 transition-all duration-300`}>
       <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
         <h3 className="font-semibold text-slate-800 flex items-center gap-2">
           <Settings size={18} className="text-blue-500" />
@@ -679,16 +756,28 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
             )}
 
             {selectedNode.data.response_type === 'open_modal' && (
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Modal ID</label>
-                <input 
-                  type="text" 
-                  value={selectedNode.data.modal_id || ''} 
-                  onChange={(e) => handleChange('modal_id', e.target.value)}
-                  className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
-                  placeholder="login_modal"
-                />
-                <p className="text-[10px] text-slate-500 mt-1">ID của Modal Element (vd: my_modal)</p>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Modal Content (HTML)</label>
+                  <textarea 
+                    value={selectedNode.data.modal_content || ''} 
+                    onChange={(e) => handleChange('modal_content', e.target.value)}
+                    className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono h-24"
+                    placeholder="{{payload.rendered_template}}"
+                  />
+                  <p className="text-[10px] text-slate-500 mt-1">Nhập nội dung HTML hoặc biến SkaFX (vd: {'{{payload.rendered_template}}'})</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Modal ID (Optional)</label>
+                  <input 
+                    type="text" 
+                    value={selectedNode.data.modal_id || ''} 
+                    onChange={(e) => handleChange('modal_id', e.target.value)}
+                    className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
+                    placeholder="login_modal"
+                  />
+                  <p className="text-[10px] text-slate-500 mt-1">ID của Modal Element (vd: my_modal) để mở Modal tĩnh nếu có.</p>
+                </div>
               </div>
             )}
 
@@ -734,58 +823,118 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
           </div>
         )}
         
-        {selectedNode.type === 'RenderTemplateNode' && (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Nguồn Template (Source)</label>
-              <select 
-                value={selectedNode.data.source_type || 'system'} 
-                onChange={(e) => handleChange('source_type', e.target.value)}
-                className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none bg-white"
-              >
-                <option value="system">Từ System Organisms (Builder)</option>
-                <option value="raw">Từ Biến / Custom Text (Ska Data Pro)</option>
-              </select>
-            </div>
+        {selectedNode.type === 'RenderTemplateNode' && (() => {
+          const currentTemplateHtml = selectedNode.data.template_html || selectedNode.data.raw_template || selectedNode.data.organism_id || '';
+          
+          let parsedPayload = {};
+          let parseError = null;
+          try {
+            parsedPayload = JSON.parse(mockPayload);
+          } catch (e) {
+            parseError = e.message;
+          }
 
-            {(!selectedNode.data.source_type || selectedNode.data.source_type === 'system') ? (
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Organism ID</label>
-                  <input 
-                    type="text" 
-                    value={selectedNode.data.organism_id || ''} 
-                    onChange={(e) => handleChange('organism_id', e.target.value)}
-                    className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-xs"
-                    placeholder="VD: org_12345 hoặc [payload.org_id]"
-                  />
-                  <p className="text-[10px] text-slate-500 mt-1">ID hoặc tên của template trong bảng ska_data_sys_organisms.</p>
+          const renderedResult = evaluateTemplateClient(currentTemplateHtml, parsedPayload);
+
+          return (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Template HTML / Variable</label>
+                <textarea 
+                  value={currentTemplateHtml} 
+                  onChange={(e) => handleChange('template_html', e.target.value)}
+                  className="w-full text-xs p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono min-h-[120px]"
+                  placeholder="<h1>Hello {{ payload.user.name }}</h1> or {{ payload.db_result.html_content }}"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">
+                  Nhập mã HTML thô hoặc biến chứa HTML động ( Two-Pass Interpolation ).
+                </p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Result Variable</label>
+                <input 
+                  type="text" 
+                  value={selectedNode.data.result_var || 'payload.rendered_template'} 
+                  onChange={(e) => handleChange('result_var', e.target.value)}
+                  className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono"
+                  placeholder="payload.rendered_template"
+                />
+                <p className="text-xs text-slate-500 mt-1">Biến sẽ chứa mã HTML sau khi nội suy.</p>
+              </div>
+
+              {/* Phân hệ Live Testing & Preview Glassmorphism */}
+              <div className="backdrop-blur-sm bg-slate-50/50 border border-slate-200/80 rounded-xl p-3.5 mt-5 space-y-3 shadow-inner">
+                <div className="flex justify-between items-center pb-1.5 border-b border-slate-200/60">
+                  <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                    <Eye size={14} className="text-sky-500" />
+                    Live Testing & Preview
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono">Client Sandbox</span>
                 </div>
-            ) : (
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Dữ liệu HTML / Biến</label>
-                  <textarea 
-                    value={selectedNode.data.raw_template || ''} 
-                    onChange={(e) => handleChange('raw_template', e.target.value)}
-                    className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-xs min-h-[100px]"
-                    placeholder="Vd: {{ payload.db_result.html_content }}"
+
+                <div className="space-y-1">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                    <FileJson size={11} />
+                    Mock Payload (JSON)
+                  </label>
+                  <textarea
+                    value={mockPayload}
+                    onChange={(e) => setMockPayload(e.target.value)}
+                    className="w-full text-[10px] p-2 bg-slate-900 text-slate-200 font-mono rounded-lg h-24 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    placeholder="Enter JSON payload for testing..."
                   />
-                  <p className="text-[10px] text-slate-500 mt-1">Sử dụng SkaFX &#123;&#123; biến &#125;&#125; để truyền nguyên cục HTML lấy từ DB Query Node vào đây.</p>
+                  {parseError && (
+                    <p className="text-[10px] text-red-500 bg-red-50 border border-red-100 rounded px-1.5 py-0.5 mt-0.5">
+                      ⚠️ Lỗi JSON: {parseError}
+                    </p>
+                  )}
                 </div>
-            )}
-            
-            <div className="border-t border-slate-200 pt-4 mt-4">
-              <label className="block text-sm font-medium text-slate-700 mb-1">Lưu HTML vào biến (Result Var)</label>
-              <input 
-                type="text" 
-                value={selectedNode.data.result_var || 'payload.rendered_template'} 
-                onChange={(e) => handleChange('result_var', e.target.value)}
-                className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono"
-                placeholder="payload.rendered_template"
-              />
-              <p className="text-xs text-slate-500 mt-1">Dữ liệu HTML sau khi nội suy sẽ được lưu vào biến này.</p>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Output</span>
+                    <div className="flex bg-slate-100/80 p-0.5 rounded-lg border border-slate-200/60">
+                      <button
+                        onClick={() => setActiveTab('visual')}
+                        className={`text-[9px] font-bold px-2 py-0.5 rounded-md transition-colors ${
+                          activeTab === 'visual'
+                            ? 'bg-white text-sky-600 shadow-sm'
+                            : 'text-slate-500 hover:text-slate-800'
+                        }`}
+                      >
+                        Visual Preview
+                      </button>
+                      <button
+                        onClick={() => setActiveTab('raw')}
+                        className={`text-[9px] font-bold px-2 py-0.5 rounded-md transition-colors ${
+                          activeTab === 'raw'
+                            ? 'bg-white text-sky-600 shadow-sm'
+                            : 'text-slate-500 hover:text-slate-800'
+                        }`}
+                      >
+                        HTML Output
+                      </button>
+                    </div>
+                  </div>
+
+                  {activeTab === 'visual' ? (
+                    <div 
+                      className="bg-white rounded-lg border border-slate-200/80 shadow-inner p-3 min-h-[90px] text-xs overflow-auto max-h-48 prose prose-sm prose-slate"
+                      dangerouslySetInnerHTML={{ __html: renderedResult || '<em class="text-slate-400">Không có dữ liệu hiển thị</em>' }}
+                    />
+                  ) : (
+                    <textarea
+                      readOnly
+                      value={renderedResult}
+                      className="w-full font-mono text-[10px] p-2 bg-slate-950 text-emerald-400 rounded-lg min-h-[90px] h-24 select-all cursor-text focus:outline-none"
+                    />
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
         
         {selectedNode.type === 'IteratorNode' && (
           <div className="space-y-4">

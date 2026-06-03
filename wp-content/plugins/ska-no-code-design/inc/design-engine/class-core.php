@@ -266,6 +266,9 @@ class Core
             }
         }
 
+        // Cho phép các plugin khác đóng góp các class cần scan qua filter
+        $classes_to_scan = apply_filters( 'ska_design_classes_to_scan', $classes_to_scan );
+
         if (!empty(trim($classes_to_scan))) {
             // Compile classes to CSS
             $result = $this->compiler->compile_classes($classes_to_scan);

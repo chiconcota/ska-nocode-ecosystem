@@ -169,6 +169,9 @@ class Ska_Logic_DB_Action implements Ska_Logic_Node {
                 break;
         }
 
+        // Xóa cache JIT CSS class của các workflow/database phẳng để compiler nhận diện các class mới
+        delete_transient( 'ska_dynamic_tailwind_classes_cache' );
+
         // Node Action trả về payload và cổng main
         return ['payload' => $payload, 'port' => 'main'];
     }

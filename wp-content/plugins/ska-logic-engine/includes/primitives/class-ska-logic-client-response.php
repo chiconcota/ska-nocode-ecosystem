@@ -24,6 +24,7 @@ class Ska_Logic_Client_Response implements Ska_Logic_Node {
                 
             case 'open_modal':
                 $event['modal_id'] = $this->evaluate_template( $config['modal_id'] ?? '', $payload );
+                $event['modal_content'] = $this->evaluate_template( $config['modal_content'] ?? '', $payload );
                 break;
                 
             case 'fire_event':

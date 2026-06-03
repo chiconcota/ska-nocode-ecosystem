@@ -79,6 +79,11 @@ class Ska_Logic_Core {
 
         // Đăng ký bảo vệ bảng phẳng hệ thống của Logic Engine
         add_filter( 'ska_data_protected_tables', [ $this, 'protect_system_tables' ] );
+
+        // Đăng ký JIT Scan CSS classes cho các Workflows của Logic Engine
+        add_filter( 'ska_design_classes_to_scan', [ $this, 'scan_workflows_classes' ] );
+        // Đăng ký JIT Scan CSS classes từ dữ liệu bảng phẳng trong Database
+        add_filter( 'ska_design_classes_to_scan', [ $this, 'scan_database_flat_tables_classes' ] );
     }
 
     public function enqueue_editor_scripts() {
@@ -405,5 +410,199 @@ class Ska_Logic_Core {
             $ids = [];
         }
         update_option( 'ska_logic_workflow_ids', $ids );
+        delete_transient( 'ska_dynamic_tailwind_classes_cache' );
+    }
+
+    /**
+     * Quét tất cả workflows để lấy các class Tailwind và đưa vào JIT compiler
+     */
+    public function scan_workflows_classes( $classes ) {
+        error_log('[Ska Logic] scan_workflows_classes triggered. Initial classes length: ' . strlen($classes));
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ska_data_sys_workflows';
+        
+        // Quét DB lấy toàn bộ đồ thị của các workflow
+        $wpdb->suppress_errors( true );
+        $graphs = $wpdb->get_col( "SELECT graph FROM `{$table_name}`" );
+        $wpdb->suppress_errors( false );
+        
+        error_log('[Ska Logic] scan_workflows_classes: Found ' . count($graphs) . ' workflows in DB');
+        
+        if ( empty( $graphs ) || ! is_array( $graphs ) ) {
+            return $classes;
+        }
+
+        $workflow_classes = [];
+        foreach ( $graphs as $graph_json ) {
+            if ( empty( $graph_json ) ) {
+                continue;
+            }
+            error_log('[Ska Logic] scan_workflows_classes: raw graph type: ' . gettype($graph_json) . ' | value: ' . substr($graph_json, 0, 150));
+            $graph = json_decode( $graph_json, true );
+            if ( ! is_array( $graph ) ) {
+                error_log('[Ska Logic] scan_workflows_classes: Failed to decode JSON or not an array!');
+                continue;
+            }
+            if ( empty( $graph['nodes'] ) ) {
+                error_log('[Ska Logic] scan_workflows_classes: Graph nodes is empty!');
+                continue;
+            }
+
+            foreach ( $graph['nodes'] as $node ) {
+                if ( empty( $node['data'] ) ) {
+                    continue;
+                }
+                $data = $node['data'];
+                
+                // Trích xuất từ các trường có khả năng chứa HTML hoặc class
+                // 1. Render Template Node: template_html / raw_template
+                if ( ! empty( $data['template_html'] ) ) {
+                    $workflow_classes[] = $this->extract_classes_from_html( $data['template_html'] );
+                }
+                if ( ! empty( $data['raw_template'] ) ) {
+                    $workflow_classes[] = $this->extract_classes_from_html( $data['raw_template'] );
+                }
+                
+                // 2. Client Response Node: modal_content / message (cho toast)
+                if ( ! empty( $data['modal_content'] ) ) {
+                    $workflow_classes[] = $this->extract_classes_from_html( $data['modal_content'] );
+                }
+                if ( ! empty( $data['message'] ) ) {
+                    $workflow_classes[] = $this->extract_classes_from_html( $data['message'] );
+                }
+            }
+        }
+
+        $workflow_classes_string = implode( ' ', array_filter( $workflow_classes ) );
+        error_log('[Ska Logic] scan_workflows_classes: Extracted classes: ' . $workflow_classes_string);
+        if ( ! empty( $workflow_classes_string ) ) {
+            $classes .= ' ' . $workflow_classes_string;
+        }
+
+        return $classes;
+    }
+
+    /**
+     * Regex trích xuất class từ HTML hoặc Gutenberg Block JSON
+     */
+    private function extract_classes_from_html( $html ) {
+        if ( empty( $html ) || ! is_string( $html ) ) {
+            return '';
+        }
+        $classes = [];
+        // Tìm thuộc tính class="..."
+        if ( preg_match_all( '/class=["\']([^"\']+)["\']/', $html, $matches ) ) {
+            foreach ( $matches[1] as $class_attr ) {
+                $parts = explode( ' ', $class_attr );
+                foreach ( $parts as $part ) {
+                    $part = trim( $part );
+                    if ( ! empty( $part ) ) {
+                        $classes[] = $part;
+                    }
+                }
+            }
+        }
+        // Tìm thuộc tính "tailwindClasses":"..." trong bình luận block Gutenberg
+        if ( preg_match_all( '/"tailwindClasses"\s*:\s*"([^"]+)"/', $html, $matches ) ) {
+            foreach ( $matches[1] as $class_attr ) {
+                $parts = explode( ' ', $class_attr );
+                foreach ( $parts as $part ) {
+                    $part = trim( $part );
+                    if ( ! empty( $part ) ) {
+                        $classes[] = $part;
+                    }
+                }
+            }
+        }
+        return implode( ' ', array_unique( $classes ) );
+    }
+
+    /**
+     * Quét tất cả các bảng phẳng của ứng dụng để trích xuất các class Tailwind động
+     */
+    public function scan_database_flat_tables_classes( $classes ) {
+        // Thử lấy từ transient cache trước
+        $cached_classes = get_transient( 'ska_dynamic_tailwind_classes_cache' );
+        if ( $cached_classes !== false ) {
+            error_log('[Ska Logic] scan_database_flat_tables_classes: Loaded from transient cache.');
+            if ( ! empty( $cached_classes ) ) {
+                $classes .= ' ' . $cached_classes;
+            }
+            return $classes;
+        }
+
+        error_log('[Ska Logic] scan_database_flat_tables_classes: Cache miss. Scanning DB flat tables...');
+        global $wpdb;
+        $dictionary = get_option( 'ska_data_dictionary', [] );
+        if ( empty( $dictionary ) || ! is_array( $dictionary ) ) {
+            return $classes;
+        }
+
+        $all_extracted_classes = [];
+        $app_table_prefix = $wpdb->prefix . 'ska_data_app_';
+
+        foreach ( $dictionary as $table_name => $fields ) {
+            // Chỉ quét các bảng phẳng của app
+            if ( ! str_starts_with( $table_name, $app_table_prefix ) ) {
+                continue;
+            }
+
+            if ( ! is_array( $fields ) ) {
+                continue;
+            }
+
+            // Tìm các cột chứa text/HTML
+            $text_columns = [];
+            foreach ( $fields as $field_name => $field_meta ) {
+                if ( $field_name === '__table_info' ) {
+                    continue;
+                }
+                $type = isset( $field_meta['type'] ) ? $field_meta['type'] : '';
+                if ( in_array( $type, [ 'long_text', 'rich_text', 'text' ], true ) ) {
+                    $text_columns[] = $field_name;
+                }
+            }
+
+            if ( empty( $text_columns ) ) {
+                continue;
+            }
+
+            // Kiểm tra bảng có thực sự tồn tại trong DB không để tránh lỗi SQL
+            $table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_name ) );
+            if ( ! $table_exists ) {
+                continue;
+            }
+
+            // Quét dữ liệu từ mỗi cột text
+            foreach ( $text_columns as $column ) {
+                $results = $wpdb->get_col( "SELECT `{$column}` FROM `{$table_name}` WHERE `{$column}` IS NOT NULL AND `{$column}` != ''" );
+                if ( ! empty( $results ) && is_array( $results ) ) {
+                    foreach ( $results as $row_content ) {
+                        $extracted = $this->extract_classes_from_html( $row_content );
+                        if ( ! empty( $extracted ) ) {
+                            $all_extracted_classes[] = $extracted;
+                        }
+                    }
+                }
+            }
+        }
+
+        $flat_db_classes = implode( ' ', array_filter( $all_extracted_classes ) );
+        
+        // Loại bỏ các class trùng lặp để chuỗi cache gọn gàng
+        if ( ! empty( $flat_db_classes ) ) {
+            $flat_db_classes = implode( ' ', array_unique( array_filter( explode( ' ', $flat_db_classes ) ) ) );
+        }
+
+        error_log('[Ska Logic] scan_database_flat_tables_classes: Finished scanning. Extracted classes: ' . $flat_db_classes);
+
+        // Lưu vào cache transient 12 tiếng
+        set_transient( 'ska_dynamic_tailwind_classes_cache', $flat_db_classes, 12 * HOUR_IN_SECONDS );
+
+        if ( ! empty( $flat_db_classes ) ) {
+            $classes .= ' ' . $flat_db_classes;
+        }
+
+        return $classes;
     }
 }

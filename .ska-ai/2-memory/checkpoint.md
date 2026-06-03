@@ -1,32 +1,27 @@
 # CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ
-*Ngày cập nhật: 2026-06-01*
+*Ngày cập nhật: 2026-06-03*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Git Branch**: `feature/ai-json-blueprint-import`
-- **Công việc**: Hoàn tất tính năng AI JSON Blueprint Import/Export cho Ska Logic Engine.
-- **Trạng thái**: Hoàn thành toàn diện 🟢 (Backend API, Manger UI Form, Ecosystem Docs, System Map).
+- **Git Branch**: `main`
+- **Công việc**: Sửa lỗi vỡ layout / thiếu styling trên Dynamic Modal Popup bằng cách bổ sung cơ chế quét JIT class Tailwind từ Database cho Ska Logic Engine.
+- **Trạng thái**: Hoàn thành 🟢 (Đã tích hợp hook `ska_design_classes_to_scan`, viết hàm `scan_database_flat_tables_classes` quét & cache transient, test E2E trên browser thành công).
 
-## 2. Các thay đổi kỹ thuật lõi đã thực hiện:
-- **Ska Logic Engine (v1.1.5)**:
-  - Khởi tạo `class-blueprint-api.php` chứa 2 endpoint xử lý Import/Export.
-  - Sửa đổi `class-ska-logic-core.php` để đăng ký API và xử lý form upload.
-  - Cập nhật `admin-manager-ui.php` với nút Import (kích hoạt Modal chọn file JSON) và nút Export tải trực tiếp định dạng `.json`.
-  - Hỗ trợ an toàn `overwrite if exists` để tránh ghi đè nhầm workflow hiện hữu.
-  - Nới rộng Wrapper quản trị lên 1200px, phân chia lại tỉ lệ các cột (45% | 15% | 40%) và gom nhóm các nút thao tác vào flexbox `white-space: nowrap` để chống tràn, chồng đè lên nhau. Chuyển đổi nhãn sang tiếng Anh bọc i18n chuẩn.
-  - Sửa lỗi REST API `rest_forbidden` (401) khi click nút Export trực tiếp từ trình duyệt bằng cách tạo và đính kèm REST Nonce (`_wpnonce`) vào link GET tải file.
+## 2. Các quyết định thiết kế đã thống nhất:
+- **Flat Table JIT Scan (v1.1.10)**: Tự động quét tất cả các bảng phẳng của app (`wp_ska_data_app_*`) qua dictionary của Data Pro để lấy dữ liệu từ các cột text/HTML (`long_text`, `rich_text`, `text`), chạy regex trích xuất class Tailwind và biên dịch JIT.
+- **Dynamic Caching**: Lưu các class Tailwind dynamic này vào transient cache trong 12 giờ để đảm bảo tốc độ tải trang 0ms overhead. Tự động xoá cache khi thực thi Insert/Update/Delete thành công thông qua Node DB Action hoặc lưu/sửa workflow trong Admin.
 
-## 3. Danh sách file đã tác động trong phiên cuối:
-- `wp-content/plugins/ska-logic-engine/ska-logic-engine.php`
-- `wp-content/plugins/ska-logic-engine/package.json`
-- `wp-content/plugins/ska-logic-engine/includes/api/class-blueprint-api.php`
-- `wp-content/plugins/ska-logic-engine/includes/class-ska-logic-core.php`
-- `wp-content/plugins/ska-logic-engine/includes/admin/admin-manager-ui.php`
-- `.ska-ai/3-ecosystem/ska-logic-engine/blueprint-spec.md`
-- `.ska-ai/3-ecosystem/ska-logic-engine/workflow-sample.json`
+## 3. Danh sách file thay đổi & tạo mới trong phiên:
+- **Thay đổi (Ecosystem Source)**:
+  - `wp-content/plugins/ska-logic-engine/ska-logic-engine.php` (Nâng version plugin lên v1.1.11)
+  - `wp-content/plugins/ska-logic-engine/package.json` (Nâng version npm lên 1.1.11)
+  - `wp-content/plugins/ska-logic-engine/assets/src/builder/App.jsx` (Tích hợp giao diện Switch View và JSON Blueprint Editor)
+  - `wp-content/plugins/ska-logic-engine/assets/js/admin-dag-builder.bundle.js` (Đồng bộ bản build JS React mới)
+  - `wp-content/plugins/ska-logic-engine/assets/js/admin-dag-builder.bundle.css` (Đồng bộ bản build CSS React mới)
+  - `wp-content/plugins/ska-logic-engine/includes/class-ska-logic-core.php` (Đăng ký hook và viết hàm quét dữ liệu bảng phẳng `scan_database_flat_tables_classes` từ v1.1.10)
+- **Thay đổi (Docs & Logs)**:
+  - `.ska-ai/1-overview/system_map.md` (Cập nhật log v1.1.11)
+  - `.ska-ai/2-memory/decision-log.md` (Ghi nhận quyết định JSON Blueprint Editor & Graph Switcher)
+  - `.ska-ai/2-memory/checkpoint.md` (Bản ghi bàn giao tiến độ hiện tại)
 
 ## 4. Nhiệm vụ cho phiên tiếp theo (Next Session)
-- **Git**: Xin ý kiến User merge nhánh `feature/ai-json-blueprint-import` vào `main`.
-- **Kiểm thử**: Chạy thử tính năng Import và Export ở trên UI Admin.
-- **Tính năng mới**: Chuyển sang hạng mục tiếp theo (Giao diện cấu hình SkaFX & Async).
-
-*Note cho Agent phiên sau: Phiên này đã khép lại gọn gàng. Nhánh `feature/ai-json-blueprint-import` đã hoàn thành công việc. Hãy đọc `system_map.md` để biết tổng quan.*
+- **Triển khai Wrapper Filter JS**: Thiết lập block wrapper filter cho các class định vị Flex/Grid của block Ska để đồng bộ hiển thị WYSIWYG trong Editor Gutenberg.

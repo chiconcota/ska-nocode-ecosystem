@@ -8,40 +8,29 @@ defined( 'ABSPATH' ) || exit;
 class Ska_Logic_Render_Template implements Ska_Logic_Node {
 
     public function execute( $payload, $config ) {
-        $source_type = isset( $config['source_type'] ) ? $config['source_type'] : 'system';
-        $html_content = '';
-
-        if ( $source_type === 'raw' ) {
-            // Lấy template trực tiếp từ cấu hình (thường là một biến như {{payload.db_template}})
-            $raw_template = isset( $config['raw_template'] ) ? $config['raw_template'] : '';
-            // Nội suy biến để lấy ra đoạn HTML thô thực sự nếu nó được truyền vào dạng biến
-            $html_content = $this->evaluate_template( $raw_template, $payload );
-        } else {
-            // Chế độ cũ: Lấy từ system_organisms
-            $organism_id = isset( $config['organism_id'] ) ? $config['organism_id'] : '';
-            $organism_id = $this->evaluate_template( $organism_id, $payload );
-
-            if ( empty( $organism_id ) ) {
-                return [ 'payload' => $payload, 'port' => 'main' ];
-            }
-
-            global $wpdb;
-            $table_name = $wpdb->prefix . 'ska_data_sys_organisms';
-            
-            // Lấy html_content dựa vào ID hoặc Name
-            $html_content = $wpdb->get_var( $wpdb->prepare( "SELECT html_content FROM {$table_name} WHERE id = %s OR name = %s", $organism_id, $organism_id ) );
-
-            if ( is_null( $html_content ) ) {
-                error_log( "Ska_Logic_Render_Template Error: Template not found for ID: " . $organism_id );
-                return [ 'payload' => $payload, 'port' => 'main' ];
+        // Lấy template_html từ cấu hình, fallback về raw_template hoặc organism_id cũ để giữ tính tương thích ngược tối đa
+        $template_html = isset( $config['template_html'] ) ? $config['template_html'] : '';
+        if ( empty( $template_html ) ) {
+            if ( isset( $config['raw_template'] ) && !empty( $config['raw_template'] ) ) {
+                $template_html = $config['raw_template'];
+            } elseif ( isset( $config['organism_id'] ) && !empty( $config['organism_id'] ) ) {
+                $template_html = $config['organism_id'];
             }
         }
 
-        // 3. Nội suy dữ liệu vào template
-        $rendered_html = $this->evaluate_template( $html_content, $payload );
+        // Bước 1: Nội suy cấp 1 (giải quyết biến chứa HTML thô từ payload, ví dụ: {{payload.db_result.html_content}})
+        $html_pass1 = $this->evaluate_template( $template_html, $payload );
 
-        // 4. Lưu kết quả vào biến
-        $result_var = isset( $config['result_var'] ) && !empty($config['result_var']) ? trim($config['result_var']) : 'payload.rendered_template';
+        // Bước 2: Nội suy cấp 2 (giải quyết các biến dữ liệu con nằm bên trong HTML đó, ví dụ: {{name}})
+        $rendered_html = $this->evaluate_template( $html_pass1, $payload );
+
+        // Biên dịch block WordPress Gutenberg (nếu có) thành mã HTML thật
+        if ( function_exists( 'do_blocks' ) ) {
+            $rendered_html = do_blocks( $rendered_html );
+        }
+
+        // Lưu kết quả vào biến chỉ định (mặc định là payload.rendered_template)
+        $result_var = isset( $config['result_var'] ) && !empty( $config['result_var'] ) ? trim( $config['result_var'] ) : 'payload.rendered_template';
         
         // Ghi dữ liệu vào đường dẫn của $result_var trong $payload
         $this->set_nested_value( $payload, $result_var, $rendered_html );
