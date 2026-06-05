@@ -11,6 +11,8 @@ $user_tailwindClasses = ! empty( $attributes['tailwindClasses'] ) ? $attributes[
 
 $wrapper_attributes = get_block_wrapper_attributes( array(
     'class' => 'ska-icon-block material-symbols-outlined ' . esc_attr( $user_tailwindClasses ),
+    'aria-hidden' => 'true',
+    'focusable' => 'false',
 ) );
 
 if ( ! empty( $attributes['logic']['enabled'] ) ) {

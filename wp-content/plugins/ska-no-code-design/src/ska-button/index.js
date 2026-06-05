@@ -204,7 +204,7 @@ registerBlockType(metadata.name, {
                     onClick={(e) => e.preventDefault()}
                 >
                     {hasIcon && iconPosition === 'left' && (
-                        <span className={`material-symbols-outlined ${iconClasses}`.trim()}>{iconName}</span>
+                        <span className={`material-symbols-outlined ${iconClasses}`.trim()} aria-hidden="true" focusable="false">{iconName}</span>
                     )}
                     {dynamic.text_source === 'static' ? (
                         <RichText
@@ -220,7 +220,7 @@ registerBlockType(metadata.name, {
                         </span>
                     )}
                     {hasIcon && iconPosition === 'right' && (
-                        <span className={`material-symbols-outlined ${iconClasses}`.trim()}>{iconName}</span>
+                        <span className={`material-symbols-outlined ${iconClasses}`.trim()} aria-hidden="true" focusable="false">{iconName}</span>
                     )}
                 </Tag>
             </>
