@@ -91,6 +91,7 @@ class Core
 
         // Architecture Scope: Add .ska-builder to body to enable JIT Scoped CSS
         add_filter('body_class', array($this, 'add_ska_builder_class'));
+        add_filter('admin_body_class', array($this, 'add_ska_builder_admin_class'));
 
         // Note: HTML attribute injection (inject_html_attributes) was moved to blocks/init.php to avoid duplicates.
     }
@@ -104,6 +105,14 @@ class Core
     {
         $classes[] = 'ska-builder';
         return $classes;
+    }
+
+    /**
+     * Add .ska-builder class to admin body.
+     */
+    public function add_ska_builder_admin_class($classes)
+    {
+        return $classes . ' ska-builder';
     }
 
     /**

@@ -1,24 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Settings, X, Trash2, Code, Eye, FileJson } from 'lucide-react';
 import TablePicker from './TablePicker';
+import { SkaFXInput, SkaFXTextarea } from './SkaFXAutocomplete';
 
-export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode, onClose }) {
+const { __ } = window.wp?.i18n || { __: (text) => text };
+
+const defaultMockPayload = JSON.stringify({
+  payload: {
+    user: {
+      name: "Alex Johnson",
+      email: "alex@example.com",
+      membership: "Gold"
+    },
+    promo_code: "WELCOME2026",
+    dynamic_html: "<div class=\"p-4 bg-amber-50 rounded border border-amber-200\">\n  <h3 class=\"text-amber-800 font-semibold\">Welcome VIP!</h3>\n  <p class=\"text-sm\">Hello {{ payload.user.name }} ({{ payload.user.email }}), your {{ payload.user.membership }} status is active.</p>\n  <p class=\"text-xs text-slate-500 mt-2\">Use coupon: <strong>{{ payload.promo_code }}</strong></p>\n</div>"
+  }
+}, null, 2);
+
+export default function SettingsPanel({ selectedNode, nodes, onUpdateNode, onDeleteNode, onClose }) {
   if (!selectedNode) return null;
 
+  const triggerNode = nodes.find(n => n.type === 'TriggerNode');
+
   // Khởi tạo state cho RenderTemplateNode Live Testing
-  const [mockPayload, setMockPayload] = useState(
-    JSON.stringify({
-      payload: {
-        user: {
-          name: "Alex Johnson",
-          email: "alex@example.com",
-          membership: "Gold"
-        },
-        promo_code: "WELCOME2026",
-        dynamic_html: "<div class=\"p-4 bg-amber-50 rounded border border-amber-200\">\n  <h3 class=\"text-amber-800 font-semibold\">Welcome VIP!</h3>\n  <p class=\"text-sm\">Hello {{ payload.user.name }} ({{ payload.user.email }}), your {{ payload.user.membership }} status is active.</p>\n  <p class=\"text-xs text-slate-500 mt-2\">Use coupon: <strong>{{ payload.promo_code }}</strong></p>\n</div>"
-      }
-    }, null, 2)
-  );
+  const [mockPayload, setMockPayload] = useState(() => {
+    return triggerNode?.data?.mockPayload || defaultMockPayload;
+  });
+
+  // Keep mockPayload in sync when switching nodes or if the trigger node updates
+  useEffect(() => {
+    setMockPayload(triggerNode?.data?.mockPayload || defaultMockPayload);
+  }, [selectedNode.id, triggerNode?.data?.mockPayload]);
+
+  const handleMockPayloadChange = (newVal) => {
+    setMockPayload(newVal);
+    if (triggerNode) {
+      onUpdateNode(triggerNode.id, {
+        ...triggerNode.data,
+        mockPayload: newVal
+      });
+    }
+  };
   
   const [activeTab, setActiveTab] = useState('visual'); // 'visual' | 'raw'
 
@@ -94,7 +116,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
       <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
         <h3 className="font-semibold text-slate-800 flex items-center gap-2">
           <Settings size={18} className="text-blue-500" />
-          Settings
+          {__( 'Settings', 'ska-logic-engine' )}
         </h3>
         <button 
           onClick={onClose}
@@ -106,7 +128,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
       
       <div className="p-4 flex-1 overflow-y-auto space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Node ID</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">{__( 'Node ID', 'ska-logic-engine' )}</label>
           <input 
             type="text" 
             value={selectedNode.id} 
@@ -117,7 +139,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
         
         {selectedNode.type !== 'TriggerNode' && (
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Parent Node (Iterator)</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">{__( 'Parent Node (Iterator)', 'ska-logic-engine' )}</label>
             <input 
               type="text" 
               value={selectedNode.parentId || selectedNode.parentNode || ''} 
@@ -128,30 +150,30 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                 });
               }}
               className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 outline-none font-mono"
-              placeholder="Tự động gán khi kéo vào Iterator"
+              placeholder={__( 'Auto-assigned when dragged into Iterator', 'ska-logic-engine' )}
             />
-            <p className="text-[10px] text-slate-500 mt-1">Tự động gán khi kéo node vào Iterator. Xóa trắng để tháo ra.</p>
+            <p className="text-[10px] text-slate-500 mt-1">{__( 'Auto-assigned when node is dragged into Iterator. Clear to detach.', 'ska-logic-engine' )}</p>
           </div>
         )}
         
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Label</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">{__( 'Label', 'ska-logic-engine' )}</label>
           <input 
             type="text" 
             value={selectedNode.data.label || ''} 
             onChange={(e) => handleChange('label', e.target.value)}
             className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            placeholder="Enter node label"
+            placeholder={__( 'Enter node label', 'ska-logic-engine' )}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">{__( 'Description', 'ska-logic-engine' )}</label>
           <textarea 
             value={selectedNode.data.description || ''} 
             onChange={(e) => handleChange('description', e.target.value)}
             className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none h-24"
-            placeholder="Enter description"
+            placeholder={__( 'Enter description', 'ska-logic-engine' )}
           />
         </div>
 
@@ -228,12 +250,15 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                     className="w-full text-xs p-1.5 border border-slate-300 rounded outline-none"
                     placeholder="Key (e.g. status)"
                   />
-                  <input 
+                  <SkaFXInput 
+                    nodes={nodes}
+                    selectedNode={selectedNode}
+                    mockPayload={mockPayload}
                     type="text" 
                     value={assignment.value || ''} 
-                    onChange={(e) => {
+                    onChange={(val) => {
                       const newAssignments = [...(selectedNode.data.assignments || [])];
-                      newAssignments[index] = { ...newAssignments[index], value: e.target.value };
+                      newAssignments[index] = { ...newAssignments[index], value: val };
                       handleChange('assignments', newAssignments);
                     }}
                     className="w-full text-xs p-1.5 border border-slate-300 rounded outline-none font-mono text-blue-600 bg-slate-50"
@@ -252,7 +277,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                 </button>
               </div>
             ))}
-            <p className="text-[10px] text-slate-400 italic">Hint: Sử dụng [...] để tính toán hoặc {'{{ ... }}'} để nối chuỗi.</p>
+            <p className="text-[10px] text-slate-400 italic">{__( 'Hint: Use [...] for calculations or {{ ... }} to concatenate strings.', 'ska-logic-engine' )}</p>
             <button 
               onClick={() => {
                 const newAssignments = [...(selectedNode.data.assignments || []), { key: '', value: '' }];
@@ -260,28 +285,31 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
               }}
               className="w-full py-1.5 text-xs font-medium text-indigo-600 border border-indigo-200 rounded bg-indigo-50 hover:bg-indigo-100 transition-colors"
             >
-              + Add Variable
+              {__( '+ Add Variable', 'ska-logic-engine' )}
             </button>
           </div>
         )}
         
         {selectedNode.type === 'ConditionNode' && (
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">If condition</label>
-            <textarea 
+            <label className="block text-sm font-medium text-slate-700 mb-1">{__( 'If condition', 'ska-logic-engine' )}</label>
+            <SkaFXTextarea 
+              nodes={nodes}
+              selectedNode={selectedNode}
+              mockPayload={mockPayload}
               value={selectedNode.data.expression || ''} 
-              onChange={(e) => handleChange('expression', e.target.value)}
+              onChange={(val) => handleChange('expression', val)}
               className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none font-mono text-amber-700 bg-amber-50/30 resize-none h-20"
               placeholder="[trigger.age] > 18 AND [status] == 'active'"
             />
-            <p className="text-xs text-slate-500 mt-1">Sử dụng cú pháp SkaFX. Biến phải nằm trong dấu ngoặc vuông `[biến]`.</p>
+            <p className="text-xs text-slate-500 mt-1">{__( 'Use SkaFX syntax. Type [ for variables, { or {{ for templates, and letters for functions.', 'ska-logic-engine' )}</p>
           </div>
         )}
 
         {selectedNode.type === 'SwitchNode' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b pb-2">
-              <label className="block text-sm font-medium text-slate-700">Routes (Nhánh rẽ)</label>
+              <label className="block text-sm font-medium text-slate-700">Routes</label>
             </div>
             {(selectedNode.data.routes || []).map((route, index) => (
               <div key={route.id || index} className="p-3 border border-purple-200 bg-purple-50 rounded space-y-2 relative">
@@ -311,12 +339,15 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-purple-800 mb-1">SkaFX Expression</label>
-                  <input 
+                  <SkaFXInput 
+                    nodes={nodes}
+                    selectedNode={selectedNode}
+                    mockPayload={mockPayload}
                     type="text" 
                     value={route.expression || ''} 
-                    onChange={(e) => {
+                    onChange={(val) => {
                       const newRoutes = [...(selectedNode.data.routes || [])];
-                      newRoutes[index] = { ...newRoutes[index], expression: e.target.value };
+                      newRoutes[index] = { ...newRoutes[index], expression: val };
                       handleChange('routes', newRoutes);
                     }}
                     className="w-full text-xs p-1.5 border border-purple-200 rounded outline-none font-mono text-purple-700"
@@ -345,27 +376,27 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
             >
               + Add Route
             </button>
-            <p className="text-xs text-slate-500 mt-2">Lưu ý: Luôn có cổng 'Default' được tự sinh trên Canvas.</p>
+            <p className="text-xs text-slate-500 mt-2">Note: 'Default' port is always auto-generated on Canvas.</p>
           </div>
         )}
 
         {selectedNode.type === 'DBActionNode' && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Hành động (Action)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Action</label>
               <select 
                 value={selectedNode.data.actionType || 'insert'} 
                 onChange={(e) => handleChange('actionType', e.target.value)}
                 className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
               >
-                <option value="insert">Thêm mới (Insert)</option>
-                <option value="update">Cập nhật (Update)</option>
-                <option value="delete">Xóa (Delete)</option>
+                <option value="insert">Insert</option>
+                <option value="update">Update</option>
+                <option value="delete">Delete</option>
               </select>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Bảng dữ liệu (Table)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Table</label>
               <TablePicker 
                 value={selectedNode.data.table || ''}
                 onChange={(val) => handleChange('table', val)}
@@ -375,24 +406,27 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
             {(selectedNode.data.actionType === 'update' || selectedNode.data.actionType === 'delete') && (
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Record ID (SkaFX var)</label>
-                <input 
+                <SkaFXInput 
+                  nodes={nodes}
+                  selectedNode={selectedNode}
+                  mockPayload={mockPayload}
                   type="text" 
                   value={selectedNode.data.recordId || ''} 
-                  onChange={(e) => handleChange('recordId', e.target.value)}
+                  onChange={(val) => handleChange('recordId', val)}
                   className="w-full text-sm p-2 border border-rose-300 rounded focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none font-mono"
                   placeholder="[payload.id]"
                 />
-                <p className="text-xs text-slate-500 mt-1">Truyền biến ID của bản ghi để tìm kiếm.</p>
+                <p className="text-xs text-slate-500 mt-1">Pass record ID variable to search.</p>
               </div>
             )}
 
             {selectedNode.data.table && selectedNode.data.actionType !== 'delete' && (
               <div className="mt-4 border-t border-slate-200 pt-4">
-                <label className="block text-sm font-medium text-slate-700 mb-2">Ánh xạ dữ liệu (Auto-map)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Auto-map Data</label>
                 <div className="space-y-2">
                   {(() => {
                     const tableObj = (window.SKA_DAG_CONTEXT?.AVAILABLE_TABLES || []).find(t => t.id === selectedNode.data.table);
-                    if (!tableObj || !tableObj.columns) return <p className="text-xs text-slate-500">Không tìm thấy schema cột.</p>;
+                    if (!tableObj || !tableObj.columns) return <p className="text-xs text-slate-500">No column schema found.</p>;
                     
                     const mappings = selectedNode.data.mappings || {};
                     const dynamicModes = selectedNode.data.dynamicModes || {};
@@ -457,19 +491,22 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                               }}
                               className="w-full text-sm p-1.5 border border-slate-200 rounded focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none bg-white"
                             >
-                               <option value="">-- Chọn một giá trị --</option>
+                               <option value="">-- Select a value --</option>
                                {options.map((opt, idx) => (
                                   <option key={idx} value={opt.value || opt}>{opt.label || opt.value || opt}</option>
                                ))}
                             </select>
                           ) : (
-                            <input
+                            <SkaFXInput
+                              nodes={nodes}
+                              selectedNode={selectedNode}
+                              mockPayload={mockPayload}
                               type="text"
                               value={mappings[col.id] || ''}
-                              onChange={(e) => {
+                              onChange={(val) => {
                                 handleChange('mappings', {
                                   ...mappings,
-                                  [col.id]: e.target.value
+                                  [col.id]: val
                                 });
                               }}
                               className="w-full text-sm p-1.5 border border-slate-200 rounded focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none font-mono text-xs"
@@ -489,7 +526,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
         {selectedNode.type === 'DBQueryNode' && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Bảng dữ liệu (Table)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Table</label>
               <TablePicker 
                 value={selectedNode.data.table || ''}
                 onChange={(val) => handleChange('table', val)}
@@ -503,8 +540,8 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                 onChange={(e) => handleChange('returnType', e.target.value)}
                 className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none bg-white"
               >
-                <option value="multiple">Nhiều dòng (Array)</option>
-                <option value="single">Một dòng (Object)</option>
+                <option value="multiple">Multiple rows (Array)</option>
+                <option value="single">Single row (Object)</option>
               </select>
             </div>
 
@@ -544,12 +581,15 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                         <option value="IN">IN</option>
                       </select>
                     </div>
-                    <input 
+                    <SkaFXInput 
+                      nodes={nodes}
+                      selectedNode={selectedNode}
+                      mockPayload={mockPayload}
                       type="text" 
                       value={cond.value || ''} 
-                      onChange={(e) => {
+                      onChange={(val) => {
                         const newConds = [...(selectedNode.data.conditions || [])];
-                        newConds[index] = { ...newConds[index], value: e.target.value };
+                        newConds[index] = { ...newConds[index], value: val };
                         handleChange('conditions', newConds);
                       }}
                       className="w-full text-xs p-1.5 border border-slate-300 rounded outline-none font-mono text-cyan-600 bg-slate-50"
@@ -617,7 +657,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
             )}
 
             <div className="border-t border-slate-200 pt-4 mt-4">
-              <label className="block text-sm font-medium text-slate-700 mb-1">Lưu kết quả vào (Result Variable)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Result Variable</label>
               <input 
                 type="text" 
                 value={selectedNode.data.resultVar || ''} 
@@ -625,7 +665,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                 className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none font-mono"
                 placeholder="payload.query_results"
               />
-              <p className="text-xs text-slate-500 mt-1">VD: <code>payload.users</code>. Dữ liệu sẽ được lưu vào biến này để các node sau sử dụng.</p>
+              <p className="text-xs text-slate-500 mt-1">e.g. <code>payload.users</code>. Data will be saved in this variable for subsequent nodes.</p>
             </div>
           </div>
         )}
@@ -649,14 +689,17 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
 
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Endpoint URL</label>
-              <input 
+              <SkaFXInput 
+                nodes={nodes}
+                selectedNode={selectedNode}
+                mockPayload={mockPayload}
                 type="text" 
                 value={selectedNode.data.url || ''} 
-                onChange={(e) => handleChange('url', e.target.value)}
+                onChange={(val) => handleChange('url', val)}
                 className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono text-xs"
                 placeholder="https://api.example.com/v1/users/{{payload.id}}"
               />
-              <p className="text-[10px] text-slate-500 mt-1">Hỗ trợ SkaFX bằng cú pháp &#123;&#123; payload.abc &#125;&#125;</p>
+              <p className="text-[10px] text-slate-500 mt-1">Supports SkaFX using syntax &#123;&#123; payload.abc &#125;&#125;</p>
             </div>
 
             <div>
@@ -675,12 +718,15 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                       className="w-full text-xs p-1.5 border border-slate-300 rounded outline-none"
                       placeholder="Header-Name"
                     />
-                    <input 
+                    <SkaFXInput 
+                      nodes={nodes}
+                      selectedNode={selectedNode}
+                      mockPayload={mockPayload}
                       type="text" 
                       value={header.value || ''} 
-                      onChange={(e) => {
+                      onChange={(val) => {
                         const newHeaders = [...(selectedNode.data.headers || [])];
-                        newHeaders[index] = { ...newHeaders[index], value: e.target.value };
+                        newHeaders[index] = { ...newHeaders[index], value: val };
                         handleChange('headers', newHeaders);
                       }}
                       className="w-full text-xs p-1.5 border border-slate-300 rounded outline-none font-mono text-blue-600 bg-slate-50"
@@ -713,9 +759,12 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
             {(selectedNode.data.method !== 'GET' && selectedNode.data.method !== 'DELETE') && (
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Body (JSON/String)</label>
-                <textarea 
+                <SkaFXTextarea 
+                  nodes={nodes}
+                  selectedNode={selectedNode}
+                  mockPayload={mockPayload}
                   value={selectedNode.data.body || ''} 
-                  onChange={(e) => handleChange('body', e.target.value)}
+                  onChange={(val) => handleChange('body', val)}
                   className="w-full text-xs p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono bg-slate-50 min-h-[100px]"
                   placeholder='{ "key": "{{payload.value}}" }'
                 />
@@ -734,7 +783,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                 className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
               >
                 <option value="toast">Show Toast Message</option>
-                <option value="remove_row">Remove Row (Xóa dòng)</option>
+                <option value="remove_row">Remove Row</option>
                 <option value="redirect">Redirect / Navigate</option>
                 <option value="open_modal">Open Modal Popup</option>
                 <option value="fire_event">Fire Custom Event</option>
@@ -744,14 +793,17 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
             {selectedNode.data.response_type === 'redirect' && (
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Redirect URL</label>
-                <input 
+                <SkaFXInput 
+                  nodes={nodes}
+                  selectedNode={selectedNode}
+                  mockPayload={mockPayload}
                   type="text" 
                   value={selectedNode.data.url || ''} 
-                  onChange={(e) => handleChange('url', e.target.value)}
+                  onChange={(val) => handleChange('url', val)}
                   className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
                   placeholder="https://example.com/success"
                 />
-                <p className="text-[10px] text-slate-500 mt-1">Hỗ trợ SkaFX (vd: [payload.next_url])</p>
+                 <p className="text-[10px] text-slate-500 mt-1">Supports SkaFX (e.g. [payload.next_url])</p>
               </div>
             )}
 
@@ -759,13 +811,16 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Modal Content (HTML)</label>
-                  <textarea 
+                  <SkaFXTextarea 
+                    nodes={nodes}
+                    selectedNode={selectedNode}
+                    mockPayload={mockPayload}
                     value={selectedNode.data.modal_content || ''} 
-                    onChange={(e) => handleChange('modal_content', e.target.value)}
+                    onChange={(val) => handleChange('modal_content', val)}
                     className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono h-24"
                     placeholder="{{payload.rendered_template}}"
                   />
-                  <p className="text-[10px] text-slate-500 mt-1">Nhập nội dung HTML hoặc biến SkaFX (vd: {'{{payload.rendered_template}}'})</p>
+                  <p className="text-[10px] text-slate-500 mt-1">Enter HTML content or SkaFX variable (e.g. &#123;&#123;payload.rendered_template&#125;&#125;)</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Modal ID (Optional)</label>
@@ -776,7 +831,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                     className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
                     placeholder="login_modal"
                   />
-                  <p className="text-[10px] text-slate-500 mt-1">ID của Modal Element (vd: my_modal) để mở Modal tĩnh nếu có.</p>
+                  <p className="text-[10px] text-slate-500 mt-1">Modal Element ID (e.g. my_modal) to open a static modal if applicable.</p>
                 </div>
               </div>
             )}
@@ -791,7 +846,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                   className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
                   placeholder="custom-success-event"
                 />
-                <p className="text-[10px] text-slate-500 mt-1">Sẽ kích hoạt: window.dispatchEvent(...) với detail chứa toàn bộ payload.</p>
+                 <p className="text-[10px] text-slate-500 mt-1">Will trigger: window.dispatchEvent(...) with detail containing payload.</p>
               </div>
             )}
 
@@ -799,13 +854,16 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Toast Message</label>
-                  <textarea 
+                  <SkaFXTextarea 
+                    nodes={nodes}
+                    selectedNode={selectedNode}
+                    mockPayload={mockPayload}
                     value={selectedNode.data.message || ''} 
-                    onChange={(e) => handleChange('message', e.target.value)}
+                    onChange={(val) => handleChange('message', val)}
                     className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                    placeholder="Thao tác thành công!"
+                    placeholder="Action successful!"
                   />
-                  <p className="text-[10px] text-slate-500 mt-1">Hỗ trợ SkaFX (vd: Cảm ơn [payload.name])</p>
+                  <p className="text-[10px] text-slate-500 mt-1">Supports SkaFX (e.g. Thanks [payload.name])</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Toast Type</label>
@@ -814,8 +872,8 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                     onChange={(e) => handleChange('toast_type', e.target.value)}
                     className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
                   >
-                    <option value="success">Thành công (Success)</option>
-                    <option value="error">Lỗi (Error)</option>
+                    <option value="success">Success</option>
+                    <option value="error">Error</option>
                   </select>
                 </div>
               </div>
@@ -840,14 +898,17 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Template HTML / Variable</label>
-                <textarea 
+                <SkaFXTextarea 
+                  nodes={nodes}
+                  selectedNode={selectedNode}
+                  mockPayload={mockPayload}
                   value={currentTemplateHtml} 
-                  onChange={(e) => handleChange('template_html', e.target.value)}
+                  onChange={(val) => handleChange('template_html', val)}
                   className="w-full text-xs p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono min-h-[120px]"
                   placeholder="<h1>Hello {{ payload.user.name }}</h1> or {{ payload.db_result.html_content }}"
                 />
                 <p className="text-[10px] text-slate-500 mt-1">
-                  Nhập mã HTML thô hoặc biến chứa HTML động ( Two-Pass Interpolation ).
+                  Enter raw HTML or variable containing dynamic HTML (Two-Pass Interpolation).
                 </p>
               </div>
               
@@ -860,7 +921,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                   className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono"
                   placeholder="payload.rendered_template"
                 />
-                <p className="text-xs text-slate-500 mt-1">Biến sẽ chứa mã HTML sau khi nội suy.</p>
+                <p className="text-xs text-slate-500 mt-1">Variable that will contain the interpolated HTML.</p>
               </div>
 
               {/* Phân hệ Live Testing & Preview Glassmorphism */}
@@ -880,13 +941,13 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                   </label>
                   <textarea
                     value={mockPayload}
-                    onChange={(e) => setMockPayload(e.target.value)}
+                    onChange={(e) => handleMockPayloadChange(e.target.value)}
                     className="w-full text-[10px] p-2 bg-slate-900 text-slate-200 font-mono rounded-lg h-24 focus:outline-none focus:ring-1 focus:ring-sky-500"
                     placeholder="Enter JSON payload for testing..."
                   />
                   {parseError && (
                     <p className="text-[10px] text-red-500 bg-red-50 border border-red-100 rounded px-1.5 py-0.5 mt-0.5">
-                      ⚠️ Lỗi JSON: {parseError}
+                      ⚠️ JSON Error: {parseError}
                     </p>
                   )}
                 </div>
@@ -921,7 +982,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
                   {activeTab === 'visual' ? (
                     <div 
                       className="bg-white rounded-lg border border-slate-200/80 shadow-inner p-3 min-h-[90px] text-xs overflow-auto max-h-48 prose prose-sm prose-slate"
-                      dangerouslySetInnerHTML={{ __html: renderedResult || '<em class="text-slate-400">Không có dữ liệu hiển thị</em>' }}
+                      dangerouslySetInnerHTML={{ __html: renderedResult || '<em class="text-slate-400">No data to display</em>' }}
                     />
                   ) : (
                     <textarea
@@ -939,19 +1000,22 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
         {selectedNode.type === 'IteratorNode' && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Array Source (Nguồn dữ liệu lặp)</label>
-              <input 
+              <label className="block text-sm font-medium text-slate-700 mb-1">Array Source</label>
+              <SkaFXInput 
+                nodes={nodes}
+                selectedNode={selectedNode}
+                mockPayload={mockPayload}
                 type="text" 
                 value={selectedNode.data.array_source || ''} 
-                onChange={(e) => handleChange('array_source', e.target.value)}
+                onChange={(val) => handleChange('array_source', val)}
                 className="w-full text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 outline-none font-mono"
                 placeholder="[payload.users_list]"
               />
-              <p className="text-xs text-slate-500 mt-1">Biến chứa danh sách (Array). Bên trong Iterator sẽ có sẵn biến <code>[item]</code> và <code>[index]</code>.</p>
+              <p className="text-xs text-slate-500 mt-1">Array variable. Inside Iterator, <code>[item]</code> and <code>[index]</code> will be available.</p>
             </div>
             
             <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
-                <strong>Lưu ý:</strong> Để cấu hình các bước trong vòng lặp, hãy chọn một node khác và thay đổi `Parent Node` của nó thành ID của Iterator này.
+                <strong>Note:</strong> To configure loop steps, select another node and change its Parent Node to this Iterator ID.
             </div>
           </div>
         )}
@@ -963,7 +1027,7 @@ export default function SettingsPanel({ selectedNode, onUpdateNode, onDeleteNode
           className="w-full flex items-center justify-center gap-2 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded transition-colors"
         >
           <Trash2 size={16} />
-          Xóa Node này
+          {__( 'Delete this Node', 'ska-logic-engine' )}
         </button>
       </div>
     </aside>

@@ -3,14 +3,16 @@ import BaseNode from './BaseNode';
 import { Database } from 'lucide-react';
 import { Handle, Position } from '@xyflow/react';
 
+const { __ } = window.wp?.i18n || { __: (text) => text };
+
 export default function DBActionNode({ data, isConnectable }) {
   const actionType = data.actionType || 'insert';
   const table = data.table || '';
 
   const actionLabels = {
-    insert: 'Thêm mới (Insert)',
-    update: 'Cập nhật (Update)',
-    delete: 'Xóa (Delete)'
+    insert: __( 'Insert', 'ska-logic-engine' ),
+    update: __( 'Update', 'ska-logic-engine' ),
+    delete: __( 'Delete', 'ska-logic-engine' )
   };
 
   const actionColors = {
@@ -24,13 +26,13 @@ export default function DBActionNode({ data, isConnectable }) {
   return (
     <BaseNode
       icon={<Database size={16} />}
-      title="DB Action"
+      title={__( 'DB Action', 'ska-logic-engine' )}
       colorClass="bg-slate-50"
       borderClass="border-slate-300"
       headerClass={currentHeaderClass}
       data={data}
     >
-      {/* Cổng vào */}
+      {/* Input Handle */}
       <Handle
         type="target"
         position={Position.Top}
@@ -40,10 +42,10 @@ export default function DBActionNode({ data, isConnectable }) {
       
       <div className="text-xs text-slate-600">
         <div className="font-semibold mb-1 border-b border-slate-200 pb-1">
-          Hành động: {actionLabels[actionType]}
+          {__( 'Action', 'ska-logic-engine' )}: {actionLabels[actionType]}
         </div>
         <div className="truncate">
-          Bảng: <span className="font-mono text-blue-600 bg-blue-50 px-1 rounded">{table || 'Chưa chọn'}</span>
+          {__( 'Table', 'ska-logic-engine' )}: <span className="font-mono text-blue-600 bg-blue-50 px-1 rounded">{table || __( 'Not selected', 'ska-logic-engine' )}</span>
         </div>
       </div>
 

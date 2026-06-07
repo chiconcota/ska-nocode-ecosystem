@@ -407,6 +407,7 @@ function DnDFlow() {
       {selectedNode && viewMode === 'graph' && (
         <SettingsPanel 
           selectedNode={selectedNode} 
+          nodes={nodes}
           onUpdateNode={handleUpdateNode}
           onDeleteNode={handleDeleteNode}
           onClose={() => setSelectedNodeId(null)}

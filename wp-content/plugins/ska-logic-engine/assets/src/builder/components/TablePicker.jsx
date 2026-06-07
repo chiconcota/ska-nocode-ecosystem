@@ -54,7 +54,7 @@ export default function TablePicker({ value, onChange }) {
         <div className="flex items-center gap-2 truncate">
           <Database size={14} className="text-slate-400 flex-shrink-0" />
           <span className={selectedTable ? 'text-slate-800' : 'text-slate-400'}>
-            {selectedTable ? `${selectedTable.name} (${selectedTable.id})` : '-- Tìm hoặc chọn bảng dữ liệu --'}
+            {selectedTable ? `${selectedTable.name} (${selectedTable.id})` : '-- Search or select a table --'}
           </span>
         </div>
         <ChevronDown size={16} className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -78,7 +78,7 @@ export default function TablePicker({ value, onChange }) {
                 <input 
                   type="text" 
                   className="w-full text-base outline-none bg-transparent placeholder-slate-400 text-slate-800"
-                  placeholder="Tìm bảng dữ liệu theo tên hoặc ID..."
+                  placeholder="Search table by name or ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Escape') setIsOpen(false); }}
@@ -92,13 +92,13 @@ export default function TablePicker({ value, onChange }) {
                 {filteredTables.length === 0 ? (
                   <div className="p-8 text-center flex flex-col items-center justify-center">
                     <Database size={32} className="text-slate-300 mb-2" />
-                    <span className="text-sm text-slate-500 font-medium">Không tìm thấy bảng nào</span>
-                    <span className="text-xs text-slate-400 mt-1">Thử tìm kiếm với từ khóa khác</span>
+                    <span className="text-sm text-slate-500 font-medium">No tables found</span>
+                    <span className="text-xs text-slate-400 mt-1">Try searching with another keyword</span>
                   </div>
                 ) : (
                   Object.entries(
                     filteredTables.reduce((acc, t) => {
-                      const group = t.app_group || 'Khác';
+                      const group = t.app_group || 'Other';
                       if (!acc[group]) acc[group] = [];
                       acc[group].push(t);
                       return acc;

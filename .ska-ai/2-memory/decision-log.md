@@ -10,6 +10,43 @@
 - **7. Shadow Scratchpad & isolated Editor:** Thực hiện thiết kế Rich Text ngoài Frontend qua môi trường Iframe cô lập của CPT ảo (`ska_scratchpad`), đồng bộ trực tiếp với form state qua JS Bridge và xóa bỏ CPT nháp ngay lập tức khi tắt modal để giữ database sạch sẽ.
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Ska Loop, Ska Text, Ska Button, Ska Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
+## 2026-06-07 - 🟡 Lên kế hoạch: Kiến trúc Community Nodes / Pluggable Nodes (Milestone 2+)
+- **Decision (Community Nodes Architecture):** Thống nhất KHÔNG tích hợp tính năng viết code PHP/JS thô trực tiếp vào các node nguyên thủy (như `Set Data`, `Condition`) để bảo mật tuyệt đối hệ thống (tránh lỗi RCE), giữ core sạch và tuân thủ chặt chẽ triết lý No-code cho Power User. Toàn bộ logic tùy biến phức tạp (như Stripe, Twilio SMS, OpenAI...) sẽ được đóng gói thành các **Community Nodes (Pluggable Nodes)** độc lập. Lập trình viên phát triển module node này một lần, sau đó đăng ký vào builder để user kéo thả trực quan.
+
+## 2026-06-07 - 🟢 Hoàn thành: Sửa lỗi hiển thị ký tự gạch dưới `_` trong Settings Panel (Ska No-Code Design v1.0.9)
+- **Decision (Admin Font Specificity Isolation & admin_body_class):** Đã giải quyết triệt để lỗi ký tự gạch dưới bị tàng hình. Lý do CSS override trong `ska-editor-helper.js` chưa ăn là vì admin body chưa có class `ska-builder` để map đúng selector `body.ska-builder .interface-complementary-area input`. Bằng việc bổ sung filter `admin_body_class` trong file `class-core.php` để chèn class `ska-builder` vào body của WP Admin, style override đã hoạt động chuẩn xác. Font inputs trong sidebar được chuyển sang system font 14px và hiển thị dấu `_` cực kỳ rõ ràng. Nâng phiên bản `ska-no-code-design` lên `v1.0.9`.
+
+## 2026-06-07 - 🟢 Hoàn thành: Đồng bộ hóa tên Workflow ID (Ska Logic Engine v1.2.6)
+- **Decision (Workflow ID Alignment):** Sửa lỗi chính tả tên Workflow trong Database từ `test-skafx-autocomplate-node` thành `test-skafx-autocomplete-node` để đồng bộ với định nghĩa ở Frontend, sửa triệt để lỗi `Wrong Password: Logic id ... not found` gây ra bởi cơ chế validate bảo mật mới.
+
+## 2026-06-07 - 🟢 Hoàn thành: Dọn dẹp và quy hoạch thư mục AI Workflows (.agent)
+- **Decision (Agent Folder Consolidation):** Phát hiện và hợp nhất thư mục `.agents` (thư mục số nhiều, bị ignore bởi Git) vào `.agent` (thư mục số ít, được whitelist bởi Git). Di chuyển `debug-workflow.md` vào đúng cấu trúc `.agent/workflows/` và xóa bỏ thư mục `.agents` bị thừa để tuân thủ Zero-Trash Directive.
+
+## 2026-06-07 - 🟡 Đang dở dang: Debug lỗi so sánh rẽ nhánh sai trong ConditionNode (v1.2.5)
+- **Decision (Literal String Quotes Uniformity & Form Field Consistency):** 
+  - Phân tích và phát hiện nguyên nhân 1: Biểu thức If/Else đánh giá `false` khi nhập nháy hỗn hợp dạng `[payload.render_template] == "'DISCOUNT50'`. Đã bổ sung cảnh báo vào `skafx-language.md`.
+  - Phân tích và phát hiện nguyên nhân 2 (lý thuyết): Tên trường Form frontend không khớp với biến payload trong Render Template Node. Đã mô phỏng CLI thành công nhưng **User test trực tiếp trên browser vẫn không hoạt động**. Lỗi chưa được giải quyết triệt để — cần debug sâu hơn bằng `error_log()` hoặc DevTools để truy vết payload thực tế tại runtime.
+
+## 2026-06-07 - 🟢 Hoàn thành: Vá lỗi Cắt khuất Dropdown Autocomplete & Thêm Fallback Biến Render Template (v1.2.5)
+- **Decision (Dynamic Dropdown Positioning):** Triển khai cơ chế định vị động (above/below) cho dropdown gợi ý tự động của component `SkaFXInput` và `SkaFXTextarea`. Khi không gian trống bên dưới ô nhập liệu (spaceBelow) nhỏ hơn 220px, dropdown sẽ tự động mở lên phía trên (`bottom-full mb-1`) thay vì phía dưới (`top-full mt-1`), ngăn chặn hoàn toàn lỗi khuất hiển thị (viewport clipping) do thanh sidebar có thuộc tính `overflow-y-auto`.
+- **Decision (Fallback Render Template Variable):** Hỗ trợ gợi ý song song cả hai dạng biến đầu ra `[payload.render_template]` và `[payload.rendered_template]` cho `RenderTemplateNode` nhằm tương thích tối đa với thói quen gõ và cấu hình của nhà phát triển.
+
+## 2026-06-07 - 🟢 Hoàn thành: Vá lỗi Autocomplete Biến Đầu Ra và Tích Hợp Fallback Mock Payload Backend (v1.2.4)
+- **Decision (Output Variables Auto-Fallback in Autocomplete):** Nâng cấp phương thức `getPrecedingResultVars` trong `SkaFXAutocomplete.jsx` để tự động gán giá trị mặc định cho biến đầu ra của `RenderTemplateNode` (`payload.rendered_template`) và `DBQueryNode` (`payload.query_results`) nếu người dùng chưa định nghĩa thủ công trong thiết lập node, đồng thời phân tích và trích xuất các biến gán từ `SetDataNode` assignments.
+- **Decision (Mock Payload Nested 'payload' Backend Fallback):** Cải tiến bộ giải mã ngữ cảnh `SkaFX_Evaluator` trên PHP backend để tự động phát hiện và fallback truy cập dữ liệu bên trong khóa con `'payload'` (nếu tồn tại) của context khi chạy test trong Builder sandbox, giải quyết triệt để lỗi biên dịch trống của các thẻ template động (ví dụ: `{{payload.custom_coupon_code}}`) do cấu trúc bọc mock payload ở UI.
+
+## 2026-06-06 - 🟢 Hoàn thành: Triển khai Giao diện Gợi ý Biến động & AST Autocomplete (v1.2.0)
+- **Decision (Context-Aware Floating Autocomplete):** Triển khai một dropdown gợi ý biến động (Autocomplete) hiển thị trực quan ngay dưới các ô nhập liệu của SettingsPanel.jsx. Dropdown kích hoạt bằng phím `[` (cho biến/cột), `{` (cho template bindings `{{ }}`), hoặc chữ cái đầu (cho hàm built-in như IF, CONCAT).
+- **Decision (Dynamic Context Parsing):** Tự động phân tích các key trong `mockPayload` JSON; quét đồ thị để trích xuất các biến đầu ra (`resultVar`, `result_var`) từ các node trước; và tự động phát hiện phân cấp cha-con của React Flow để hiển thị gợi ý biến vòng lặp `[$item]` và `[$index]` duy nhất khi node nằm trong `IteratorNode`.
+- **Decision (Focus and Caret Restoring):** Sử dụng React refs để khôi phục tiêu điểm (focus) và di chuyển vị trí con trỏ chuột (caret) về đúng vị trí mong muốn (ví dụ: bên trong ngoặc hàm `IF( | )` hoặc sau dấu đóng ngoặc `]`) ngay sau khi người dùng click chọn biến, bảo đảm trải nghiệm UX liền mạch.
+
+## 2026-06-05 - 🟡 Lên kế hoạch: Tách biệt và Đóng gói Package độc lập cho các Module cốt lõi
+- **Decision (Tailwind JIT PHP & SkaFX / SkapineJS Packaging):** Thống nhất tầm nhìn dài hạn về việc đóng gói các cấu phần lõi có tính tái sử dụng cao (như cỗ máy Tailwind JIT Compiler viết bằng PHP thuần, ngôn ngữ biểu thức DSL SkaFX, và trình giả lập tương tác SkapineJS) thành các packages độc lập.
+- **Decision (Distribution Pipeline via Composer & npm):** 
+  - Tách cỗ máy Tailwind JIT PHP thành một repo riêng biệt (ví dụ: `tailwind-jit-php`), chuẩn hóa loại bỏ phụ thuộc WordPress để chạy được trên mọi framework PHP (Laravel, Symfony...). Xuất bản lên Packagist để cài đặt qua `composer require`.
+  - Tách SkaFX và SkapineJS thành các npm packages (ví dụ: `@ska-builder/skafx`) xuất bản lên npm registry để tái sử dụng trong các frontend JS apps.
+  - Tích hợp ngược lại vào Ska No-Code Ecosystem bằng cách khai báo dependency trong `composer.json` / `package.json` nhằm tinh giản mã nguồn core.
+
 ## 2026-06-03 - 🟢 Hoàn thành: Tích hợp JSON Blueprint Editor & Graph Switcher (v1.1.11)
 - **Decision (Dual-Mode React Flow Canvas):** Triển khai cơ chế render có điều kiện (Conditional Rendering) trên component `DnDFlow` của Logic Builder. Hỗ trợ chuyển đổi nhanh giữa chế độ đồ thị (Graph View) và chế độ văn bản (JSON View) bằng một thanh công cụ Glassmorphism.
 - **Decision (Safe JSON Modification & Syntax Validation):** Thiết lập một trình soạn thảo textarea chuyên dụng ở chế độ JSON View, hỗ trợ Copy nhanh bằng Clipboard API. Cho phép dán và chỉnh sửa trực tiếp, sau đó chạy qua khối `try...catch` để parse và kiểm tra cú pháp trước khi nạp lại vào React Flow. Nếu phát hiện lỗi cú pháp, hệ thống sẽ chặn lại và báo lỗi màu đỏ thay vì cập nhật state, triệt tiêu hoàn toàn rủi ro crash ứng dụng.

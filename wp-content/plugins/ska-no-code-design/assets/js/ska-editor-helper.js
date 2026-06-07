@@ -291,6 +291,9 @@
 
     /**
      * Inject UI refinements into the MAIN document (sidebar, etc.)
+     * FIX: Ký tự gạch dưới `_` bị render quá mỏng (1px glyph) trên màn hình 1DPI Linux,
+     * khiến nó trông như khoảng trắng. Giải pháp: tăng font-size sidebar inputs lên 14px
+     * và override CSS variable gốc --wp-admin-font-family để đảm bảo system font nhất quán.
      */
     function injectMainDocStyles() {
         if (document.getElementById('ska-main-ui-refinements')) return;
@@ -305,6 +308,34 @@
                 border-left: none !important;
             }
 
+            /*
+             * FIX UNDERSCORE GLYPH VISIBILITY ON 1DPI LINUX DISPLAYS
+             * Root Cause: System fonts at 13px produce underscore glyphs that are only ~1px tall,
+             * rendering them invisible on 1x DPI screens. Increasing to 14px ensures the glyph
+             * occupies at least 2px, making it clearly visible across all OS/display combinations.
+             * 
+             * Scope: All text inputs, textareas, selects, and help text within the Gutenberg
+             * sidebar (Inspector / Complementary Area).
+             */
+            body.ska-builder .interface-complementary-area input[type="text"],
+            body.ska-builder .interface-complementary-area input[type="number"],
+            body.ska-builder .interface-complementary-area input[type="url"],
+            body.ska-builder .interface-complementary-area input[type="email"],
+            body.ska-builder .interface-complementary-area input[type="search"],
+            body.ska-builder .interface-complementary-area input.components-text-control__input,
+            body.ska-builder .interface-complementary-area textarea.components-textarea-control__input,
+            body.ska-builder .interface-complementary-area select.components-select-control__input,
+            body.ska-builder .interface-complementary-area .components-base-control__help {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+                font-size: 14px !important;
+                overflow: visible !important;
+            }
+
+            /* Override WP admin CSS variable tận gốc để đảm bảo system font trên toàn sidebar */
+            body.ska-builder .interface-complementary-area {
+                --wp-admin-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+            }
+
             /* Indicators for debugging - Standardized icon style placeholder if needed */
             .ska-editor-active-indicator {
                 position: fixed; 
@@ -317,8 +348,6 @@
                 pointer-events: none;
                 text-shadow: 0 0 5px rgba(16, 185, 129, 0.4);
             }
-
-            /* GLOBAL UI REFINEMENT: Remove all vertical lines from Sidebar panels */
         `;
         document.head.appendChild(style);
     }

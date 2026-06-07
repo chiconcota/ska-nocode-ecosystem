@@ -21,6 +21,9 @@
 !/wp-content/plugins/ska-no-code-design/
 !/wp-content/plugins/ska-data-pro/
 !/wp-content/plugins/ska-logic-engine/
+!/wp-content/plugins/release.js
+!/wp-content/plugins/zip-all.js
+
 
 # Ignore all themes except the Ska ones
 /wp-content/themes/*

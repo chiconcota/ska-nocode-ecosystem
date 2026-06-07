@@ -69,26 +69,51 @@ class SkaFX_Evaluator {
                 $var_name = substr( $var_name, 8 );
             }
 
-            // Ưu tiên 1: Quét biến ảo trong RAM (VD: Lễ tân vừa gán `var tuoi = 18`)
-            if ( array_key_exists( $var_name, $this->symbol_table ) ) {
-                return $this->symbol_table[ $var_name ];
-            }
-            foreach ( $this->symbol_table as $k => $v ) {
-                if ( strtolower( $k ) === strtolower( $var_name ) ) return $v;
+            // Thiết lập danh sách các tên biến cần thử tìm kiếm (bao gồm cả fallback của render_template)
+            $var_names_to_try = [ $var_name ];
+            if ( $var_name === 'render_template' ) {
+                $var_names_to_try[] = 'rendered_template';
+            } elseif ( $var_name === 'rendered_template' ) {
+                $var_names_to_try[] = 'render_template';
             }
 
-            // Ưu tiên 2: Quét mảng dữ liệu Dòng nội khu (Tự nhận diện `[nam_kinh_nghiem]`)
-            if ( array_key_exists( $var_name, $this->row_context ) ) {
-                return $this->row_context[ $var_name ];
-            }
-            foreach ( $this->row_context as $k => $v ) {
-                if ( strtolower( $k ) === strtolower( $var_name ) ) return $v;
+            foreach ( $var_names_to_try as $try_name ) {
+                // Ưu tiên 1: Quét biến ảo trong RAM (VD: Lễ tân vừa gán `var tuoi = 18`)
+                if ( array_key_exists( $try_name, $this->symbol_table ) ) {
+                    return $this->symbol_table[ $try_name ];
+                }
+                foreach ( $this->symbol_table as $k => $v ) {
+                    if ( strtolower( $k ) === strtolower( $try_name ) ) return $v;
+                }
+
+                // Ưu tiên 2: Quét mảng dữ liệu Dòng nội khu (Tự nhận diện `[nam_kinh_nghiem]`)
+                if ( array_key_exists( $try_name, $this->row_context ) ) {
+                    return $this->row_context[ $try_name ];
+                }
+                foreach ( $this->row_context as $k => $v ) {
+                    if ( strtolower( $k ) === strtolower( $try_name ) ) return $v;
+                }
+
+                // Hỗ trợ quét trong sub-key 'payload' nếu đang test bằng mock payload bọc ngoài
+                if ( isset( $this->row_context['payload'] ) && is_array( $this->row_context['payload'] ) ) {
+                    if ( array_key_exists( $try_name, $this->row_context['payload'] ) ) {
+                        return $this->row_context['payload'][ $try_name ];
+                    }
+                    foreach ( $this->row_context['payload'] as $k => $v ) {
+                        if ( strtolower( $k ) === strtolower( $try_name ) ) return $v;
+                    }
+                }
             }
 
             // Ưu tiên 2.5: Quét mảng dữ liệu Dòng nội khu hỗ trợ Dot Notation (VD: `trigger.nam_sinh` hoặc `form.ten`)
             if ( strpos( $var_name, '.' ) !== false ) {
                 $keys = explode( '.', $var_name );
                 $current = $this->row_context;
+                if ( ! array_key_exists( $keys[0], $current ) && isset( $current['payload'] ) && is_array( $current['payload'] ) ) {
+                    if ( $keys[0] !== 'payload' ) {
+                        $current = $current['payload'];
+                    }
+                }
                 $found = true;
                 foreach ( $keys as $key ) {
                     // Cải tiến: Nếu là chuỗi JSON, tự động decode để truy cập sâu

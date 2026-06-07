@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKA NO-CODE (v2.0.0)
-@status: MILESTONE 1 (POST-MVP) | @git_branch: main | @last_update: 2026-06-03
+@status: MILESTONE 1 (POST-MVP) | @git_branch: feature/skafx-autocomplete | @last_update: 2026-06-07
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core 6.x + PHP 8.2+ (Host & API)
@@ -29,9 +29,9 @@ wp-content/
 | Module Name | Path | Core Function | Status |
 | :--- | :--- | :--- | :--- |
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Loại bỏ CSS/JS rác của WP, tạo khung canvas sạch. | 🟢 Stable (v1.0.0) |
-| **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.0.6) |
+| **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.0.9) |
 | **Ska Data Pro** | `plugins/ska-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.0.5) |
-| **Ska Logic Engine** | `plugins/ska-logic-engine/` | DAG Workflows, Event Pipeline, SkaFX Compiler. | 🟢 Stable (v1.1.11) |
+| **Ska Logic Engine** | `plugins/ska-logic-engine/` | DAG Workflows, Event Pipeline, SkaFX Compiler. | 🟢 Stable (v1.2.6) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API endpoints. | 🟢 Stable (v1.0.0) |
 
 ---
@@ -46,7 +46,7 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 
 ### 4.2. UI/UX, Symbols & Molecules (Phase 4.1 - 4.4)
 - **Ska Symbols (Organisms):** Save as Organism, lưu code HTML dưới dạng JSON Reference, tối ưu hóa zero-query trong Editor nhờ localize JSON Cache.
-- **Global Edit (Shadow Scratchpad):** Chỉnh sửa Organisms gốc thông qua Iframe biệt lập sử dụng Shadow CPT (`ska_organism_draft`), an toàn MySQL.
+- **Global Edit (Shadow Scratchpad):** Chỉnh sửa Organisms gốc thông qua Iframe biệt lập sử dụng Shadow CPT (`ska_organism_draft`), an sau MySQL.
 - **Thư viện Ska Molecules:** Tích hợp 10 Block Variations nguyên tử (Tabs, Accordion, Carousel/Slider, Dropdown, Offcanvas mobile menu, Toggle, Tooltip, Radio/Checkbox Groups, Form) bọc Alpine.js và Tailwind CSS.
 - **Skapine Engine:** Higher-Order Component (`withSkapineEngine`) mô phỏng live-preview 100% các event Alpine (`@click`, hover, `x-init`, và transition `x-transition`) ngay trong Editor.
 
@@ -68,6 +68,14 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-06-07 - 🟢 Done:** Hoàn thành kiểm thử thủ công E2E cho tính năng gợi ý tự động (SkaFX Autocomplete & Data Picker), chuyển toàn bộ 6 test cases sang dạng check list để dễ kiểm soát. Thống nhất phương án kiến trúc phát triển Community Nodes (Pluggable Nodes) cho các logic tùy biến phức tạp ở Milestone 2+ nhằm bảo vệ tuyệt đối tính an toàn của lõi và triết lý No-code.
+- **2026-06-07 - 🟢 Done:** Nghiên cứu và sửa lỗi ký tự gạch dưới `_` bị tàng hình/biến thành khoảng trắng trong Gutenberg Sidebar (Settings Panel). Đã giải quyết triệt để bằng cách chèn class `ska-builder` vào body của WP Admin thông qua hook `admin_body_class` trong `class-core.php`, giúp CSS override font-family hệ thống kích hoạt thành công trên các inputs và textareas ở sidebar. Nâng version `ska-no-code-design` lên `v1.0.9`.
+- **2026-06-07 - 🟢 Done:** Đồng bộ hóa chính tả Workflow ID giữa Database và Frontend (`test-skafx-autocomplate-node` -> `test-skafx-autocomplete-node`), giải quyết triệt để lỗi không tìm thấy workflow khi submit form và khôi phục hoạt động của ConditionNode If/Else E2E test. Nâng version `ska-logic-engine` lên `v1.2.6`.
+- **2026-06-07 - 🟢 Done:** Dọn dẹp cấu trúc thư mục agent trong workspace. Di chuyển `debug-workflow.md` từ thư mục `.agents` (số nhiều) sang `.agent` (số ít), loại bỏ thư mục rác `.agents` bị bỏ qua bởi Git, đồng bộ hóa các slash commands và giữ sạch cấu trúc thư mục của dự án.
+- **2026-06-07 - 🟢 Done:** Khắc phục hoàn toàn lỗi khuất hiển thị (viewport clipping) của dropdown gợi ý bằng cơ chế tự động căn chỉnh vị trí lên trên (above) hoặc xuống dưới (below) ô nhập liệu tùy thuộc vào không gian trống còn lại của màn hình. Bổ sung hỗ trợ gợi ý cả biến `[payload.render_template]` và `[payload.rendered_template]` cho RenderTemplateNode. Nâng phiên bản lên `v1.2.5`.
+- **2026-06-07 - 🟢 Done:** Vá lỗi autocompletion biến đầu ra của `RenderTemplateNode` (`[payload.rendered_template]`) và `DBQueryNode` (`[payload.query_results]`) khi các biến này chưa được người dùng cấu hình thủ công. Tối ưu hoá cỗ máy `SkaFX_Evaluator` để tự động fallback và phân giải biến nằm sâu trong mảng mock `payload` do UI Sandbox truyền lên backend. Nâng version lên `v1.2.4`.
+- **2026-06-06 - 🟢 Done:** Triển khai tính năng gợi ý biến động (SkaFX Autocomplete & Data Picker) tích hợp trong SettingsPanel.jsx. Hỗ trợ tự động hoàn thành biến payload, database fields, built-in functions và loop context ([$item], [$index]) khi người dùng gõ `[`, `{` hoặc chữ cái đầu. Nâng version lên `v1.2.0`.
+- **2026-06-05 - 🟢 Done:** Triển khai quy trình đóng gói tự động thành file ZIP phân phối duy nhất cho người dùng cuối (release.js), lập tài liệu quy trình release-workflow.md và đẩy tag Git v1.1.11 thành công.
 - **2026-06-03 - 🟢 Done:** Tích hợp tính năng Switch View (Graph / JSON) cho Ska Logic Engine (v1.1.11). Cho phép xem cấu trúc đồ thị dạng JSON Blueprint thời gian thực, sao chép nhanh (Copy JSON) và dán đè/chỉnh sửa trực tiếp (Apply & Return) với bộ kiểm lỗi cú pháp (Syntax validation) an toàn chống crash. Nâng version lên `v1.1.11`.
 - **2026-06-03 - 🟢 Done:** Vá lỗi JIT Tailwind cho nội dung động bằng cách đăng ký hook `ska_design_classes_to_scan` trong Ska Logic Engine và phát triển tính năng quét CSDL bảng phẳng tự động (`scan_database_flat_tables_classes`). JIT compiler giờ tự động trích xuất mọi class Tailwind động trong các bảng phẳng MySQL của app và cache transient 12 giờ (tự động invalidate cache khi có thay đổi DB action), giải quyết triệt để lỗi vỡ giao diện 3 cột của Client Response Modal ngoài frontend. Nâng version Ska Logic Engine lên `v1.1.10`.
 - **2026-06-03 - 🟢 Done:** Nâng cấp Shadow Scratchpad Modal (v1.0.6) cho Ska No-Code Design. Loại bỏ padding của overlay, gỡ bỏ các thuộc tính giới hạn chiều rộng/chiều cao, thiết lập modal container chiếm trọn vẹn 100% chiều rộng và chiều cao màn hình (full-screen) cùng việc loại bỏ bo góc để mang lại trải nghiệm review thiết kế trung thực và tối ưu nhất.

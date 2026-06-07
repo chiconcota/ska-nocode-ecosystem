@@ -314,8 +314,13 @@ class Tailwind_Config {
 		$css .= "}\n";
 		$css .= "html body.ska-builder .ska-container, .editor-styles-wrapper .ska-container { width: 100%; max-width: var(--ska-container-width); margin-left: auto; margin-right: auto; padding: var(--ska-content-padding); }\n";
 		$css .= "html body.ska-builder .ska-container-block > * + *, .editor-styles-wrapper .ska-container-block > * + * { margin-top: var(--ska-block-gap); }\n";
-		$css .= "html body.ska-builder, .editor-styles-wrapper { font-family: var(--font-primary), ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; }\n";
-		$css .= "html body.ska-builder h1, html body.ska-builder h2, html body.ska-builder h3, html body.ska-builder h4, html body.ska-builder h5, html body.ska-builder h6, .editor-styles-wrapper h1, .editor-styles-wrapper h2, .editor-styles-wrapper h3, .editor-styles-wrapper h4, .editor-styles-wrapper h5, .editor-styles-wrapper h6 { font-family: var(--font-secondary), ui-sans-serif, system-ui, sans-serif; }\n";
+		if ( is_admin() ) {
+			$css .= ".editor-styles-wrapper { font-family: var(--font-primary), ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; }\n";
+			$css .= ".editor-styles-wrapper h1, .editor-styles-wrapper h2, .editor-styles-wrapper h3, .editor-styles-wrapper h4, .editor-styles-wrapper h5, .editor-styles-wrapper h6 { font-family: var(--font-secondary), ui-sans-serif, system-ui, sans-serif; }\n";
+		} else {
+			$css .= "html body.ska-builder { font-family: var(--font-primary), ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; }\n";
+			$css .= "html body.ska-builder h1, html body.ska-builder h2, html body.ska-builder h3, html body.ska-builder h4, html body.ska-builder h5, html body.ska-builder h6 { font-family: var(--font-secondary), ui-sans-serif, system-ui, sans-serif; }\n";
+		}
 
 		$prefixes = array(
 			"html body.ska-builder",

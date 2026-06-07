@@ -23,7 +23,8 @@ Trong kiến trúc Smart Object, dữ liệu từ Cơ sở dữ liệu (Database
 - **Biến Ngữ Cảnh Hệ Thống (`$variable`):** Hỗ trợ các định danh bắt đầu bằng ký tự `$` dành riêng cho các biến hệ thống hoặc biến ngữ cảnh vòng lặp (Ví dụ: `[$item.price]`, `[$index]`).
 
 ### 2.2. Kiểu Dữ Liệu Hằng Số (Literals)
-- **Chuỗi văn bản (String):** Dùng nháy kép hoặc nháy đơn. VD: `"Xin chào"`, `'ABC'`, `""` (Chuỗi rỗng).
+- **Chuỗi văn bản (String):** Dùng nháy kép hoặc nháy đơn độc lập. VD: `"Xin chào"`, `'ABC'`, `""` (Chuỗi rỗng).
+  - *Lưu ý quan trọng:* KHÔNG lồng nhầm nháy đơn bên trong nháy kép như `"'DISCOUNT50'"` hay viết thiếu nháy đóng như `"'DISCOUNT50'`. Sự kết hợp nháy hỗn hợp sẽ khiến bộ lexer nhận diện sai ký tự và so sánh không khớp (so sánh cả dấu nháy đơn bên trong), hoặc báo lỗi cú pháp.
 - **Số học (Number):** Viết trực tiếp. VD: `45`, `3.14`
 - **Boolean / Null:** `true`, `false`, `null` (Sử dụng trực tiếp trong biểu thức).
 

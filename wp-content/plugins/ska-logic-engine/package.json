@@ -1,6 +1,6 @@
 {
   "name": "ska-logic-engine",
-  "version": "1.1.11",
+  "version": "1.2.6",
   "description": "The logic builder for Ska ecosystem",
   "main": "index.js",
   "scripts": {

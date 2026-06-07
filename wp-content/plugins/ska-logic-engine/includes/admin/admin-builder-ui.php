@@ -191,5 +191,5 @@ $saved_graph = empty($graph_json) ? '[]' : $graph_json;
 // Tự động enqueue Vite bundles
 $plugin_url = plugin_dir_url(dirname(__DIR__));
 wp_enqueue_style('ska-dag-builder-style', $plugin_url . 'assets/js/admin-dag-builder.bundle.css', [], time());
-wp_enqueue_script('ska-dag-builder-script', $plugin_url . 'assets/js/admin-dag-builder.bundle.js', ['wp-element'], time(), true);
+wp_enqueue_script('ska-dag-builder-script', $plugin_url . 'assets/js/admin-dag-builder.bundle.js', ['wp-element', 'wp-i18n'], time(), true);
 ?>

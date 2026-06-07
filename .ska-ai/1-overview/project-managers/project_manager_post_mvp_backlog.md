@@ -40,8 +40,8 @@
 
 #### D. Hoàn thiện Node Render HTML (Render Template)
 *Cấu phần render email/modal động hiện đang trống trơn.*
-- [ ] **Nâng cấp UI Settings:**
-  - [ ] Xây dựng giao diện cấu hình trực quan trên Settings Panel (hỗ trợ code editor nhỏ cho Raw HTML và preview trực quan trước khi lưu kết quả render vào biến payload).
+- [x] **Nâng cấp UI Settings:**
+  -[x] Xây dựng giao diện cấu hình trực quan trên Settings Panel (hỗ trợ code editor nhỏ cho Raw HTML và preview trực quan trước khi lưu kết quả render vào biến payload).
 
 ---
 
@@ -49,8 +49,8 @@
 
 #### E. Hoàn thiện UI cho SkaFX AST Evaluator (Data Picker)
 *Đơn giản hóa trải nghiệm lập công thức biểu thức của Power User.*
-- [ ] **Autocomplete & Data Picker:**
-  - [ ] Xây dựng giao diện Autocomplete/Gợi ý biến (Data Picker) ở `SettingsPanel.jsx` để giúp người dùng Nocode viết cú pháp SkaFX dễ dàng hơn.
+- [x] **Autocomplete & Data Picker:**
+  - [x] Xây dựng giao diện Autocomplete/Gợi ý biến (Data Picker) ở `SettingsPanel.jsx` để giúp người dùng Nocode viết cú pháp SkaFX dễ dàng hơn.
 
 #### F. Kế thừa Chuyển hướng cấp độ App (App-Level Redirect Fallback)
 *Quản trị bảo mật tập trung ở mức Workspace.*

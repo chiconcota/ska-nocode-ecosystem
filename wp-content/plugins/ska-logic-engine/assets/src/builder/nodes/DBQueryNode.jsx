@@ -3,13 +3,15 @@ import BaseNode from './BaseNode';
 import { Search } from 'lucide-react';
 import { Handle, Position } from '@xyflow/react';
 
+const { __ } = window.wp?.i18n || { __: (text) => text };
+
 export default function DBQueryNode({ data, isConnectable }) {
   const table = data.table || '';
 
   return (
     <BaseNode
       icon={<Search size={16} />}
-      title="DB Query"
+      title={__( 'DB Query', 'ska-logic-engine' )}
       colorClass="bg-slate-50"
       borderClass="border-slate-300"
       headerClass="bg-cyan-100 text-cyan-800 border-cyan-200"
@@ -24,14 +26,14 @@ export default function DBQueryNode({ data, isConnectable }) {
       
       <div className="text-xs text-slate-600">
         <div className="font-semibold mb-1 border-b border-slate-200 pb-1">
-          Loại: Lấy dữ liệu (Fetch)
+          {__( 'Type', 'ska-logic-engine' )}: {__( 'Fetch Data', 'ska-logic-engine' )}
         </div>
         <div className="truncate mb-1">
-          Bảng: <span className="font-mono text-cyan-600 bg-cyan-50 px-1 rounded">{table || 'Chưa chọn'}</span>
+          {__( 'Table', 'ska-logic-engine' )}: <span className="font-mono text-cyan-600 bg-cyan-50 px-1 rounded">{table || __( 'Not selected', 'ska-logic-engine' )}</span>
         </div>
         {data.resultVar && (
           <div className="truncate text-[10px] text-slate-500">
-            Lưu vào: <span className="font-mono text-slate-700 bg-slate-100 px-1 rounded">{data.resultVar}</span>
+            {__( 'Save to', 'ska-logic-engine' )}: <span className="font-mono text-slate-700 bg-slate-100 px-1 rounded">{data.resultVar}</span>
           </div>
         )}
       </div>
