@@ -64,19 +64,36 @@ class Ska_Virtual_Wrapper {
 	public function override_template( $template ) {
 		$location = '';
 
-		$portal_slug = get_query_var( 'ska_portal' );
+		global $ska_access_denied;
+		if ( ! empty( $ska_access_denied ) ) {
+			$location = '403';
+		} else {
+			$portal_slug = get_query_var( 'ska_portal' );
 
-		if ( ! empty( $portal_slug ) ) {
-			$location = 'app_layout'; // Allow users to design portal using 'app_layout' templates
-		} elseif ( is_404() ) {
-			$location = '404';
-		} elseif ( is_singular() ) {
-			$location = 'single';
-		} elseif ( is_archive() || is_home() || is_search() ) {
-			$location = 'archive';
+			if ( ! empty( $portal_slug ) ) {
+				$location = 'app_layout'; // Allow users to design portal using 'app_layout' templates
+			} elseif ( is_404() ) {
+				$location = '404';
+			} elseif ( is_singular() ) {
+				$location = 'single';
+			} elseif ( is_archive() || is_home() || is_search() ) {
+				$location = 'archive';
+			}
 		}
 
 		$matched_template = ! empty( $location ) ? $this->get_matched_template( $location ) : null;
+
+		// Nếu là trang 403 bị từ chối truy cập và không tìm thấy custom template nào, fallback về trang mặc định ngay lập tức
+		if ( ! empty( $ska_access_denied ) && empty( $matched_template ) ) {
+			if ( class_exists( 'Ska_No_Code_Design\Theme_Builder\Ska_App_Router' ) ) {
+				\Ska_No_Code_Design\Theme_Builder\Ska_App_Router::render_default_403_page();
+			} else {
+				status_header( 403 );
+				wp_die( 'Access Denied', 'Forbidden', array( 'response' => 403 ) );
+			}
+			exit;
+		}
+
 		$matched_header   = $this->get_matched_template( 'header' );
 		$matched_footer   = $this->get_matched_template( 'footer' );
 		$matched_app      = $this->get_matched_template( 'app_layout' );
@@ -88,6 +105,12 @@ class Ska_Virtual_Wrapper {
 			global $ska_active_theme_organisms;
 			
 			$ska_current_template_id = ! empty( $matched_template ) ? $matched_template['id'] : 0;
+
+			// Nếu đây là trang 403, gửi status header 403 và nocache headers
+			if ( '403' === $location ) {
+				status_header( 403 );
+				nocache_headers();
+			}
 
 			// Register active organisms for JIT compiler scanning during wp_head
 			$ska_active_theme_organisms = array();
@@ -230,6 +253,9 @@ class Ska_Virtual_Wrapper {
 				return is_singular() && ( (string) get_the_ID() === $value );
 			case 'is_404':
 				return is_404();
+			case 'is_403':
+				global $ska_access_denied;
+				return ! empty( $ska_access_denied );
 			case 'is_search':
 				return is_search();
 			case 'is_portal':

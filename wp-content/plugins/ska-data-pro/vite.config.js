@@ -12,7 +12,11 @@ export default defineConfig({
       formats: ['iife']
     },
     rollupOptions: {
+      external: ['@wordpress/i18n'],
       output: {
+        globals: {
+          '@wordpress/i18n': 'wp.i18n'
+        },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name === 'style.css') return 'admin-datagrid.bundle.css';
           return assetInfo.name;

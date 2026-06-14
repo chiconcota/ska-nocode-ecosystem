@@ -398,7 +398,7 @@ defined( 'ABSPATH' ) || exit;
 <div id="ska-rename-app-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[99999] flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-2xl w-[400px] flex flex-col overflow-hidden animate-[pulse_0.2s_ease-out]">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-indigo-50 text-indigo-700">
-            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-edit text-indigo-500"></span> <?php esc_html_e( 'Rename Space', 'ska-data-pro' ); ?></h3>
+            <h3 class="font-bold m-0 flex items-center gap-1.5"><span class="dashicons dashicons-admin-generic text-indigo-500"></span> <?php esc_html_e( 'Workspace Settings', 'ska-data-pro' ); ?></h3>
             <span class="dashicons dashicons-no-alt cursor-pointer text-gray-400 hover:text-red-500" onclick="document.getElementById('ska-rename-app-modal').classList.add('hidden');"></span>
         </div>
         
@@ -419,6 +419,11 @@ defined( 'ABSPATH' ) || exit;
                     <option value="dashicons-welcome-learn-more"><?php esc_html_e( 'Education/Courses', 'ska-data-pro' ); ?></option>
                     <option value="dashicons-networking"><?php esc_html_e( 'Network / Network', 'ska-data-pro' ); ?></option>
                 </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide"><?php esc_html_e( 'Unauthorized Redirect URL', 'ska-data-pro' ); ?></label>
+                <input type="text" id="ska-rename-app-redirect" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 bg-white" autocomplete="off" placeholder="e.g. /login or https://example.com/login">
             </div>
         </div>
 

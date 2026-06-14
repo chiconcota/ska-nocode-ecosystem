@@ -1,30 +1,48 @@
 # CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ
-*Ngày cập nhật: 2026-06-07*
+*Ngày cập nhật: 2026-06-15*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Git Branch**: `feature/skafx-autocomplete`
+- **Git Branch**: `feature/workspace-redirect-fallback`
 - **Công việc**: 
-  1. Đã giải quyết triệt để lỗi hiển thị dấu gạch dưới `_` trên admin sidebar (đã hoàn thành ở phiên trước).
-  2. Đã hoàn thành kiểm thử thủ công E2E cho tính năng SkaFX Autocomplete & Data Picker (6/6 Test Cases thành công tốt đẹp, người dùng đã thực hiện thành công và tích chọn checklist đầy đủ).
-  3. Đã làm rõ và hướng dẫn người dùng các nguyên tắc cấu hình cú pháp biểu thức trong node `Set Data` (phải dùng ngoặc vuông `[a]` để lấy biến và ký tự kích hoạt tính toán) cũng như Universal Binding `{{ }}` ở node `Render Template` và `Client Response` để phân giải biến ở frontend.
-  4. Thống nhất và chốt định hướng phát triển Community Nodes / Pluggable Nodes cho Milestone 2+.
-- **Trạng thái**: 🟢 Done (Hoàn thành 100% mục tiêu của nhánh `feature/skafx-autocomplete`, sẵn sàng tích hợp/merge vào `main`).
+  1. Chuẩn hóa cấu trúc lưu trữ App Workspace: chuyển đổi hoàn toàn từ lưu trữ option `wp_options` (`ska_data_apps`) sang bảng phẳng hệ thống MySQL `wp_ska_data_sys_apps` để tối ưu hóa hiệu năng và bảo mật cấu trúc bảng.
+  2. Triển khai cơ chế Redirect Fallback 2 cấp (Table Portal -> Workspace Settings) và tùy biến trang lỗi 403 (location/condition `403`) qua Ska Builder với trang 403 mặc định làm fallback tuyệt đẹp (sử dụng Tailwind, Outfit font, Glassmorphism).
+  3. Bump version của cả hai plugin `Ska Data Pro` và `Ska No-Code Design` lên `1.1.0`.
+- **Trạng thái**: 🟢 Done (Các thay đổi code và tài liệu đã hoàn thành, sẵn sàng chuyển giao cho User tự kiểm thử trực tiếp trên trình duyệt).
 
 ## 2. Các quyết định thiết kế đã thống nhất:
-- **Admin Font Scope Isolation**: font-family tùy chỉnh của website chỉ được phép reset và áp dụng lên vùng Canvas thiết kế (`.editor-styles-wrapper`), không được áp dụng global lên `html body.ska-builder` trong Gutenberg Admin để bảo vệ hiển thị chính xác cho các ô nhập liệu bên Sidebar.
-- **Workflow ID Consistency**: Luôn đảm bảo tính đồng bộ chính xác từng ký tự (không sai chính tả) của Workflow ID giữa Frontend Block attributes và database table `ska_data_sys_workflows`.
-- **Community Nodes Architecture (Milestone 2+)**: Thống nhất không cho phép viết code PHP/JS thô trực tiếp trên các node nguyên thủy (tránh rủi ro bảo mật RCE và giữ triết lý No-code). Thay vào đó, toàn bộ logic tùy biến phức tạp (Stripe, Twilio, OpenAI...) sẽ được đóng gói thành các Community Nodes (Pluggable Nodes) độc lập.
+- **Flat Table App Workspace Storage**: Di trú dữ liệu lưu trữ Workspace của ứng dụng sang bảng phẳng MySQL `wp_ska_data_sys_apps` để đồng nhất với triết lý flat-table của Ska và cho phép cấu hình URL chuyển hướng an toàn.
+- **Two-Tier Redirect Resolution**: Khi bị từ chối truy cập, hệ thống ưu tiên URL ở Portal Table. Nếu trống, fallback về URL ở Workspace. Nếu cả hai cùng trống, hiển thị trang 403.
+- **Customizable 403 via Theme Builder**: Cho phép thiết kế trang 403 riêng biệt dưới dạng Theme Template có Location là `403` hoặc điều kiện `is_403`. Nếu không có, hiển thị trang fallback mặc định đẹp mắt.
 
 ## 3. Danh sách file thay đổi & tạo mới trong phiên:
-- **Tài liệu hệ thống**:
-  - `[MODIFY]` `.ska-ai/1-overview/project-managers/test-skafx-autocomplete.md` (Việt hóa và định dạng check list cho 6 test cases).
-  - `[MODIFY]` `.ska-ai/1-overview/system_map.md` (Cập nhật logs hoàn thành kiểm thử).
-  - `[MODIFY]` `.ska-ai/2-memory/decision-log.md` (Cập nhật quyết định kiến trúc Community Nodes).
-  - `[MODIFY]` `.ska-ai/2-memory/checkpoint.md` (Cập nhật checkpoint bàn giao).
+- **Cập nhật mã nguồn (Ska Data Pro v1.1.0)**:
+  - `[MODIFY]` `ska-data-pro/inc/core/class-app-manager.php` (Đúc bảng apps, viết lại CRUD apps).
+  - `[MODIFY]` `ska-data-pro/inc/core/class-database-engine.php` (Bảo vệ bảng phẳng apps).
+  - `[MODIFY]` `ska-data-pro/inc/admin/class-admin-ajax.php` (Xử lý AJAX URL redirect).
+  - `[MODIFY]` `ska-data-pro/inc/admin/views/parts/manage-modals.php` (Bổ sung input URL redirect).
+  - `[MODIFY]` `ska-data-pro/inc/admin/views/parts/manage-sidebar.php` (Bơm dữ liệu cũ sang JS popup).
+  - `[MODIFY]` `ska-data-pro/assets/js/src/modules/modals.js` (Popup input value loading).
+  - `[MODIFY]` `ska-data-pro/assets/js/src/modules/apps.js` (Gửi AJAX lưu URL redirect).
+  - `[MODIFY]` `ska-data-pro/ska-data-pro.php` (Bump version to 1.1.0).
+- **Cập nhật mã nguồn (Ska No-Code Design v1.1.0)**:
+  - `[MODIFY]` `ska-no-code-design/inc/theme-builder/views/admin-panel.php` (Tab 403 và điều kiện `is_403`).
+  - `[MODIFY]` `ska-no-code-design/inc/theme-builder/class-ska-app-router.php` (Kế thừa redirect cấp Workspace và default 403 fallback).
+  - `[MODIFY]` `ska-no-code-design/inc/theme-builder/class-ska-virtual-wrapper.php` (Override 403 template & condition evaluation).
+  - `[MODIFY]` `ska-no-code-design/ska-no-code-design.php` (Bump version to 1.1.0).
+- **Cập nhật tài liệu hệ thống**:
+  - `[NEW]` `.ska-ai/1-overview/project-managers/test-workspace-redirect-e2e.md` (Tài liệu hướng dẫn test E2E thủ công).
+  - `[MODIFY]` `.ska-ai/1-overview/system_map.md` (Update log & module version).
+  - `[MODIFY]` `.ska-ai/2-memory/self-improve.md` (Cập nhật quy tắc MISTAKE-003 tránh lạm dụng browser).
+  - `[MODIFY]` `.ska-ai/2-memory/decision-log.md` (Update technical decision).
+  - `[MODIFY]` `.ska-ai/3-ecosystem/ska-data-pro/architecture.md` (Document flat table workspace & 403 routing).
+  - `[MODIFY]` `.ska-ai/1-overview/project-managers/pm_workspace_storage.md` (Update project task status).
+  - `[MODIFY]` `task.md` (Mark tasks as complete).
 
-## 4. Gợi ý debug / Công việc cho phiên tiếp theo (QUAN TRỌNG)
-- **Chuẩn bị Merge Git**:
-  1. Rà soát lại code của nhánh `feature/skafx-autocomplete` để chuẩn bị merge vào `main`.
-  2. Bắt đầu chuẩn bị kế hoạch/blueprint cho Milestone tiếp theo, tập trung nghiên cứu kiến trúc Community Nodes (Pluggable Nodes) để expose registry cho lập trình viên phát triển module node ngoài.
-- **Dọn dẹp**: Đảm bảo thư mục làm việc sạch sẽ, không còn file rác `.md` tự phát ngoài 4 ngăn kéo.
-
+## 4. Gợi ý công việc cho phiên tiếp theo (QUAN TRỌNG)
+- **Tiến hành kiểm thử thực tế từ trình duyệt**:
+  1. Kích hoạt hai plugin để tự động khởi tạo bảng phẳng hệ thống `wp_ska_data_sys_apps`.
+  2. Tạo/cấu hình thử một Workspace, thay đổi URL redirect trong Workspace settings (popup rename).
+  3. Truy cập một Portal bị chặn quyền để:
+     - Xem trang 403 mặc định (nếu không có URL redirect).
+     - Kiểm tra redirect (nếu có URL redirect).
+     - Tạo template 403 trong Builder, active nó và truy cập portal bị chặn -> xác nhận render giao diện tự thiết kế.

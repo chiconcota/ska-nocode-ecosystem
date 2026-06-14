@@ -17,34 +17,49 @@ class App_Manager {
 	 * Khởi tạo Mặc định (Uncategorized)
 	 */
 	public static function init() {
-		$apps = get_option( self::OPTION_NAME, false );
-		if ( false === $apps || ! is_array( $apps ) ) {
-			$apps = array();
+		global $wpdb;
+		$table_apps = $wpdb->prefix . 'ska_data_sys_apps';
+
+		$table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_apps ) );
+		if ( $table_exists !== $table_apps ) {
+			return;
 		}
 
-		$changed = false;
-		if ( ! isset( $apps[ self::UNCATEGORIZED_APP ] ) ) {
-			$apps[ self::UNCATEGORIZED_APP ] = array(
+		// Đọc từ option cũ để di trú
+		$old_apps = get_option( 'ska_data_apps', array() );
+		if ( ! is_array( $old_apps ) ) {
+			$old_apps = array();
+		}
+
+		// Đảm bảo có Default Workspace và Site Management
+		if ( ! isset( $old_apps[ self::UNCATEGORIZED_APP ] ) ) {
+			$old_apps[ self::UNCATEGORIZED_APP ] = array(
 				'id'         => self::UNCATEGORIZED_APP,
 				'name'       => 'Default Workspace',
 				'icon'       => 'dashicons-portfolio',
 				'created_at' => current_time( 'mysql' ),
 			);
-			$changed = true;
 		}
-
-		if ( ! isset( $apps[ self::SYSTEM_APP ] ) ) {
-			$apps[ self::SYSTEM_APP ] = array(
+		if ( ! isset( $old_apps[ self::SYSTEM_APP ] ) ) {
+			$old_apps[ self::SYSTEM_APP ] = array(
 				'id'         => self::SYSTEM_APP,
 				'name'       => 'Site Management',
 				'icon'       => 'dashicons-admin-generic',
 				'created_at' => current_time( 'mysql' ),
 			);
-			$changed = true;
 		}
 
-		if ( $changed ) {
-			update_option( self::OPTION_NAME, $apps );
+		foreach ( $old_apps as $app_id => $app_data ) {
+			$exists = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table_apps} WHERE app_id = %s", $app_id ) );
+			if ( ! $exists ) {
+				$wpdb->insert( $table_apps, array(
+					'app_id'                    => $app_id,
+					'name'                      => isset( $app_data['name'] ) ? $app_data['name'] : $app_id,
+					'icon'                      => isset( $app_data['icon'] ) ? $app_data['icon'] : 'dashicons-portfolio',
+					'unauthorized_redirect_url' => isset( $app_data['unauthorized_redirect_url'] ) ? $app_data['unauthorized_redirect_url'] : '',
+					'created_at'                => isset( $app_data['created_at'] ) ? $app_data['created_at'] : current_time( 'mysql' ),
+				) );
+			}
 		}
 	}
 
@@ -124,6 +139,7 @@ class App_Manager {
 		$table_organisms = $wpdb->prefix . 'ska_data_sys_organisms';
 		$table_templates = $wpdb->prefix . 'ska_data_sys_theme_templates';
 		$table_presets   = $wpdb->prefix . 'ska_data_sys_presets';
+		$table_apps      = $wpdb->prefix . 'ska_data_sys_apps';
 
 		// Đảm bảo module Database đã sẵn sàng
 		if ( ! class_exists( '\Ska\Data\Core\Database_Engine' ) ) {
@@ -198,7 +214,7 @@ class App_Manager {
 			// Nếu chưa có bảng trong MySQL thì tạo mới hoàn toàn
 			$db_engine->create_custom_table( 'theme_templates', 'dashicons-admin-appearance', self::SYSTEM_APP );
 			$db_engine->add_column( $table_templates, 'Name', 'short_text' );
-			$db_engine->add_column( $table_templates, 'Location', 'select', 'header, footer, single, archive, 404, app_layout, custom' );
+			$db_engine->add_column( $table_templates, 'Location', 'select', 'header, footer, single, archive, 404, 403, app_layout, custom' );
 			$db_engine->add_column( $table_templates, 'Organism_ID', 'number' );
 			$db_engine->add_column( $table_templates, 'Conditions', 'long_text' );
 			$db_engine->add_column( $table_templates, 'Is Active', 'boolean' );
@@ -220,7 +236,7 @@ class App_Manager {
 		// Phục hồi Metadata các cột nếu bị mất
 		$tpl_cols = array(
 			'name' => array('label' => 'Name', 'type' => 'short_text', 'options' => ''),
-			'location' => array('label' => 'Location', 'type' => 'select', 'options' => 'header, footer, single, archive, 404, app_layout, custom'),
+			'location' => array('label' => 'Location', 'type' => 'select', 'options' => 'header, footer, single, archive, 404, 403, app_layout, custom'),
 			'organism_id' => array('label' => 'Organism_ID', 'type' => 'number', 'options' => ''),
 			'conditions' => array('label' => 'Conditions', 'type' => 'long_text', 'options' => ''),
 			'is_active' => array('label' => 'Is Active', 'type' => 'boolean', 'options' => '')
@@ -228,6 +244,14 @@ class App_Manager {
 		foreach ( $tpl_cols as $col_slug => $col_data ) {
 			if ( ! isset( $dictionary[ $table_templates ][ $col_slug ] ) ) {
 				$dictionary[ $table_templates ][ $col_slug ] = $col_data;
+				$changed = true;
+			}
+		}
+
+		// Cập nhật lại options của cột location để luôn có '403' cho cả các cài đặt hiện tại
+		if ( isset( $dictionary[ $table_templates ]['location'] ) ) {
+			if ( strpos( $dictionary[ $table_templates ]['location']['options'], '403' ) === false ) {
+				$dictionary[ $table_templates ]['location']['options'] = 'header, footer, single, archive, 404, 403, app_layout, custom';
 				$changed = true;
 			}
 		}
@@ -280,6 +304,66 @@ class App_Manager {
 			$changed = false;
 		}
 
+		$dictionary = get_option( 'ska_data_dictionary', array() );
+
+		// 4. Workspaces (Apps)
+		$table_apps_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_apps ) );
+		if ( $table_apps_exists !== $table_apps ) {
+			// Tạo mới bảng qua db_engine
+			$db_engine->create_custom_table( 'apps', 'dashicons-portfolio', self::SYSTEM_APP );
+			$db_engine->add_column( $table_apps, 'App ID', 'short_text' );
+			$db_engine->add_column( $table_apps, 'Name', 'short_text' );
+			$db_engine->add_column( $table_apps, 'Icon', 'short_text' );
+			$db_engine->add_column( $table_apps, 'Unauthorized Redirect URL', 'short_text' );
+			$changed = true;
+		} else {
+			// Đảm bảo các cột luôn tồn tại (phòng trường hợp bảng bị lỗi khởi tạo dở dang)
+			$required_columns = array(
+				'app_id'                    => 'VARCHAR(255) DEFAULT NULL',
+				'name'                      => 'VARCHAR(255) DEFAULT NULL',
+				'icon'                      => 'VARCHAR(255) DEFAULT NULL',
+				'unauthorized_redirect_url' => 'VARCHAR(255) DEFAULT NULL'
+			);
+			foreach ( $required_columns as $col => $definition ) {
+				$column_exists = $wpdb->get_results( $wpdb->prepare( "SHOW COLUMNS FROM {$table_apps} LIKE %s", $col ) );
+				if ( empty( $column_exists ) ) {
+					$wpdb->query( "ALTER TABLE {$table_apps} ADD COLUMN {$col} {$definition}" );
+				}
+			}
+		}
+
+		// Luôn đảm bảo Dictionary có mặt
+		if ( ! isset( $dictionary[ $table_apps ] ) ) {
+			$dictionary[ $table_apps ] = array();
+		}
+		if ( ! isset( $dictionary[ $table_apps ]['__table_info'] ) ) {
+			$dictionary[ $table_apps ]['__table_info'] = array(
+				'name' => 'Workspaces',
+				'icon' => 'dashicons-portfolio',
+				'app_id' => self::SYSTEM_APP
+			);
+			$changed = true;
+		}
+		// Phục hồi Metadata các cột nếu bị mất
+		$app_cols = array(
+			'app_id' => array('label' => 'App ID', 'type' => 'short_text', 'options' => ''),
+			'name' => array('label' => 'Name', 'type' => 'short_text', 'options' => ''),
+			'icon' => array('label' => 'Icon', 'type' => 'short_text', 'options' => ''),
+			'unauthorized_redirect_url' => array('label' => 'Unauthorized Redirect URL', 'type' => 'short_text', 'options' => '')
+		);
+		foreach ( $app_cols as $col_slug => $col_data ) {
+			if ( ! isset( $dictionary[ $table_apps ][ $col_slug ] ) ) {
+				$dictionary[ $table_apps ][ $col_slug ] = $col_data;
+				$changed = true;
+			}
+		}
+
+		// Cập nhật ngay vào Database nếu có thay đổi
+		if ( $changed ) {
+			update_option( 'ska_data_dictionary', $dictionary );
+			$changed = false;
+		}
+
 		// ... (các bước sau sẽ dùng dictionary hiện tại)
 		if ( $changed || true ) { // trigger the next block anyway to ensure names
 			$dictionary = get_option( 'ska_data_dictionary', array() );
@@ -292,6 +376,9 @@ class App_Manager {
 			if ( isset( $dictionary[ $table_presets ] ) ) {
 				$dictionary[ $table_presets ]['__table_info']['name'] = 'Design Tokens (Presets)';
 			}
+			if ( isset( $dictionary[ $table_apps ] ) ) {
+				$dictionary[ $table_apps ]['__table_info']['name'] = 'Workspaces';
+			}
 			update_option( 'ska_data_dictionary', $dictionary );
 		}
 
@@ -300,7 +387,8 @@ class App_Manager {
 		$system_tables = array(
 			$table_organisms => array( 'name' => 'Sys Organisms', 'icon' => 'dashicons-layout' ),
 			$table_templates => array( 'name' => 'Theme Templates', 'icon' => 'dashicons-admin-appearance' ),
-			$table_presets   => array( 'name' => 'Design Tokens', 'icon' => 'dashicons-admin-customizer' )
+			$table_presets   => array( 'name' => 'Design Tokens', 'icon' => 'dashicons-admin-customizer' ),
+			$table_apps      => array( 'name' => 'Workspaces', 'icon' => 'dashicons-portfolio' )
 		);
 
 		foreach ( $system_tables as $tb_name => $tb_config ) {
@@ -325,11 +413,46 @@ class App_Manager {
 	 * Lấy toàn bộ danh sách Workspace
 	 */
 	public static function get_apps() {
-		$apps = get_option( self::OPTION_NAME, array() );
+		global $wpdb;
+		$table_apps = $wpdb->prefix . 'ska_data_sys_apps';
+
+		// Đảm bảo bảng tồn tại trước khi select
+		$table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_apps ) );
+		if ( $table_exists !== $table_apps ) {
+			self::maybe_create_system_tables();
+		}
+
+		$results = $wpdb->get_results( "SELECT * FROM {$table_apps}", ARRAY_A );
+		$apps = array();
+		if ( ! empty( $results ) && is_array( $results ) ) {
+			foreach ( $results as $row ) {
+				$apps[ $row['app_id'] ] = array(
+					'id'                        => $row['app_id'],
+					'name'                      => $row['name'],
+					'icon'                      => $row['icon'],
+					'unauthorized_redirect_url' => isset( $row['unauthorized_redirect_url'] ) ? $row['unauthorized_redirect_url'] : '',
+					'created_at'                => $row['created_at'],
+				);
+			}
+		}
+
+		// Nếu danh sách trống, khởi tạo lại
 		if ( empty( $apps ) ) {
 			self::init();
-			$apps = get_option( self::OPTION_NAME, array() );
+			$results = $wpdb->get_results( "SELECT * FROM {$table_apps}", ARRAY_A );
+			if ( ! empty( $results ) && is_array( $results ) ) {
+				foreach ( $results as $row ) {
+					$apps[ $row['app_id'] ] = array(
+						'id'                        => $row['app_id'],
+						'name'                      => $row['name'],
+						'icon'                      => $row['icon'],
+						'unauthorized_redirect_url' => isset( $row['unauthorized_redirect_url'] ) ? $row['unauthorized_redirect_url'] : '',
+						'created_at'                => $row['created_at'],
+					);
+				}
+			}
 		}
+
 		return $apps;
 	}
 
@@ -346,7 +469,8 @@ class App_Manager {
 			return new \WP_Error( 'invalid_name', __( 'Application name cannot be empty.', 'ska-data-pro' ) );
 		}
 
-		$apps   = self::get_apps();
+		global $wpdb;
+		$table_apps = $wpdb->prefix . 'ska_data_sys_apps';
 		
 		// Semantic Slug Generator (Human-readable logic)
 		$base_slug = sanitize_title( $name );
@@ -354,40 +478,65 @@ class App_Manager {
 		$app_id    = 'app_' . $base_slug;
 
 		// Bức tường thép: Chặn đụng độ App name
-		if ( isset( $apps[ $app_id ] ) ) {
+		$exists = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table_apps} WHERE app_id = %s", $app_id ) );
+		if ( $exists > 0 ) {
 			return new \WP_Error( 'app_exists', __( 'This Application name is already in use (Clash Alias). ', 'ska-data-pro' ) );
 		}
 		
-		$apps[ $app_id ] = array(
-			'id'         => $app_id,
-			'name'       => $name,
-			'icon'       => sanitize_text_field( $icon ),
-			'created_at' => current_time( 'mysql' ),
-		);
+		$inserted = $wpdb->insert( $table_apps, array(
+			'app_id'                    => $app_id,
+			'name'                      => $name,
+			'icon'                      => sanitize_text_field( $icon ),
+			'unauthorized_redirect_url' => '',
+			'created_at'                => current_time( 'mysql' ),
+		) );
 
-		update_option( self::OPTION_NAME, $apps );
+		if ( false === $inserted ) {
+			return new \WP_Error( 'db_error', __( 'Could not create Workspace in database.', 'ska-data-pro' ) );
+		}
+
 		return $app_id;
 	}
 
 	/**
-	 * Sửa tên App
+	 * Sửa tên App và cấu hình chuyển hướng
 	 */
-	public static function update_app( $app_id, $name, $icon ) {
-		$app_id = sanitize_text_field( $app_id );
-		$name   = sanitize_text_field( $name );
+	public static function update_app( $app_id, $name, $icon, $unauthorized_redirect_url = '' ) {
+		$app_id                    = sanitize_text_field( $app_id );
+		$name                      = sanitize_text_field( $name );
+		$icon                      = sanitize_text_field( $icon );
+		$unauthorized_redirect_url = sanitize_text_field( $unauthorized_redirect_url );
 		
-		if ( $app_id === self::UNCATEGORIZED_APP || $app_id === self::SYSTEM_APP ) {
-			return new \WP_Error( 'protected', __( 'The System Workspace cannot be modified.', 'ska-data-pro' ) );
-		}
+		global $wpdb;
+		$table_apps = $wpdb->prefix . 'ska_data_sys_apps';
 
-		$apps = self::get_apps();
-		if ( ! isset( $apps[ $app_id ] ) ) {
+		// Đảm bảo workspace tồn tại
+		$exists = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table_apps} WHERE app_id = %s", $app_id ) );
+		if ( ! $exists ) {
 			return new \WP_Error( 'not_found', __( 'Application does not exist.', 'ska-data-pro' ) );
 		}
 
-		$apps[ $app_id ]['name'] = $name;
-		$apps[ $app_id ]['icon'] = sanitize_text_field( $icon );
-		update_option( self::OPTION_NAME, $apps );
+		// Nếu là system workspace thì giữ nguyên tên mặc định để tránh phá vỡ giao diện
+		if ( $app_id === self::SYSTEM_APP ) {
+			$name = 'Site Management';
+		} elseif ( $app_id === self::UNCATEGORIZED_APP ) {
+			$name = 'Default Workspace';
+		}
+
+		$updated = $wpdb->update(
+			$table_apps,
+			array(
+				'name'                      => $name,
+				'icon'                      => $icon,
+				'unauthorized_redirect_url' => $unauthorized_redirect_url,
+			),
+			array( 'app_id' => $app_id )
+		);
+
+		if ( false === $updated ) {
+			return new \WP_Error( 'db_error', __( 'Could not update Workspace in database.', 'ska-data-pro' ) );
+		}
+
 		return true;
 	}
 
@@ -400,8 +549,11 @@ class App_Manager {
 			return new \WP_Error( 'protected', __( 'Cannot delete System Workspace.', 'ska-data-pro' ) );
 		}
 
-		$apps = self::get_apps();
-		if ( ! isset( $apps[ $app_id ] ) ) {
+		global $wpdb;
+		$table_apps = $wpdb->prefix . 'ska_data_sys_apps';
+
+		$exists = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table_apps} WHERE app_id = %s", $app_id ) );
+		if ( ! $exists ) {
 			return new \WP_Error( 'not_found', __( 'Application does not exist.', 'ska-data-pro' ) );
 		}
 
@@ -420,8 +572,10 @@ class App_Manager {
 		}
 
 		// 2. Trảm App
-		unset( $apps[ $app_id ] );
-		update_option( self::OPTION_NAME, $apps );
+		$deleted = $wpdb->delete( $table_apps, array( 'app_id' => $app_id ) );
+		if ( false === $deleted ) {
+			return new \WP_Error( 'db_error', __( 'Could not delete Workspace from database.', 'ska-data-pro' ) );
+		}
 
 		return true;
 	}

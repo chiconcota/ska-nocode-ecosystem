@@ -98,6 +98,7 @@ defined( 'ABSPATH' ) || exit;
                 if ( ! isset( $apps[ $app_key ] ) ) continue;
                 $app_name = $apps[ $app_key ]['name'];
                 $app_icon = $apps[ $app_key ]['icon'];
+                $app_redirect = isset( $apps[ $app_key ]['unauthorized_redirect_url'] ) ? $apps[ $app_key ]['unauthorized_redirect_url'] : '';
             ?>
                 <li class="px-2 pt-3 pb-1 mt-2 mb-1 border-b border-gray-200 relative group">
                     <div class="flex items-center gap-1.5 font-bold text-[10px] uppercase text-gray-500 tracking-wider">
@@ -112,7 +113,7 @@ defined( 'ABSPATH' ) || exit;
                                 <span class="dashicons dashicons-download text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> <?php esc_html_e( 'Export Blueprint (JSON)', 'ska-data-pro' ); ?>
                             </a>
                             <div class="h-px bg-gray-100 my-0.5"></div>
-                            <button onclick="skaOpenRenameApp('<?php echo esc_js($app_key); ?>', '<?php echo esc_js($app_name); ?>', '<?php echo esc_js($app_icon); ?>'); document.getElementById('dd-app-<?php echo esc_attr($app_key); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-indigo-50 hover:text-indigo-600 flex items-center gap-2 transition-colors">
+                            <button onclick="skaOpenRenameApp('<?php echo esc_js($app_key); ?>', '<?php echo esc_js($app_name); ?>', '<?php echo esc_js($app_icon); ?>', '<?php echo esc_js($app_redirect); ?>'); document.getElementById('dd-app-<?php echo esc_attr($app_key); ?>').classList.add('hidden');" class="w-full text-left px-4 py-2 text-sm hover:bg-indigo-50 hover:text-indigo-600 flex items-center gap-2 transition-colors">
                                 <span class="dashicons dashicons-edit text-current opacity-70" style="font-size:14px; margin-top:-1px;"></span> <?php esc_html_e( 'Rename Space', 'ska-data-pro' ); ?>
                             </button>
                             <div class="h-px bg-gray-100 my-0.5"></div>

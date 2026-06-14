@@ -497,11 +497,12 @@ class Admin_Ajax {
 	public function data_update_app() {
 		$this->verify_crud_request();
 
-		$app_id = isset( $_POST['app_id'] ) ? sanitize_text_field( wp_unslash( $_POST['app_id'] ) ) : '';
-		$name   = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
-		$icon   = isset( $_POST['icon'] ) ? sanitize_text_field( wp_unslash( $_POST['icon'] ) ) : 'dashicons-portfolio';
+		$app_id                    = isset( $_POST['app_id'] ) ? sanitize_text_field( wp_unslash( $_POST['app_id'] ) ) : '';
+		$name                      = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
+		$icon                      = isset( $_POST['icon'] ) ? sanitize_text_field( wp_unslash( $_POST['icon'] ) ) : 'dashicons-portfolio';
+		$unauthorized_redirect_url = isset( $_POST['unauthorized_redirect_url'] ) ? sanitize_text_field( wp_unslash( $_POST['unauthorized_redirect_url'] ) ) : '';
 
-		$result = \Ska\Data\Core\App_Manager::update_app( $app_id, $name, $icon );
+		$result = \Ska\Data\Core\App_Manager::update_app( $app_id, $name, $icon, $unauthorized_redirect_url );
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}

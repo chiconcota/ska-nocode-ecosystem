@@ -115,6 +115,13 @@ class Ska_App_Router {
 		// Security Check: Roles & Custom Redirect
 		$this->enforce_security( $portal_config );
 
+		global $ska_access_denied;
+		if ( ! empty( $ska_access_denied ) ) {
+			$wp->query_vars['error'] = '';
+			status_header( 403 );
+			return;
+		}
+
 		// If passed, store config in a global context for Virtual Wrapper and other components
 		global $ska_current_portal;
 		$ska_current_portal = $portal_config;
@@ -130,8 +137,8 @@ class Ska_App_Router {
 	public function short_circuit_wp_query( $posts, $query ) {
 		// Chỉ chặn Main Query nếu nó là yêu cầu Portal hợp lệ
 		if ( $query->is_main_query() && get_query_var( 'ska_portal' ) ) {
-			global $ska_current_portal;
-			if ( ! empty( $ska_current_portal ) ) {
+			global $ska_current_portal, $ska_access_denied;
+			if ( ! empty( $ska_current_portal ) || ! empty( $ska_access_denied ) ) {
 				// Ép WP_Query trả về mảng rỗng để không tốn chi phí query DB
 				$query->is_404 = false; // Ngăn WP set is_404 = true khi mảng posts rỗng
 				$query->is_home = false;
@@ -163,6 +170,7 @@ class Ska_App_Router {
 				if ( ! empty( $settings['active'] ) && $settings['slug'] === $slug ) {
 					// Found the matching table portal
 					$settings['table_name'] = $table_name; // Attach table name for context
+					$settings['app_id']     = isset( $schema['__table_info']['app_id'] ) ? $schema['__table_info']['app_id'] : ''; // Attach app_id
 					return $settings;
 				}
 			}
@@ -196,52 +204,148 @@ class Ska_App_Router {
 			return; // Anyone can access! No need to check login.
 		}
 
-		if ( ! is_user_logged_in() ) {
-			// Not logged in -> Redirect to login page and return back to portal
-			global $wp;
-			$current_url = home_url( add_query_arg( array(), $wp->request ) );
-
-			if ( ! empty( $portal_config['unauthorized_redirect_url'] ) ) {
-				$redirect_base = esc_url_raw( $portal_config['unauthorized_redirect_url'] );
-				$login_url = add_query_arg( 'redirect_to', urlencode( $current_url ), $redirect_base );
-			} else {
-				$login_url = wp_login_url( $current_url );
+		$has_access = false;
+		if ( is_user_logged_in() ) {
+			$user = wp_get_current_user();
+			$user_roles = (array) $user->roles;
+			
+			// Check for intersection using normalized lowercase roles
+			if ( count( array_intersect( $allowed_roles_lower, $user_roles ) ) > 0 ) {
+				$has_access = true;
 			}
 			
-			$login_url = apply_filters( 'ska_auth_redirect_url', $login_url );
-			
-			wp_redirect( $login_url );
-			exit;
-		}
-
-		$user = wp_get_current_user();
-		$user_roles = (array) $user->roles;
-		
-		$has_access = false;
-		
-		// Check for intersection using normalized lowercase roles
-		if ( count( array_intersect( $allowed_roles_lower, $user_roles ) ) > 0 ) {
-			$has_access = true;
-		}
-		
-		// Administrator override
-		if ( in_array( 'administrator', $user_roles, true ) ) {
-			$has_access = true;
+			// Administrator override
+			if ( in_array( 'administrator', $user_roles, true ) ) {
+				$has_access = true;
+			}
 		}
 
 		if ( ! $has_access ) {
-			$access_denied_url = apply_filters( 'ska_access_denied_redirect_url', '' );
-			if ( ! empty( $access_denied_url ) ) {
-				wp_redirect( $access_denied_url );
+			// Phân giải URL chuyển hướng (Cấp Table hoặc cấp Workspace)
+			$redirect_url = '';
+			if ( ! empty( $portal_config['unauthorized_redirect_url'] ) ) {
+				$redirect_url = $portal_config['unauthorized_redirect_url'];
+			} else {
+				$app_id = isset( $portal_config['app_id'] ) ? $portal_config['app_id'] : '';
+				if ( ! empty( $app_id ) ) {
+					global $wpdb;
+					$table_apps = $wpdb->prefix . 'ska_data_sys_apps';
+					// Đảm bảo bảng apps tồn tại trước khi select
+					$table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_apps ) );
+					if ( $table_exists === $table_apps ) {
+						$redirect_url = $wpdb->get_var( $wpdb->prepare( "SELECT unauthorized_redirect_url FROM {$table_apps} WHERE app_id = %s", $app_id ) );
+					}
+				}
+			}
+
+			// Lớp filter mở rộng của bên thứ 3
+			$redirect_url = apply_filters( 'ska_access_denied_redirect_url', $redirect_url );
+
+			if ( ! empty( $redirect_url ) ) {
+				global $wp;
+				$current_url = home_url( add_query_arg( array(), $wp->request ) );
+				$redirect_target = add_query_arg( 'redirect_to', urlencode( $current_url ), $redirect_url );
+				$redirect_target = apply_filters( 'ska_auth_redirect_url', $redirect_target );
+				wp_redirect( $redirect_target );
 				exit;
 			}
 
-			wp_die( 
-				__( 'You do not have sufficient rights (Role) to access this App Portal. ', 'ska-no-code-design' ), 
-				'403 Forbidden', 
-				array( 'response' => 403 ) 
-			);
+			// Không có URL chuyển hướng -> Bật cờ lỗi phân quyền để Virtual Wrapper xử lý render template 403
+			global $ska_access_denied;
+			$ska_access_denied = true;
 		}
+	}
+
+	/**
+	 * Render the default beautiful 403 Forbidden / Access Denied page
+	 */
+	public static function render_default_403_page() {
+		status_header( 403 );
+		nocache_headers();
+		
+		$login_url = wp_login_url( home_url( $_SERVER['REQUEST_URI'] ) );
+		$home_url  = home_url();
+		$site_name = get_bloginfo( 'name' );
+		
+		?>
+		<!DOCTYPE html>
+		<html <?php language_attributes(); ?>>
+		<head>
+			<meta charset="<?php bloginfo( 'charset' ); ?>">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title><?php esc_html_e( 'Access Denied - 403 Forbidden', 'ska-no-code-design' ); ?></title>
+			<script src="https://cdn.tailwindcss.com"></script>
+			<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+			<style>
+				body {
+					font-family: 'Outfit', sans-serif;
+				}
+				.dark-glass {
+					background: rgba(15, 23, 42, 0.6);
+					backdrop-filter: blur(16px);
+					-webkit-backdrop-filter: blur(16px);
+					border: 1px solid rgba(255, 255, 255, 0.08);
+				}
+			</style>
+		</head>
+		<body class="bg-gradient-to-tr from-slate-900 via-slate-800 to-indigo-950 min-h-screen flex items-center justify-center p-4 overflow-hidden relative">
+			<!-- Decorative glowing circles -->
+			<div class="absolute w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl -top-20 -left-20 animate-pulse"></div>
+			<div class="absolute w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl -bottom-20 -right-20 animate-pulse" style="animation-duration: 8s;"></div>
+
+			<div class="dark-glass max-w-md w-full rounded-2xl shadow-2xl p-8 text-center relative z-10 text-white animate-[fadeIn_0.5s_ease-out]">
+				<!-- Shield Icon with Animation -->
+				<div class="mx-auto w-24 h-24 mb-6 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/30 shadow-[0_0_50px_rgba(239,68,68,0.15)] relative">
+					<div class="absolute inset-0 rounded-full border border-red-500/50 animate-ping opacity-25"></div>
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+					</svg>
+				</div>
+
+				<h1 class="text-4xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-red-400 to-amber-300 bg-clip-text text-transparent">
+					403
+				</h1>
+				<h2 class="text-xl font-bold mb-4 text-slate-100">
+					<?php esc_html_e( 'Access Denied', 'ska-no-code-design' ); ?>
+				</h2>
+				
+				<p class="text-sm text-slate-400 mb-8 leading-relaxed">
+					<?php 
+					if ( is_user_logged_in() ) {
+						esc_html_e( 'Your account does not have sufficient role permissions to access this Portal.', 'ska-no-code-design' );
+					} else {
+						esc_html_e( 'This page is protected. You must sign in with an authorized account to view it.', 'ska-no-code-design' );
+					}
+					?>
+				</p>
+
+				<div class="flex flex-col gap-3">
+					<?php if ( ! is_user_logged_in() ) : ?>
+						<a href="<?php echo esc_url( $login_url ); ?>" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-indigo-500/20 transition duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+							</svg>
+							<?php esc_html_e( 'Login to Access', 'ska-no-code-design' ); ?>
+						</a>
+					<?php endif; ?>
+
+					<a href="<?php echo esc_url( $home_url ); ?>" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white font-semibold py-3 px-4 rounded-xl border border-slate-700/50 transition duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+						</svg>
+						<?php printf( esc_html__( 'Back to %s', 'ska-no-code-design' ), esc_html( $site_name ) ); ?>
+					</a>
+				</div>
+
+				<div class="mt-8 pt-6 border-t border-slate-800/60 text-slate-500 text-xs flex justify-between items-center">
+					<span><?php echo esc_html( $site_name ); ?></span>
+					<span>•</span>
+					<span><?php esc_html_e( 'Forbidden Resource', 'ska-no-code-design' ); ?></span>
+				</div>
+			</div>
+		</body>
+		</html>
+		<?php
 	}
 
 	/**

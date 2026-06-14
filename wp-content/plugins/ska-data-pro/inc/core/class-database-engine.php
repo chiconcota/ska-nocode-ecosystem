@@ -690,7 +690,8 @@ class Database_Engine
 		$protected_tables = array(
 			$wpdb->prefix . 'ska_data_sys_organisms',
 			$wpdb->prefix . 'ska_data_sys_theme_templates',
-			$wpdb->prefix . 'ska_data_sys_presets'
+			$wpdb->prefix . 'ska_data_sys_presets',
+			$wpdb->prefix . 'ska_data_sys_apps'
 		);
 		$protected_tables = apply_filters('ska_data_protected_tables', $protected_tables);
 

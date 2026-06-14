@@ -6,7 +6,7 @@
 - **Giữ cấu trúc lai (Hybrid):** Dữ liệu xác thực người dùng (Login, Mật khẩu, Identity) vẫn NẰM ở `wp_users`. Các bảng của Ska liên quan đến user chỉ lưu ID (Foreign Key). Không tự làm hệ thống Auth riêng.
 - **Data Providers Pattern:** Không copy dữ liệu của WooCommerce vào Ska. Khi cần truy vấn dữ liệu WooCommerce, sử dụng Adapter gọi hàm `wc_get_products()` của WP Core.
 - **Độc Lập UI Admin:** Dashboard của Data Pro tự load Tailwind CDN tĩnh, KHÔNG hook vào CDN chung của Builder Core để tránh gãy Layout khi Core bị tắt.
-- **System Table Schema Protection (Approach A):** Cấm tuyệt đối mọi thay đổi cấu trúc bảng (thêm/sửa/xóa cột, cập nhật tùy chọn select), đổi tên hoặc xóa bảng đối với các bảng hệ thống cốt lõi (ví dụ: `wp_ska_data_sys_workflows`) để đảm bảo tính toàn vẹn hệ thống.
+- **System Table Schema Protection (Approach A):** Cấm tuyệt đối mọi thay đổi cấu trúc bảng (thêm/sửa/xóa cột, cập nhật tùy chọn select), đổi tên hoặc xóa bảng đối với các bảng hệ thống cốt lõi (ví dụ: `wp_ska_data_sys_workflows`, `wp_ska_data_sys_apps`) để đảm bảo tính toàn vẹn hệ thống.
 
 ## 2. WP HOOKS EXPOSED (GIAO TIẾP XUYÊN PLUGIN)
 *Dự kiến triển khai trong Phase 2 & 3:*
@@ -53,7 +53,7 @@ Nằm tại `assets/js/src`:
 - `/utils/api.js`: Tổng hợp Ajax URL và Nonce Header.
 
 ## 5. SMART OBJECT (APP BLUEPRINT) ARCHITECTURE
-- **App Workspace**: Từ bỏ mô hình Table Categories (`group` string cứng). Áp dụng kiến trúc Smart Object phân cấp Workspace, định nghĩa bởi `App_Manager` và quản lý thông qua cấu trúc Option (`ska_data_apps`).
+- **App Workspace**: Từ bỏ mô hình Table Categories (`group` string cứng). Áp dụng kiến trúc Smart Object phân cấp Workspace, định nghĩa bởi `App_Manager` và quản lý thông qua bảng phẳng hệ thống MySQL `wp_ska_data_sys_apps` trực thuộc Ska Data Pro (thay thế hoàn toàn việc lưu trữ trong `wp_options` Option `ska_data_apps`).
 - **Data Flow Bảo Phân Phối**: Khi tạo Bảng, thông tin `app_id` được nạp thẳng xuống Từ Điển Cấu Hình Bảng. Đặc quyền bảo vệ Data: Xóa App Blueprint không kích hoạt xóa SQL Bảng, mà dịch chuyển Bảng về trạng thái Môi Trường Mặc Định (`uncategorized`) để ngăn mất dữ liệu vô ý. Tầng Admin UI Load động danh sách qua thẻ `<select>` thay vì Input tay.
 - **Blueprint Portable System (JSON)**: Hệ thống đóng gói toàn bộ bảng (schema), các cột, cũng như cấu hình Tham chiếu (Relation & Rollup) sang một file Blueprint `.json` gọn nhẹ. Không đóng gói Raw Data để bảo mật.
 - **Dynamic Slug Resolution**: (Biện pháp chống đụng độ Tên Bảng). Khi người dùng Nhập (Import) file JSON, Tên Bảng gốc (Vd: `teachers`) chỉ đóng vai trò là "Ký danh Tương đối" (Relative Slug). Bộ Import sẽ bắt lỗi MySQL Collision `table_exists` và tự động rẽ nhánh sinh ra Hậu tố Vật lý mới (Vd: `ska_data_teachers_1`). Sau đó biên dịch ngược (Re-wire) tệp Ký danh này vào bảng nối mạng (Relation Config), đảm bảo cấu trúc bảng dù có mang đi qua Server khác vẫn giữ được sự toàn vẹn. Kéo theo Pipeline WP Hooks `ska_import_smart_object`.
@@ -63,6 +63,7 @@ Nằm tại `assets/js/src`:
 - **Short-circuit WP_Query:** Để tránh việc WP tốn CPU truy vấn Database cho trang 404, Router can thiệp vào hook `posts_pre_query` để ép WP_Query trả về mảng rỗng và vô hiệu hóa cơ chế tìm bài viết.
 - **Custom Base Slug & Dynamic Context:** Các bảng được gán một URL Slug tùy ý (không dính tiền tố cứng `/portal/`). Khi người dùng truy cập `/slug/{id}`, Router bóc tách ID động và bơm xuống biến Javascript toàn cục `window.SkaPortalContext` để Frontend (Alpine.js / Logic Engine) chủ động call API gọi dữ liệu Chi tiết.
 - **REST API DELETE Endpoint (2026-05-22):** Đăng ký route `DELETE` `/portal/(?P<table>[a-zA-Z0-9_-]+)/rows/(?P<id>\d+)` trong `class-rest-api.php`. Cho phép người dùng ở Frontend thực hiện xóa dòng an toàn nhờ việc kiểm tra quyền truy cập thông qua hàm `check_portal_permissions()` xác thực nonce và quyền hạn của user trên bảng phẳng, trước khi gọi `Database_Engine::delete_record()` xóa vĩnh viễn dòng dữ liệu vật lý.
+- **Workspace-Level Redirect & Custom 403 (2026-06-15):** Khi người dùng không đủ quyền truy cập App Portal, hệ thống sẽ tự động phân giải URL chuyển hướng theo 2 cấp: cấp Table (Portal) trước, nếu trống sẽ fallback về cấu hình `unauthorized_redirect_url` cấp Workspace lưu trong bảng phẳng hệ thống `wp_ska_data_sys_apps`. Nếu cả 2 đều trống, hệ thống kích hoạt cờ `$ska_access_denied = true` để render template lỗi `403` do người dùng thiết kế trong Theme Builder (điều kiện `is_403`) hoặc fallback về trang 403 mặc định tuyệt đẹp sử dụng Tailwind CSS, Outfit font và hiệu ứng Glassmorphism.
 
 ## 7. PHASE 4: GLOBAL "APP-SITE" SMART OBJECT
 - **Centralized Definition:** Ở Phase 4, Ska Data Pro sẽ thầu luôn việc lưu trữ tài nguyên vĩ mô của Website thông qua một Smart Object mang nhóm hệ thống (Ví dụ: `app-site`). 

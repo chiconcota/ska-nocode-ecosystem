@@ -32,12 +32,13 @@ export function attachAppEvents() {
             const slug = document.getElementById('ska-rename-app-slug').value;
             const name = document.getElementById('ska-rename-app-name').value.trim();
             const icon = document.getElementById('ska-rename-app-icon').value;
+            const redirect = document.getElementById('ska-rename-app-redirect').value.trim();
 
             if(!name) { alert(__( 'Please enter Workspace name.', 'ska-data-pro' )); return; }
             renameBtn.disabled = true;
             renameBtn.innerText = __( 'Saving...', 'ska-data-pro' );
 
-            const res = await apiFetch('ska_data_update_app', { app_id: slug, name, icon });
+            const res = await apiFetch('ska_data_update_app', { app_id: slug, name, icon, unauthorized_redirect_url: redirect });
 
             if (res.success) window.location.reload();
             else { 

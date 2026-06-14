@@ -75,10 +75,11 @@ export function attachModalHandlers() {
         document.getElementById('ska-delete-table-modal').classList.remove('hidden');
     };
 
-    window.skaOpenRenameApp = (slug, name, icon) => {
+    window.skaOpenRenameApp = (slug, name, icon, redirectUrl) => {
         document.getElementById('ska-rename-app-slug').value = slug;
         document.getElementById('ska-rename-app-name').value = name;
         document.getElementById('ska-rename-app-icon').value = icon;
+        document.getElementById('ska-rename-app-redirect').value = redirectUrl || '';
         document.getElementById('ska-rename-app-modal').classList.remove('hidden');
     };
 

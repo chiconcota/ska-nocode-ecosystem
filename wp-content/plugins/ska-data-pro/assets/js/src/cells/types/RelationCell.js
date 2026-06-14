@@ -98,7 +98,8 @@ export default class RelationCell extends BaseCell {
                         resContainer.innerHTML = __( '<div class=\"p-2 text-center text-[10px] text-gray-400 bg-gray-50 italic\">No available results.</div>', 'ska-data-pro' );
                     }
                 } else {
-                    resContainer.innerHTML = `<div class="p-2 text-xs text-red-500">{__( '${res.data?.message || ', 'ska-data-pro' )}</div>`;
+                    const errorMsg = res.data?.message || __( 'An error occurred', 'ska-data-pro' );
+                    resContainer.innerHTML = `<div class="p-2 text-xs text-red-500">${errorMsg}</div>`;
                 }
             };
 

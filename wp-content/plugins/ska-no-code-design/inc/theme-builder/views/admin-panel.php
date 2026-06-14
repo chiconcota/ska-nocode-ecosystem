@@ -332,6 +332,7 @@ document.addEventListener('alpine:init', () => {
             { id: 'single', name: 'Single', icon: 'article' },
             { id: 'archive', name: 'Archive', icon: 'view_agenda' },
             { id: '404', name: '404 Page', icon: 'error' },
+            { id: '403', name: '403 Forbidden', icon: 'lock' },
             { id: 'app_layout', name: 'App Layout', icon: 'web' },
             { id: 'custom', name: 'Custom Page', icon: 'layers' }
         ],
@@ -368,6 +369,7 @@ document.addEventListener('alpine:init', () => {
             { value: 'post_type', label: '<?php echo esc_js( __( 'By Post Type (Post Type)', 'ska-no-code-design' ) ); ?>' },
             { value: 'specific_post', label: '<?php echo esc_js( __( 'Specific post (Post/Page ID)', 'ska-no-code-design' ) ); ?>' },
             { value: 'is_404', label: '<?php echo esc_js( __( 'Error page (404)', 'ska-no-code-design' ) ); ?>' },
+            { value: 'is_403', label: '<?php echo esc_js( __( 'Access Denied page (403)', 'ska-no-code-design' ) ); ?>' },
             { value: 'is_search', label: '<?php echo esc_js( __( 'Search results (Search)', 'ska-no-code-design' ) ); ?>' },
             { value: 'is_portal', label: '<?php echo esc_js( __( 'All App Portals', 'ska-no-code-design' ) ); ?>' },
             { value: 'specific_portal', label: '<?php echo esc_js( __( 'Specific App Portal (According to Slug)', 'ska-no-code-design' ) ); ?>' },
@@ -432,6 +434,7 @@ document.addEventListener('alpine:init', () => {
                 'single': 'bg-emerald-100 text-emerald-700',
                 'archive': 'bg-amber-100 text-amber-700',
                 '404': 'bg-rose-100 text-rose-700',
+                '403': 'bg-red-100 text-red-700',
                 'app_layout': 'bg-indigo-100 text-indigo-700',
                 'custom': 'bg-cyan-100 text-cyan-700'
             };
