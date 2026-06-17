@@ -54,10 +54,10 @@
 
 #### F. Kế thừa Chuyển hướng cấp độ App (App-Level Redirect Fallback)
 *Quản trị bảo mật tập trung ở mức Workspace (Theo dõi chi tiết tại [pm_workspace_storage.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/project-managers/pm_workspace_storage.md)).*
-- [ ] **Workspace Security Fallback:**
-  - [ ] Chuẩn hóa lưu trữ Workspace từ `wp_options` về bảng phẳng MySQL `wp_ska_data_sys_apps`.
-  - [ ] Thiết lập bảng cấu hình redirect chung cho toàn bộ App (Workspace).
-  - [ ] Cơ chế tự động fallback về `wp-login.php` hoặc URL tùy chọn khi người dùng không đủ quyền truy cập App View.
+- [x] **Workspace Security Fallback:**
+  - [x] Chuẩn hóa lưu trữ Workspace từ `wp_options` về bảng phẳng MySQL `wp_ska_data_sys_apps`.
+  - [x] Thiết lập bảng cấu hình redirect chung cho toàn bộ App (Workspace).
+  - [x] Cơ chế tự động fallback về `wp-login.php` hoặc URL tùy chọn khi người dùng không đủ quyền truy cập App View.
 
 #### G. Thư viện mã nguồn tập trung (Ska Scripts Library) & Khối `ska-code`
 *Giải quyết bài toán nhúng và quản lý custom JS/CSS an toàn, hiệu năng cao.*

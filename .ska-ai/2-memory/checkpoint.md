@@ -1,54 +1,33 @@
 # CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ
-*Ngày cập nhật: 2026-06-15*
+*Ngày cập nhật: 2026-06-17*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Git Branch**: `feature/workspace-redirect-fallback`
-- **Công việc**: 
-  1. Chuẩn hóa cấu trúc lưu trữ App Workspace: chuyển đổi hoàn toàn từ lưu trữ option `wp_options` (`ska_data_apps`) sang bảng phẳng hệ thống MySQL `wp_ska_data_sys_apps` để tối ưu hóa hiệu năng và bảo mật cấu trúc bảng.
-  2. Triển khai cơ chế Redirect Fallback 2 cấp (Table Portal -> Workspace Settings) và tùy biến trang lỗi 403 (location/condition `403`) qua Ska Builder với trang 403 mặc định làm fallback tuyệt đẹp (sử dụng Tailwind, Outfit font, Glassmorphism).
-  3. Sửa lỗi `ReferenceError: wp is not defined` và sự cố không đóng được sidebar popup menu khi click ra ngoài.
-  4. Bump version của plugin `Ska Data Pro` lên `1.1.1` và `Ska No-Code Design` lên `1.1.0`.
-- **Trạng thái**: 🟢 Done (Các lỗi phát sinh trong quá trình kiểm thử đã được sửa chữa triệt để, sẵn sàng cho User tự kiểm thử trực tiếp trên trình duyệt).
+- **Git Branch**: `main`
+- **Công việc**:
+  1. Đã giải quyết triệt để lỗi phân quyền SSH (`Permission denied (publickey)`) bằng cách sinh SSH Key mới (`id_ed25519`) và hướng dẫn người dùng kết nối an toàn với GitHub.
+  2. Đã merge nhánh `feature/workspace-redirect-fallback` vào nhánh `main` và đẩy toàn bộ mã nguồn cũng như tài liệu cập nhật của phiên trước lên GitHub thành công.
+  3. Đã chạy script tự động hóa `release.js` đóng gói 3 plugin thành tệp ZIP phân phối duy nhất `ska-nocode-ecosystem-v1.2.0.zip` và tạo tệp ghi chú changelog `release-notes-v1.2.0.md`.
+  4. Gắn Git Tag `v1.2.0` và đẩy lên GitHub thành công.
+- **Trạng thái**: 🟢 Done (Đã đồng bộ hóa 100% lên GitHub và đóng gói phát hành thành công bản `v1.2.0` cho hệ sinh thái Ska).
 
 ## 2. Các quyết định thiết kế đã thống nhất:
-- **Flat Table App Workspace Storage**: Di trú dữ liệu lưu trữ Workspace của ứng dụng sang bảng phẳng MySQL `wp_ska_data_sys_apps` để đồng nhất với triết lý flat-table của Ska và cho phép cấu hình URL chuyển hướng an toàn.
-- **Two-Tier Redirect Resolution**: Khi bị từ chối truy cập, hệ thống ưu tiên URL ở Portal Table. Nếu trống, fallback về URL ở Workspace. Nếu cả hai cùng trống, hiển thị trang 403.
-- **Customizable 403 via Theme Builder**: Cho phép thiết kế trang 403 riêng biệt dưới dạng Theme Template có Location là `403` hoặc điều kiện `is_403`. Nếu không có, hiển thị trang fallback mặc định đẹp mắt.
-- **Assets Enqueue Standard**: Loại bỏ việc nhúng script thủ công trong file view PHP, thay thế bằng cơ chế `wp_enqueue_script` chuẩn của WordPress cùng các dependencies bắt buộc (`wp-i18n`, `wp-util`) để tránh xung đột tải và đảm bảo các đối tượng toàn cục `wp` được khai báo đầy đủ.
+- **Git Push & Release Automation via SSH Key**: Tạo khóa SSH chuẩn Ed25519 mới (`~/.ssh/id_ed25519`) và hướng dẫn tích hợp để giao tiếp với GitHub không dùng mật khẩu.
+- **Release Packaging Structure**: Đóng gói các plugin lõi (`ska-no-code-design`, `ska-data-pro`, `ska-logic-engine`) kèm thư mục tài liệu `docs` và tệp thông tin chung thành một tệp ZIP duy nhất cho người dùng cuối để thuận tiện cài đặt, loại bỏ hoàn toàn các tệp môi trường phát triển (`node_modules`, `webpack`, `package.json`, v.v.).
 
 ## 3. Danh sách file thay đổi & tạo mới trong phiên:
-- **Cập nhật mã nguồn (Ska Data Pro v1.1.1)**:
-  - `[MODIFY]` `ska-data-pro/inc/core/class-app-manager.php` (Đúc bảng apps, viết lại CRUD apps).
-  - `[MODIFY]` `ska-data-pro/inc/core/class-database-engine.php` (Bảo vệ bảng phẳng apps).
-  - `[MODIFY]` `ska-data-pro/inc/admin/class-admin-ajax.php` (Xử lý AJAX URL redirect).
-  - `[MODIFY]` `ska-data-pro/inc/admin/class-admin-menu.php` (Enqueue script `admin-datagrid.bundle.js` chuẩn WordPress).
-  - `[MODIFY]` `ska-data-pro/inc/admin/views/manage.php` (Gỡ bỏ script nhúng thủ công).
-  - `[MODIFY]` `ska-data-pro/inc/admin/views/parts/manage-modals.php` (Bổ sung input URL redirect).
-  - `[MODIFY]` `ska-data-pro/inc/admin/views/parts/manage-sidebar.php` (Gắn class `ska-dropdown-menu` và đổi tên nút).
-  - `[MODIFY]` `ska-data-pro/assets/js/src/index.js` (Thêm trình lắng nghe click đóng dropdown khi click ra ngoài).
-  - `[MODIFY]` `ska-data-pro/assets/js/src/modules/modals.js` (Popup input value loading).
-  - `[MODIFY]` `ska-data-pro/assets/js/src/modules/apps.js` (Gửi AJAX lưu URL redirect).
-  - `[MODIFY]` `ska-data-pro/package.json` (Bump version to 1.1.1).
-  - `[MODIFY]` `ska-data-pro/ska-data-pro.php` (Bump version to 1.1.1).
-- **Cập nhật mã nguồn (Ska No-Code Design v1.1.0)**:
-  - `[MODIFY]` `ska-no-code-design/inc/theme-builder/views/admin-panel.php` (Tab 403 và điều kiện `is_403`).
-  - `[MODIFY]` `ska-no-code-design/inc/theme-builder/class-ska-app-router.php` (Kế thừa redirect cấp Workspace và default 403 fallback).
-  - `[MODIFY]` `ska-no-code-design/inc/theme-builder/class-ska-virtual-wrapper.php` (Override 403 template & condition evaluation).
-  - `[MODIFY]` `ska-no-code-design/ska-no-code-design.php` (Bump version to 1.1.0).
+- **Cập nhật mã nguồn & đóng gói**:
+  - `[NEW]` `/home/chiconcota/.ssh/id_ed25519` (Khóa SSH private key cục bộ).
+  - `[NEW]` `/home/chiconcota/.ssh/id_ed25519.pub` (Khóa SSH public key cục bộ).
+  - `[NEW]` `wp-content/plugins/release-notes-v1.2.0.md` (Tệp changelog tự động trích xuất).
+  - `[NEW]` `wp-content/plugins/ska-nocode-ecosystem-v1.2.0.zip` (Gói phân phối duy nhất v1.2.0).
 - **Cập nhật tài liệu hệ thống**:
-  - `[NEW]` `.ska-ai/1-overview/project-managers/test-workspace-redirect-e2e.md` (Tài liệu hướng dẫn test E2E thủ công).
-  - `[MODIFY]` `.ska-ai/1-overview/system_map.md` (Update logs & module version).
-  - `[MODIFY]` `.ska-ai/2-memory/self-improve.md` (Cập nhật quy tắc MISTAKE-003 tránh lạm dụng browser).
-  - `[MODIFY]` `.ska-ai/2-memory/decision-log.md` (Update technical decision).
-  - `[MODIFY]` `.ska-ai/3-ecosystem/ska-data-pro/architecture.md` (Document flat table workspace & 403 routing).
-  - `[MODIFY]` `.ska-ai/1-overview/project-managers/pm_workspace_storage.md` (Update project task status).
-  - `[MODIFY]` `task.md` (Mark tasks as complete).
+  - `[MODIFY]` `.ska-ai/1-overview/system_map.md` (Cập nhật branch `main`, last_update và log release `v1.2.0`).
+  - `[MODIFY]` `.ska-ai/2-memory/decision-log.md` (Bổ sung quyết định cấu hình SSH & Phát hành v1.2.0).
+  - `[MODIFY]` `.ska-ai/1-overview/project-managers/project_manager_post_mvp_backlog.md` (Đánh dấu hoàn thành task Workspace Security Fallback).
+  - `[MODIFY]` `.ska-ai/2-memory/checkpoint.md` (Bàn giao phiên làm việc hiện tại).
 
 ## 4. Gợi ý công việc cho phiên tiếp theo (QUAN TRỌNG)
-- **Tiến hành kiểm thử thực tế từ trình duyệt**:
-  1. Kích hoạt hai plugin để tự động khởi tạo bảng phẳng hệ thống `wp_ska_data_sys_apps`.
-  2. Tạo/cấu hình thử một Workspace, thay đổi URL redirect trong Workspace settings (popup rename).
-  3. Truy cập một Portal bị chặn quyền để:
-     - Xem trang 403 mặc định (nếu không có URL redirect).
-     - Kiểm tra redirect (nếu có URL redirect).
-     - Tạo template 403 trong Builder, active nó và truy cập portal bị chặn -> xác nhận render giao diện tự thiết kế.
+- **Tiếp tục triển khai Backlog Post-MVP (Milestone 1)**:
+  1. Phát triển **Thư viện mã nguồn tập trung (Ska Scripts Library)** và **Khối `ska-code`** phục vụ nhúng Alpine store, CSS/JS custom an toàn, tránh load trùng lặp.
+  2. Bổ sung giao diện Edge/Node Async Flag (Logic Engine) để bật cờ `async` trực quan trên Canvas.
+  3. Triển khai phân quyền hiển thị (RBAC UI) ở tầng block của Gutenberg Editor.

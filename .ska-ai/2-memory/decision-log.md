@@ -10,6 +10,9 @@
 - **7. Shadow Scratchpad & isolated Editor:** Thực hiện thiết kế Rich Text ngoài Frontend qua môi trường Iframe cô lập của CPT ảo (`ska_scratchpad`), đồng bộ trực tiếp với form state qua JS Bridge và xóa bỏ CPT nháp ngay lập tức khi tắt modal để giữ database sạch sẽ.
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Ska Loop, Ska Text, Ska Button, Ska Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
+## 2026-06-17 - 🟢 Hoàn thành: Thiết lập SSH Key & Đóng gói phát hành bản chính thức v1.2.0
+- **Decision (Git Push & Release Automation via SSH Key):** Tạo khóa SSH chuẩn Ed25519 mới (`~/.ssh/id_ed25519`) để giải quyết triệt để lỗi phân quyền SSH (`Permission denied (publickey)`) khi kết nối GitHub. Thực hiện merge toàn bộ thay đổi của phiên trước từ nhánh tính năng `feature/workspace-redirect-fallback` vào nhánh `main`, đẩy thành công lên nhánh chính GitHub và khởi chạy script `release.js` đóng gói, gắn tag Git `v1.2.0` chuẩn xác.
+
 ## 2026-06-15 - 🟢 Hoàn thành: Vá lỗi tự động đóng Sidebar Popup Menu & Asset Enqueue (Ska Data Pro v1.1.1)
 - **Decision (Standardized Enqueue & Dependencies):** Nhúng script `admin-datagrid.bundle.js` thông qua hook `wp_enqueue_script` chuẩn của WordPress kèm theo các dependency `['wp-i18n', 'wp-util']` trong `Admin_Menu::enqueue_assets()`. Giải quyết triệt để lỗi `ReferenceError: wp is not defined` và sự cố các hàm callback modal (như `skaOpenDeleteApp`) không hoạt động do lỗi crash luồng JS trên các trang quản lý Data Sheet.
 - **Decision (Click-Outside Dropdown Dimmer):** Triển khai event listener toàn cục xử lý đóng tự động tất cả các dropdown menu trong sidebar khi click ra ngoài. Sửa nhãn dropdown từ "Rename Space" thành "Workspace Settings" để đồng bộ với E2E testing guides.
