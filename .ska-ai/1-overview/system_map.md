@@ -30,7 +30,7 @@ wp-content/
 | :--- | :--- | :--- | :--- |
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Loại bỏ CSS/JS rác của WP, tạo khung canvas sạch. | 🟢 Stable (v1.0.0) |
 | **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.1.0) |
-| **Ska Data Pro** | `plugins/ska-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.1.0) |
+| **Ska Data Pro** | `plugins/ska-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.1.1) |
 | **Ska Logic Engine** | `plugins/ska-logic-engine/` | DAG Workflows, Event Pipeline, SkaFX Compiler. | 🟢 Stable (v1.2.6) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API endpoints. | 🟢 Stable (v1.0.0) |
 
@@ -68,6 +68,7 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-06-15 - 🟢 Done:** Vá lỗi tự động đóng Sidebar Popup Menu (Table & Workspace dropdowns) khi click ra ngoài và đổi nhãn từ "Rename Space" thành "Workspace Settings" trong [manage-sidebar.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/inc/admin/views/parts/manage-sidebar.php). Khắc phục triệt để lỗi `ReferenceError: wp is not defined` bằng cách chuyển sang enqueue script `admin-datagrid.bundle.js` qua hệ thống `wp_enqueue_script` chuẩn của WordPress với các dependency `['wp-i18n', 'wp-util']` trong [class-admin-menu.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/inc/admin/class-admin-menu.php). Nâng cấp phiên bản plugin `Ska Data Pro` lên `v1.1.1`.
 - **2026-06-15 - 🟢 Done:** Chuẩn hóa lưu trữ Workspace từ option `wp_options` sang bảng phẳng hệ thống `wp_ska_data_sys_apps` trực thuộc Ska Data Pro. Thiết lập cơ chế Redirect Fallback 2 cấp (Table -> Workspace) và tích hợp tùy biến trang lỗi 403 (location/condition 403) qua Ska Builder với fallback 403 mặc định tuyệt đẹp. Nâng cấp phiên bản cả hai plugin Ska Data Pro và Ska No-Code Design lên `v1.1.0`.
 - **2026-06-07 - 🟢 Done:** Khởi tạo cơ chế Continuous Learning Loop của Agent, thiết lập tệp tự sửa đổi hành vi `self-improve.md` và cập nhật các workflow `start_session` và `end_session` có bước đánh giá tương tác (Interactive Session Review).
 - **2026-06-07 - 🟢 Done:** Hoàn thành kiểm thử thủ công E2E cho tính năng gợi ý tự động (SkaFX Autocomplete & Data Picker), chuyển toàn bộ 6 test cases sang dạng check list để dễ kiểm soát. Thống nhất phương án kiến trúc phát triển Community Nodes (Pluggable Nodes) cho các logic tùy biến phức tạp ở Milestone 2+ nhằm bảo vệ tuyệt đối tính an toàn của lõi và triết lý No-code.

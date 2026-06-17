@@ -15,10 +15,10 @@
 ## 🧪 Test Cases
 
 ### Test Case 1: Schema Integrity & Workspace Settings Saving
-**Status:** `[ ] Pending`
+**Status:** `[x] Done`
 
 **Các bước thực hiện:**
-1. Truy cập trang quản trị WordPress, click vào menu **Ska Data** ở thanh sidebar.
+1. Truy cập trang quản trị WordPress, click vào menu **Ska Data** ở thanh sidebar.x
 2. Quan sát danh sách table xem bảng phẳng hệ thống `wp_ska_data_sys_apps` có xuất hiện trong danh mục ứng dụng "Site Management" (`ska_system`) hay không.
 3. Click vào bảng `sys_apps`, thử click vào icon chỉnh sửa cấu trúc bảng (hoặc nút xóa bảng) để xác minh xem có bị chặn (Read-Only) bởi cơ chế bảo vệ bảng hệ thống hay không.
 4. Mở sidebar quản lý Workspace, click chuột phải (hoặc click icon bánh răng/chỉnh sửa) tại **Default Workspace** hoặc một Workspace custom để mở Modal **Workspace Settings**.
@@ -34,7 +34,7 @@
 ---
 
 ### Test Case 2: 403 Access Denied Default Fallback
-**Status:** `[ ] Pending`
+**Status:** `[x] Done`
 
 **Các bước thực hiện:**
 1. Vào **Ska Data** -> **Smart Objects**, chọn một table (ví dụ: `app_courses`).
@@ -52,7 +52,7 @@
 ---
 
 ### Test Case 3: Custom 403 Template Integration
-**Status:** `[ ] Pending`
+**Status:** `[x] Done`
 
 **Các bước thực hiện:**
 1. Trở lại trang quản trị WP, truy cập menu **Ska Builder** (hoặc Theme Builder).
@@ -68,7 +68,7 @@
 ---
 
 ### Test Case 4: Workspace-Level Redirect Fallback
-**Status:** `[ ] Pending`
+**Status:** `[x] Done`
 
 **Các bước thực hiện:**
 1. Vào **Ska Data** -> Mở Modal **Workspace Settings** của Workspace chứa table Portal trên.

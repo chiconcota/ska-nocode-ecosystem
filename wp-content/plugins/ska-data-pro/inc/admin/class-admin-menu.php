@@ -27,6 +27,17 @@ class Admin_Menu {
 		// Chỉ nhúng khi đang ở trang Quản lý Data
 		if ( strpos( $hook, 'ska-data-pro' ) !== false ) {
 			wp_enqueue_media();
+
+			$bundle_path = SKA_DATA_PRO_PATH . 'assets/js/admin-datagrid.bundle.js';
+			$bundle_ver  = file_exists( $bundle_path ) ? filemtime( $bundle_path ) : SKA_DATA_PRO_VERSION;
+
+			wp_enqueue_script(
+				'ska-data-admin-datagrid',
+				SKA_DATA_PRO_URL . 'assets/js/admin-datagrid.bundle.js',
+				array( 'wp-i18n', 'wp-util' ),
+				$bundle_ver,
+				true
+			);
 		}
 	}
 

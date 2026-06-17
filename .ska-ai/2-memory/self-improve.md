@@ -9,10 +9,9 @@
 ## 🚨 DANH SÁCH LỖI HÀNH VI ĐANG ĐƯỢC GIÁM SÁT (ACTIVE)
 
 ### MISTAKE-001: Chạy CLI không khả dụng hoặc tương tác trực tiếp (Ví dụ: `mysql`)
-* **Mô tả**: Tự ý chạy lệnh `mysql` hoặc các CLI tương tác trực tiếp qua bash. Khi gặp lỗi `command not found` hoặc lỗi kết nối, AI âm thầm bỏ qua hoặc thử lại liên tục mà không báo cáo cho User.
+* **Mô tả**: Chạy lệnh `mysql` hoặc các CLI tương tác trực tiếp qua bash. Khi gặp lỗi `command not found` hoặc lỗi kết nối, AI âm thầm bỏ qua hoặc thử lại liên tục mà không báo cáo cho User.
 * **Quy tắc tự khắc phục**:
-  1. TUYỆT ĐỐI không gọi trực tiếp `mysql`. Nếu cần truy vấn DB, hãy dùng WP-CLI (`wp db query ...`) hoặc viết script PHP chạy ngầm qua API WordPress (`$wpdb`).
-  2. Nếu một lệnh CLI quan trọng bị lỗi, **bắt buộc phải dừng lại và báo cáo ngay lập tức cho User** để được hỗ trợ cài đặt/cấp quyền.
+  1. Nếu một lệnh CLI quan trọng bị lỗi, **bắt buộc phải dừng lại và báo cáo ngay lập tức cho User** để được hỗ trợ cài đặt/cấp quyền.
 
 ### MISTAKE-002: Vi phạm chuẩn đa ngôn ngữ (i18n) và viết Text cứng trong Code
 * **Mô tả**: Viết chuỗi hiển thị (labels, placeholders, messages) bằng tiếng Việt hoặc tiếng Anh dạng "text cứng" (không bọc qua hàm dịch của WordPress) trong mã nguồn PHP/JS.
@@ -28,7 +27,19 @@
   1. Thay vì tự chạy browser subagent để thực hiện kiểm thử E2E phức tạp trong admin, ưu tiên xây dựng trước một tài liệu quy trình kiểm thử E2E chi tiết (`test-*-e2e.md`) để bàn giao cho User tự kiểm thử tay nhanh chóng và hiệu quả.
   2. Chỉ sử dụng browser subagent cho các trường hợp kiểm thử tự động đơn giản, bắt buộc (như xác nhận hiển thị UI cơ bản hoặc screenshot ban đầu) và tối ưu hóa số bước thao tác.
 
+### MISTAKE-004: Nhúng script thủ công bỏ qua hệ thống Dependency của WordPress
+* **Mô tả**: In thẻ `<script>` thủ công để nhúng JS bundle có chứa các import bên ngoài (như `@wordpress/i18n`) thay vì dùng `wp_enqueue_script`, dẫn đến lỗi nghiêm trọng `ReferenceError: wp is not defined` do WordPress chưa kịp nạp thư viện lõi.
+* **Quy tắc tự khắc phục**:
+  1. Mọi asset script/style trong hệ sinh thái WordPress bắt buộc phải được enqueue chính quy thông qua `wp_enqueue_script` / `wp_enqueue_style` với đầy đủ dependencies thay vì in thẻ script/link thủ công.
+
+### MISTAKE-005: Tự ý kích hoạt hoặc lạm dụng Chrome DevTools MCP / Browser Subagent
+* **Mô tả**: Tự ý chạy các công cụ browser subagent hoặc chrome-devtools-mcp để tương tác hoặc kiểm thử giao diện mà không có yêu cầu trực tiếp từ người dùng, gây tốn tài nguyên và dễ gặp lỗi xác thực/CDP session.
+* **Quy tắc tự khắc phục**:
+  1. **Tuyệt đối không tự động kích hoạt** browser subagent hoặc Chrome DevTools MCP để kiểm thử trừ khi người dùng yêu cầu rõ ràng.
+  2. Khi người dùng yêu cầu kiểm thử giao diện, hãy ưu tiên hướng dẫn họ tự kiểm thử trực tiếp trên trình duyệt của họ, hoặc chỉ sử dụng browser subagent như là giải pháp cuối cùng sau khi đã thống nhất các điều kiện cần thiết (như URL đăng nhập).
+
 ---
 
 ## 🟢 LỊCH SỬ LỖI ĐÃ KHẮC PHỤC (RESOLVED)
 *(Trống)*
+
