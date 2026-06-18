@@ -1,0 +1,3 @@
+## 2024-06-13 - Add keyboard accessibility to role="button" elements
+**Learning:** Found elements in components (like `TailwindPanel.js` and `StylePopoverDrawer.js`) with `role="button"` but lacking keyboard accessibility (`tabIndex={0}` and `onKeyDown` handlers), which violates accessibility standards for interactive elements.
+**Action:** When using `role="button"` on non-interactive elements like `span` or `div`, always add `tabIndex={0}` and an `onKeyDown` handler to allow keyboard users to trigger the action using 'Enter' or 'Space' keys. Also, ensure decorative Material Symbols have `aria-hidden="true"` and `focusable="false"`.
