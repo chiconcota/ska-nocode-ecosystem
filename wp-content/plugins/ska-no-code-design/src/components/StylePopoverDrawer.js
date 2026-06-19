@@ -427,6 +427,15 @@ export const StylePopoverDrawer = ({ className, setClassName }) => {
         <>
             <span
                 role="button"
+                tabIndex={0}
+                aria-label={__('Visual Tailwind Browser', 'ska-builder-core')}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleVisible();
+                    }
+                }}
                 onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -447,7 +456,7 @@ export const StylePopoverDrawer = ({ className, setClassName }) => {
                 }}
                 title={__('Visual Tailwind Browser', 'ska-builder-core')}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                     <path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 9.95 10c1.38 0 2.5-1.12 2.5-2.5 0-.61-.23-1.16-.62-1.57-.38-.41-.61-.95-.61-1.55 0-1.22.99-2.21 2.21-2.21h1.53c3.05 0 5.54-2.49 5.54-5.54C22 6.16 17.51 2 12 2zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 8 6.5 8 8 8.67 8 9.5 7.33 11 6.5 11zm3-4c-.83 0-1.5-.67-1.5-1.5S8.67 4 9.5 4 11 4.67 11 5.5 10.33 7 9.5 7zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 4 14.5 4 16 4.67 16 5.5 15.33 7 14.5 7zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 8 17.5 8 19 8.67 19 9.5 18.33 11 17.5 11z"/>
                 </svg>
             </span>
