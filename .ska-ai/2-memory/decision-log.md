@@ -10,6 +10,11 @@
 - **7. Shadow Scratchpad & isolated Editor:** Thực hiện thiết kế Rich Text ngoài Frontend qua môi trường Iframe cô lập của CPT ảo (`ska_scratchpad`), đồng bộ trực tiếp với form state qua JS Bridge và xóa bỏ CPT nháp ngay lập tức khi tắt modal để giữ database sạch sẽ.
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Ska Loop, Ska Text, Ska Button, Ska Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
+## 2026-06-23 - 🟢 Hoàn thành: Vá lỗi giao diện JIT Tailwind, Ẩn submenu sidebar & Sửa lỗi query danh sách scripts (Ska Data Pro v1.2.3)
+- **Decision (Scripts Query Restored):** Phát hiện và vá lỗi logic thiếu truy vấn `$scripts = $wpdb->get_results(...)` ở phần đầu tệp `scripts.php`, khiến danh sách scripts luôn bị trống rỗng ngoài trang quản trị dù dữ liệu đã lưu trữ thành công dưới CSDL phẳng.
+- **Decision (Tailwind PHP JIT Compilation & Native Fallback):** Tích hợp JIT Compiler của Ska No-Code Design qua filter hook 'ska_compile_tailwind' trên trang quản lý Scripts Library. Toàn bộ utility classes Tailwind được quét tĩnh ở server-side và compile thành CSS nhúng (offline-first), có fallback tự động về CDN nếu plugin Design bị tắt.
+- **Decision (Hidden Admin Submenu):** Loại bỏ submenu 'Scripts Library' khỏi sidebar WordPress Admin để tránh làm rác danh mục theo yêu cầu. Giao diện hiện được truy cập gọn gàng và tập trung thông qua card Extensions ở Dashboard chính và các liên kết định tuyến nội bộ, route URL '?page=ska-data-pro-scripts' vẫn hoạt động bình thường nhờ đăng ký với parent slug là null. Nâng cấp phiên bản lên v1.2.3.
+
 ## 2026-06-17 - 🟢 Hoàn thành: Thiết lập SSH Key & Đóng gói phát hành bản chính thức v1.2.0
 - **Decision (Git Push & Release Automation via SSH Key):** Tạo khóa SSH chuẩn Ed25519 mới (`~/.ssh/id_ed25519`) để giải quyết triệt để lỗi phân quyền SSH (`Permission denied (publickey)`) khi kết nối GitHub. Thực hiện merge toàn bộ thay đổi của phiên trước từ nhánh tính năng `feature/workspace-redirect-fallback` vào nhánh `main`, đẩy thành công lên nhánh chính GitHub và khởi chạy script `release.js` đóng gói, gắn tag Git `v1.2.0` chuẩn xác.
 

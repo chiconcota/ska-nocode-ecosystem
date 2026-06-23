@@ -57,6 +57,11 @@ class Admin_Ajax {
 		// Hook xử lý UI & Data Relation
 		add_action( 'wp_ajax_ska_data_search_relation', array( $this, 'data_search_relation' ) );
 		add_action( 'wp_ajax_ska_data_get_table_columns', array( $this, 'data_get_table_columns' ) );
+
+		// Hook xử lý Scripts Library CRUD
+		add_action( 'wp_ajax_ska_data_save_script', array( $this, 'data_save_script' ) );
+		add_action( 'wp_ajax_ska_data_delete_script', array( $this, 'data_delete_script' ) );
+		add_action( 'wp_ajax_ska_data_toggle_script_status', array( $this, 'data_toggle_script_status' ) );
 	}
 
 	/**
@@ -955,5 +960,172 @@ class Admin_Ajax {
 		}
 
 		wp_send_json_success( array( 'columns' => $results ) );
+	}
+
+	/**
+	 * AJAX: Lưu hoặc cập nhật Script trong Thư viện
+	 */
+	public function data_save_script() {
+		$this->verify_crud_request();
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'ska_data_sys_scripts';
+
+		$id             = isset( $_POST['id'] ) ? absint( wp_unslash( $_POST['id'] ) ) : 0;
+		$script_id      = isset( $_POST['script_id'] ) ? sanitize_key( wp_unslash( $_POST['script_id'] ) ) : '';
+		$name           = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
+		$type           = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
+		$content        = isset( $_POST['content'] ) ? wp_unslash( $_POST['content'] ) : ''; // Không dùng sanitize_text_field cho mã code
+		$location       = isset( $_POST['location'] ) ? sanitize_text_field( wp_unslash( $_POST['location'] ) ) : 'footer';
+		$load_condition = isset( $_POST['load_condition'] ) ? sanitize_text_field( wp_unslash( $_POST['load_condition'] ) ) : 'global';
+		$conditions_raw = isset( $_POST['conditions'] ) ? wp_unslash( $_POST['conditions'] ) : '';
+		$status         = isset( $_POST['status'] ) ? absint( wp_unslash( $_POST['status'] ) ) : 1;
+
+		if ( empty( $script_id ) || empty( $name ) || empty( $type ) ) {
+			wp_send_json_error( array( 'message' => __( 'Missing required script configuration fields.', 'ska-data-pro' ) ) );
+		}
+
+		// Kiểm tra Type hợp lệ
+		$valid_types = array( 'js_file', 'css_file', 'js_inline', 'css_inline' );
+		if ( ! in_array( $type, $valid_types, true ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid script type.', 'ska-data-pro' ) ) );
+		}
+
+		// Kiểm tra Location hợp lệ
+		$valid_locations = array( 'header', 'footer' );
+		if ( ! in_array( $location, $valid_locations, true ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid script position.', 'ska-data-pro' ) ) );
+		}
+
+		// Kiểm tra Load Condition hợp lệ
+		$valid_conditions = array( 'global', 'conditional' );
+		if ( ! in_array( $load_condition, $valid_conditions, true ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid loading condition.', 'ska-data-pro' ) ) );
+		}
+
+		// Xử lý conditions JSON
+		$conditions = null;
+		if ( 'conditional' === $load_condition && ! empty( $conditions_raw ) ) {
+			if ( is_array( $conditions_raw ) ) {
+				$conditions = wp_json_encode( $conditions_raw );
+			} else {
+				$decoded = json_decode( $conditions_raw, true );
+				if ( is_array( $decoded ) ) {
+					$conditions = $conditions_raw;
+				} else {
+					$conditions = wp_json_encode( array() );
+				}
+			}
+		}
+
+		// Kiểm tra trùng lặp script_id
+		if ( $id > 0 ) {
+			$duplicate = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) FROM `{$table_name}` WHERE `script_id` = %s AND `id` != %d",
+					$script_id,
+					$id
+				)
+			);
+		} else {
+			$duplicate = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) FROM `{$table_name}` WHERE `script_id` = %s",
+					$script_id
+				)
+			);
+		}
+
+		if ( $duplicate > 0 ) {
+			wp_send_json_error( array( 'message' => __( 'Script ID already exists. Please choose another ID.', 'ska-data-pro' ) ) );
+		}
+
+		$data = array(
+			'script_id'      => $script_id,
+			'name'           => $name,
+			'type'           => $type,
+			'content'        => $content,
+			'location'       => $location,
+			'load_condition' => $load_condition,
+			'conditions'     => $conditions,
+			'status'         => $status,
+		);
+
+		if ( $id > 0 ) {
+			$result = $wpdb->update(
+				$table_name,
+				$data,
+				array( 'id' => $id )
+			);
+			if ( false === $result ) {
+				wp_send_json_error( array( 'message' => __( 'Failed to update script.', 'ska-data-pro' ) ) );
+			}
+			wp_send_json_success( array( 'message' => __( 'Script updated successfully.', 'ska-data-pro' ) ) );
+		} else {
+			$result = $wpdb->insert(
+				$table_name,
+				$data
+			);
+			if ( ! $result ) {
+				wp_send_json_error( array( 'message' => __( 'Failed to save new script.', 'ska-data-pro' ) ) );
+			}
+			wp_send_json_success( array( 'message' => __( 'New script added successfully.', 'ska-data-pro' ) ) );
+		}
+	}
+
+	/**
+	 * AJAX: Xóa Script khỏi Thư viện
+	 */
+	public function data_delete_script() {
+		$this->verify_crud_request();
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'ska_data_sys_scripts';
+
+		$id = isset( $_POST['id'] ) ? absint( wp_unslash( $_POST['id'] ) ) : 0;
+		if ( empty( $id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Missing script ID parameter.', 'ska-data-pro' ) ) );
+		}
+
+		$result = $wpdb->delete(
+			$table_name,
+			array( 'id' => $id ),
+			array( '%d' )
+		);
+
+		if ( false === $result ) {
+			wp_send_json_error( array( 'message' => __( 'Failed to delete script.', 'ska-data-pro' ) ) );
+		}
+
+		wp_send_json_success( array( 'message' => __( 'Script deleted successfully.', 'ska-data-pro' ) ) );
+	}
+
+	/**
+	 * AJAX: Bật/Tắt trạng thái Script nhanh
+	 */
+	public function data_toggle_script_status() {
+		$this->verify_crud_request();
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'ska_data_sys_scripts';
+
+		$id     = isset( $_POST['id'] ) ? absint( wp_unslash( $_POST['id'] ) ) : 0;
+		$status = isset( $_POST['status'] ) ? absint( wp_unslash( $_POST['status'] ) ) : 0;
+
+		if ( empty( $id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Missing script ID parameter.', 'ska-data-pro' ) ) );
+		}
+
+		$result = $wpdb->update(
+			$table_name,
+			array( 'status' => $status ),
+			array( 'id' => $id )
+		);
+
+		if ( false === $result ) {
+			wp_send_json_error( array( 'message' => __( 'Failed to update status.', 'ska-data-pro' ) ) );
+		}
+
+		wp_send_json_success( array( 'message' => __( 'Status updated successfully.', 'ska-data-pro' ) ) );
 	}
 }

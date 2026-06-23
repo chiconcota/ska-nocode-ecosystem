@@ -68,3 +68,9 @@ Nằm tại `assets/js/src`:
 ## 7. PHASE 4: GLOBAL "APP-SITE" SMART OBJECT
 - **Centralized Definition:** Ở Phase 4, Ska Data Pro sẽ thầu luôn việc lưu trữ tài nguyên vĩ mô của Website thông qua một Smart Object mang nhóm hệ thống (Ví dụ: `app-site`). 
 - **Replacement for PostMeta:** Bất kỳ "Ska Symbols" (Custom Reusable Blocks) hoặc Theme Settings (Global Colors/Fonts Defaults) nào cũng sẽ được lưu trực tiếp vào các Data Grid phẳng của `app-site` thay vì dùng Post/PostMeta nhúng CPT truyền thống. Điều này xoay chuyển toàn bộ Ecosystem về chuẩn "Zero-PostMeta".
+
+## 8. MILESTONE 1 (POST-MVP): SCRIPTS LIBRARY & LOADER ENGINE
+- **Bảng Hệ Thống Scripts phẳng:** Khởi tạo bảng phẳng MySQL `wp_ska_data_sys_scripts` lưu trữ danh sách scripts (inline và external JS/CSS) trung tâm. Bảng này được bảo vệ cấu trúc chặn sửa/xóa qua bộ lọc `ska_data_protected_tables`.
+- **Loader Engine Frontend:** Lớp `Scripts_Loader` tự động truy quét các scripts đang được active, kiểm tra điều kiện tải (Conditional) theo Pages/Workspaces và tiêm (inject) mã tương ứng ngoài Frontend tại đúng vị trí đăng ký (`wp_head` hoặc `wp_footer`).
+- **JIT Tailwind compiler:** Để hiển thị đẹp và offline-friendly trong trang admin (URL `?page=ska-data-pro-scripts`), trang sử dụng filter `ska_compile_tailwind` để biên dịch động toàn bộ utility class Tailwind tĩnh trên máy chủ (PHP JIT Compiler) và tự động fallback về CDN nếu plugin No-Code Design bị tắt.
+

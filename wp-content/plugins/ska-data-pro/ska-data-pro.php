@@ -3,7 +3,7 @@
  * Plugin Name: Ska Data Pro
  * Plugin URI: https://ska.net
  * Description: High-performance database system (Flat Tables) and schema automation via Template Gallery.
- * Version: 1.1.1
+ * Version: 1.2.3
  * Author: Ly Tat Thanh + antigravity AI
  * Author URI: https://lytatthanh.com
  * Text Domain: ska-data-pro
@@ -15,7 +15,7 @@ namespace Ska\Data;
 defined('ABSPATH') || exit;
 
 // Định nghĩa Path & URL
-define('SKA_DATA_PRO_VERSION', '1.1.1');
+define('SKA_DATA_PRO_VERSION', '1.2.3');
 define('SKA_DATA_PRO_PATH', plugin_dir_path(__FILE__));
 define('SKA_DATA_PRO_URL', plugin_dir_url(__FILE__));
 
@@ -32,6 +32,7 @@ require_once SKA_DATA_PRO_PATH . 'inc/core/class-template-registry.php';
 require_once SKA_DATA_PRO_PATH . 'inc/core/class-data-fetcher.php';
 require_once SKA_DATA_PRO_PATH . 'inc/core/class-database-engine.php';
 require_once SKA_DATA_PRO_PATH . 'inc/core/class-query-builder.php';
+require_once SKA_DATA_PRO_PATH . 'inc/core/class-scripts-loader.php';
 require_once SKA_DATA_PRO_PATH . 'inc/api/class-rest-api.php';
 // Khởi tạo hệ thống
 function init()
@@ -41,6 +42,10 @@ function init()
     Core\Query_Builder::get_instance(); // Đánh thức cỗ máy xử lý Truy Xuất Dữ Liệu SQL
     Core\App_Manager::maybe_run_migration(); // Đồng bộ App Blueprint Migration
     Api\Rest_Api::get_instance(); // Đăng ký REST API cho App Portal
+
+    // Khởi tạo Scripts Loader & đúc bảng phẳng MySQL
+    Core\Scripts_Loader::get_instance();
+    Core\Scripts_Loader::maybe_create_table();
 
     // Require file chứa Provider lúc hệ thống Hook Plugins_loaded (tránh bị return early)
     require_once SKA_DATA_PRO_PATH . 'inc/core/class-ska-provider.php';

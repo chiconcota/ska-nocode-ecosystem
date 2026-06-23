@@ -62,6 +62,22 @@ class Admin_Menu {
 			'ska-data-pro-manage',
 			[ $this, 'render_manage_page' ]
 		);
+
+		add_submenu_page(
+			null, // Ẩn khỏi sidebar menu để tránh làm rác danh mục
+			__( 'Scripts Library', 'ska-data-pro' ),
+			__( 'Scripts Library', 'ska-data-pro' ),
+			'manage_options',
+			'ska-data-pro-scripts',
+			[ $this, 'render_scripts_page' ]
+		);
+	}
+
+	/**
+	 * Render trang quản lý Scripts Library.
+	 */
+	public function render_scripts_page() {
+		require_once SKA_DATA_PRO_PATH . 'inc/admin/views/scripts.php';
 	}
 
     public function render_dashboard_card() {
@@ -101,6 +117,15 @@ class Admin_Menu {
 			</div>
 			<h3 class="font-bold text-base m-0 p-0 border-0 mb-2 group-hover:text-indigo-600 transition-colors relative z-10"><?php echo esc_html__( 'Site Blueprint', 'ska-data-pro' ); ?></h3>
 			<p class="text-xs text-slate-500 m-0 leading-relaxed relative z-10"><?php echo esc_html__( 'Manage Theme Templates, Organisms & Tokens for Web App.', 'ska-data-pro' ); ?></p>
+		</a>
+
+		<a href="?page=ska-data-pro-scripts" class="block bg-white/80 backdrop-blur rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:border-indigo-300 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group no-underline text-slate-800 relative overflow-hidden">
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500 pointer-events-none"></div>
+			<div class="w-12 h-12 bg-gradient-to-br from-indigo-50 to-purple-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4 border border-indigo-100 shadow-sm relative z-10 group-hover:scale-110 transition-transform">
+				<span class="material-symbols-outlined text-[24px]">code_blocks</span>
+			</div>
+			<h3 class="font-bold text-base m-0 p-0 border-0 mb-2 group-hover:text-indigo-600 transition-colors relative z-10"><?php echo esc_html__( 'Scripts Library', 'ska-data-pro' ); ?></h3>
+			<p class="text-xs text-slate-500 m-0 leading-relaxed relative z-10"><?php echo esc_html__( 'Manage central custom JS/CSS scripts and CDN files.', 'ska-data-pro' ); ?></p>
 		</a>
 		<?php
 	}

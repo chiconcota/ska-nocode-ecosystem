@@ -61,6 +61,10 @@
 
 #### G. Thư viện mã nguồn tập trung (Ska Scripts Library) & Khối `ska-code`
 *Giải quyết bài toán nhúng và quản lý custom JS/CSS an toàn, hiệu năng cao.*
+*Chi tiết tiến độ và kế hoạch hành động riêng tại:*
+- [pm_ska_scripts_library.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/project-managers/pm_ska_scripts_library.md)
+- [pm_ska_code_block.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/project-managers/pm_ska_code_block.md)
+
 - [ ] **Ska Scripts Library:**
   - [ ] Giao diện quản lý các đoạn mã (như Alpine store, CDN Chart, Google Analytics).
   - [ ] Cấu hình nạp code: Header, Footer, Inline, nạp Global hay nạp theo điều kiện trang.
