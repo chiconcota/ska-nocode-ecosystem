@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "ska-builder/code",
+    "version": "1.0.0",
+    "title": "Ska Code",
+    "category": "ska-atomic",
+    "icon": "code",
+    "description": "A custom code block to write inline CSS/JS/HTML or connect to the Scripts Library.",
+    "attributes": {
+        "codeType": {
+            "type": "string",
+            "default": "inline"
+        },
+        "libraryScriptId": {
+            "type": "string",
+            "default": ""
+        },
+        "inlineCode": {
+            "type": "string",
+            "default": ""
+        },
+        "location": {
+            "type": "string",
+            "default": "inline"
+        }
+    },
+    "supports": {
+        "html": false,
+        "customClassName": false
+    },
+    "textdomain": "ska-no-code-design",
+    "editorScript": "file:./index.js",
+    "render": "file:./render.php"
+}

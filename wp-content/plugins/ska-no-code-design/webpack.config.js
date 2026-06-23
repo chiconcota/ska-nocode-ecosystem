@@ -19,6 +19,7 @@ module.exports = {
         'ska-form-rich-text/index': path.resolve(process.cwd(), 'src/ska-form-rich-text', 'index.js'),
         'ska-organism-ref/index': path.resolve(process.cwd(), 'src/ska-organism-ref', 'index.js'),
         'ska-loop/index': path.resolve(process.cwd(), 'src/ska-loop', 'index.js'),
+        'ska-code/index': path.resolve(process.cwd(), 'src/ska-code', 'index.js'),
         'extensions': path.resolve(process.cwd(), 'src/extensions/html-attributes.js'),
     },
     output: {

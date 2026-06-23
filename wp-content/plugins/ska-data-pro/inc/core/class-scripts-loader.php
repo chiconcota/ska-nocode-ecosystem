@@ -49,6 +49,9 @@ class Scripts_Loader {
 			add_action( 'wp_head', [ $this, 'load_header_scripts' ], 100 );
 			add_action( 'wp_footer', [ $this, 'load_footer_scripts' ], 100 );
 		}
+
+		// Hook cho các plugin khác/block Gutenberg gọi nạp script decoupled
+		add_action( 'ska_enqueue_custom_script', [ __CLASS__, 'enqueue_custom_script' ] );
 	}
 
 	/**

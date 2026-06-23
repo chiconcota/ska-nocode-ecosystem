@@ -124,3 +124,12 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
   - **CSS Modal Scoped & Alpine Compatibility:** Thư viện CSS nội bộ sử dụng scope để tránh tràn style và loại bỏ thuộc tính `display: flex !important` khỏi lớp phủ `.ska-designer-modal-overlay` và `.ska-designer-modal-loader` nhằm đảm bảo khả năng tương thích 100% với thuộc tính hiển thị `x-show` của AlpineJS (tránh việc modal không thể ẩn đi khi `isOpen` chuyển về `false`).
   - **Beforeunload Prompt Suppression (Fix Unsaved Warning Dialog):** Tích hợp lệnh `wp.data.dispatch('core').clearEntityRecordEdits('postType', type, id)` vào cuối tiến trình đóng thiết kế (`closeDesigner`). Sau khi nội dung được lưu trữ an toàn vào Alpine field, Redux store của Gutenberg sẽ được đánh dấu sạch (clean) để giải phóng Iframe ngay lập tức mà không kích hoạt thông báo cảnh báo thay đổi chưa được lưu của trình duyệt.
 
+#### 13. Ska Code (`ska-builder/code`)
+- **Attributes:** `codeType` ('inline' / 'library'), `libraryScriptId`, `inlineCode`, `location` ('inline' / 'header' / 'footer').
+- **Render (v1.2.0 - 2026-06-24):** 
+  - Chỉ đăng ký block khi plugin **Ska Data Pro** đang hoạt động (quét bằng `Dependency_Manager::is_data_pro_active()`).
+  - Hỗ trợ viết mã HTML/CSS/JS inline trực tiếp tại chỗ hoặc đẩy lên hàng đợi `Ska_Code_Block_Queue` để in không trùng lặp (dùng băm MD5 làm key) ở Head/Footer.
+  - Liên kết decoupled với **Ska Scripts Library** bằng cách gọi action hook `ska_enqueue_custom_script` thay vì gọi trực tiếp class.
+  - Tích hợp giao diện dark editor monospace cho code inline và modal Quick Save trực tiếp vào thư viện trong Editor.
+
+

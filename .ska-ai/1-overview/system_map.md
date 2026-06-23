@@ -29,8 +29,8 @@ wp-content/
 | Module Name | Path | Core Function | Status |
 | :--- | :--- | :--- | :--- |
 | **Ska Canvas (Theme)** | `themes/ska-canvas/` | Loại bỏ CSS/JS rác của WP, tạo khung canvas sạch. | 🟢 Stable (v1.0.0) |
-| **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.1.0) |
-| **Ska Data Pro** | `plugins/ska-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.2.3) |
+| **Ska No-Code Design** | `plugins/ska-no-code-design/` | Custom Blocks, Tailwind JIT, Skapine, Molecules. | 🟢 Stable (v1.2.0) |
+| **Ska Data Pro** | `plugins/ska-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.3.0) |
 | **Ska Logic Engine** | `plugins/ska-logic-engine/` | DAG Workflows, Event Pipeline, SkaFX Compiler. | 🟢 Stable (v1.2.6) |
 | **Ska Bridge** | `plugins/ska-bridge/` | html2tailwind, API endpoints. | 🟢 Stable (v1.0.0) |
 
@@ -68,6 +68,7 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-06-24 - 🟢 Done:** Triển khai block Gutenberg code (`ska-builder/code`) hỗ trợ viết JS/CSS/HTML inline hoặc liên kết tới thư viện Scripts trung tâm. Cơ chế nạp linh hoạt (Inline, Header, Footer) và khử trùng lặp ở frontend (hash MD5 cho inline code và action hook decoupled cho library scripts). Bổ sung các REST API endpoint (`GET`/`POST`) và decoupled hook cho Scripts Library. Nâng cấp phiên bản `Ska No-Code Design` lên `v1.2.0` và `Ska Data Pro` lên `v1.3.0`.
 - **2026-06-23 - 🟢 Done:** Vá lỗi thiếu query lấy danh sách scripts từ Database khiến danh sách trong `scripts.php` luôn trống rỗng (hiển thị 'No scripts found'), đồng thời ẩn submenu Scripts Library khỏi WordPress sidebar để tránh làm rác danh mục và tích hợp bộ compile JIT Tailwind PHP cục bộ. Nâng cấp phiên bản plugin Ska Data Pro lên `v1.2.3`.
 - **2026-06-17 - 🟢 Done:** Đồng bộ hóa SSH Key kết nối với GitHub, merge thành công nhánh tính năng vào `main` và tự động đóng gói, phát hành phiên bản hệ sinh thái `v1.2.0` (bao gồm các cập nhật chuẩn hóa bảng phẳng Workspace và cơ chế Redirect Fallback).
 - **2026-06-15 - 🟢 Done:** Vá lỗi tự động đóng Sidebar Popup Menu (Table & Workspace dropdowns) khi click ra ngoài và đổi nhãn từ "Rename Space" thành "Workspace Settings" trong [manage-sidebar.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/inc/admin/views/parts/manage-sidebar.php). Khắc phục triệt để lỗi `ReferenceError: wp is not defined` bằng cách chuyển sang enqueue script `admin-datagrid.bundle.js` qua hệ thống `wp_enqueue_script` chuẩn của WordPress với các dependency `['wp-i18n', 'wp-util']` trong [class-admin-menu.php](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/ska-data-pro/inc/admin/class-admin-menu.php). Nâng cấp phiên bản plugin `Ska Data Pro` lên `v1.1.1`.

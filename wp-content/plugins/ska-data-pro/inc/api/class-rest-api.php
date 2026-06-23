@@ -77,6 +77,96 @@ class Rest_Api {
 			'callback'            => array( $this, 'delete_portal_row' ),
 			'permission_callback' => array( $this, 'check_portal_permissions' ),
 		) );
+
+		register_rest_route( 'ska-data/v1', '/scripts', array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_scripts_list' ),
+				'permission_callback' => array( $this, 'check_scripts_permissions' ),
+			),
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'create_script' ),
+				'permission_callback' => array( $this, 'check_scripts_permissions' ),
+			)
+		) );
+	}
+
+	/**
+	 * Check permission to fetch scripts list (allow editors and admins).
+	 */
+	public function check_scripts_permissions( WP_REST_Request $request ) {
+		return current_user_can( 'edit_posts' ) || current_user_can( 'manage_options' );
+	}
+
+	/**
+	 * Retrieve active scripts from Flat Table database.
+	 */
+	public function get_scripts_list( WP_REST_Request $request ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'ska_data_sys_scripts';
+
+		if ( $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_name ) ) !== $table_name ) {
+			return new WP_REST_Response( array( 'success' => true, 'data' => array() ), 200 );
+		}
+
+		$scripts = $wpdb->get_results(
+			"SELECT `id`, `script_id`, `name`, `type`, `location` FROM `{$table_name}` WHERE `status` = 1 ORDER BY `name` ASC",
+			ARRAY_A
+		);
+
+		return new WP_REST_Response( array(
+			'success' => true,
+			'data'    => $scripts ? $scripts : array()
+		), 200 );
+	}
+
+	/**
+	 * Create a new script in Scripts Library from Gutenberg editor.
+	 */
+	public function create_script( WP_REST_Request $request ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'ska_data_sys_scripts';
+
+		$script_id = sanitize_key( $request->get_param( 'script_id' ) );
+		$name      = sanitize_text_field( $request->get_param( 'name' ) );
+		$type      = sanitize_text_field( $request->get_param( 'type' ) );
+		$content   = $request->get_param( 'content' ); // Keep raw JS/CSS/HTML code
+		$location  = sanitize_text_field( $request->get_param( 'location' ) );
+
+		if ( empty( $script_id ) || empty( $name ) || empty( $type ) ) {
+			return new WP_Error( 'ska_data_missing_fields', 'Missing required configuration fields.', array( 'status' => 400 ) );
+		}
+
+		// Verify unique ID
+		$duplicate = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM `{$table_name}` WHERE `script_id` = %s", $script_id ) );
+		if ( $duplicate > 0 ) {
+			return new WP_Error( 'ska_data_duplicate_id', 'Script ID already exists.', array( 'status' => 400 ) );
+		}
+
+		$data = array(
+			'script_id'      => $script_id,
+			'name'           => $name,
+			'type'           => $type,
+			'content'        => $content,
+			'location'       => $location,
+			'load_condition' => 'block_only', // default to block_only
+			'conditions'     => null,
+			'status'         => 1,
+		);
+
+		$result = $wpdb->insert( $table_name, $data );
+
+		if ( ! $result ) {
+			return new WP_Error( 'ska_data_insert_failed', 'Failed to save script to database.', array( 'status' => 500 ) );
+		}
+
+		return new WP_REST_Response( array(
+			'success' => true,
+			'message' => 'Script created successfully.',
+			'id'      => $wpdb->insert_id,
+			'script'  => $data
+		), 200 );
 	}
 
 	/**

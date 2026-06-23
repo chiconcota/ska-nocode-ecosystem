@@ -36,6 +36,11 @@ function ska_builder_core_register_blocks() {
     if ( get_option( 'ska_bridge_enabled', 'yes' ) === 'yes' ) {
         register_block_type( SKA_DESIGN_PATH . 'build/ska-bridge-import' );
     }
+
+    // Ska Code Block (Chỉ đăng ký khi Ska Data Pro active)
+    if ( class_exists( '\Ska_System_Framework\Dependency_Manager' ) && \Ska_System_Framework\Dependency_Manager::is_data_pro_active() ) {
+        register_block_type( SKA_DESIGN_PATH . 'build/ska-code' );
+    }
 }
 
 add_action( 'init', 'ska_builder_core_register_blocks' );

@@ -3,7 +3,7 @@
  * Plugin Name: Ska Data Pro
  * Plugin URI: https://ska.net
  * Description: High-performance database system (Flat Tables) and schema automation via Template Gallery.
- * Version: 1.2.3
+ * Version: 1.3.0
  * Author: Ly Tat Thanh + antigravity AI
  * Author URI: https://lytatthanh.com
  * Text Domain: ska-data-pro
@@ -15,7 +15,7 @@ namespace Ska\Data;
 defined('ABSPATH') || exit;
 
 // Định nghĩa Path & URL
-define('SKA_DATA_PRO_VERSION', '1.2.3');
+define('SKA_DATA_PRO_VERSION', '1.3.0');
 define('SKA_DATA_PRO_PATH', plugin_dir_path(__FILE__));
 define('SKA_DATA_PRO_URL', plugin_dir_url(__FILE__));
 

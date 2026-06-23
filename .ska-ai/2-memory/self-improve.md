@@ -1,5 +1,5 @@
 # AGENT SELF-IMPROVEMENT LOG (self-improve.md)
-@status: ACTIVE | @last_update: 2026-06-07
+@status: ACTIVE | @last_update: 2026-06-24
 
 > Nhật ký tự cải thiện hành vi và sửa sai của Agent. Chứa các lỗi thao tác (mistakes/anti-patterns) thực tế trong quá trình làm việc và các bộ quy tắc tự sửa lỗi bắt buộc tuân thủ.
 > **Luật dọn dẹp:** File này không được vượt quá 80 dòng. Các lỗi đã giải quyết (Resolved) sau 3 phiên sẽ được lưu trữ (Archived) vào `.ska-ai/2-memory/archive/`.
@@ -37,6 +37,11 @@
 * **Quy tắc tự khắc phục**:
   1. **Tuyệt đối không tự động kích hoạt** browser subagent hoặc Chrome DevTools MCP để kiểm thử trừ khi người dùng yêu cầu rõ ràng.
   2. Khi người dùng yêu cầu kiểm thử giao diện, hãy ưu tiên hướng dẫn họ tự kiểm thử trực tiếp trên trình duyệt của họ, hoặc chỉ sử dụng browser subagent như là giải pháp cuối cùng sau khi đã thống nhất các điều kiện cần thiết (như URL đăng nhập).
+
+### MISTAKE-006: Thiếu đăng ký entry point Webpack khi tạo block mới
+* **Mô tả**: Khi tạo một block Gutenberg mới trong thư mục `src/` của plugin `ska-no-code-design`, chạy build nhưng block không được biên dịch do thiếu khai báo entry point thủ công trong `webpack.config.js`.
+* **Quy tắc tự khắc phục**:
+  1. Bất cứ khi nào tạo block Gutenberg mới, **bắt buộc phải vào kiểm tra và đăng ký entry point tương ứng cho block** trong `webpack.config.js` trước khi chạy lệnh biên dịch `npm run build`.
 
 ---
 
