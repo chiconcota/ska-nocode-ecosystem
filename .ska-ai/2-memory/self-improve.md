@@ -55,8 +55,13 @@
      - **Nghiệm thu cuối cùng (Final Handoff)**: Chụp 1-2 ảnh duy nhất của giao diện sản phẩm hoàn chỉnh ngoài Frontend để chèn vào báo cáo nghiệm thu (`walkthrough.md`).
      - *Ngoài các trường hợp trên (như CRUD dữ liệu, cấu hình Admin, kiểm thử sự kiện logic), cấm sử dụng screenshot. Thay vào đó bắt buộc phải dùng DOM (`browser_get_dom`), Console logs, Network requests hoặc truy vấn Database để xác minh.*
 
+### MISTAKE-008: Cung cấp ArtifactMetadata cho các tệp tin nguồn ngoài thư mục artifacts
+* **Mô tả**: Sử dụng `ArtifactMetadata` trong `write_to_file` hoặc `replace_file_content` đối với các tệp nằm ngoài thư mục artifacts của conversation, dẫn đến lỗi `invalid tool call error`.
+* **Quy tắc tự khắc phục**:
+  1. Chỉ cung cấp `ArtifactMetadata` đối với các tệp tin markdown lưu tại thư mục `/home/chiconcota/.gemini/antigravity-ide/brain/[conversation-id]/`.
+  2. Đối với mọi file mã nguồn PHP, JS, JSON thông thường của dự án, bắt buộc **bỏ trống** tham số `ArtifactMetadata`.
+
 ---
 
 ## 🟢 LỊCH SỬ LỖI ĐÃ KHẮC PHỤC (RESOLVED)
 *(Trống)*
-
