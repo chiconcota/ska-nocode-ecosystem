@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Ska No-Code Design
  * Description: The UI design engine and blocks framework for Ska No-Code Builder.
- * Version: 1.2.0
+ * Version: 1.2.3
  * Author: Ska Team
  * Text Domain: ska-no-code-design
  *

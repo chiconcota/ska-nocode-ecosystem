@@ -43,6 +43,18 @@
 * **Quy tắc tự khắc phục**:
   1. Bất cứ khi nào tạo block Gutenberg mới, **bắt buộc phải vào kiểm tra và đăng ký entry point tương ứng cho block** trong `webpack.config.js` trước khi chạy lệnh biên dịch `npm run build`.
 
+### MISTAKE-007: Click pixel không chuẩn, đi lệch kịch bản E2E và lạm dụng Screenshot trong Browser Subagent
+* **Mô tả**: Khi chạy browser subagent, thực hiện các pixel clicks không chuẩn xác, đi lệch khỏi kịch bản E2E được chỉ định, hoặc lạm dụng việc chụp ảnh màn hình (`capture_browser_screenshot`) liên tục để tự xác minh, gây tiêu tốn lượng token cực kỳ lớn không cần thiết.
+* **Quy tắc tự khắc phục**:
+  1. Luôn bám sát từng bước của tài liệu hướng dẫn workflow (`e2e_*.md`), không tự ý làm thêm các tính năng không được yêu cầu.
+  2. Ưu tiên click/fill bằng CSS selectors hoặc Text chính xác thay vì bấm pixel click mù (trừ khi không có cách nào khác).
+  3. **Hạn chế tối đa việc chụp ảnh màn hình (`capture_browser_screenshot`)**: Chỉ được phép sử dụng công cụ chụp ảnh màn hình trong các trường hợp cần thiết (Whitelist) sau:
+     - **Visual & Layout Check**: Xác minh lỗi vỡ giao diện, lệch bố cục, lỗi hiển thị CSS/Tailwind, hoặc kiểm thử độ tương thích Responsive trên các thiết bị.
+     - **Render Output Verification**: Xác nhận hiển thị của các thành phần đồ họa động hoặc canvas (như biểu đồ Chart.js, slider, popup modal) hoạt động ngoài Frontend.
+     - **Error Debugging (Headless)**: Chụp lại màn hình tại thời điểm phát sinh lỗi (Failure) khi chạy test tự động không đầu (CI/CD hoặc Headless Browser) để hỗ trợ debug.
+     - **Nghiệm thu cuối cùng (Final Handoff)**: Chụp 1-2 ảnh duy nhất của giao diện sản phẩm hoàn chỉnh ngoài Frontend để chèn vào báo cáo nghiệm thu (`walkthrough.md`).
+     - *Ngoài các trường hợp trên (như CRUD dữ liệu, cấu hình Admin, kiểm thử sự kiện logic), cấm sử dụng screenshot. Thay vào đó bắt buộc phải dùng DOM (`browser_get_dom`), Console logs, Network requests hoặc truy vấn Database để xác minh.*
+
 ---
 
 ## 🟢 LỊCH SỬ LỖI ĐÃ KHẮC PHỤC (RESOLVED)

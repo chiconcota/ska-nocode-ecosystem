@@ -177,26 +177,60 @@ class Rest_Api {
 		
 		// Đọc Dictionary
 		$all_dict = get_option( 'ska_data_dictionary', array() );
+		global $wpdb;
 		
-		// Tìm table_dict (hỗ trợ cả có và không có prefix)
+		// Tìm table_dict (hỗ trợ cả có và không có prefix, tên bảng thô, và portal slug)
 		$table_dict = null;
+		$matched_table = null;
+
+		// 1. Thử tìm trực tiếp hoặc theo prefix mặc định
 		if ( isset( $all_dict[ $table_name ] ) ) {
 			$table_dict = $all_dict[ $table_name ];
+			$matched_table = $table_name;
 		} else {
-			global $wpdb;
 			$with_prefix    = strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
 			$without_prefix = str_replace( $wpdb->prefix, '', $table_name );
 			
 			if ( isset( $all_dict[ $with_prefix ] ) ) {
 				$table_dict = $all_dict[ $with_prefix ];
+				$matched_table = $with_prefix;
 			} elseif ( isset( $all_dict[ $without_prefix ] ) ) {
 				$table_dict = $all_dict[ $without_prefix ];
+				$matched_table = $without_prefix;
+			}
+		}
+
+		// 2. Thử tìm bằng cách thêm prefix 'ska_data_' cho tên bảng thô (ví dụ: 'revenue' -> 'ska_data_revenue')
+		if ( ! $table_dict ) {
+			$ska_table_raw = 'ska_data_' . $table_name;
+			$ska_table_prefix = $wpdb->prefix . $ska_table_raw;
+			if ( isset( $all_dict[ $ska_table_prefix ] ) ) {
+				$table_dict = $all_dict[ $ska_table_prefix ];
+				$matched_table = $ska_table_prefix;
+			} elseif ( isset( $all_dict[ $ska_table_raw ] ) ) {
+				$table_dict = $all_dict[ $ska_table_raw ];
+				$matched_table = $ska_table_raw;
+			}
+		}
+
+		// 3. Thử tìm theo Portal Slug (ví dụ: 'revenue-api')
+		if ( ! $table_dict ) {
+			foreach ( $all_dict as $real_table => $dict ) {
+				if ( isset( $dict['__table_info']['portal_settings']['slug'] ) && $dict['__table_info']['portal_settings']['slug'] === $table_name ) {
+					$table_dict = $dict;
+					$matched_table = $real_table;
+					break;
+				}
 			}
 		}
 
 		if ( ! $table_dict ) {
 			return new WP_Error( 'ska_data_not_found', 'Table not found in dictionary.', array( 'status' => 404 ) );
 		}
+
+		// Gán lại tên bảng thật để các xử lý sau (như query dữ liệu) dùng đúng bảng phẳng MySQL
+		$request->set_param( 'table', $matched_table );
+
 
 		
 		// Không có thông tin portal -> Mặc định là không cho phép gọi qua API Portal

@@ -57,10 +57,10 @@
   - [x] Tinh chỉnh stylesheet trong Editor để textarea nhập code inline có màu nền tối, font chữ monospace rõ ràng.
   - [x] Tích hợp Modal Quick Save to Library cho phép lưu thẳng code JS/CSS inline vào thư viện Scripts.
 
-- [ ] **Phase 4: Kiểm Thử & Nghiệm Thu (Testing & Verification)**
+- [x] **Phase 4: Kiểm Thử & Nghiệm Thu (Testing & Verification)**
   - [x] Viết tài liệu quy trình kiểm thử E2E thủ công tại `walkthrough.md`.
-  - [ ] Test kéo thả nhiều block `ska-code` dùng chung thư viện CDN để xác nhận chỉ tải 1 lần duy nhất ngoài frontend.
-  - [ ] Test chức năng nạp Inline, Header (Pre-parsing), và Footer hoạt động đúng vị trí DOM.
+  - [x] Test kéo thả nhiều block `ska-code` dùng chung thư viện CDN để xác nhận chỉ tải 1 lần duy nhất ngoài frontend.
+  - [x] Test chức năng nạp Inline, Header (Pre-parsing), và Footer hoạt động đúng vị trí DOM.
 
 ---
 

@@ -1,6 +1,6 @@
 {
     "name": "ska-no-code-design",
-    "version": "1.2.0",
+    "version": "1.2.3",
     "description": "Ska No-Code Design Plugin",
     "scripts": {
         "build": "wp-scripts build",

@@ -7,92 +7,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-/**
- * Class Ska_Code_Block_Queue
- * Quản lý hàng đợi và in các đoạn mã inline code ở header/footer không trùng lặp.
- */
+// Ensure Ska_Code_Block_Queue is loaded (it is loaded early, but fallback just in case)
 if ( ! class_exists( 'Ska_Code_Block_Queue' ) ) {
-    class Ska_Code_Block_Queue {
-        /**
-         * Hàng đợi code in ở Header
-         * @var array
-         */
-        private static $header_queue = [];
-
-        /**
-         * Hàng đợi code in ở Footer
-         * @var array
-         */
-        private static $footer_queue = [];
-
-        /**
-         * Cờ đánh dấu đã đăng ký hook với WordPress chưa
-         * @var bool
-         */
-        private static $hooks_registered = false;
-
-        /**
-         * Đẩy một đoạn mã inline vào hàng đợi
-         *
-         * @param string $code
-         * @param string $location 'header' hoặc 'footer'
-         */
-        public static function add( $code, $location ) {
-            if ( empty( $code ) ) {
-                return;
-            }
-            
-            // Băm MD5 nội dung code để chống in trùng lặp
-            $hash = md5( $code );
-            
-            if ( 'header' === $location ) {
-                self::$header_queue[ $hash ] = $code;
-            } else {
-                self::$footer_queue[ $hash ] = $code;
-            }
-
-            self::register_hooks();
-        }
-
-        /**
-         * Đăng ký hook hiển thị với WordPress
-         */
-        private static function register_hooks() {
-            if ( self::$hooks_registered ) {
-                return;
-            }
-
-            // In ra ở mức ưu tiên muộn (101) sau khi các style/script mặc định đã load
-            add_action( 'wp_head', [ __CLASS__, 'render_header' ], 101 );
-            add_action( 'wp_footer', [ __CLASS__, 'render_footer' ], 101 );
-            
-            self::$hooks_registered = true;
-        }
-
-        /**
-         * Render toàn bộ code trong hàng đợi Header
-         */
-        public static function render_header() {
-            if ( ! empty( self::$header_queue ) ) {
-                echo "\n<!-- Ska Code Block: Header Inline Scripts -->\n";
-                foreach ( self::$header_queue as $code ) {
-                    echo $code . "\n";
-                }
-            }
-        }
-
-        /**
-         * Render toàn bộ code trong hàng đợi Footer
-         */
-        public static function render_footer() {
-            if ( ! empty( self::$footer_queue ) ) {
-                echo "\n<!-- Ska Code Block: Footer Inline Scripts -->\n";
-                foreach ( self::$footer_queue as $code ) {
-                    echo $code . "\n";
-                }
-            }
-        }
-    }
+	require_once dirname( dirname( __DIR__ ) ) . '/blocks/class-ska-code-block-queue.php';
 }
 
 // Trích xuất các thuộc tính của block

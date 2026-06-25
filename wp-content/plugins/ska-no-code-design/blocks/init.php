@@ -7,6 +7,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Load Code Block Queue early to handle frontend block scanning before wp_head
+if ( class_exists( '\Ska_System_Framework\Dependency_Manager' ) && \Ska_System_Framework\Dependency_Manager::is_data_pro_active() ) {
+	require_once SKA_DESIGN_PATH . 'blocks/class-ska-code-block-queue.php';
+	Ska_Code_Block_Queue::init();
+}
+
 /**
  * Register blocks from the build directory.
  */

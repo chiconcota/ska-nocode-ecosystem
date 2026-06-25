@@ -23,6 +23,7 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
 - **Attributes:** `tagName`, `tailwindClasses`, `customStyle`, `logic`, `templateLock`.
 - **Render:** Sử dụng `get_block_wrapper_attributes()` trên thẻ wrapper chính.
 - **Editor (2026-03-26):** Sử dụng `useInnerBlocksProps` + `getPositionStyles()` helper để inject positioning inline styles. Đây là block đầu tiên và quan trọng nhất áp dụng pattern này.
+- **Nesting Whitelist (2026-06-25):** Bổ sung `ska-builder/code` vào danh sách `ALLOWED_BLOCKS` cho phép người dùng kéo thả và chèn lồng block viết code/canvas trực tiếp vào bên trong block container để dựng giao diện tùy chỉnh.
 - **Molecule Base (2026-04-16):** Trở thành Root Element cho hệ Ska Molecules. Hỗ trợ thuộc tính `templateLock` (như 'all') truyền vào `useInnerBlocksProps` để Khóa Xương Sống cấu trúc đối với các Variation phức tạp (Multi-Step Form, Tabs, Accordion) nhằm tránh gãy Layout khi người dùng thao tác. Thẻ `tagName` có thể linh hoạt chuyển hóa (vd: `form` cho Quiz/Wizard).
 
 #### 3. Ska Image (`ska-builder/image`)
@@ -126,10 +127,11 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Ska Builder. Cung cấp các at
 
 #### 13. Ska Code (`ska-builder/code`)
 - **Attributes:** `codeType` ('inline' / 'library'), `libraryScriptId`, `inlineCode`, `location` ('inline' / 'header' / 'footer').
-- **Render (v1.2.0 - 2026-06-24):** 
+- **Render (v1.2.3 - 2026-06-25):** 
   - Chỉ đăng ký block khi plugin **Ska Data Pro** đang hoạt động (quét bằng `Dependency_Manager::is_data_pro_active()`).
   - Hỗ trợ viết mã HTML/CSS/JS inline trực tiếp tại chỗ hoặc đẩy lên hàng đợi `Ska_Code_Block_Queue` để in không trùng lặp (dùng băm MD5 làm key) ở Head/Footer.
+  - **Pre-scan & wp_head lifecycle fix**: Đăng ký hook `wp_head` độ ưu tiên 1 để tự động quét sớm toàn bộ blocks `ska-builder/code` trong `post_content` của bài viết và các active organisms (đệ quy cả inner blocks) trước khi HTML bắt đầu xuất ra, giải quyết triệt để lỗi mất CSS/JS do lỡ nhịp tải trang.
+  - **Ska Script HTML Comment Debug**: Tự động in thêm dòng chú thích HTML debug `<!-- Ska Script: [script_id] -->` trước khi xuất các script thư viện, giúp dễ dàng kiểm tra tính khử trùng lặp và xác minh E2E.
   - Liên kết decoupled với **Ska Scripts Library** bằng cách gọi action hook `ska_enqueue_custom_script` thay vì gọi trực tiếp class.
   - Tích hợp giao diện dark editor monospace cho code inline và modal Quick Save trực tiếp vào thư viện trong Editor.
-
-
+  - **Nesting Support (2026-06-25):** Được phép chèn lồng bên trong block `Ska Container` để dựng giao diện phức hợp (ví dụ: bọc thẻ canvas biểu đồ trong khung kính glassmorphism).

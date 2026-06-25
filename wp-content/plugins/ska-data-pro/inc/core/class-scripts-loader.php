@@ -26,6 +26,13 @@ class Scripts_Loader {
 	private static $enqueued_scripts = [];
 
 	/**
+	 * Danh sách các script ID đã được in ra trang (để tránh in lặp chéo)
+	 *
+	 * @var array
+	 */
+	private static $rendered_script_ids = [];
+
+	/**
 	 * Lấy instance duy nhất của class
 	 *
 	 * @return Scripts_Loader
@@ -155,7 +162,7 @@ class Scripts_Loader {
 			return;
 		}
 
-		// Lấy danh sách script đang active tại vị trí được yêu cầu
+		// Lấy danh sách script đang active tại vị trí được yêu cầu (lọc cứng theo location của database)
 		$scripts = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * FROM `{$table_name}` WHERE `status` = 1 AND `location` = %s ORDER BY `id` ASC",
@@ -172,11 +179,28 @@ class Scripts_Loader {
 			$placeholders = implode( ',', array_fill( 0, count( self::$enqueued_scripts ), '%s' ) );
 			$extra_scripts = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM `{$table_name}` WHERE `status` = 1 AND `location` = %s AND `script_id` IN ($placeholders) ORDER BY `id` ASC",
-					array_merge( [ $location ], self::$enqueued_scripts )
+					"SELECT * FROM `{$table_name}` WHERE `status` = 1 AND `script_id` IN ($placeholders) ORDER BY `id` ASC",
+					self::$enqueued_scripts
 				)
 			);
 			
+			// Lọc lại các script enqueue động tùy thuộc vào vị trí và trạng thái in
+			$filtered_extras = [];
+			foreach ( $extra_scripts as $s ) {
+				if ( 'header' === $location ) {
+					// Ở header: chỉ in các script enqueue động có cấu hình location là header
+					if ( 'header' === $s->location ) {
+						$filtered_extras[] = $s;
+					}
+				} else {
+					// Ở footer: in tất cả các script enqueue động chưa được in ở header
+					if ( ! in_array( $s->script_id, self::$rendered_script_ids, true ) ) {
+						$filtered_extras[] = $s;
+					}
+				}
+			}
+			$extra_scripts = $filtered_extras;
+
 			// Hợp nhất và loại bỏ script trùng lặp
 			$merged = [];
 			$seen_ids = [];
@@ -199,6 +223,14 @@ class Scripts_Loader {
 			if ( empty( $content ) ) {
 				continue;
 			}
+
+			// Đánh dấu script đã được rendered
+			if ( ! in_array( $script->script_id, self::$rendered_script_ids, true ) ) {
+				self::$rendered_script_ids[] = $script->script_id;
+			}
+
+			// In HTML comment để hỗ trợ debug và xác minh E2E
+			echo '<!-- Ska Script: ' . esc_html( $script->script_id ) . " -->\n";
 
 			switch ( $script->type ) {
 				case 'js_file':
