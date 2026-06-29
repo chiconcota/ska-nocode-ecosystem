@@ -274,6 +274,7 @@ export const StylePopoverDrawer = ({ className, setClassName }) => {
                                         {cls}
                                         <button 
                                             onClick={() => handleToggleClass(cls)}
+                                            aria-label={__('Remove class', 'ska-builder-core')}
                                             style={{
                                                 background: 'transparent',
                                                 border: 'none',
