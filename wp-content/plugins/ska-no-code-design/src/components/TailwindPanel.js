@@ -298,6 +298,16 @@ export const TailwindPanel = ({ className, setClassName }) => {
                         
                         <span
                             role="button"
+                            aria-label={__('Copy Classes', 'ska-builder-core')}
+                            aria-disabled={!hasClasses}
+                            tabIndex={hasClasses ? 0 : -1}
+                            onKeyDown={(e) => {
+                                if (hasClasses && (e.key === 'Enter' || e.key === ' ')) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    copyAll(e);
+                                }
+                            }}
                             onPointerDown={copyAll}
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                             style={{
@@ -314,11 +324,21 @@ export const TailwindPanel = ({ className, setClassName }) => {
                             }}
                             title={__('Copy Classes', 'ska-builder-core')}
                         >
-                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>content_copy</span>
+                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }} aria-hidden="true" focusable="false">content_copy</span>
                         </span>
 
                         <span
                             role="button"
+                            aria-label={__('Save Preset', 'ska-builder-core')}
+                            aria-disabled={!hasClasses}
+                            tabIndex={hasClasses ? 0 : -1}
+                            onKeyDown={(e) => {
+                                if (hasClasses && (e.key === 'Enter' || e.key === ' ')) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setIsSavingPreset(true);
+                                }
+                            }}
                             onPointerDown={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -339,7 +359,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
                             }}
                             title={__('Save Preset', 'ska-builder-core')}
                         >
-                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>save</span>
+                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }} aria-hidden="true" focusable="false">save</span>
                         </span>
                     </div>
                 </div>
