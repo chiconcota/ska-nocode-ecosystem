@@ -1,0 +1,3 @@
+## 2026-07-07 - Interactive Custom Controls Need Keyboard Fallbacks
+**Learning:** When `span` elements act as custom icon buttons (using `role="button"`), they often miss critical accessibility attributes like `tabIndex`, `onKeyDown` handlers for Enter/Space, `aria-label`, and inner SVG/ligature `aria-hidden` properties, especially when conditionally disabled.
+**Action:** Always add `tabIndex={0}` (or `-1` if disabled) and a matching `onKeyDown` handler that executes the primary click action (or disabled logic check) whenever introducing a `role="button"` on non-interactive elements, alongside proper ARIA labels and SVG hiding.
