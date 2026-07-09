@@ -15,13 +15,18 @@ class Ska_Logic_Core {
 
     private function __construct() {
         $this->includes();
+        
+        // Khởi tạo Node Registry
+        Ska_Node_Registry::instance();
+
         $this->maybe_create_tables();
         $this->init_hooks();
     }
 
     private function includes() {
-        // 1. Interfaces (Khuôn mẫu)
+        // 1. Interfaces (Khuôn mẫu) & Registry
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/interface-ska-node.php';
+        require_once SKA_LOGIC_ENGINE_DIR . 'includes/class-ska-node-registry.php';
         
         // 2. Các cục Cục Nút (Nodes)
         require_once SKA_LOGIC_ENGINE_DIR . 'includes/primitives/class-ska-logic-trigger.php';
@@ -348,20 +353,23 @@ class Ska_Logic_Core {
     public function protect_system_tables( $protected_tables ) {
         global $wpdb;
         $protected_tables[] = $wpdb->prefix . 'ska_data_sys_workflows';
+        $protected_tables[] = $wpdb->prefix . 'ska_data_sys_settings';
         return $protected_tables;
     }
 
     public function maybe_create_tables() {
         $db_version = get_option( 'ska_logic_db_version', '' );
-        if ( $db_version === '1.1.0' ) {
+        if ( $db_version === '1.3.0' ) {
             return;
         }
 
         global $wpdb;
-        $table_name = $wpdb->prefix . 'ska_data_sys_workflows';
         $charset_collate = $wpdb->get_charset_collate();
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-        $sql = "CREATE TABLE `{$table_name}` (
+        // 1. Tạo bảng workflows
+        $table_workflows = $wpdb->prefix . 'ska_data_sys_workflows';
+        $sql_workflows = "CREATE TABLE `{$table_workflows}` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `workflow_id` varchar(191) NOT NULL,
             `name` varchar(255) NOT NULL,
@@ -373,9 +381,20 @@ class Ska_Logic_Core {
             PRIMARY KEY  (`id`),
             UNIQUE KEY `workflow_id` (`workflow_id`)
         ) $charset_collate;";
+        dbDelta( $sql_workflows );
 
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-        dbDelta( $sql );
+        // 2. Tạo bảng settings phẳng cho hệ thống
+        $table_settings = $wpdb->prefix . 'ska_data_sys_settings';
+        $sql_settings = "CREATE TABLE `{$table_settings}` (
+            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            `setting_key` varchar(191) NOT NULL,
+            `setting_value` longtext DEFAULT NULL,
+            `group_name` varchar(100) DEFAULT 'general',
+            `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY  (`id`),
+            UNIQUE KEY `setting_key` (`setting_key`)
+        ) $charset_collate;";
+        dbDelta( $sql_settings );
 
         // Xóa option cũ
         delete_option( 'ska_logic_simple_workflows' );
@@ -385,17 +404,28 @@ class Ska_Logic_Core {
         if ( ! is_array( $dictionary ) ) {
             $dictionary = [];
         }
-        if ( ! isset( $dictionary[ $table_name ] ) ) {
-            $dictionary[ $table_name ] = [];
+        
+        if ( ! isset( $dictionary[ $table_workflows ] ) ) {
+            $dictionary[ $table_workflows ] = [];
         }
-        $dictionary[ $table_name ]['__table_info'] = [
+        $dictionary[ $table_workflows ]['__table_info'] = [
             'name'   => 'Workflows',
             'icon'   => 'dashicons-networking',
             'app_id' => 'ska_system'
         ];
+
+        if ( ! isset( $dictionary[ $table_settings ] ) ) {
+            $dictionary[ $table_settings ] = [];
+        }
+        $dictionary[ $table_settings ]['__table_info'] = [
+            'name'   => 'System Settings',
+            'icon'   => 'dashicons-admin-settings',
+            'app_id' => 'ska_system'
+        ];
+        
         update_option( 'ska_data_dictionary', $dictionary );
 
-        update_option( 'ska_logic_db_version', '1.1.0' );
+        update_option( 'ska_logic_db_version', '1.3.0' );
 
         self::sync_workflow_ids_cache();
     }
@@ -604,5 +634,72 @@ class Ska_Logic_Core {
         }
 
         return $classes;
+    }
+}
+
+if ( ! function_exists( 'ska_get_system_setting' ) ) {
+    /**
+     * Lấy giá trị cấu hình hệ thống từ bảng phẳng wp_ska_data_sys_settings
+     *
+     * @param string $key Khoá cấu hình
+     * @param mixed $default Giá trị mặc định nếu không tìm thấy
+     * @return mixed
+     */
+    function ska_get_system_setting( $key, $default = null ) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ska_data_sys_settings';
+        
+        $wpdb->suppress_errors( true );
+        $value = $wpdb->get_var( $wpdb->prepare( "SELECT setting_value FROM `{$table_name}` WHERE setting_key = %s", $key ) );
+        $wpdb->suppress_errors( false );
+        
+        if ( is_null( $value ) ) {
+            return $default;
+        }
+        
+        $decoded = json_decode( $value, true );
+        if ( json_last_error() === JSON_ERROR_NONE ) {
+            return $decoded;
+        }
+        return $value;
+    }
+}
+
+if ( ! function_exists( 'ska_set_system_setting' ) ) {
+    /**
+     * Lưu giá trị cấu hình hệ thống vào bảng phẳng wp_ska_data_sys_settings
+     *
+     * @param string $key Khoá cấu hình
+     * @param mixed $value Giá trị cần lưu (hỗ trợ array/object tự động chuyển JSON)
+     * @param string $group Phân nhóm cấu hình (mặc định: general)
+     * @return bool
+     */
+    function ska_set_system_setting( $key, $value, $group = 'general' ) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ska_data_sys_settings';
+        
+        $serialized_value = ( is_array( $value ) || is_object( $value ) ) ? wp_json_encode( $value ) : $value;
+        
+        $wpdb->suppress_errors( true );
+        $exists = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM `{$table_name}` WHERE setting_key = %s", $key ) );
+        $wpdb->suppress_errors( false );
+        
+        if ( $exists ) {
+            $result = $wpdb->update(
+                $table_name,
+                array( 'setting_value' => $serialized_value, 'group_name' => $group ),
+                array( 'setting_key' => $key )
+            );
+        } else {
+            $result = $wpdb->insert(
+                $table_name,
+                array(
+                    'setting_key'   => $key,
+                    'setting_value' => $serialized_value,
+                    'group_name'    => $group
+                )
+            );
+        }
+        return $result !== false;
     }
 }

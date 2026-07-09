@@ -81,33 +81,8 @@ foreach ($data_dictionary as $table_name => $meta) {
     }
 }
 
-// Danh sách các Cục Node khả dụng (Nhất quán với các Class đã tạo)
-$available_nodes = [
-    [
-        'class' => 'Ska_Format_Processor',
-        'name' => __( '🧰 Data Format (Junk Standardization)', 'ska-logic-engine' ),
-        'type' => 'processor',
-        'color' => '#f59e0b'
-    ],
-    [
-        'class' => 'Ska_Insert_Data_Action',
-        'name' => __( '🗄️ Save Data (Any Table)', 'ska-logic-engine' ),
-        'type' => 'action',
-        'color' => '#10b981'
-    ],
-    [
-        'class' => 'Ska_Update_Data_Action',
-        'name' => __( '📝 Update Record (Update)', 'ska-logic-engine' ),
-        'type' => 'action',
-        'color' => '#8b5cf6'
-    ],
-    [
-        'class' => 'Ska_Email_Action',
-        'name' => __( '✉️ Send Email (There are {{variations}})', 'ska-logic-engine' ),
-        'type' => 'action',
-        'color' => '#3b82f6'
-    ]
-];
+// Lấy danh sách các Cục Node khả dụng từ Registry trung tâm
+$available_nodes = Ska_Node_Registry::instance()->get_all_nodes();
 
 global $wpdb;
 $table_name = $wpdb->prefix . 'ska_data_sys_workflows';

@@ -21,6 +21,10 @@ class Framework_UI
         add_action('admin_menu', array($this, 'register_menu'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
         add_action('ska_system_dashboard_modules', array($this, 'render_default_modules'), 99);
+        
+        // AJAX hooks cho quản lý Extensions trực tiếp
+        add_action('wp_ajax_ska_system_toggle_node_status', array($this, 'ajax_toggle_node_status'));
+        add_action('wp_ajax_ska_system_delete_node_plugin', array($this, 'ajax_delete_node_plugin'));
     }
 
     public function save_settings()
@@ -222,8 +226,240 @@ class Framework_UI
 
         wp_localize_script('ska-system-ai', 'skaSystemObj', array(
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('ska_ai_blueprint_nonce')
+            'nonce' => wp_create_nonce('ska_ai_blueprint_nonce'),
+            'addon_nonce' => wp_create_nonce('ska_system_addon_nonce')
         ));
+    }
+
+    /**
+     * AJAX Bật / Tắt mềm một node (Lưu trạng thái vô hiệu hóa vào bảng phẳng settings)
+     */
+    public function ajax_toggle_node_status()
+    {
+        check_ajax_referer('ska_system_addon_nonce', 'nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Insufficient permissions.', 'ska-no-code-design')));
+        }
+
+        $node_type = isset($_POST['node_type']) ? sanitize_text_field($_POST['node_type']) : '';
+        $active    = isset($_POST['active']) ? (int)$_POST['active'] : 0;
+
+        if (empty($node_type)) {
+            wp_send_json_error(array('message' => __('Node type not specified.', 'ska-no-code-design')));
+        }
+
+        if (!function_exists('ska_get_system_setting') || !function_exists('ska_set_system_setting')) {
+            wp_send_json_error(array('message' => __('System Settings flat table is not available.', 'ska-no-code-design')));
+        }
+
+        $disabled_nodes = ska_get_system_setting('ska_disabled_nodes', array());
+        if (!is_array($disabled_nodes)) {
+            $disabled_nodes = array();
+        }
+
+        if ($active === 1) {
+            // Kích hoạt: xóa khỏi mảng bị tắt
+            $disabled_nodes = array_values(array_diff($disabled_nodes, array($node_type)));
+            $status = 'active';
+        } else {
+            // Vô hiệu hóa: thêm vào mảng bị tắt nếu chưa có
+            if (!in_array($node_type, $disabled_nodes, true)) {
+                $disabled_nodes[] = $node_type;
+            }
+            $status = 'inactive';
+        }
+
+        ska_set_system_setting('ska_disabled_nodes', $disabled_nodes, 'logic_engine');
+
+        wp_send_json_success(array(
+            'status'  => $status,
+            'message' => $status === 'active' ? __('Activated node successfully.', 'ska-no-code-design') : __('Disabled node successfully.', 'ska-no-code-design')
+        ));
+    }
+
+    /**
+     * AJAX Xóa vật lý plugin addon chứa node được chọn
+     */
+    public function ajax_delete_node_plugin()
+    {
+        check_ajax_referer('ska_system_addon_nonce', 'nonce');
+
+        if (!current_user_can('delete_plugins')) {
+            wp_send_json_error(array('message' => __('Insufficient permissions to delete plugins.', 'ska-no-code-design')));
+        }
+
+        $node_type = isset($_POST['node_type']) ? sanitize_text_field($_POST['node_type']) : '';
+        if (empty($node_type)) {
+            wp_send_json_error(array('message' => __('Node type not specified.', 'ska-no-code-design')));
+        }
+
+        // Lấy thông tin plugin file thông qua class Reflection
+        $plugin_file = $this->get_plugin_file_by_node_type($node_type);
+
+        if (empty($plugin_file)) {
+            wp_send_json_error(array('message' => __('Cannot determine the plugin file for this extension.', 'ska-no-code-design')));
+        }
+
+        if (!function_exists('is_plugin_active')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        // Tắt plugin trước khi xóa
+        if (is_plugin_active($plugin_file)) {
+            deactivate_plugins($plugin_file);
+        }
+
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+        $result = delete_plugins(array($plugin_file));
+        
+        if (is_wp_error($result)) {
+            wp_send_json_error(array('message' => $result->get_error_message()));
+        }
+
+        if ($result === false) {
+            wp_send_json_error(array('message' => __('Failed to delete plugin files.', 'ska-no-code-design')));
+        }
+
+        wp_send_json_success(array('message' => __('Deleted extension plugin successfully.', 'ska-no-code-design')));
+    }
+
+    /**
+     * Tìm file chính của plugin chứa node qua Reflection class
+     */
+    private function get_plugin_file_by_node_type($node_type)
+    {
+        if (!class_exists('Ska_Node_Registry')) {
+            return '';
+        }
+
+        $registry = \Ska_Node_Registry::instance();
+        $all_nodes = $registry->get_all_nodes();
+        $target_node = null;
+
+        foreach ($all_nodes as $node) {
+            if ($node['type'] === $node_type) {
+                $target_node = $node;
+                break;
+            }
+        }
+
+        // 1. Quét theo Class Reflection nếu class đã được load
+        if (!empty($target_node) && !empty($target_node['class']) && class_exists($target_node['class'])) {
+            try {
+                $reflector = new \ReflectionClass($target_node['class']);
+                $file_path = wp_normalize_path($reflector->getFileName());
+                $plugins_dir = wp_normalize_path(WP_PLUGIN_DIR);
+
+                if (str_starts_with($file_path, $plugins_dir)) {
+                    $relative_path = ltrim(str_replace($plugins_dir, '', $file_path), '/');
+                    $parts = explode('/', $relative_path);
+                    $plugin_folder = $parts[0];
+
+                    if (!function_exists('get_plugins')) {
+                        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+                    }
+
+                    $all_plugins = get_plugins();
+                    foreach ($all_plugins as $plugin_file => $data) {
+                        if (str_starts_with($plugin_file, $plugin_folder . '/')) {
+                            return $plugin_file;
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                // Bỏ qua để chạy phương pháp quét file dự phòng ở dưới
+            }
+        }
+
+        // 2. Phương pháp dự phòng tối thượng: Quét nội dung các file plugin chính bắt đầu bằng 'ska-' để tìm node_type
+        if (!function_exists('get_plugins')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+        
+        $all_plugins = get_plugins();
+        $core_plugins = array(
+            'ska-no-code-design/ska-no-code-design.php',
+            'ska-data-pro/ska-data-pro.php',
+            'ska-logic-engine/ska-logic-engine.php',
+            'ska-bridge/ska-bridge.php'
+        );
+
+        foreach ($all_plugins as $plugin_file => $data) {
+            if (str_starts_with($plugin_file, 'ska-') && !in_array($plugin_file, $core_plugins, true)) {
+                $full_path = WP_PLUGIN_DIR . '/' . $plugin_file;
+                if (file_exists($full_path)) {
+                    $content = file_get_contents($full_path);
+                    if ($content !== false && strpos($content, $node_type) !== false) {
+                        return $plugin_file;
+                    }
+                }
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Lấy danh sách các node tùy biến ngoài Core để quản lý
+     */
+    public static function get_custom_pluggable_nodes()
+    {
+        if (!class_exists('Ska_Node_Registry')) {
+            return array();
+        }
+
+        $registry = \Ska_Node_Registry::instance();
+        
+        // Quét trực tiếp để xem node nào bị tắt
+        $disabled_nodes = array();
+        if (function_exists('ska_get_system_setting')) {
+            $disabled_nodes = ska_get_system_setting('ska_disabled_nodes', array());
+            if (!is_array($disabled_nodes)) {
+                $disabled_nodes = array();
+            }
+        }
+
+        // Lấy toàn bộ node được đăng ký
+        $all_nodes = $registry->get_all_nodes();
+        $custom_nodes = array();
+
+        // 10 primitive nodes mặc định của core
+        $core_node_types = array(
+            'TriggerNode',
+            'SetDataNode',
+            'DBActionNode',
+            'DBQueryNode',
+            'ConditionNode',
+            'SwitchNode',
+            'IteratorNode',
+            'ApiNode',
+            'ClientResponseNode',
+            'RenderTemplateNode'
+        );
+
+        foreach ($all_nodes as $node) {
+            // Chỉ lấy các node không thuộc lõi core
+            if (!in_array($node['type'], $core_node_types, true)) {
+                $node_type = $node['type'];
+                $is_disabled_soft = in_array($node_type, $disabled_nodes, true);
+                
+                $custom_nodes[$node_type] = array(
+                    'type'        => $node_type,
+                    'class'       => $node['class'],
+                    'label'       => $node['label'],
+                    'icon'        => $node['icon'],
+                    'description' => $node['description'],
+                    'color'       => $node['color'],
+                    'category'    => $node['category'],
+                    'active'      => !$is_disabled_soft
+                );
+            }
+        }
+
+        return $custom_nodes;
     }
 
     public function render_dashboard()

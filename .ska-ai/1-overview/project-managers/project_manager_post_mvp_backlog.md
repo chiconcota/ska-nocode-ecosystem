@@ -65,12 +65,12 @@
 - [pm_ska_scripts_library.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/project-managers/pm_ska_scripts_library.md)
 - [pm_ska_code_block.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/project-managers/pm_ska_code_block.md)
 
-- [ ] **Ska Scripts Library:**
-  - [ ] Giao diện quản lý các đoạn mã (như Alpine store, CDN Chart, Google Analytics).
-  - [ ] Cấu hình nạp code: Header, Footer, Inline, nạp Global hay nạp theo điều kiện trang.
+- [x] **Ska Scripts Library:**
+  - [x] Giao diện quản lý các đoạn mã (như Alpine store, CDN Chart, Google Analytics).
+  - [x] Cấu hình nạp code: Header, Footer, Inline, nạp Global hay nạp theo điều kiện trang.
 - [ ] **Khối `ska-code`:**
-  - [ ] Thay thế Custom HTML block. Hỗ trợ code editor trực quan (Monaco/CodeMirror) hoặc liên kết script từ Thư viện.
-  - [ ] Cơ chế Server-side Deduplication: Chống nạp lặp CSS/JS trùng nhau khi render nhiều khối trên cùng một trang.
+  - [x] Thay thế Custom HTML block. Hỗ trợ code editor trực quan (Monaco/CodeMirror) hoặc liên kết script từ Thư viện.
+  - [x] Cơ chế Server-side Deduplication: Chống nạp lặp CSS/JS trùng nhau khi render nhiều khối trên cùng một trang.
 
 ---
 
@@ -109,3 +109,7 @@
 - [ ] **Hệ thống Node Cộng đồng (Community Nodes & Pluggable Actions Framework - Milestone 2+):**
   - [ ] Thiết kế cơ chế tách biệt các hành động của Client Response và Trigger thành các Node con độc lập trên Sidebar (User Nodes / Community Nodes).
   - [ ] Cho phép bên thứ ba đăng ký và đóng gói các custom node thành các module/add-on cài đặt riêng lẻ.
+- [ ] **Đóng gói Thư viện Lõi (Packaging Phase - Định hướng Tương lai):**
+  - [ ] Khi API của SkaFX, Skapine đã ổn định và "đóng băng" (không thay đổi lớn), thực hiện tách các thư mục lõi (`inc/skafx/`, `inc/design-engine/`...) thành các repository độc lập.
+  - [ ] Phát hành lên Packagist (cho Composer) và npm registry để cộng đồng mã nguồn mở cùng phát triển.
+

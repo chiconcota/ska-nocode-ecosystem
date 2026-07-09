@@ -216,10 +216,50 @@ defined( 'ABSPATH' ) || exit;
                  * Hook để các tiện ích inject card
                  */
                 do_action( 'ska_system_dashboard_extensions' ); 
+
+                // Lặp render các dynamic pluggable custom nodes
+                $ska_custom_nodes = \Ska_System_Framework\Framework_UI::get_custom_pluggable_nodes();
+                if ( ! empty( $ska_custom_nodes ) ) {
+                    foreach ( $ska_custom_nodes as $node_type => $addon ) {
+                        $is_active = $addon['active'];
+                        $addon_class = $is_active ? 'border-indigo-200 shadow-md' : 'opacity-70 grayscale-[30%]';
+                        ?>
+                        <div class="bg-white/90 backdrop-blur rounded-2xl border p-5 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between <?php echo esc_attr( $addon_class ); ?>" id="addon-card-<?php echo esc_attr( $node_type ); ?>">
+                            <div>
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-50 to-purple-50 text-indigo-600 rounded-xl flex items-center justify-center border border-indigo-100 shadow-sm relative z-10 group-hover:scale-110 transition-transform">
+                                        <span class="material-symbols-outlined text-[20px]">extension</span>
+                                    </div>
+                                    
+                                    <!-- Nút Xóa (Thùng rác) ở góc để xóa plugin addon vật lý -->
+                                    <button onclick="skaDeleteNodePlugin('<?php echo esc_js( $node_type ); ?>')" class="text-slate-400 hover:text-rose-600 bg-transparent border-0 cursor-pointer p-1 rounded-lg hover:bg-rose-50 transition-colors flex items-center justify-center" title="<?php esc_attr_e( 'Uninstall Extension Plugin', 'ska-no-code-design' ); ?>">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </div>
+                                
+                                <h3 class="font-bold text-base m-0 p-0 border-0 mb-1 text-slate-800"><?php echo esc_html( $addon['label'] ); ?></h3>
+                                <p class="text-xs text-slate-500 m-0 leading-relaxed min-h-[48px] line-clamp-3 mb-4"><?php echo esc_html( $addon['description'] ); ?></p>
+                            </div>
+                            
+                            <!-- Toggle switch Bật / Tắt ở chân Card -->
+                            <div class="flex items-center justify-between pt-3 border-t border-slate-100/60 mt-auto">
+                                <span class="text-xs font-semibold <?php echo $is_active ? 'text-indigo-600' : 'text-slate-400'; ?>" id="addon-status-text-<?php echo esc_attr( $node_type ); ?>">
+                                    <?php echo $is_active ? __( 'Active', 'ska-no-code-design' ) : __( 'Disabled', 'ska-no-code-design' ); ?>
+                                </span>
+                                
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" <?php checked( $is_active ); ?> onchange="skaToggleNodeStatus('<?php echo esc_js( $node_type ); ?>', this)" class="sr-only peer">
+                                    <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
                 ?>
             </div>
             
-            <?php if ( ! has_action( 'ska_system_dashboard_extensions' ) ) : ?>
+            <?php if ( ! has_action( 'ska_system_dashboard_extensions' ) && empty( $ska_custom_nodes ) ) : ?>
                 <div class="bg-white/60 backdrop-blur border border-dashed border-slate-300 rounded-2xl text-center py-12 text-slate-500 text-sm font-medium">
                     <span class="material-symbols-outlined text-[48px] text-slate-300 mb-3 block">extension_off</span>
                     <?php esc_html_e( 'No extensions have been installed yet.', 'ska-no-code-design' ); ?>
@@ -227,5 +267,86 @@ defined( 'ABSPATH' ) || exit;
             <?php endif; ?>
         </div>
 
+        <!-- Script JS xử lý AJAX cho Extensions (Node Soft-Toggle & Plugin Deletion) -->
+        <script>
+        function skaToggleNodeStatus(nodeType, toggleEl) {
+            const cardEl = document.getElementById('addon-card-' + nodeType);
+            const statusTextEl = document.getElementById('addon-status-text-' + nodeType);
+            
+            toggleEl.disabled = true;
+            const isActiveVal = toggleEl.checked ? 1 : 0;
+            
+            jQuery.post(skaSystemObj.ajax_url, {
+                action: 'ska_system_toggle_node_status',
+                node_type: nodeType,
+                active: isActiveVal,
+                nonce: skaSystemObj.addon_nonce
+            }, function(response) {
+                toggleEl.disabled = false;
+                if (response.success) {
+                    const is_active = response.data.status === 'active';
+                    toggleEl.checked = is_active;
+                    
+                    if (is_active) {
+                        cardEl.classList.remove('opacity-70', 'grayscale-[30%]');
+                        cardEl.classList.add('border-indigo-200', 'shadow-md');
+                        statusTextEl.textContent = '<?php echo esc_js( __( 'Active', 'ska-no-code-design' ) ); ?>';
+                        statusTextEl.className = 'text-xs font-semibold text-indigo-600';
+                    } else {
+                        cardEl.classList.add('opacity-70', 'grayscale-[30%]');
+                        cardEl.classList.remove('border-indigo-200', 'shadow-md');
+                        statusTextEl.textContent = '<?php echo esc_js( __( 'Disabled', 'ska-no-code-design' ) ); ?>';
+                        statusTextEl.className = 'text-xs font-semibold text-slate-400';
+                    }
+                } else {
+                    alert(response.data.message || 'Error toggling node');
+                    toggleEl.checked = !toggleEl.checked;
+                }
+            }).fail(function() {
+                toggleEl.disabled = false;
+                alert('Network error. Failed to toggle node.');
+                toggleEl.checked = !toggleEl.checked;
+            });
+        }
+
+        function skaDeleteNodePlugin(nodeType) {
+            if (!confirm('<?php echo esc_js( __( 'Are you absolutely sure you want to delete this extension? This will delete all physical files of the extension and CANNOT be undone! Type CONFIRM to delete.', 'ska-no-code-design' ) ); ?>')) {
+                return;
+            }
+
+            const inputConfirm = prompt('<?php echo esc_js( __( 'Type CONFIRM to execute deletion:', 'ska-no-code-design' ) ); ?>');
+            if (inputConfirm !== 'CONFIRM') {
+                alert('<?php echo esc_js( __( 'Deletion cancelled. Confirmation text did not match.', 'ska-no-code-design' ) ); ?>');
+                return;
+            }
+
+            const cardId = 'addon-card-' + nodeType;
+            const cardEl = document.getElementById(cardId);
+            
+            cardEl.style.opacity = '0.5';
+            
+            jQuery.post(skaSystemObj.ajax_url, {
+                action: 'ska_system_delete_node_plugin',
+                node_type: nodeType,
+                nonce: skaSystemObj.addon_nonce
+            }, function(response) {
+                if (response.success) {
+                    jQuery('#' + cardId).fadeOut(300, function() {
+                        jQuery(this).remove();
+                        // Tải lại trang nếu không còn card nào để hiển thị blank state
+                        if (jQuery('.grid-cols-1.sm\\:grid-cols-2 .bg-white\\/90').length === 0) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    cardEl.style.opacity = '1';
+                    alert(response.data.message || 'Error deleting addon');
+                }
+            }).fail(function() {
+                cardEl.style.opacity = '1';
+                alert('Network error. Failed to delete addon.');
+            });
+        }
+        </script>
     </div>
 </div>

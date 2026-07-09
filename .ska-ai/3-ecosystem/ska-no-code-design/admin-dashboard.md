@@ -1,5 +1,5 @@
 # SKA SYSTEM FRAMEWORK (Quản Trị Trung Tâm)
-@module: ska-system-framework | @version: 2.0.0
+@module: ska-system-framework | @version: 2.1.0
 
 ## 1. MỤC ĐÍCH (PURPOSE)
 - Đóng vai trò là **Shared Drop-in Framework**, không phải là một plugin độc lập. File sẽ tự kích hoạt dựa trên phiên bản mới nhất nếu nhiều plugin nội bộ (Ska Builder Core, Data Pro, Logic Engine) cùng lồng ghép nó.
@@ -15,6 +15,13 @@ Sự mở rộng cấu trúc hiển thị trang Dashboard thông qua 3 Action Ho
 
 - **Events:**
   - `admin_init` -> Nhúng lệnh bắt tín hiệu POST Save Setting (Kiểm tra `wp_verify_nonce( $_POST['ska_system_nonce'] )` và check user quyền `manage_options`).
+
+
+### Quản lý Addons/Extensions Trực Tiếp (v2.1.0):
+Hỗ trợ tương tác trực tiếp với các custom nodes được đăng ký bởi bên thứ ba thông qua 2 endpoint AJAX được bảo vệ bằng nonce `ska_system_addon_nonce`:
+- **`wp_ajax_ska_system_toggle_node_status`**: Bật/Tắt mềm trạng thái node. Tên node được cập nhật vào mảng `ska_disabled_nodes` lưu trong bảng phẳng settings `wp_ska_data_sys_settings` để vô hiệu hóa mềm trên UI Canvas (cấm kéo thả, hiển thị grayscale), giữ nguyên trạng thái active của plugin WordPress để bảo vệ hệ thống.
+- **`wp_ajax_ska_system_delete_node_plugin`**: Tắt và xóa vật lý plugin addon chứa node đó khỏi server (`delete_plugins`). Định vị tệp plugin chính tự động bằng PHP Reflection Class và **Dynamic File Scan Fallback** (quét nội dung file tìm chuỗi tên node khi class chưa load).
+- Giao diện Dashboard render động mỗi custom node thành một Card riêng biệt tại phần **Extensions** với Toggle Switch và nút Xóa (icon Thùng rác) trực quan.
 
 ## 3. CƠ CHẾ DỮ LIỆU ĐỘT PHÁ (Dev Mode)
 - Module cập nhật và quản lý khoá option **`ska_system_dev_mode`**. Khi `Dev Mode` có giá trị là `1` (ON), lõi Engine (`Ska_Dynamic_Content` bên Logic Engine) sẽ tự động bật luồng bắt lỗi Exception và quăng thẳng Badges Đỏ lên Frontend nếu Code có vấn đề (Vd: Trùng Tên Data Table, Trích xuất lỗi).

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Settings, X, Trash2, Code, Eye, FileJson } from 'lucide-react';
 import TablePicker from './TablePicker';
 import { SkaFXInput, SkaFXTextarea } from './SkaFXAutocomplete';
+import DynamicNodeSettings from './DynamicNodeSettings';
 
 const { __ } = window.wp?.i18n || { __: (text) => text };
 
@@ -1018,6 +1019,15 @@ export default function SettingsPanel({ selectedNode, nodes, onUpdateNode, onDel
                 <strong>Note:</strong> To configure loop steps, select another node and change its Parent Node to this Iterator ID.
             </div>
           </div>
+        )}
+
+        {!['TriggerNode', 'SetDataNode', 'DBActionNode', 'DBQueryNode', 'ConditionNode', 'SwitchNode', 'IteratorNode', 'ApiNode', 'ClientResponseNode', 'RenderTemplateNode'].includes(selectedNode.type) && (
+          <DynamicNodeSettings 
+            selectedNode={selectedNode}
+            nodes={nodes}
+            onUpdateNode={onUpdateNode}
+            mockPayload={mockPayload}
+          />
         )}
       </div>
       

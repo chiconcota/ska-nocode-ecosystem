@@ -1,5 +1,5 @@
 # Kiến trúc Ska Logic Engine (Ska-xi măng)
-@version: 1.1.11
+@version: 1.3.0
 @focus: Lớp Nhân (Dự án The Trinity Architecture)
 
 Ska Logic Engine là bộ óc kết nối (Node Engine định tuyến) giúp "Vỏ" (Ska Design / Form Frontend) nối với "Kho" (Ska Data Pro / Flat Tables MySQL).
@@ -35,6 +35,8 @@ Mọi thứ vào là `$payload` và bắt buộc trả về mảng `$payload` ch
 - **Canvas UI (React Flow v11+):** Giao diện Builder đã chuyển đổi hoàn toàn sang React Flow (Full-Screen). Hỗ trợ Sidebar Drag & Drop kéo thả các Node trực tiếp vào Canvas. `ReactFlowProvider` bọc toàn cục để quản lý State chung (screenToFlowPosition).
 - **Settings Panel (Inspector):** Click vào Node trên Canvas sẽ mở ra bảng Setting bên phải để cấu hình Node. Thay đổi cấu hình (Data Binding 2 chiều) cập nhật label và data trên Node Canvas theo thời gian thực, đồng thời sync xuống ô input ẩn của WP.
 - **BaseNode Architecture:** Cung cấp generic `BaseNode` bọc ngoài các Node logic, chuẩn hóa UI hiển thị cho Icon, Label, và các cổng In/Out (Handles) giúp việc mở rộng 10 Atomic Nodes được đồng nhất.
+- **Pluggable Nodes Framework & Dynamic Sidebar (v1.3.0):** Triển khai lớp `Ska_Node_Registry` quản lý tập trung việc đăng ký node và filter `ska_logic_registered_nodes` cho phép bên thứ ba tự đăng ký custom nodes từ các plugin addon độc lập. Sidebar React nạp động danh sách nodes từ JS context, tự động mapping chuỗi tên icon (như `Zap`, `Database`, `Mail`...) thành React Lucide Icon tương ứng với fallback an toàn về `ServerCog` chống crash.
+- **Dynamic settings form (v1.3.0):** Xây dựng component `DynamicNodeSettings` tự động giải phân cấu trúc mảng cấu hình JSON Schema (`settings_schema`) từ PHP registry để tự động vẽ Form settings phù hợp (input, password, textarea, select, toggle) cho các node ngoài core, đồng bộ reactive về state nodes của Canvas.
 
 ## 4. UI Tương Tác & Quản Trị Băng Chuyền
 - **Hệ Thống Dual-View & Dynamic Submenu:** Lớp giao diện quản trị wp-admin tách thành `Manager UI` (Dashboard List View) và `Builder UI` (Không gian kéo thả). Đặc biệt, hệ thống hỗ trợ Dynamic Submenu, tự động đăng ký các workflows đang hoạt động thành các menu con trên thanh sidebar của WordPress, cho phép người dùng Nocode truy cập nhanh trực tiếp vào builder mà không cần qua Dashboard trung gian.
@@ -88,3 +90,9 @@ Do bản chất của việc xâu chuỗi nhiều Primitive Nodes và chạy vò
 1. **Circuit Breaker (Ngắt mạch):** Bộ đếm `$step_count` đếm số lượng Node đã thực thi trong 1 phiên. Nếu vượt quá ngưỡng (VD: 1000), lập tức `throw CircuitBreakerException` để dừng hệ thống chống treo. Có giới hạn độ sâu đệ quy (`$call_stack_depth`) và thời gian chạy tối đa (Execution Timeout).
 2. **State Pruning (Dọn rác bộ nhớ):** Ở môi trường Production, biến `$context` của luồng chỉ giữ lại các Output cần thiết cho các node sau. Output của các Node trung gian không còn tác dụng sẽ bị `unset()` để tiết kiệm RAM. Async Worker (Action Scheduler) được dùng để chặt nhỏ (chunking) xử lý cho vòng lặp lớn.
 3. **Data Vector / Batch Processing (Chống N+1):** Các Action Nodes (như DB Action) được thiết kế nhận diện đầu vào dạng Mảng (Array). Thay vì gọi lặp `insert/update` 1000 lần sinh ra lỗi N+1 Queries, Node sẽ tự động gom thành 1 câu lệnh Bulk SQL duy nhất để xử lý với Ska Data Pro.
+
+### 7.2. Quản Lý Bật/Tắt Mềm Node (Node Soft-Toggle) & Bảng Phẳng System Settings (v1.3.0)
+Để đảm bảo tính độc lập và độ ổn định cho hệ sinh thái, việc tắt mở các trạm logic mở rộng được thực hiện ở mức độ logic mềm mà không cần gỡ kích hoạt plugin vật lý của WordPress:
+1. **Bảng phẳng `wp_ska_data_sys_settings`:** Cung cấp hạ tầng cơ sở dữ liệu phẳng để lưu trữ các thông số cấu hình hệ thống bằng JSON.
+2. **Khóa `ska_disabled_nodes`:** Lưu trữ mảng chứa danh sách các Node Type bị vô hiệu hóa (Blacklist).
+3. **Cơ chế hoạt động:** Khi nạp danh sách Node cho Canvas React Flow, Registry sẽ lọc qua danh sách bị tắt này và đánh dấu thuộc tính `disabled => true` cho các Node tương ứng, làm cho các Node đó bị mờ đi (grayscale) và vô hiệu hóa khả năng kéo thả trên UI.

@@ -1,45 +1,49 @@
 # CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ
-*Ngày cập nhật: 2026-06-25*
+*Ngày cập nhật: 2026-07-09*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Git Branch**: `main` (Đã merge nhánh `feature/scripts-library` vào `main` và push lên GitHub).
+- **Git Branch**: `main` (Nhánh sạch, code đã compile và chạy lint PHP thành công).
 - **Công việc đã thực hiện trong phiên**:
-  1. **Nesting Block Code inside Container**: Bổ sung `'ska-builder/code'` vào danh sách `allowedBlocks` của block `Ska Container` (`ska-container/index.js`). Khắc phục giới hạn của phiên trước, cho phép người dùng kéo thả block canvas/code lồng trực tiếp vào bên trong block container để tạo các khối giao diện phức hợp (ví dụ: bọc canvas biểu đồ trong card glassmorphism).
-  2. **Gutenberg UI Icon Enhancement**: Đăng ký sử dụng icon `code` từ thư viện chính quy `@wordpress/icons` cho block `Ska Code` (`ska-code/index.js`). Cải thiện trải nghiệm trực quan trong Block Inserter.
-  3. **Robust API Table Routing**: Cải tiến REST API Portal (`class-rest-api.php`) để tự động phân giải và ánh xạ chính xác tên bảng từ request URL. Hệ thống tự động kiểm tra: tên bảng thô, bảng có prefix mặc định, bảng dạng phẳng (`ska_data_revenue`), hoặc theo Portal Settings Slug (`revenue-api`), định tuyến chính xác về tên bảng phẳng MySQL gốc để phục vụ truy vấn dữ liệu.
-  4. **Duplicate Script Render Prevention**: Tối ưu hóa `Scripts_Loader` (`class-scripts-loader.php`) bằng cách theo dõi danh sách `rendered_script_ids` tĩnh. Đảm bảo triệt tiêu hoàn toàn lỗi in lặp script CDN (như thư viện Chart.js) ở cả Header (`wp_head`) và Footer (`wp_footer`) khi nhiều block/trang cùng gọi load.
-  5. **Header CSS/JS Lifecycle Conflict Resolution**: Phát hiện và vá lỗi mất CSS/JS ở Header (Inject Location = Header) do block render trong body lỡ nhịp chạy `wp_head`. Xây dựng cơ chế pre-scan tĩnh toàn bộ blocks `ska-builder/code` sớm ở `wp_head` độ ưu tiên 1 để đẩy tài nguyên vào queue kịp thời.
-  6. **HTML Script Comment Debugging**: In thêm comment debug HTML `<!-- Ska Script: [script_id] -->` trước khi load script thư viện giúp dễ dàng kiểm tra tính khử trùng lặp và xác minh E2E View Source.
-  7. **Versioning Auto-Increment**: Nâng cấp phiên bản plugin **Ska Data Pro** lên `v1.3.2` và plugin **Ska No-Code Design** lên `v1.2.3`, tuân thủ nghiêm ngặt quy tắc SemVer.
-- **Trạng thái**: 🟢 Fully Verified, Merged & Released (Các lỗi phát sinh đã được fix triệt để, kiểm thử E2E Test Cases 1-4 thành công tốt đẹp).
+  1. **Tạo lớp Registry Platform**: Viết lớp `Ska_Node_Registry` hỗ trợ các default primitive nodes và filter hook `ska_logic_registered_nodes` cho bên thứ ba đăng ký nodes tùy biến từ các plugin mở rộng độc lập.
+  2. **Sidebar Nạp Động**: Sửa đổi `Sidebar.jsx` React component nạp động danh sách nodes từ `window.SKA_DAG_CONTEXT.AVAILABLE_NODES` và map icons qua thư viện `lucide-react` (có fallback an toàn `ServerCog` tránh lỗi ReferenceError crash).
+  3. **Dynamic Settings Panel**: Tạo component `DynamicNodeSettings.jsx` giải cấu trúc JSON Schema (settings_schema) từ registry PHP để vẽ form động ở Settings Panel bên phải React Flow Canvas.
+  4. **Flat Tables Settings (`wp_ska_data_sys_settings`)**: Tạo bảng phẳng lưu cấu hình hệ thống, cung cấp 2 hàm helper toàn cục `ska_get_system_setting()` và `ska_set_system_setting()` thay thế hoàn toàn cho `wp_options`.
+  5. **Extensions Manager trên Dashboard (Soft-Toggle & Uninstall)**:
+     - Đăng ký API AJAX `ska_system_toggle_node_status` để bật/tắt mềm các custom node và lưu trạng thái vào mảng `ska_disabled_nodes` dưới DB bảng phẳng settings.
+     - Đăng ký API AJAX `ska_system_delete_node_plugin` để xóa vật lý plugin addon.
+     - Sử dụng PHP Reflection Class kết hợp **Dynamic File Scan Fallback** (quét nội dung file tìm tên node) để tự động tìm chính xác tệp plugin chính của addon cần xóa kể cả khi class PHP của node chưa được định nghĩa.
+     - Kết xuất các custom node thành các Card riêng biệt trong phần Extensions của Ska System Dashboard.
+- **Trạng thái**: 🟢 Done (Hạ tầng Pluggable Nodes và Extensions Manager trên Dashboard đã được tích hợp hoàn chỉnh và tối ưu hóa mượt mà).
 
 ## 2. Các quyết định thiết kế đã thống nhất:
-- **Dynamic API Mapping**: Tránh hardcode endpoint, cho phép các plugin/JS gọi API thông qua Portal Settings Slug linh hoạt.
-- **Strict Allowed Blocks Control**: Kiểm soát chặt chẽ danh sách allowed blocks của Container để bảo vệ layout và tính nhất quán của hệ sinh thái.
-- **Render Track Cache**: Theo dõi trạng thái rendered script tại runtime để ngăn ngừa xung đột/in thừa tài nguyên JS ngoài frontend.
-- **Early wp_head Pre-scan**: Đăng ký quét sớm blocks ở hook `wp_head` độ ưu tiên 1 ngoài frontend để giải quyết triệt để vấn đề assets lỡ nhịp vòng đời WordPress.
-- **HTML Comment Debugging**: In ID script dưới dạng comment HTML để debug và tối ưu hóa quy trình kiểm thử tự động.
+- **Pluggable Nodes Framework**: Cung cấp cơ chế cắm rút node decoupled hoàn hảo cho plugin bên thứ ba.
+- **Lucide Icon Dynamic Mapping**: Sử dụng mảng map các icon Lucide phổ biến trong `Sidebar.jsx` để bên thứ ba tự chọn icon mong muốn qua PHP config.
+- **Dynamic settings via JSON Schema**: Settings Panel tự động vẽ form dựa trên schema JSON, hỗ trợ các input thông dụng (password, text, textarea, select, toggle).
+- **Node Soft-Toggle & Physical Uninstall**: Tắt node mềm qua DB phẳng settings để giữ hệ thống ổn định và bảo mật (không thay đổi trạng thái active/inactive của plugin WordPress). Chỉ khi click nút Xóa (Delete) trên card và gõ "CONFIRM", hệ thống mới thực hiện xóa vật lý thư mục plugin đó.
+- **Reflection & File Scan Fallback**: Dò tìm plugin file chứa node thông qua Reflection class và tự động quét chuỗi nội dung file chính nếu class chưa load.
 
 ## 3. Danh sách file thay đổi & tạo mới trong phiên:
-- **Cập nhật mã nguồn**:
-  - `[NEW]` `wp-content/plugins/ska-no-code-design/blocks/class-ska-code-block-queue.php` (Quản lý hàng đợi in và quét block sớm).
-  - `[MODIFY]` `wp-content/plugins/ska-no-code-design/blocks/init.php` (Load sớm class queue).
-  - `[MODIFY]` `wp-content/plugins/ska-no-code-design/src/ska-code/render.php` (Dọn dẹp định nghĩa class trùng).
-  - `[MODIFY]` `wp-content/plugins/ska-no-code-design/build/ska-code/render.php` (Dọn dẹp định nghĩa class trùng).
-  - `[MODIFY]` `wp-content/plugins/ska-no-code-design/ska-no-code-design.php` (Nâng cấp version lên 1.2.3).
-  - `[MODIFY]` `wp-content/plugins/ska-no-code-design/package.json` (Nâng cấp version lên 1.2.3).
-  - `[MODIFY]` `wp-content/plugins/ska-data-pro/inc/core/class-scripts-loader.php` (In comment debug HTML).
-  - `[MODIFY]` `wp-content/plugins/ska-data-pro/ska-data-pro.php` (Nâng cấp version lên 1.3.2).
-  - `[MODIFY]` `wp-content/plugins/ska-data-pro/package.json` (Nâng cấp version lên 1.3.2).
-  - `[MODIFY]` `wp-content/plugins/ska-data-pro/inc/api/class-rest-api.php` (Phân giải bảng thông minh qua prefix/slug).
-  - `[MODIFY]` `wp-content/plugins/ska-no-code-design/src/ska-code/index.js` (Thêm icon code từ `@wordpress/icons`).
-  - `[MODIFY]` `wp-content/plugins/ska-no-code-design/src/ska-container/index.js` (Cho phép lồng `ska-builder/code` vào allowedBlocks).
-  - `[MODIFY]` Các file biên dịch trong thư mục `build/` của plugin Design.
-- **Cập nhật tài liệu hệ thống**:
-  - `[MODIFY]` `.ska-ai/2-memory/checkpoint.md` (Cập nhật tiến trình bàn giao phiên này).
-  - `[MODIFY]` `.ska-ai/1-overview/system_map.md` (Cập nhật logs v1.2.3 & v1.3.2).
-  - `[MODIFY]` `.ska-ai/2-memory/decision-log.md` (Bổ sung quyết định thiết kế lồng block, sửa lỗi nạp head, comment debug và API).
-  - `[MODIFY]` `.ska-ai/3-ecosystem/ska-no-code-design/blocks.md` (Cập nhật ghi chú về khả năng Nesting và cơ chế pre-scan).
+- **Thư mục plugin `ska-logic-engine`**:
+  - `[NEW]` `includes/class-ska-node-registry.php` (Lớp Registry nodes PHP, hỗ trợ lọc danh sách disabled nodes từ DB settings).
+  - `[NEW]` `assets/src/builder/components/DynamicNodeSettings.jsx` (Component vẽ Form động React).
+  - `[MODIFY]` `ska-logic-engine.php` (Tăng version plugin lên 1.3.0).
+  - `[MODIFY]` `package.json` (Tăng version package lên 1.3.0).
+  - `[MODIFY]` `includes/class-ska-logic-core.php` (Nhúng và init Registry, tạo bảng settings phẳng `wp_ska_data_sys_settings`, cung cấp hai hàm helper toàn cục `ska_get_system_setting` và `ska_set_system_setting`).
+  - `[MODIFY]` `includes/admin/admin-builder-ui.php` (Đẩy mảng registry node qua JS context).
+  - `[MODIFY]` `assets/src/builder/components/Sidebar.jsx` (Load sidebar nodes động từ JS context, có fail-safe fallback).
+  - `[MODIFY]` `assets/src/builder/components/SettingsPanel.jsx` (Nhúng render DynamicNodeSettings fallback).
+  - `[MODIFY]` `assets/js/admin-dag-builder.bundle.js` & `.css` (Biên dịch lại bundles).
+- **Thư mục plugin `ska-no-code-design`**:
+  - `[MODIFY]` `ska-no-code-design.php` (Tăng version lên 2.1.0).
+  - `[MODIFY]` `package.json` (Tăng version lên 2.1.0).
+  - `[MODIFY]` `inc/ska-system-framework/includes/class-framework-ui.php` (Thêm API AJAX toggle/delete nodes, tự động truy vết plugin file bằng Reflection/File scan, và helper xuất danh sách custom nodes).
+  - `[MODIFY]` `inc/ska-system-framework/views/dashboard-ui.php` (Render card custom nodes và nhúng AJAX JS handler điều phối soft-toggle/delete).
+- **Thư mục tài liệu `.ska-ai`**:
+  - `[MODIFY]` `.ska-ai/3-ecosystem/ska-logic-engine/logic-engine.md` (Thêm tài liệu kiến trúc Pluggable Nodes v1.3.0).
+  - `[MODIFY]` `.ska-ai/3-ecosystem/ska-no-code-design/admin-dashboard.md` (Thêm tài liệu API quản lý addons v2.1.0).
+  - `[MODIFY]` `.ska-ai/1-overview/project-managers/pm_pluggable_nodes_framework.md` (Cập nhật tiến độ hoàn thành Phase 1, 2, 3, 4, 5).
+  - `[MODIFY]` `.ska-ai/2-memory/checkpoint.md` (Bản ghi bàn giao phiên làm việc hiện tại).
+  - `[MODIFY]` `.ska-ai/2-memory/decision-log.md` (Bổ sung log quyết định về Pluggable Nodes và Extensions Manager).
 
 ## 4. Gợi ý công việc cho phiên tiếp theo (QUAN TRỌNG)
-- **Chuẩn bị Milestone 2**: Phiên tiếp theo có thể bắt đầu lập kế hoạch và thiết kế cho các tính năng của Milestone 2 (như Pluggable Community Nodes, Async Workflows nâng cao, v.v.). Nhánh Git làm việc sẽ bắt đầu từ nhánh `main` sạch.
+- Hệ sinh thái đã sẵn sàng hoạt động ở môi trường sản xuất. Giai đoạn tiếp theo có thể tiến hành phát triển các Addons thực tế như `ska-video-engine` hoặc `ska-stripe-payment` để phân phối thương mại.

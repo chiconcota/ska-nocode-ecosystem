@@ -61,6 +61,12 @@
   1. Chỉ cung cấp `ArtifactMetadata` đối với các tệp tin markdown lưu tại thư mục `/home/chiconcota/.gemini/antigravity-ide/brain/[conversation-id]/`.
   2. Đối với mọi file mã nguồn PHP, JS, JSON thông thường của dự án, bắt buộc **bỏ trống** tham số `ArtifactMetadata`.
 
+### MISTAKE-009: Tham chiếu biến chưa import (ReferenceError) trong UI React & Thiếu Fail-Safe Fallback
+* **Mô tả**: Import thiếu icon/thành phần trong React (như icon `Plug` từ `lucide-react`) nhưng vẫn tham chiếu trong map config, đồng thời thiếu cơ chế fallback icon an toàn dẫn đến crash toàn bộ trang vẽ logic (lỗi trắng màn hình).
+* **Quy tắc tự khắc phục**:
+  1. Luôn bảo đảm mọi thành phần/icon cấu hình động từ PHP bắt buộc phải được import hợp lệ hoặc có trong danh sách map được định nghĩa ở React code.
+  2. Bắt buộc xây dựng cơ chế **Fail-Safe Fallback** thông minh (ví dụ: trả về icon mặc định `ServerCog` nếu không tìm thấy icon cấu hình) thay vì quăng lỗi crash làm hỏng luồng render của React.
+
 ---
 
 ## 🟢 LỊCH SỬ LỖI ĐÃ KHẮC PHỤC (RESOLVED)

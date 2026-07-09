@@ -10,6 +10,8 @@ trigger: always_on
 2. **Framework-Agnostic WP:** WordPress từ nay bị xem là một nền tảng cung cấp Authentication & Admin UI tạm thời, KHÔNG phải môi trường rễ. Tránh phụ thuộc các class nội địa cũ nếu rủi ro hiệu năng cao.
 3. **Decoupled Plugins Rule (Microservices):** Tuyệt đối KHÔNG ĐƯỢC để Plugin A gọi trực tiếp một class của Plugin B. Sự giao tiếp giữa 4 Plugins bắt buộc phải truyền qua WordPress Hooks (`do_action`, `apply_filters`). 
 4. **Single Source Of Truth (Global State):** Tuân thủ tuyệt đối chuẩn Nocode Molecule. Không tách vỡ State, Skapine Engine phải sử dụng độc quyền hệ sinh thái `Alpine.store` để giao tiếp chéo giữa các Block độc lập.
+5. **Clean & Agnostic Core Libraries (SkaFX, Skapine, Tailwind JIT):** Trong quá trình code hiện tại, bắt buộc viết mã nguồn của SkaFX, Skapine, và Tailwind PHP JIT cực kỳ sạch, hoàn toàn không phụ thuộc vào WordPress (ví dụ: không gọi trực tiếp các hàm WP như `get_option`, `wp_send_json` bên trong class lõi/parser, mà phải nhận dữ liệu qua tham số truyền vào). Điều này phục vụ việc tách các module này thành package độc lập (Composer/npm) đưa lên open source trong tương lai.
+
 
 ## 1. PHÂN CÁCH TRÁCH NHIỆM (BOUNDARY ISOLATION)
 Trước khi Code, Agent BẮT BUỘC nhận diện code mình viết sẽ rơi vào Plugin nào để không lẫn lộn:

@@ -109,3 +109,4 @@ function ska_canvas_hide_site_editor() {
 	remove_submenu_page( 'themes.php', 'site-editor.php' ); // Removes "Editor" under Appearance
 }
 add_action( 'admin_menu', 'ska_canvas_hide_site_editor', 999 );
+
