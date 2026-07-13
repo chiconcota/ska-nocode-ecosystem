@@ -4,7 +4,7 @@
 # But don't ignore these files/folders at root:
 !/.gitignore
 !/.agent/
-!/.ska-ai/
+!/.skaaa-ai/
 !/README.md
 !/LICENSE
 !/CONTRIBUTING.md
@@ -18,16 +18,16 @@
 
 # Ignore all plugins except the Ska ones
 /wp-content/plugins/*
-!/wp-content/plugins/ska-no-code-design/
-!/wp-content/plugins/ska-data-pro/
-!/wp-content/plugins/ska-logic-engine/
+!/wp-content/plugins/skaaa-no-code-design/
+!/wp-content/plugins/skaaa-data-pro/
+!/wp-content/plugins/skaaa-logic-engine/
 !/wp-content/plugins/release.js
 !/wp-content/plugins/zip-all.js
 
 
 # Ignore all themes except the Ska ones
 /wp-content/themes/*
-!/wp-content/themes/ska-canvas/
+!/wp-content/themes/skaaa-canvas/
 
 # Node modules inside plugins and themes should be ignored
 **/node_modules/

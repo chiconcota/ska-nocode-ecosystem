@@ -1,0 +1,48 @@
+<?php
+defined( 'ABSPATH' ) || exit;
+
+class Skaaa_Logic_Async_Worker {
+    
+    public function __construct() {
+        // Lắng nghe hook từ Action Scheduler hoặc WP-Cron
+        add_action( 'skaaa_logic_async_task', [ $this, 'process_async_task' ], 10, 3 );
+    }
+
+    /**
+     * Đưa một tác vụ vào hàng đợi chạy nền (Async)
+     * Ưu tiên Action Scheduler nếu có, fallback về WP-Cron
+     */
+    public static function dispatch( $workflow_id, $node_id, $payload ) {
+        if ( function_exists( 'as_enqueue_async_action' ) ) {
+            as_enqueue_async_action( 'skaaa_logic_async_task', [ $workflow_id, $node_id, $payload ] );
+        } else {
+            // Fallback: WP-Cron
+            wp_schedule_single_event( time(), 'skaaa_logic_async_task', [ $workflow_id, $node_id, $payload ] );
+        }
+    }
+
+    /**
+     * Worker Job: Khởi động lại Graph Traversal từ cái Node bị treo
+     */
+    public function process_async_task( $workflow_id, $node_id, $payload ) {
+        // Đọc lại graph từ DB
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'skaaa_data_sys_workflows';
+        $graph_json = $wpdb->get_var($wpdb->prepare("SELECT graph FROM `{$table_name}` WHERE workflow_id = %s", $workflow_id));
+        
+        $graph = [];
+        if ( !empty($graph_json) ) {
+            $graph = json_decode($graph_json, true);
+        }
+
+        // Nếu workflow bị xóa giữa chừng thì drop.
+        if ( empty($graph) || ! isset($graph['nodes']) || ! isset($graph['edges']) ) {
+            return; 
+        }
+
+        // Đẩy tiếp băng chuyền
+        Skaaa_Workflow_Runner::traverse_graph( $graph, $node_id, $payload, $workflow_id );
+    }
+}
+
+new Skaaa_Logic_Async_Worker();

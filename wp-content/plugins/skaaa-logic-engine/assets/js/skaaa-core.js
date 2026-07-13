@@ -1,0 +1,433 @@
+window.$skaaa = {
+    /**
+     * Submit Form Helper (Decoupled No-Code Entry)
+     * Kích hoạt chu trình xử lý: Alpine Data -> WP REST API -> Skaaa Logic Engine -> Skaaa Event Bus
+     * 
+     * @param {HTMLElement} el Thẻ form (this/$el)
+     * @param {Object} payload Dữ liệu người dùng truyền từ giao diện
+     */
+    submitForm: async (el, payload = {}) => {
+        window.$skaaa.lastClickedElement = el;
+        // 1. Nhận diện ID Workflow
+        const logicId = el.getAttribute('data-skaaa-action') || el.dataset.logicId || 'default_form_submit';
+        
+        // 2. Chuẩn bị Dữ Liệu
+        const requestData = {
+            skaaa_form_id: logicId,
+            ...payload
+        };
+
+        // 3. UI State: Hỗ trợ tự động vô hiệu hóa nút bấm
+        const submitBtn = el.querySelector('button[type="submit"], input[type="submit"]') || el.querySelector('a.wp-block-button__link') || el;
+        let originalText = '';
+        if (submitBtn) {
+            originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span style="display:inline-block; animation: skaaa-spin 1s linear infinite; margin-right: 8px;">⏳</span> Đang xử lý...';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.7';
+            submitBtn.style.cursor = 'not-allowed';
+            submitBtn.style.pointerEvents = 'none';
+            
+            // Add spinner animation CSS if missing
+            if (!document.getElementById('skaaa-spin-css')) {
+                const style = document.createElement('style');
+                style.id = 'skaaa-spin-css';
+                style.innerHTML = '@keyframes skaaa-spin { 100% { transform: rotate(360deg); } }';
+                document.head.appendChild(style);
+            }
+        }
+
+        // 3.1. Giao tiếp với AlpineJS (Nếu có) để người dùng tự do hiển thị Loading bằng logic x-show
+        if (typeof Alpine !== 'undefined' && Alpine.$data) {
+            try { 
+                const dataScope = Alpine.$data(el);
+                if (dataScope.isSubmitting !== undefined) dataScope.isSubmitting = true;
+                if (dataScope.errorMessage !== undefined) dataScope.errorMessage = '';
+                if (dataScope.success !== undefined) dataScope.success = false;
+            } catch (e) {
+                console.warn('Skaaa Core: Lỗi khi đồng bộ UI State xuống Alpine', e);
+            }
+        }
+
+        try {
+            // 4. "Ném Cầu" vào Backend - TRÁNH TRỰC TIẾP PHỤ THUỘC CLASS (Decoupled Rule)
+            const res = await fetch(skaaaAppEnv.restUrl, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': skaaaAppEnv.nonce // Đảm bảo an toàn
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            const result = await res.json();
+            
+            // 5. Kiểm tra kết quả
+            if (result.success) {
+                // Thành công: Cập nhật biến success trong Alpine để UI hiện thông báo
+                if (typeof Alpine !== 'undefined' && Alpine.$data) {
+                    try { 
+                        const dataScope = Alpine.$data(el);
+                        if (dataScope.success !== undefined) dataScope.success = true;
+                    } catch (e) {}
+                }
+                
+                // KÍCH HOẠT EVENT BUS - HỆ TUẦN HOÀN CHO PHÉP BACKEND RA LỆNH NGƯỢC LẠI FRONTEND
+                if (result.data && result.data._skaaa_events) {
+                    window.$skaaa.processEventBus(result.data._skaaa_events, el);
+                }
+
+                // Dọn dẹp Form (Reset Trắng)
+                if (el.tagName === 'FORM') el.reset();
+
+                // Ném một tín hiệu global để ai muốn bắt thì bắt (Vd: Analytics)
+                el.dispatchEvent(new CustomEvent('skaaa-submit-success', { bubbles: true, detail: result }));
+                
+                return result;
+            } else {
+                throw new Error(result.message || 'Lỗi chưa xác định từ máy chủ!');
+            }
+        } catch (error) {
+            // Lỗi: Cập nhật biến errorMessage trong Alpine để UI báo đỏ
+            if (typeof Alpine !== 'undefined' && Alpine.$data) {
+                try { 
+                    const dataScope = Alpine.$data(el);
+                    if (dataScope.errorMessage !== undefined) dataScope.errorMessage = error.message;
+                } catch (e) {}
+            }
+            
+            // Bắn tín hiệu lỗi
+            el.dispatchEvent(new CustomEvent('skaaa-submit-error', { bubbles: true, detail: error }));
+            
+            // Hỗ trợ console để dev kiểm tra thêm thông tin
+            console.error('Skaaa Core Form Submit Error:', error);
+            window.$skaaa.showToast('Lỗi: ' + error.message, 'error');
+        } finally {
+            // Khôi phục nút bấm để bấm lại
+            if (submitBtn) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+                submitBtn.style.pointerEvents = 'auto';
+            }
+            
+            // Tắt cờ Loading ở Alpine
+            if (typeof Alpine !== 'undefined' && Alpine.$data) {
+                try { 
+                    const dataScope = Alpine.$data(el);
+                    if (dataScope.isSubmitting !== undefined) dataScope.isSubmitting = false;
+                } catch (e) {}
+            }
+        }
+    },
+
+    /**
+     * Dàn Nhạc Trưởng (Event Bus)
+     * Thực thi các phản hồi do Server đẩy xuống (Vd: Lệnh chuyển trang, Lệnh mở Modal Pop-up)
+     * 
+     * @param {Array} events Danh sách lệnh
+     */
+    processEventBus: (events, initiatorEl = null) => {
+        if (!Array.isArray(events)) return;
+        
+        events.forEach(evt => {
+            console.log('Skaaa Event Bus triggered:', evt);
+            
+            if (evt.type === 'redirect' && evt.url) {
+                window.location.href = evt.url;
+            } 
+            else if (evt.type === 'open_modal') {
+                if (evt.modal_content) {
+                    window.$skaaa.showDynamicModal(evt.modal_content);
+                } else if (evt.modal_id) {
+                    // Giả định: Modal có ID và lắng nghe event "open-modal"
+                    const modal = document.getElementById(evt.modal_id);
+                    if (modal) {
+                        modal.dispatchEvent(new CustomEvent('open-modal'));
+                    }
+                }
+            } 
+            else if (evt.type === 'fire_event' && evt.event_name) {
+                window.dispatchEvent(new CustomEvent(evt.event_name, { detail: evt.payload || {} }));
+            }
+            else if (evt.type === 'remove_row') {
+                if (evt.message) {
+                    window.$skaaa.showToast(evt.message, evt.toast_type || 'success');
+                }
+                const targetEl = initiatorEl || window.$skaaa.lastClickedElement;
+                if (targetEl) {
+                    let rowEl = null;
+
+                    // 1. Nếu nằm trong Loop, phần tử lặp lại (hàng cần xóa) luôn là con trực tiếp của Loop container
+                    const loopContainer = targetEl.closest('.wp-block-skaaaaa-builder-loop, .skaaa-loop-wrapper');
+                    if (loopContainer) {
+                        let current = targetEl;
+                        while (current && current.parentElement && current.parentElement !== loopContainer) {
+                            current = current.parentElement;
+                        }
+                        if (current && current !== loopContainer) {
+                            rowEl = current;
+                        }
+                    }
+
+                    // 2. Nếu không nằm trong Loop hoặc không tìm thấy, dùng selector truyền thống
+                    if (!rowEl) {
+                        rowEl = targetEl.closest('tr') || 
+                                targetEl.closest('.skaaa-organism-row') || 
+                                targetEl.closest('.skaaa-loop-item') || 
+                                targetEl.closest('.loop-item');
+                    }
+
+                    // 3. Fallback cuối cùng: Tránh việc closest() trả về chính targetEl nếu targetEl có class container
+                    if (!rowEl || rowEl === targetEl) {
+                        const parent = targetEl.parentElement;
+                        if (parent) {
+                            rowEl = parent.closest('[data-id]') ||
+                                    parent.closest('.skaaa-container-block') ||
+                                    parent.closest('.wp-block-skaaaaa-builder-container') ||
+                                    parent;
+                        }
+                    }
+
+                    if (rowEl) {
+                        rowEl.style.transition = 'all 0.4s ease';
+                        rowEl.style.opacity = '0';
+                        rowEl.style.transform = 'scale(0.95)';
+                        rowEl.style.maxHeight = rowEl.offsetHeight + 'px';
+                        setTimeout(() => {
+                            rowEl.style.height = '0';
+                            rowEl.style.paddingTop = '0';
+                            rowEl.style.paddingBottom = '0';
+                            rowEl.style.marginTop = '0';
+                            rowEl.style.marginBottom = '0';
+                            rowEl.style.overflow = 'hidden';
+                            setTimeout(() => {
+                                rowEl.remove();
+                            }, 400);
+                        }, 100);
+                    }
+                }
+            }
+            else if (evt.type === 'toast' && evt.message) {
+                window.$skaaa.showToast(evt.message, evt.toast_type || 'success');
+            }
+        });
+    },
+
+    /**
+     * Hiển thị thông báo Toast
+     */
+    showToast: (message, type = 'success') => {
+        console.log(`[Skaaa UI] ShowToast: "${message}" (${type})`);
+        const toast = document.createElement('div');
+        toast.className = `skaaa-toast skaaa-toast-${type}`;
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-family: sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 99999999;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: ${type === 'success' ? '#10b981' : '#ef4444'};
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        `;
+        
+        // Add icon
+        const icon = type === 'success' ? '✅' : '❌';
+        toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.style.transform = 'translateY(0)';
+            toast.style.opacity = '1';
+        }, 10);
+
+        // Animate out
+        setTimeout(() => {
+            toast.style.transform = 'translateY(-100px)';
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    },
+
+    /**
+     * Hiển thị Modal động với nội dung HTML tùy chỉnh
+     * Giữ nguyên thiết kế Tailwind, có overlay mờ và nút đóng Close (X) tinh tế.
+     */
+    showDynamicModal: (htmlContent) => {
+        console.log('[Skaaa UI] ShowDynamicModal triggered');
+        
+        // 1. Tạo container cho Modal
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'skaaa-dynamic-modal-overlay';
+        modalOverlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 99999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        `;
+
+        // 2. Tạo khung nội dung của Modal
+        const modalContainer = document.createElement('div');
+        modalContainer.className = 'skaaa-dynamic-modal-container';
+        modalContainer.style.cssText = `
+            background: transparent;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        `;
+
+        // 3. Tạo nút đóng Close floating
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '✕';
+        closeBtn.title = 'Close';
+        closeBtn.style.cssText = `
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1e293b;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        `;
+        closeBtn.onmouseenter = () => {
+            closeBtn.style.background = '#ffffff';
+            closeBtn.style.transform = 'scale(1.05)';
+        };
+        closeBtn.onmouseleave = () => {
+            closeBtn.style.background = 'rgba(255, 255, 255, 0.8)';
+            closeBtn.style.transform = 'scale(1)';
+        };
+
+        // 4. Hàm đóng modal
+        const closeModal = () => {
+            modalOverlay.style.opacity = '0';
+            modalContainer.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                modalOverlay.remove();
+            }, 300);
+        };
+
+        // Gán sự kiện đóng
+        closeBtn.onclick = closeModal;
+        
+        // Click vào overlay (vùng trống ngoài container) thì đóng modal
+        modalOverlay.onclick = (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        };
+
+        // Hỗ trợ đóng bằng phím ESC
+        const escHandler = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                document.removeEventListener('keydown', escHandler);
+            }
+        };
+        document.addEventListener('keydown', escHandler);
+
+        // 5. Gắn nội dung HTML vào Container
+        const modalBody = document.createElement('div');
+        modalBody.className = 'skaaa-dynamic-modal-body bg-white rounded-xl overflow-hidden';
+        modalBody.innerHTML = htmlContent;
+        
+        modalContainer.appendChild(closeBtn);
+        modalContainer.appendChild(modalBody);
+        modalOverlay.appendChild(modalContainer);
+        document.body.appendChild(modalOverlay);
+
+        // 6. Animate in
+        setTimeout(() => {
+            modalOverlay.style.opacity = '1';
+            modalContainer.style.transform = 'scale(1)';
+        }, 50);
+    }
+};
+
+/**
+ * Global Action Click Listener
+ * Hỗ trợ kích hoạt API Workflow từ MỌI nút bấm (không cần bọc trong Form)
+ * Bằng cách thêm class CSS: skaaa-action-[workflow_id]
+ */
+document.addEventListener('click', function(e) {
+    // Tìm element có class bắt đầu bằng skaaa-action-
+    const actionEl = e.target.closest('[class*="skaaa-action-"]');
+    if (!actionEl) return;
+    
+    // Nếu nó nằm trong Form đã được binding bằng Alpine (skaaaForm) thì bỏ qua để Form tự xử lý
+    if (actionEl.closest('form[x-data*="skaaaForm"]')) return;
+
+    // Lấy confirm message trước khi chạy
+    const confirmMsg = actionEl.getAttribute('data-skaaa-confirm');
+    if (confirmMsg && !window.confirm(confirmMsg)) {
+        e.preventDefault();
+        return;
+    }
+
+    e.preventDefault();
+
+    // Trích xuất ID workflow từ class. Ví dụ: skaaa-action-api_test -> api_test
+    const match = actionEl.className.match(/skaaa-action-([a-zA-Z0-9_-]+)/);
+    if (!match) return;
+
+    const workflowId = match[1];
+    
+    // Gắn ID tạm để submitForm nhận diện
+    actionEl.dataset.logicId = workflowId;
+    
+    // Lấy payload tĩnh nếu có
+    let payload = {};
+    const payloadStr = actionEl.getAttribute('data-skaaa-payload');
+    if (payloadStr) {
+        try {
+            payload = JSON.parse(payloadStr);
+        } catch(err) {
+            console.warn('Skaaa Core: Invalid JSON in data-skaaa-payload', err);
+        }
+    }
+    
+    // Kích hoạt chu trình gọi Backend
+    window.$skaaa.submitForm(actionEl, payload);
+});

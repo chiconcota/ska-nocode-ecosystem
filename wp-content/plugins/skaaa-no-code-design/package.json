@@ -1,0 +1,18 @@
+{
+    "name": "skaaa-no-code-design",
+    "version": "2.1.0",
+    "description": "Skaaa No-Code Design Plugin",
+    "scripts": {
+        "build": "wp-scripts build",
+        "start": "wp-scripts start",
+        "sync": "node scripts/sync-php.js"
+    },
+    "devDependencies": {
+        "@wordpress/icons": "^11.8.0",
+        "@wordpress/scripts": "^27.0.0"
+    },
+    "dependencies": {
+        "@jsep-plugin/assignment": "^1.3.0",
+        "jsep": "^1.4.0"
+    }
+}
