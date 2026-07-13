@@ -2,14 +2,14 @@
 trigger: always_on
 ---
 
-# SKA AI DOCUMENTATION MANAGEMENT RULE (NO-MESS POLICY)
+# SKAAA AI DOCUMENTATION MANAGEMENT RULE (NO-MESS POLICY)
 @target: All AI Agents | @trigger: /end_session or any documentation update
 
 ## 1. THIẾT QUÂN LUẬT KHÔNG RÁC (ZERO-TRASH DIRECTIVE)
 - Mọi tài liệu bắt buộc phải nằm gọn bên trong 4 ngăn kéo. **Dưới đây là Cấu trúc Hệ thống (Directory Tree) BẮT BUỘC tuân thủ:**
 
 ```text
-.ska-ai/
+.skaaa-ai/
 ├── 1-overview/
 │   ├── system_map.md           (Bản đồ kiến trúc tổng thể, Trạng thái Dự án, Nhật ký ngắn)
 │   └── project-managers/       (Thư mục chứa các Roadmap, Kế hoạch cho từng Phase)
@@ -18,10 +18,10 @@ trigger: always_on
 │   ├── checkpoint.md           (Bàn giao tiến độ dở dang và nhánh Git hiện tại cho phiên sau)
 │   └── archive/                (Lưu trữ các quyết định và log cũ của các Phase trước)
 ├── 3-ecosystem/
-│   ├── ska-no-code-design/     (Tài liệu kiến trúc Design, UI/UX, Blocks, JIT)
-│   ├── ska-data-pro/           (Tài liệu kiến trúc Database, Smart Object Blueprint)
-│   ├── ska-logic-engine/       (Tài liệu kiến trúc Logic, Event Pipeline, Form)
-│   └── ska-bridge/             (Tài liệu kiến trúc Adapter chuyển đổi html2tailwind)
+│   ├── skaaa-no-code-design/     (Tài liệu kiến trúc Design, UI/UX, Blocks, JIT)
+│   ├── skaaa-data-pro/           (Tài liệu kiến trúc Database, Smart Object Blueprint)
+│   ├── skaaa-logic-engine/       (Tài liệu kiến trúc Logic, Event Pipeline, Form)
+│   └── skaaa-bridge/             (Tài liệu kiến trúc Adapter chuyển đổi html2tailwind)
 └── 4-rules/
     └── (Tầng chứa các quy chuẩn/luật lệ AI cũ - Thường đã được di chuyển sang thư mục .agent/rules/)
 ```
@@ -43,6 +43,6 @@ trigger: always_on
 - Trước khi push code lên Git, AI phải tự phán xét: "Mình có bị lỡ tay đẻ ra cái file .md nào nằm ngoài hệ thống 4 folder không?". Nếu có thì tự động dùng Lệnh Xóa (Remove) hoặc hỏi ý kiến User ngay lập tức.
 
 ## 5. QUY LUẬT TẠO TÀI LIỆU (ANTI-CLUTTER DIRECTIVE)
-- **Hạn chế tạo rác:** Yêu cầu các Agent Tuyệt đối KHÔNG ĐƯỢC tự ý tạo mới bất kỳ file Markdown (`.md`) nào ở thư mục gốc (Root) của project hoặc thư mục gốc của `.ska-ai` nếu chưa xin phép.
+- **Hạn chế tạo rác:** Yêu cầu các Agent Tuyệt đối KHÔNG ĐƯỢC tự ý tạo mới bất kỳ file Markdown (`.md`) nào ở thư mục gốc (Root) của project hoặc thư mục gốc của `.skaaa-ai` nếu chưa xin phép.
 - **Bắt buộc hỏi Ý kiến:** Nếu trong lúc thực hiện luồng /end_session hoặc theo lệnh từ Workflow mà nhận thấy CẦN PHẢI TẠO file mới nằm ngoài 4 thư mục lớn (`1-overview`, `2-memory`, `3-ecosystem`, `4-rules`) thì **BẮT BUỘC phải đặt câu hỏi xin phép User trước**. Nếu User trả lời OK/Yes thì mới được phép khởi tạo.
 - Khuyến nghị: Ưu tiên update trực tiếp (Replace_content) trên các tài liệu đã có sẵn trong 4 ngăn kéo để hạn chế sinh file rác.

@@ -17,7 +17,7 @@ function extractVersions(str) {
 const targetInput = process.argv[2];
 if (!targetInput) {
     console.error('\x1b[31m[Lỗi] Vui lòng nhập phiên bản cần phát hành!\x1b[0m');
-    console.log('Ví dụ: node release.js v1.1.11 [phiên_bản_trước_đó]');
+    console.log('Ví dụ: node release.js v2.0.0 [phiên_bản_trước_đó]');
     process.exit(1);
 }
 
@@ -28,9 +28,9 @@ console.log(`\x1b[36m========== BẮT ĐẦU QUY TRÌNH PHÁT HÀNH HỆ SINH TH
 
 // Định nghĩa các đường dẫn từ thư mục gốc
 const rootDir = path.join(__dirname, '..', '..');
-const systemMapPath = path.join(rootDir, '.ska-ai', '1-overview', 'system_map.md');
+const systemMapPath = path.join(rootDir, '.skaaa-ai', '1-overview', 'system_map.md');
 const notesOutputPath = path.join(__dirname, `release-notes-${tag}.md`);
-const outputZipName = `ska-nocode-ecosystem-${tag}.zip`;
+const outputZipName = `skaaa-nocode-ecosystem-${tag}.zip`;
 const outputZipPath = path.join(__dirname, outputZipName);
 
 // 2. Xác định phiên bản phát hành trước đó (Previous Version)
@@ -140,7 +140,7 @@ if (fs.existsSync(outputZipPath)) {
 
 try {
     // Chỉ định đóng gói: wp-content (chứa 3 plugins), docs, README.md, LICENSE
-    // Loại trừ các file dev, node_modules, .git, .agent, .ska-ai, zip file khác
+    // Loại trừ các file dev, node_modules, .git, .agent, .skaaa-ai, zip file khác
     const excludePatterns = [
         '*/node_modules/*',
         '*/node_modules/**',
@@ -151,8 +151,8 @@ try {
         '*/.git/**',
         '.agent/*',
         '.agent/**',
-        '.ska-ai/*',
-        '.ska-ai/**',
+        '.skaaa-ai/*',
+        '.skaaa-ai/**',
         '.gemini/*',
         '.gemini/**',
         'CONTRIBUTING.md',
@@ -161,25 +161,25 @@ try {
         'wp-content/plugins/zip-all.js',
         'wp-content/plugins/temp-zip-logic.js',
         'wp-content/plugins/release-notes-*.md',
-        'wp-content/plugins/ska-no-code-design/package.json',
-        'wp-content/plugins/ska-no-code-design/package-lock.json',
-        'wp-content/plugins/ska-no-code-design/webpack.config.js',
-        'wp-content/plugins/ska-data-pro/package.json',
-        'wp-content/plugins/ska-data-pro/package-lock.json',
-        'wp-content/plugins/ska-logic-engine/package.json',
-        'wp-content/plugins/ska-logic-engine/package-lock.json',
-        'wp-content/plugins/ska-logic-engine/vite.config.js',
-        'wp-content/plugins/ska-no-code-design/vite.config.js',
-        'wp-content/plugins/ska-data-pro/vite.config.js'
+        'wp-content/plugins/skaaa-no-code-design/package.json',
+        'wp-content/plugins/skaaa-no-code-design/package-lock.json',
+        'wp-content/plugins/skaaa-no-code-design/webpack.config.js',
+        'wp-content/plugins/skaaa-data-pro/package.json',
+        'wp-content/plugins/skaaa-data-pro/package-lock.json',
+        'wp-content/plugins/skaaa-logic-engine/package.json',
+        'wp-content/plugins/skaaa-logic-engine/package-lock.json',
+        'wp-content/plugins/skaaa-logic-engine/vite.config.js',
+        'wp-content/plugins/skaaa-no-code-design/vite.config.js',
+        'wp-content/plugins/skaaa-data-pro/vite.config.js'
     ];
 
     const excludeFlags = excludePatterns.map(p => `-x "${p}"`).join(' ');
     
     // Thư mục và file nguồn cần đóng gói (tương đối từ root)
     const sourcesToPack = [
-        'wp-content/plugins/ska-no-code-design',
-        'wp-content/plugins/ska-data-pro',
-        'wp-content/plugins/ska-logic-engine',
+        'wp-content/plugins/skaaa-no-code-design',
+        'wp-content/plugins/skaaa-data-pro',
+        'wp-content/plugins/skaaa-logic-engine',
         'docs',
         'README.md',
         'LICENSE'
@@ -204,7 +204,7 @@ console.log(`Bước 1: Chạy lệnh Git để gắn Tag và push lên GitHub:`
 console.log(`   \x1b[33mgit tag ${tag}\x1b[0m`);
 console.log(`   \x1b[33mgit push origin ${tag}\x1b[0m`);
 console.log(`\nBước 2: Truy cập trang GitHub Releases của repo:`);
-console.log(`   https://github.com/chiconcota/ska-nocode-ecosystem/releases/new?tag=${tag}`);
+console.log(`   https://github.com/chiconcota/skaaa-nocode-ecosystem/releases/new?tag=${tag}`);
 console.log(`\nBước 3: Sao chép nội dung file sau làm mô tả Release (Release Notes):`);
 console.log(`   \x1b[34mwp-content/plugins/release-notes-${tag}.md\x1b[0m`);
 console.log(`\nBước 4: Kéo thả tệp ZIP phân phối duy nhất dưới đây vào GitHub:`);

@@ -5,21 +5,21 @@ description: RELEASE AUTOMATION WORKFLOW
 # RELEASE AUTOMATION WORKFLOW
 @status: IMPLEMENTED | @purpose: Quy trình đóng gói & Phát hành phiên bản mới | @last_update: 2026-06-05
 
-Tài liệu này hướng dẫn cách sử dụng công cụ tự động hóa để đóng gói các Plugin thuộc hệ sinh thái **Ska No-Code Ecosystem** và phát hành chúng lên GitHub Releases một cách chuẩn xác, sạch sẽ nhất.
+Tài liệu này hướng dẫn cách sử dụng công cụ tự động hóa để đóng gói các Plugin thuộc hệ sinh thái **Skaaa No-Code Ecosystem** và phát hành chúng lên GitHub Releases một cách chuẩn xác, sạch sẽ nhất.
 
 ---
 
 ## 1. CẤU PHẦN TỰ ĐỘNG HÓA (COMPONENTS)
 
-* **Script chính:** [release.js](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/release.js)
+* **Script chính:** [release.js](file:///home/chiconcota/Local%20Sites/skaaa-core-builder/app/public/wp-content/plugins/release.js)
   * Chịu trách nhiệm tự động quét log, tạo ghi chú phát hành và nén ZIP các plugin.
-* **Script phụ trợ:** [zip-all.js](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/zip-all.js)
+* **Script phụ trợ:** [zip-all.js](file:///home/chiconcota/Local%20Sites/skaaa-core-builder/app/public/wp-content/plugins/zip-all.js)
   * Chứa cấu hình nén zip mặc định của hệ thống.
 
 ### Danh sách các tệp được nén (Plugins):
-1. `ska-no-code-design` (Đường dẫn: `wp-content/plugins/ska-no-code-design/`)
-2. `ska-data-pro` (Đường dẫn: `wp-content/plugins/ska-data-pro/`)
-3. `ska-logic-engine` (Đường dẫn: `wp-content/plugins/ska-logic-engine/`)
+1. `skaaa-no-code-design` (Đường dẫn: `wp-content/plugins/skaaa-no-code-design/`)
+2. `skaaa-data-pro` (Đường dẫn: `wp-content/plugins/skaaa-data-pro/`)
+3. `skaaa-logic-engine` (Đường dẫn: `wp-content/plugins/skaaa-logic-engine/`)
 
 ### Quy tắc loại bỏ tệp (Ignore Patterns):
 Script tự động bỏ qua các thư mục/file phát triển để tối ưu dung lượng:
@@ -36,8 +36,8 @@ Script tự động bỏ qua các thư mục/file phát triển để tối ưu 
 ## 2. ĐIỀU KIỆN TIÊN QUYẾT (PREREQUISITES)
 
 Trước khi kích hoạt quy trình phát hành, lập trình viên/AI phải đảm bảo:
-1. **Nâng cấp số phiên bản (SemVer):** Cập nhật số phiên bản chính xác tại Comment Header của file PHP chính của các plugin cần phát hành (ví dụ: `Version: 1.1.11` trong `ska-logic-engine.php`).
-2. **Ghi log hệ thống:** Viết đầy đủ nhật ký thay đổi của phiên bản mới vào phần `## 6. RECENT LOGS` của file [system_map.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/.ska-ai/1-overview/system_map.md). Dòng log bắt buộc phải chứa ký tự phiên bản dạng `(vX.Y.Z)` hoặc `vX.Y.Z` để script nhận diện được.
+1. **Nâng cấp số phiên bản (SemVer):** Cập nhật số phiên bản chính xác tại Comment Header của file PHP chính của các plugin cần phát hành (ví dụ: `Version: 1.1.11` trong `skaaa-logic-engine.php`).
+2. **Ghi log hệ thống:** Viết đầy đủ nhật ký thay đổi của phiên bản mới vào phần `## 6. RECENT LOGS` của file [system_map.md](file:///home/chiconcota/Local%20Sites/skaaa-core-builder/app/public/.skaaa-ai/1-overview/system_map.md). Dòng log bắt buộc phải chứa ký tự phiên bản dạng `(vX.Y.Z)` hoặc `vX.Y.Z` để script nhận diện được.
 3. **Môi trường Git sạch:** Đã commit toàn bộ code mới trên nhánh đang làm việc.
 
 ---
@@ -70,7 +70,7 @@ git push origin v1.1.11
 ### 🔔 ĐIỂM CHẠM BÀN GIAO (AI THÔNG BÁO CHO BẠN)
 Sau khi hoàn thành Bước 2, AI gửi thông báo bàn giao:
 > *"Tôi đã hoàn thành đóng gói 3 file ZIP và đẩy Git Tag `v1.1.11` lên GitHub thành công.*
-> *Ghi chú changelog đã sẵn sàng tại: [release-notes-v1.1.11.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/release-notes-v1.1.11.md).*
+> *Ghi chú changelog đã sẵn sàng tại: [release-notes-v1.1.11.md](file:///home/chiconcota/Local%20Sites/skaaa-core-builder/app/public/wp-content/plugins/release-notes-v1.1.11.md).*
 > *Mời bạn thực hiện các bước tiếp theo trên giao diện GitHub Web."*
 
 ---
@@ -79,15 +79,15 @@ Sau khi hoàn thành Bước 2, AI gửi thông báo bàn giao:
 
 #### Bước 3: Tạo bản phát hành (Release) trên GitHub
 1. Truy cập trang phát hành tag mới:
-   [https://github.com/chiconcota/ska-nocode-ecosystem/releases/new?tag=v1.1.11](https://github.com/chiconcota/ska-nocode-ecosystem/releases/new?tag=v1.1.11)
+   [https://github.com/chiconcota/skaaa-nocode-ecosystem/releases/new?tag=v1.1.11](https://github.com/chiconcota/skaaa-nocode-ecosystem/releases/new?tag=v1.1.11)
 2. Nhập tiêu đề Release (Release Title): `Release v1.1.11`.
 
 #### Bước 4: Tải lên Assets & Hoàn tất
-1. Mở file [release-notes-v1.1.11.md](file:///home/chiconcota/Local%20Sites/ska-core-builder/app/public/wp-content/plugins/release-notes-v1.1.11.md), copy toàn bộ nội dung và dán vào phần **"Describe this release"** trên GitHub.
+1. Mở file [release-notes-v1.1.11.md](file:///home/chiconcota/Local%20Sites/skaaa-core-builder/app/public/wp-content/plugins/release-notes-v1.1.11.md), copy toàn bộ nội dung và dán vào phần **"Describe this release"** trên GitHub.
 2. Kéo thả 3 file ZIP đã đóng gói vào phần **"Attach binaries by dropping them here..."**:
-   * `ska-no-code-design.zip`
-   * `ska-data-pro.zip`
-   * `ska-logic-engine.zip`
+   * `skaaa-no-code-design.zip`
+   * `skaaa-data-pro.zip`
+   * `skaaa-logic-engine.zip`
 3. Nhấp nút **Publish release**. Hoàn thành!
 
 ---

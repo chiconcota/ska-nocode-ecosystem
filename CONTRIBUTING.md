@@ -1,6 +1,6 @@
-# Contributing to Ska No-Code Ecosystem
+# Contributing to Skaaa No-Code Ecosystem
 
-Thank you for your interest in contributing to the Ska No-Code Ecosystem! We welcome contributions from developers, designers, writers, and AI-native collaborators to help make WordPress a high-performance web application builder.
+Thank you for your interest in contributing to the Skaaa No-Code Ecosystem! We welcome contributions from developers, designers, writers, and AI-native collaborators to help make WordPress a high-performance web application builder.
 
 Please take a moment to review this document to understand our development workflow, coding standards, and guidelines.
 
@@ -50,8 +50,8 @@ To maintain consistency and security, all contributions must strictly adhere to 
 * **Default Language**: All user interface strings must be written in **English** by default.
 * **i18n Functions**: Wrap all UI strings in standard WordPress translation functions:
   ```php
-  __( 'My string', 'plugin-domain' )
-  esc_html__( 'My string', 'plugin-domain' )
+  __( 'My string', 'skaaa-domain' )
+  esc_html__( 'My string', 'skaaa-domain' )
   ```
 
 ---
@@ -61,11 +61,11 @@ To maintain consistency and security, all contributions must strictly adhere to 
 If you are using AI agents (such as Cursor, GitHub Copilot, or Gemini) to write code, please enforce the following requirements:
 
 1. **Rules Alignment**: Instruct your AI agent to read the rules defined in [`.agent/rules/`](file://./.agent/rules/) before generating code.
-2. **No Markdown Clutter**: Do not allow your AI to create random Markdown (`.md`) files in the root folder or elsewhere. All architectural files must reside in the four core buckets inside [`.ska-ai/`](file://./.ska-ai/).
+2. **No Markdown Clutter**: Do not allow your AI to create random Markdown (`.md`) files in the root folder or elsewhere. All architectural files must reside in the four core buckets inside [`.skaaa-ai/`](file://./.skaaa-ai/).
 3. **Docs Update & Git Conflicts Prevention**: Every commit that introduces architectural changes, database updates, or new hooks should update:
-   * [`.ska-ai/1-overview/system_map.md`](file://./.ska-ai/1-overview/system_map.md) (Status & Recent Logs).
-   * [`.ska-ai/2-memory/decision-log.md`](file://./.ska-ai/2-memory/decision-log.md) (Architectural Decisions).
-   * ⚠️ **CRITICAL**: Do **NOT** modify or commit changes to [`.ska-ai/2-memory/checkpoint.md`](file://./.ska-ai/2-memory/checkpoint.md) or files under [`.ska-ai/1-overview/project-managers/`](file://./.ska-ai/1-overview/project-managers/). These files manage local session states and roadmap tracking; committing them will cause unnecessary Git merge conflicts.
+   * [`.skaaa-ai/1-overview/system_map.md`](file://./.skaaa-ai/1-overview/system_map.md) (Status & Recent Logs).
+   * [`.skaaa-ai/2-memory/decision-log.md`](file://./.skaaa-ai/2-memory/decision-log.md) (Architectural Decisions).
+   * ⚠️ **CRITICAL**: Do **NOT** modify or commit changes to [`.skaaa-ai/2-memory/checkpoint.md`](file://./.skaaa-ai/2-memory/checkpoint.md) or files under [`.skaaa-ai/1-overview/project-managers/`](file://./.skaaa-ai/1-overview/project-managers/). These files manage local session states and roadmap tracking; committing them will cause unnecessary Git merge conflicts.
 
 ---
 
@@ -79,4 +79,4 @@ If you are using AI agents (such as Cursor, GitHub Copilot, or Gemini) to write 
 
 ## 💬 Questions and Support
 
-If you have questions about the codebase or architecture, please open an Issue with the `question` tag, or refer to our global [System Map](file://./.ska-ai/1-overview/system_map.md).
+If you have questions about the codebase or architecture, please open an Issue with the `question` tag, or refer to our global [System Map](file://./.skaaa-ai/1-overview/system_map.md).
