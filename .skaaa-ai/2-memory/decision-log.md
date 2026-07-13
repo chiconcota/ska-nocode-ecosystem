@@ -11,9 +11,11 @@
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Skaaa Loop, Skaaa Text, Skaaa Button, Skaaa Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
 
-## 2026-07-13 - 🟢 Hoàn thành: Đổi tên thương hiệu sang SKAAA & Pivot chiến lược sang Native SSR Monolith + AI Automation
+## 2026-07-13 - 🟢 Hoàn thành: Đổi tên thương hiệu sang SKAAA, Quy hoạch Bridge & Di cư sang Local Site mới sạch rác
 - **Decision (Rebranding to SKAAA)**: Quyết định đổi tên toàn bộ hệ sinh thái từ `Ska` sang `SKAAA` (đại diện cho **S**ystem Design, **K**ey Database, **a**ction, **a**i, và **a**gent/automation). Chạy script tự động đổi tên tệp/thư mục, thay thế chuỗi trong 270 file nguồn, di cư 13 bảng phẳng MySQL và cập nhật comment block trong 873 bài viết. Biên dịch lại webpack/vite cho các plugin chính thành công.
 - **Decision (Strategic Pivot to Native SSR Monolith)**: Từ bỏ hoàn toàn định hướng headless React bên ngoài, tập trung tối đa sức mạnh vào mô hình Native SSR Monolith chạy trực tiếp trên WordPress core sử dụng Tailwind JIT compile PHP và Alpine.js tương tác động ở frontend, giúp đạt hiệu năng tối đa với chi phí vận hành thấp nhất.
+- **Decision (Bridge Decoupling & Skaaai AI Addon)**: Khai tử plugin `skaaa-bridge` lỗi thời. Phân rã và đưa các tính năng của nó về đúng vị trí tự nhiên: `html2tailwind` về `skaaa-no-code-design`; các cổng dữ liệu tĩnh `Integration REST APIs` về `skaaa-data-pro`; và `Webhooks` về `skaaa-logic-engine`. Khởi tạo plugin mới **Skaaai** (AI Addon) làm addon decoupled 100% chuyên trách tích hợp LLM (Gemini/OpenAI) đăng ký node qua Pluggable Nodes API.
+- **Decision (Clean Site Migration & Gitignore Alignment)**: Sửa đổi `.gitignore` whitelists để hỗ trợ tên thư mục `skaaa-*` mới, tránh việc Git tự động loại trừ tệp. Commit sạch sẽ và đẩy tag `v2.0.0` lên GitHub. Thực hiện khởi tạo và đồng bộ mã nguồn chính quy sang Local Site mới tinh sạch rác tại `/home/chiconcota/Local Sites/skaaa-no-code-ecosystem/app/public/` và kích hoạt tự động các package bằng WP-CLI.
 
 ## 2026-07-09 - 🟢 Hoàn thành: Triển khai Pluggable Nodes Registry API, Sidebar loading động, Dynamic Settings Panel & Direct Extensions Dashboard Manager (v1.3.0)
 - **Decision (Central Node Registry):** Triển khai class `Skaaa_Node_Registry` tập trung để quản lý các node và filter `skaaa_logic_registered_nodes` cho phép bên thứ ba đăng ký nodes tùy biến từ các plugin mở rộng độc lập một cách decoupled tuyệt đối.

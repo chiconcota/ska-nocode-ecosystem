@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKAAA NO-CODE (v2.0.0)
-@status: MILESTONE 2 (DEVELOPMENT) | @git_branch: main | @last_update: 2026-07-09
+@status: MILESTONE 2 (DEVELOPMENT) | @git_branch: main | @last_update: 2026-07-13
 
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
@@ -7,7 +7,7 @@
 - **Data (Skaaa Data Pro):** Flat Tables MySQL (`skaaa_data_*`), Schema Manager, Custom Query Builder.
 - **Design (Skaaa Design Engine):** Tailwind CSS v4, Local JIT Compiler, React + Gutenberg API, Alpine.js (Skaaa Molecule).
 - **Logic (Skaaa Logic Engine):** DAG Canvas Graph (React Flow v11), Expression Evaluator (SkaaaFX AST), Background Worker (Action Scheduler).
-- **Bridge (Skaaa Bridge):** html2tailwind Converter, Integration APIs, Webhooks & App Portability.
+- **Skaaai (AI Addon):** Tích hợp Google Gemini & OpenAI API để mang AI Automation vào logic flows.
 
 ---
 
@@ -20,7 +20,7 @@ wp-content/
     ├── skaaa-no-code-design/  # [UI/UX] Atomic Blocks, Tailwind JIT, Inspector, Skaaapine, Molecules
     ├── skaaa-data-pro/        # [DATA] Flat Tables DB Engine, Smart Object JSON Blueprint
     ├── skaaa-logic-engine/    # [LOGIC] DAG Workflow Builder, SkaaaFX AST, Async Worker
-    └── skaaa-bridge/          # [ADAPTER] html2tailwind, Integration APIs & Webhooks
+    └── skaaai/                # [AI ADDON] Prompt Node, Structured Parser & Agentic Flow (Gemini/OpenAI)
 ```
 *Giao tiếp chéo:* Độc lập tuyệt đối (Decoupled). Không gọi class chéo, chỉ truyền nhận qua WP Action/Filter hooks và Alpine.js global store (`Alpine.store`).
 
@@ -33,7 +33,7 @@ wp-content/
 | **Skaaa No-Code Design** | `plugins/skaaa-no-code-design/` | Custom Blocks, Tailwind JIT, Skaaapine, Molecules. | 🟢 Stable (v1.2.2) |
 | **Skaaa Data Pro** | `plugins/skaaa-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.3.1) |
 | **Skaaa Logic Engine** | `plugins/skaaa-logic-engine/` | DAG Workflows, Event Pipeline, SkaaaFX Compiler. | 🟢 Stable (v1.2.6) |
-| **Skaaa Bridge** | `plugins/skaaa-bridge/` | html2tailwind, Integration APIs & Webhooks. | 🟢 Stable (v1.0.0) |
+| **Skaaai (AI Addon)** | `plugins/skaaai/` | Cung cấp các Node AI Prompt & Parser kết nối Gemini/OpenAI. | 🟡 Planning |
 
 ---
 
@@ -69,6 +69,7 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-07-13 - 🟢 Done (strategic rebranding, database migration, and new site migration):** Hoàn thành việc đổi tên toàn diện codebase và database sang thương hiệu mới **SKAAA** (System Design + Key Database + AI Automation). Phân rã Bridge cũ về các plugin lõi (html2tailwind về Design, REST APIs về Data Pro, Webhooks về Logic). Đóng gói và phát hành bản ZIP phân phối `v2.0.0` thành công. Clone dự án sang Local Site mới sạch rác tại `/home/chiconcota/Local Sites/skaaa-no-code-ecosystem/` và kích hoạt tự động các package bằng WP-CLI hoạt động ổn định.
 - **2026-07-09 - 🟢 Done (Milestone 2 - Pluggable Nodes & Extensions):** Hoàn thành **Pluggable Nodes Framework** cho phép addon bên thứ ba tự đăng ký node và tự động vẽ Settings Panel bằng JSON Schema. Đồng thời, tích hợp tính năng **Extensions Manager** trực tiếp lên Skaaa System Dashboard cho phép bật/tắt và xóa vật lý các plugin addon thông qua AJAX bảo mật bằng nonce. Cải tiến cơ chế **Soft-Toggle** lưu trạng thái tắt vào bảng phẳng hệ thống mới **`wp_skaaa_data_sys_settings`** để duy trì độ ổn định của plugin WordPress. Tích hợp PHP Reflection và **Dynamic File Scan Fallback** để tự động dò tìm file plugin addon khi xóa kể cả khi class của node chưa được định nghĩa. Khắc phục lỗi crash do thiếu icon trong Sidebar bằng cơ chế Fallback an toàn về `ServerCog`. Nâng cấp phiên bản `Skaaa Logic Engine` lên `v1.3.0` và `Skaaa No-Code Design` lên `v2.1.0`.
 - **2026-07-08 - 🟡 Planning:** Phân tích kỹ thuật và lên kế hoạch phát triển **Pluggable Nodes Framework** phục vụ cắm rút các node tích hợp của bên thứ ba (đóng vai trò chuẩn hóa giao diện settings động qua JSON Schema ở backend, tự động render sidebar và canvas ở React editor). Cập nhật quy tắc Rule 5 ràng buộc lập trình sạch decoupled (SkaaaFX, Skaaapine, Tailwind JIT) để chuẩn bị cho lộ trình Open-source trong tương lai. Lập tài liệu tiến trình `pm_pluggable_nodes_framework.md` cho Milestone 2 và cập nhật backlog post-mvp.
 - **2026-06-25 - 🟢 Done:** Giải quyết lỗi mất CSS/JS ở Header do lỡ nhịp tải trang bằng cơ chế quét sớm block Skaaa Code ở hook `wp_head` độ ưu tiên 1. Tự động in comment debug HTML `<!-- Skaaa Script: [script_id] -->` cho script thư viện giúp E2E verification dễ dàng. Tích hợp block Skaaa Code lồng vào bên trong block Skaaa Container phục vụ hiển thị biểu đồ dynamic ngoài Frontend. Thêm icon code từ thư viện `@wordpress/icons` cho block Skaaa Code. Nâng cấp REST API Portal của Skaaa Data Pro tự động phân giải bảng qua slug `revenue-api` hoặc prefix `skaaa_data_` để MySQL query chính xác dữ liệu. Tối ưu hóa `Scripts_Loader` chống in trùng lặp chéo giữa Header/Footer bằng cache rendered script IDs. Nâng cấp phiên bản plugin `Skaaa No-Code Design` lên `v1.2.3` và `Skaaa Data Pro` lên `v1.3.2`.
