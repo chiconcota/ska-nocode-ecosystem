@@ -11,6 +11,10 @@
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Skaaa Loop, Skaaa Text, Skaaa Button, Skaaa Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
 
+## 2026-07-20 - 🟡 Brainstorm: Nghiên cứu thiết kế SkaaaWind JS cho Gutenberg
+- **Decision (Core JIT Decoupling):** Quyết định tách nhân biên dịch Core JIT Compiler viết bằng Vanilla JS (ES6 Class) thuần để đảm bảo tính độc lập và di động (Rule 5 Agnostic Core Libraries), có thể đóng gói npm package độc lập sau này.
+- **Decision (Skaaapine Store Sync):** Thiết lập cơ chế đồng bộ hóa với Skaaapine Store. Khi Skaaapine chuyển đổi trạng thái (ví dụ: dark mode `skaaaTheme`), nó sẽ tự động thay đổi class `.dark` trên document root của canvas. Bộ biên dịch SkaaaWind JS sẽ sinh selector tương thích để Editor phản hồi tức thì mà không cần CDN ngoài.
+
 ## 2026-07-13 - 🟢 Hoàn thành: Đổi tên thương hiệu sang SKAAA, Quy hoạch Bridge & Di cư sang Local Site mới sạch rác
 - **Decision (Rebranding to SKAAA)**: Quyết định đổi tên toàn bộ hệ sinh thái từ `Ska` sang `SKAAA` (đại diện cho **S**ystem Design, **K**ey Database, **a**ction, **a**i, và **a**gent/automation). Chạy script tự động đổi tên tệp/thư mục, thay thế chuỗi trong 270 file nguồn, di cư 13 bảng phẳng MySQL và cập nhật comment block trong 873 bài viết. Biên dịch lại webpack/vite cho các plugin chính thành công.
 - **Decision (Strategic Pivot to Native SSR Monolith)**: Từ bỏ hoàn toàn định hướng headless React bên ngoài, tập trung tối đa sức mạnh vào mô hình Native SSR Monolith chạy trực tiếp trên WordPress core sử dụng Tailwind JIT compile PHP và Alpine.js tương tác động ở frontend, giúp đạt hiệu năng tối đa với chi phí vận hành thấp nhất.

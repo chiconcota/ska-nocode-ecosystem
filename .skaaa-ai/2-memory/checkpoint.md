@@ -1,36 +1,27 @@
 # CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ
-*Ngày cập nhật: 2026-07-13*
+*Ngày cập nhật: 2026-07-20*
 
 ## 1. Trạng thái hiện tại (Status)
 - **Git Branch**: `main` (Nhánh sạch, code đã commit và push lên GitHub origin thành công).
-- **Thư mục làm việc mới**: `/home/chiconcota/Local Sites/skaaa-no-code-ecosystem/app/public/` (Đã được clone sạch rác từ GitHub và reset hard về commit mới nhất).
-- **Kích hoạt gói trên Site mới**: Đã dùng WP-CLI kích hoạt thành công 3 plugin lõi (`skaaa-data-pro`, `skaaa-logic-engine`, `skaaa-no-code-design`) và theme active `skaaa-canvas`. Các bảng phẳng MySQL của hệ thống sẽ tự động được khởi tạo khi người dùng bắt đầu import Schema hoặc bấm tạo mới.
+- **Thư mục làm việc**: `/home/chiconcota/Local Sites/skaaa-no-code-ecosystem/app/public/`
 - **Công việc đã hoàn thành trong phiên**:
-  1. **Pivot chiến lược sang SKAAA**: Chuyển sang mô hình Native SSR Monolith + AI Automation.
-  2. **Quy hoạch & Phân rã Bridge cũ**:
-     - Khai tử plugin `ska-bridge` / `skaaa-bridge`.
-     - Di chuyển parser `html2tailwind` sang `skaaa-no-code-design` (Tầng Design).
-     - Di chuyển Integration REST APIs sang `skaaa-data-pro` (Tầng Data).
-     - Di chuyển Webhooks sang `skaaa-logic-engine` (Tầng Logic).
-     - Khởi tạo addon mới **`skaaai`** (AI Addon) để cắm các Node AI vào Logic Canvas.
-  3. **Đổi tên & Dọn rác toàn diện**:
-     - Sửa `.gitignore` whitelists, `README.md`, `CONTRIBUTING.md`, và script đóng gói `release.js` sang tên thương hiệu mới **SKAAA**.
-     - Commit toàn bộ các thư mục plugin/theme `skaaa-*` mới lên GitHub.
-     - Đóng gói và phát hành ZIP phân phối `v2.0.0` thành công.
-     - Clone mã nguồn sạch từ GitHub sang Local Site mới sạch rác.
+  1. **Xác minh Chuyển nhà thành công:** Kiểm tra toàn bộ trạng thái database, WP-CLI, các bảng phẳng MySQL của hệ thống đã tự động khởi tạo đầy đủ (`wp_skaaa_data_sys_apps` chứa 2 workspace mặc định). Hệ thống Nginx & PHP hoạt động tốt (`200 OK`).
+  2. **Nghiên cứu kiến trúc SkaaaWind JS:**
+     - Thiết lập kế hoạch triển khai (Implementation Plan) cho bộ biên dịch JIT client-side bằng Vanilla JS chạy trực tiếp trên Gutenberg Editor thay thế Tailwind CDN.
+     - Vẽ sơ đồ hoạt động (System Flow) và sơ đồ tư duy (Mindmap) chi tiết tại `skaawind_system_flow.md`.
+     - Thống nhất phương án viết Core JIT Compiler bằng Vanilla JS (ES6 Class) decoupled thuần túy để có thể đóng gói npm package độc lập trong tương lai (Rule 5), kết nối sự kiện với `SkaaapineStore` để đồng bộ Dark Mode và dynamic transition classes.
+  3. **Khởi tạo tệp tin Project Manager:**
+     - Tạo tệp tin `1-overview/project-managers/pm_skaaawind_compiler.md` để lưu trữ và quản lý lộ trình 5 Phase chi tiết cho sự phát triển của `SkaaaWind JS` ở các phiên sau.
 
 ---
 
 ## 2. Các quyết định thiết kế đã chốt:
-- **Thương hiệu SKAAA**: Đại diện cho **S**ystem Design, **K**ey Database, **a**ction (Logic Workflows), **a**i (Intelligence Addon), và **a**gent/automation.
-- **Addon Skaaai**: Plugin tiện ích decoupled 100% chỉ lo việc gọi API LLM (Gemini/OpenAI) và xử lý Prompt. Skaaai tự đăng ký các Node AI (`AIPromptNode`, `AIParserNode`) vào Registry của Logic Engine thông qua hook filter `skaaa_logic_registered_nodes`. UI settings nạp động qua JSON Schema và React editor của Logic Engine.
+- **Core JIT Decoupling:** Bộ biên dịch `SkaaaWind JS` sẽ viết bằng Vanilla JS thuần để tách biệt khỏi framework/WordPress và sẵn sàng cho monorepo/package trong tương lai.
+- **Skaaapine Store Sync:** Tận dụng `SkaaapineStore` để lắng nghe thay đổi Dark Mode (`skaaaTheme`), đồng bộ cập nhật class `.dark` ở HTML root của Editor Canvas Iframe.
 
 ---
 
-## 3. Gợi ý công việc cho phiên tiếp theo (Debug chuyển nhà)
-1. **Kiểm tra hoạt động trên Site mới**:
-   * Đăng nhập WP Admin của site mới (`skaaa-no-code-ecosystem`).
-   * Kiểm tra giao diện Dashboard, đảm bảo 3 plugin lõi đã kích hoạt và không có lỗi crash JS/PHP.
-   * Tạo thử một Table Schema mới trong Data Pro để kiểm tra cơ chế tự tạo bảng phẳng MySQL.
-   * Vào Logic Canvas kiểm thử đồ thị DAG kéo thả và save thử JSON Blueprint.
-2. **Kế hoạch tiếp theo**: Sau khi debug quá trình chuyển nhà ổn định, chúng ta sẽ bắt đầu Phase 4 thiết kế và viết Node AI đầu tiên (`AIPromptNode`) trong plugin mới **Skaaai**.
+## 3. Gợi ý công việc cho phiên tiếp theo (Triển khai SkaaaWind JS)
+1. **Triển khai Phase 1:** Viết nhân biên dịch Vanilla JS JIT trong `assets/js/skaaawind.js`, ánh xạ các regex và màu sắc từ cấu hình PHP.
+2. **Triển khai Phase 2:** Đăng ký file script mới và viết subscriber `wp.data.subscribe` trong `skaaa-editor-helper.js` để quét đệ quy các block Gutenberg đang hiển thị.
+3. **Thực hiện chuyển đổi workspace:** Hãy để user mở lại workspace đúng vị trí tại `/home/chiconcota/Local Sites/skaaa-no-code-ecosystem/app/public` trước khi tiếp tục code ở phiên sau.
