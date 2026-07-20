@@ -11,7 +11,8 @@
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Skaaa Loop, Skaaa Text, Skaaa Button, Skaaa Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
 
-## 2026-07-20 - 🟡 Brainstorm: Nghiên cứu thiết kế SkaaaWind JS cho Gutenberg
+## 2026-07-20 - 🟡 In Progress: Phê duyệt kế hoạch triển khai bộ biên dịch SkaaaWind JS (Phase 1-4)
+- **Decision (Plan Approved):** Kế hoạch triển khai [implementation_plan.md](file:///home/chiconcota/.gemini/antigravity-ide/brain/e9181566-848c-4ebe-b42f-c3906a5fd260/implementation_plan.md) đã được phê duyệt, bao gồm việc xây dựng bộ biên dịch local-first, tích hợp subscriber Gutenberg `wp.data.subscribe` để quét block tree và inject stylesheet động vào Editor canvas, thay thế hoàn toàn Tailwind CDN ngoài.
 - **Decision (Core JIT Decoupling):** Quyết định tách nhân biên dịch Core JIT Compiler viết bằng Vanilla JS (ES6 Class) thuần để đảm bảo tính độc lập và di động (Rule 5 Agnostic Core Libraries), có thể đóng gói npm package độc lập sau này.
 - **Decision (Skaaapine Store Sync):** Thiết lập cơ chế đồng bộ hóa với Skaaapine Store. Khi Skaaapine chuyển đổi trạng thái (ví dụ: dark mode `skaaaTheme`), nó sẽ tự động thay đổi class `.dark` trên document root của canvas. Bộ biên dịch SkaaaWind JS sẽ sinh selector tương thích để Editor phản hồi tức thì mà không cần CDN ngoài.
 

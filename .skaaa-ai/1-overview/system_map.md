@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKAAA NO-CODE (v2.0.0)
-@status: MILESTONE 2 (DEVELOPMENT) | @git_branch: main | @last_update: 2026-07-20
+@status: MILESTONE 2 (DEVELOPMENT) | @git_branch: feature/skaaawind-compiler | @last_update: 2026-07-20
 
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
@@ -69,6 +69,7 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-07-20 - 🟡 In Progress (SkaaaWind JS Compiler Implementation):** Chuyển sang nhánh tính năng `feature/skaaawind-compiler`, xây dựng và được duyệt kế hoạch triển khai bộ biên dịch client-side JIT Tailwind CSS (SkaaaWind JS) chạy offline trên Gutenberg Editor. Sẵn sàng bắt đầu Phase 1.
 - **2026-07-20 - 🟡 Planning (SkaaaWind JS Compiler Research):** Hoàn thành nghiên cứu giải pháp thay thế Tailwind CDN bằng SkaaaWind JS JIT Compiler chạy client-side trong Gutenberg Editor. Thiết lập file project manager `pm_skaaawind_compiler.md` để quản lý và theo dõi tiến trình triển khai ở các phiên làm việc tiếp theo.
 - **2026-07-13 - 🟢 Done (strategic rebranding, database migration, and new site migration):** Hoàn thành việc đổi tên toàn diện codebase và database sang thương hiệu mới **SKAAA** (System Design + Key Database + AI Automation). Phân rã Bridge cũ về các plugin lõi (html2tailwind về Design, REST APIs về Data Pro, Webhooks về Logic). Đóng gói và phát hành bản ZIP phân phối `v2.0.0` thành công. Clone dự án sang Local Site mới sạch rác tại `/home/chiconcota/Local Sites/skaaa-no-code-ecosystem/app/public/` và kích hoạt tự động các package bằng WP-CLI hoạt động ổn định.
 - **2026-07-09 - 🟢 Done (Milestone 2 - Pluggable Nodes & Extensions):** Hoàn thành **Pluggable Nodes Framework** cho phép addon bên thứ ba tự đăng ký node và tự động vẽ Settings Panel bằng JSON Schema. Đồng thời, tích hợp tính năng **Extensions Manager** trực tiếp lên Skaaa System Dashboard cho phép bật/tắt và xóa vật lý các plugin addon thông qua AJAX bảo mật bằng nonce. Cải tiến cơ chế **Soft-Toggle** lưu trạng thái tắt vào bảng phẳng hệ thống mới **`wp_skaaa_data_sys_settings`** để duy trì độ ổn định của plugin WordPress. Tích hợp PHP Reflection và **Dynamic File Scan Fallback** để tự động dò tìm file plugin addon khi xóa kể cả khi class của node chưa được định nghĩa. Khắc phục lỗi crash do thiếu icon trong Sidebar bằng cơ chế Fallback an toàn về `ServerCog`. Nâng cấp phiên bản `Skaaa Logic Engine` lên `v1.3.0` và `Skaaa No-Code Design` lên `v2.1.0`.
