@@ -61,9 +61,9 @@
   - [x] Sửa lỗi wrapper `.skaaapine-wrapper { display: contents; }` trong Editor Canvas giúp đạt tỷ lệ 100% đồng nhất giữa Editor và Frontend (`641.5px` width).
   - [x] Thêm modifier `@click.prevent` cho file `skaaa-landing-test.html` và Post 25 để triệt tiêu việc tự thêm dấu `#` vào URL.
 
-- [ ] **Phase 6: Thiết lập Single Source of Truth qua JSON (Kế hoạch phiên sau)**
-  - [ ] Khởi tạo file cấu hình chung `tailwind-rules.json`.
-  - [ ] PHP JIT và JS JIT tự động load cấu hình này để phân giải class tự động, loại bỏ nợ kỹ thuật desync.
+- [x] **Phase 6: Thiết lập Single Source of Truth qua JSON (`tailwind-rules.json`)**
+  - [x] Khởi tạo file cấu hình chung `tailwind-rules.json`.
+  - [x] PHP JIT và JS JIT tự động load cấu hình này để phân giải class tự động, loại bỏ nợ kỹ thuật desync.
 
 ---
 

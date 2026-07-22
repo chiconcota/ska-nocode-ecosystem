@@ -82,58 +82,118 @@
             min-width: 100%;
         }
 
-        /* CHILD BLOCK WIDTH RESET */
-        .wp-block-skaaaaa-builder-container:not(.flex) > .wp-block:not([class*="max-w-"]):not(.container):not([class*="size-"]):not([class*="w-"]),
-        .wp-block-skaaaaa-builder-container.flex-col > .wp-block:not([class*="max-w-"]):not(.container):not([class*="size-"]):not([class*="w-"]) {
-            width: auto !important;
-            max-width: none !important;
+        /* CHILD BLOCK FLEX & GRID WRAPPER RESET */
+        .skaaapine-wrapper {
+            display: contents !important;
+        }
+
+        .wp-block-skaaaaa-builder-container > .wp-block {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        /* Flex row & Grid children resets */
+        .wp-block-skaaaaa-builder-container[class*="flex"]:not([class*="flex-col"]) > .wp-block:not([class*="w-"]):not([class*="size-"]):not(.container),
+        .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:not([class*="w-"]):not([class*="size-"]):not(.container) {
+            width: auto;
+            max-width: none;
+        }
+
+        .wp-block-skaaaaa-builder-container:not([class*="flex"]):not([class*="grid"]) > .wp-block:not([class*="max-w-"]):not(.container):not([class*="size-"]):not([class*="w-"]),
+        .wp-block-skaaaaa-builder-container[class*="flex-col"] > .wp-block:not([class*="max-w-"]):not(.container):not([class*="size-"]):not([class*="w-"]) {
+            width: auto;
+            max-width: none;
         }
 
         /* Ensure .container works by allowing margin: auto and limits */
-        .wp-block-skaaaaa-builder-container > .wp-block.container {
-            width: 100% !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.container {
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
         }
+
+        /* Flex item utility pass-through to Gutenberg wrapper */
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.flex-1 { flex: 1 1 0%; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.flex-auto { flex: 1 1 auto; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.flex-initial { flex: 0 1 auto; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.flex-none { flex: none; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.self-auto { align-self: auto; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.self-start { align-self: flex-start; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.self-end { align-self: flex-end; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.self-center { align-self: center; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.self-stretch { align-self: stretch; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.justify-self-auto { justify-self: auto; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.justify-self-start { justify-self: start; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.justify-self-end { justify-self: end; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.justify-self-center { justify-self: center; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.justify-self-stretch { justify-self: stretch; }
+
+        /* Grid item col-span pass-through to Gutenberg wrapper */
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-12"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-12"] { grid-column: span 12 / span 12; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-11"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-11"] { grid-column: span 11 / span 11; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-10"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-10"] { grid-column: span 10 / span 10; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-9"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-9"] { grid-column: span 9 / span 9; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-8"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-8"] { grid-column: span 8 / span 8; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-7"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-7"] { grid-column: span 7 / span 7; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-6"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-6"] { grid-column: span 6 / span 6; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-5"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-5"] { grid-column: span 5 / span 5; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-4"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-4"] { grid-column: span 4 / span 4; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-3"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-3"] { grid-column: span 3 / span 3; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-2"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-2"] { grid-column: span 2 / span 2; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-1"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-1"] { grid-column: span 1 / span 1; }
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block:has(> [class*="col-span-full"]),
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="grid"] > .wp-block[class*="col-span-full"] { grid-column: 1 / -1; }
 
         /* POSITIONING OVERRIDES (CRITICAL) */
-        .wp-block-skaaaaa-builder-container.absolute,
-        .wp-block-skaaaaa-builder-container.absolute.block-editor-block-list__layout {
-            position: absolute !important;
-            width: auto !important;
-            height: auto !important;
-            margin: 0 !important;
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container.absolute,
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container.absolute.block-editor-block-list__layout {
+            position: absolute;
+            width: auto;
+            height: auto;
+            margin: 0;
         }
 
-        .wp-block-skaaaaa-builder-container > .wp-block.absolute {
-            position: absolute !important;
-            width: auto !important;
-            height: auto !important;
-            margin: 0 !important;
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.absolute {
+            position: absolute;
+            width: auto;
+            height: auto;
+            margin: 0;
         }
 
-        .wp-block-skaaaaa-builder-container.sticky,
-        .wp-block-skaaaaa-builder-container.sticky.block-editor-block-list__layout,
-        .wp-block-skaaaaa-builder-container > .wp-block.sticky {
-            position: sticky !important;
-            width: auto !important;
-            height: auto !important;
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container.sticky,
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container.sticky.block-editor-block-list__layout,
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.sticky {
+            position: sticky;
+            width: auto;
+            height: auto;
         }
 
-        .wp-block-skaaaaa-builder-container.relative,
-        .wp-block-skaaaaa-builder-container.relative.block-editor-block-list__layout,
-        .wp-block-skaaaaa-builder-container > .wp-block.relative {
-            position: relative !important;
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container.relative,
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container.relative.block-editor-block-list__layout,
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block.relative {
+            position: relative;
         }
 
-        .wp-block-skaaaaa-builder-container[class*="inset-"],
-        .wp-block-skaaaaa-builder-container > .wp-block[class*="inset-"] {
-            width: auto !important;
-            height: auto !important;
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container[class*="inset-"],
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container > .wp-block[class*="inset-"] {
+            width: auto;
+            height: auto;
         }
 
-        .wp-block-skaaaaa-builder-container.flex-col:not([class*="items-"]) > .wp-block {
-            align-self: stretch !important;
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container.flex-col:not([class*="items-"]) > .wp-block {
+            align-self: stretch;
         }
     `;
 
@@ -193,66 +253,17 @@
 
             updateEditorStylesheets(unifiedCss);
 
-            // Log unresolved classes to console & trigger CDN Fallback dynamically
+            // Log unresolved classes to console
             if (compiled.unresolved && compiled.unresolved.length > 0) {
                 const unresolvedStr = compiled.unresolved.join(', ');
                 if (unresolvedStr !== lastUnresolvedString) {
                     lastUnresolvedString = unresolvedStr;
                     console.warn(`[SkaaaWind Warning] The following classes are not supported by the local JIT compiler: [${unresolvedStr}]`);
                 }
-                
-                // Dynamically trigger CDN Fallback
-                triggerCDNFallback();
             } else {
                 lastUnresolvedString = '';
             }
         }
-    }
-
-    /**
-     * Dynamically loads Tailwind CDN into all active iframe contexts as a fallback.
-     */
-    function triggerCDNFallback() {
-        const iframeSelectors = [
-            'iframe[name="editor-canvas"]',
-            '.edit-site-visual-editor__editor-canvas iframe',
-            '.block-editor-iframe__container iframe'
-        ];
-
-        iframeSelectors.forEach(selector => {
-            const iframes = document.querySelectorAll(selector);
-            iframes.forEach(iframe => {
-                try {
-                    const doc = iframe.contentDocument || iframe.contentWindow.document;
-                    if (doc) {
-                        loadCDNFallback(doc);
-                    }
-                } catch (e) {}
-            });
-        });
-    }
-
-    /**
-     * Load Tailwind CDN script into target document body.
-     */
-    function loadCDNFallback(doc) {
-        if (!doc || doc.getElementById('skaaawind-cdn-fallback')) return;
-
-        const script = doc.createElement('script');
-        script.id = 'skaaawind-cdn-fallback';
-        script.src = 'https://cdn.tailwindcss.com';
-        script.onload = () => {
-            const tw = doc.defaultView.tailwind;
-            if (tw && tw.config) {
-                tw.config.important = true;
-                tw.config.darkMode = 'class';
-                tw.config.corePlugins = { preflight: false };
-                const customBrandColors = (window.skaaaEditorConfig && window.skaaaEditorConfig.brandColorsJson) ? window.skaaaEditorConfig.brandColorsJson : {};
-                tw.config.theme = { extend: { colors: customBrandColors } };
-                console.log("Skaaa JIT: CDN Fallback dynamically loaded and configured in iframe.");
-            }
-        };
-        doc.body.appendChild(script);
     }
 
     /**

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Skaaa No-Code Design
  * Description: The UI design engine and blocks framework for Skaaa No-Code Builder.
- * Version: 2.2.3
+ * Version: 2.3.0
  * Author: Skaaa Team
  * Text Domain: skaaa-no-code-design
  *
@@ -89,33 +89,49 @@ function skaaa_no_code_design_init() {
 
 add_action( 'plugins_loaded', 'skaaa_no_code_design_init' );
 
-// Tạm thời migrate Database Sys Presets
+// Migrate Database Sys Presets
 add_action('admin_init', function() {
-    if ( ! get_option('skaaa_temp_fix_sys_presets_db_3', false) ) {
+    if ( ! get_option('skaaa_temp_fix_sys_presets_db_5', false) ) {
         global $wpdb;
         $table = $wpdb->prefix . 'skaaa_data_sys_presets';
         
-        $wpdb->query("ALTER TABLE {$table} ADD COLUMN type VARCHAR(255) DEFAULT ''");
-        $wpdb->query("ALTER TABLE {$table} ADD COLUMN value LONGTEXT");
-        
-        $dict = get_option('skaaa_data_dictionary', []);
-        if (isset($dict[$table])) {
-            unset($dict[$table]['json_content']);
-            $dict[$table]['type'] = array(
-                'label' => 'Type', 
-                'type' => 'enum', 
-                'options' => 'token_color, token_font, token_spacing, token_radius, token_shadow, preset_typography, preset_component'
-            );
-            $dict[$table]['value'] = array(
-                'label' => 'Value', 
-                'type' => 'long_text', 
-                'options' => ''
-            );
-            update_option('skaaa_data_dictionary', $dict);
+        if ( $wpdb->get_var("SHOW TABLES LIKE '{$table}'") === $table ) {
+            $cols = $wpdb->get_col("DESCRIBE {$table}", 0);
+            if ($cols && ! in_array('name', $cols)) {
+                $wpdb->query("ALTER TABLE {$table} ADD COLUMN name VARCHAR(255) DEFAULT ''");
+            }
+            if ($cols && ! in_array('type', $cols)) {
+                $wpdb->query("ALTER TABLE {$table} ADD COLUMN type VARCHAR(255) DEFAULT ''");
+            }
+            if ($cols && ! in_array('value', $cols)) {
+                $wpdb->query("ALTER TABLE {$table} ADD COLUMN value LONGTEXT");
+            }
+            if ($cols && in_array('json_content', $cols)) {
+                $wpdb->query("ALTER TABLE {$table} DROP COLUMN json_content");
+            }
+            
+            $dict = get_option('skaaa_data_dictionary', []);
+            if (isset($dict[$table])) {
+                unset($dict[$table]['json_content']);
+                $dict[$table]['name'] = array(
+                    'label' => 'Name',
+                    'type' => 'short_text',
+                    'options' => ''
+                );
+                $dict[$table]['type'] = array(
+                    'label' => 'Type', 
+                    'type' => 'enum', 
+                    'options' => 'token_brand, token_color, token_dark_color, token_font, token_spacing, token_radius, token_shadow, preset_typography, preset_component'
+                );
+                $dict[$table]['value'] = array(
+                    'label' => 'Value', 
+                    'type' => 'long_text', 
+                    'options' => ''
+                );
+                update_option('skaaa_data_dictionary', $dict);
+            }
         }
         
-        $wpdb->query("ALTER TABLE {$table} DROP COLUMN json_content");
-        
-        update_option('skaaa_temp_fix_sys_presets_db_3', true);
+        update_option('skaaa_temp_fix_sys_presets_db_5', true);
     }
 });

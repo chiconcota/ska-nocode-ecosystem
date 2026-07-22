@@ -502,19 +502,29 @@ function skaaaDesignTokensApp() {
                 });
                 const res = await response.json();
                 
-                if (res.success && Object.keys(res.data || {}).length > 0) {
-                    // Cẩn thận merge object để tránh thiếu field khi JSON trên server rỗng 1 phần
-                    this.formData = {
-                         ...this.formData,
-                         ...res.data,
-                         brand: { ...this.formData.brand, ...(res.data.brand || {}) },
-                         colors: { ...this.formData.colors, ...(res.data.colors || {}) },
-                         darkColors: { ...this.formData.darkColors, ...(res.data.darkColors || {}) },
-                         typography: { ...this.formData.typography, ...(res.data.typography || {}) },
-                         typography_scale: { ...this.formData.typography_scale, ...(res.data.typography_scale || {}) },
-                         tokens: { ...this.formData.tokens, ...(res.data.tokens || {}) },
-                         components: (res.data.components && Array.isArray(res.data.components)) ? res.data.components : this.formData.components
-                    };
+                if (res.success && res.data) {
+                    const d = res.data;
+                    if (d.colors && typeof d.colors === 'object' && !Array.isArray(d.colors) && Object.keys(d.colors).length > 0) {
+                        this.formData.colors = { ...this.formData.colors, ...d.colors };
+                    }
+                    if (d.darkColors && typeof d.darkColors === 'object' && !Array.isArray(d.darkColors) && Object.keys(d.darkColors).length > 0) {
+                        this.formData.darkColors = { ...this.formData.darkColors, ...d.darkColors };
+                    }
+                    if (d.brand && typeof d.brand === 'object' && !Array.isArray(d.brand) && Object.keys(d.brand).length > 0) {
+                        this.formData.brand = { ...this.formData.brand, ...d.brand };
+                    }
+                    if (d.typography && typeof d.typography === 'object' && !Array.isArray(d.typography) && Object.keys(d.typography).length > 0) {
+                        this.formData.typography = { ...this.formData.typography, ...d.typography };
+                    }
+                    if (d.typography_scale && typeof d.typography_scale === 'object' && !Array.isArray(d.typography_scale) && Object.keys(d.typography_scale).length > 0) {
+                        this.formData.typography_scale = { ...this.formData.typography_scale, ...d.typography_scale };
+                    }
+                    if (d.tokens && typeof d.tokens === 'object' && !Array.isArray(d.tokens) && Object.keys(d.tokens).length > 0) {
+                        this.formData.tokens = { ...this.formData.tokens, ...d.tokens };
+                    }
+                    if (d.components && Array.isArray(d.components) && d.components.length > 0) {
+                        this.formData.components = d.components;
+                    }
                 }
                 
                 // Cập nhật colorsList từ formData.colors

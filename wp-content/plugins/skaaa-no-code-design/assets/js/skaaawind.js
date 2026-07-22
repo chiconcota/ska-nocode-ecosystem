@@ -298,7 +298,40 @@ class SkaaaWindCompiler {
         'to': '--tw-gradient-to',
     };
 
+    static initRules() {
+        if (window.skaaaEditorConfig && window.skaaaEditorConfig.tailwindRules) {
+            const rules = window.skaaaEditorConfig.tailwindRules;
+            if (rules.mediaQueries) this.mediaQueries = rules.mediaQueries;
+            if (rules.basicColors) this.basicColors = rules.basicColors;
+            if (rules.weights) this.weights = rules.weights;
+            if (rules.shadowMap) this.shadowMap = rules.shadowMap;
+            if (rules.maxWMap) this.maxWMap = rules.maxWMap;
+            if (rules.marginAutoMap) this.marginAutoMap = rules.marginAutoMap;
+            if (rules.layoutMap) this.layoutMap = rules.layoutMap;
+            if (rules.sizeMap) this.sizeMap = rules.sizeMap;
+            if (rules.textAlignMap) this.textAlignMap = rules.textAlignMap;
+            if (rules.textDecoMap) this.textDecoMap = rules.textDecoMap;
+            if (rules.textMiscMap) this.textMiscMap = rules.textMiscMap;
+            if (rules.whitespaceMap) this.whitespaceMap = rules.whitespaceMap;
+            if (rules.leadingMap) this.leadingMap = rules.leadingMap;
+            if (rules.trackingMap) this.trackingMap = rules.trackingMap;
+            if (rules.borderStyleMap) this.borderStyleMap = rules.borderStyleMap;
+            if (rules.borderBasicMap) this.borderBasicMap = rules.borderBasicMap;
+            if (rules.ringBasic) this.ringBasic = rules.ringBasic;
+            if (rules.ringOffsetBasic) this.ringOffsetBasic = rules.ringOffsetBasic;
+            if (rules.bgUtilMap) this.bgUtilMap = rules.bgUtilMap;
+            if (rules.gradBasic) this.gradBasic = rules.gradBasic;
+            if (rules.radiusMap) this.radiusMap = rules.radiusMap;
+            if (rules.flexExtra) this.flexExtra = rules.flexExtra;
+            if (rules.transitionMap) this.transitionMap = rules.transitionMap;
+            if (rules.easeMap) this.easeMap = rules.easeMap;
+            if (rules.blurMap) this.blurMap = rules.blurMap;
+            if (rules.palette) this.palette = rules.palette;
+        }
+    }
+
     constructor(brandColors = null) {
+        SkaaaWindCompiler.initRules();
         // Load brand colors from parameter or fallback to localized config
         this.brandColors = brandColors || (window.skaaaEditorConfig && window.skaaaEditorConfig.brandColorsJson) || {};
     }

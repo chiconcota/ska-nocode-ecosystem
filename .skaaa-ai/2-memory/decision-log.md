@@ -11,6 +11,15 @@
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Skaaa Loop, Skaaa Text, Skaaa Button, Skaaa Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
 
+## 2026-07-22 - 🟢 Hoàn thành: Sửa lỗi Vertical Grid Height Alignment, Loại bỏ !important & Auto-seed Design Tokens DB
+- **Decision (Frontend Grid Height Alignment):** Thêm điều kiện lọc `:not([class*="grid"]):not([class*="flex"])` vào quy tắc `.skaaa-container-block > * + *` trong `class-tailwind-config.php`, triệt tiêu thuộc tính `margin-top: 24px` bị gán nhầm cho phần tử con trong Flex/Grid, giúp các cột hiển thị phẳng 100% trên cùng đường kẻ ngang cả Editor lẫn Frontend.
+- **Decision (Zero !important Specificity Policy):** Refactor toàn bộ `skaaa-editor-helper.js` loại bỏ 100% cờ `!important` dư thừa. Sử dụng bộ gom nhóm Specificity Scope `.editor-styles-wrapper.editor-styles-wrapper` để đè style mặc định của WP Admin theo đúng Test Case 5.
+- **Decision (Sys Presets DB Schema & Auto-Seeding):** Bổ sung migration cột `name VARCHAR(255)` vào bảng `wp_skaaa_data_sys_presets`, tích hợp tự động seed 48 bản ghi tiêu chuẩn và xuất `tokens.json` khi database trống, giải quyết triệt để lỗi rơi vào fallback sai màu trên bài viết Frontend. Nâng phiên bản `Skaaa No-Code Design` lên `v2.3.0`.
+
+## 2026-07-22 - 🟢 Hoàn thành: Phase 6: Thiết lập Single Source of Truth qua JSON (tailwind-rules.json)
+- **Decision (Single Source of Truth via tailwind-rules.json):** Tập trung toàn bộ quy tắc biên dịch tĩnh của Tailwind CSS (media queries, basic colors, weights, shadow map, max-width, margins, layout grid, size map, typography maps, border/ring/gradient/radius/blur maps và 22 palette màu) vào tệp JSON duy nhất `tailwind-rules.json`.
+- **Decision (PHP & JS Dynamic JSON Rule Injection):** `Tailwind_Config` phía PHP và `SkaaaWindCompiler` phía Javascript đều nạp quy tắc động từ `tailwind-rules.json` (thông qua `wp_localize_script('skaaa-editor-helper', 'skaaaEditorConfig', ['tailwindRules' => ...])`). Điều này đảm bảo 100% Compiler Parity và tách biệt tuyệt đối giữa từ điển tiêu chuẩn Tailwind với các Design System Tokens tĩnh/động từ Theme Options (`tokens.json`).
+
 ## 2026-07-22 - 🟢 Hoàn thành: Khắc phục triệt để bóp méo Editor Canvas Layout, loại bỏ !important & Fix đính dấu # URL
 - **Decision (Editor Selector Scope & CSS Specificity):** Chuyển đổi `editorBaseSelector` từ dạng chuỗi CSV dễ bị trượt vế sang `:where(.editor-styles-wrapper)`. Đồng thời loại bỏ toàn bộ cờ `!important` trong override layout bằng cách tăng độ ưu tiên CSS tự nhiên (`.editor-styles-wrapper.editor-styles-wrapper` và `html body.skaaaaa-builder .editor-styles-wrapper`).
 - **Decision (Skaaapine Wrapper Display Contents):** Xử lý wrapper trung gian `.skaaapine-wrapper { display: contents; }` trong Editor Canvas để trả các phần tử con `md:col-span-*` về làm con trực tiếp của `.grid`, khôi phục 100% tỷ lệ layout đồng nhất với Frontend (Width = `641.5px`).

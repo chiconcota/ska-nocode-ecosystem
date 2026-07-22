@@ -173,6 +173,7 @@ class Core
 
         // Pass theme config to JS
         wp_localize_script('skaaa-editor-helper', 'skaaaEditorConfig', array(
+            'tailwindRules'  => \Skaaa\Builder\Design\Tailwind_Config::get_rules(),
             'editorResetCss' => \Skaaa\Builder\Design\Tailwind_Config::get_core_reset_css(),
             'brandColorsJson' => \Skaaa\Builder\Design\Tailwind_Color_Registry::get_custom_colors(),
             // Vẫn giữ brandColorsCss fallback nếu file JS chưa được cập nhật cache.
