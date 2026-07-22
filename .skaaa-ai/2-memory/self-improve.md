@@ -1,71 +1,60 @@
 # AGENT SELF-IMPROVEMENT LOG (self-improve.md)
-@status: ACTIVE | @last_update: 2026-06-24
+@status: ACTIVE | @last_update: 2026-07-21
 
-> Nhật ký tự cải thiện hành vi và sửa sai của Agent. Chứa các lỗi thao tác (mistakes/anti-patterns) thực tế trong quá trình làm việc và các bộ quy tắc tự sửa lỗi bắt buộc tuân thủ.
-> **Luật dọn dẹp:** File này không được vượt quá 80 dòng. Các lỗi đã giải quyết (Resolved) sau 3 phiên sẽ được lưu trữ (Archived) vào `.skaaa-ai/2-memory/archive/`.
+> Nhật ký tự cải thiện hành vi và sửa sai của Agent. Chứa các lỗi thao tác thực tế và quy tắc tự sửa lỗi.
+> **Luật dọn dẹp:** File này không được vượt quá 80 dòng. Các lỗi đã giải quyết (Resolved) sau 3 phiên sẽ được lưu trữ.
 
 ---
 
 ## 🚨 DANH SÁCH LỖI HÀNH VI ĐANG ĐƯỢC GIÁM SÁT (ACTIVE)
 
-### MISTAKE-001: Chạy CLI không khả dụng hoặc tương tác trực tiếp (Ví dụ: `mysql`)
-* **Mô tả**: Chạy lệnh `mysql` hoặc các CLI tương tác trực tiếp qua bash. Khi gặp lỗi `command not found` hoặc lỗi kết nối, AI âm thầm bỏ qua hoặc thử lại liên tục mà không báo cáo cho User.
-* **Quy tắc tự khắc phục**:
-  1. Nếu một lệnh CLI quan trọng bị lỗi, **bắt buộc phải dừng lại và báo cáo ngay lập tức cho User** để được hỗ trợ cài đặt/cấp quyền.
+### MISTAKE-001: CLI mysql tương tác trực tiếp
+- Lỗi: Chạy CLI mysql trực tiếp gây treo.
+- Sửa đổi: Dừng và báo cáo ngay cho User để được hỗ trợ.
 
-### MISTAKE-002: Vi phạm chuẩn đa ngôn ngữ (i18n) và viết Text cứng trong Code
-* **Mô tả**: Viết chuỗi hiển thị (labels, placeholders, messages) bằng tiếng Việt hoặc tiếng Anh dạng "text cứng" (không bọc qua hàm dịch của WordPress) trong mã nguồn PHP/JS.
-* **Quy tắc tự khắc phục**:
-  1. Tuân thủ tuyệt đối quy tắc `wp-architect.md` (Rule 10): Mọi chuỗi hiển thị UI mặc định phải viết bằng **tiếng Anh** và bọc trong hàm i18n chuẩn:
-     - PHP: `__( 'Text', 'skaaa-domain' )`, `esc_html_e( 'Text', 'skaaa-domain' )`...
-     - JS/JSX: `__( 'Text', 'skaaa-domain' )` (từ thư viện `@wordpress/i18n`).
-  2. Ngay cả khi User yêu cầu bằng tiếng Việt, mã nguồn sinh ra phải viết bằng tiếng Anh bọc i18n. Chỉ có chú thích code (Comments) và PHPDoc là được viết tiếng Việt.
+### MISTAKE-002: Vi phạm chuẩn i18n & Text cứng
+- Lỗi: Viết text hiển thị tiếng Việt hoặc text cứng không bọc i18n.
+- Sửa đổi: Tất cả text hiển thị UI phải là tiếng Anh và bọc i18n: `__( 'Text', 'skaaa-domain' )`.
 
-### MISTAKE-003: Lạm dụng Browser Subagent kiểm thử E2E phức tạp gây tốn token
-* **Mô tả**: Sử dụng browser subagent để thực hiện một chuỗi thao tác kiểm thử giao diện quản trị phức tạp liên tục, dẫn đến tiêu tốn lượng token lớn mà không mang lại kết quả kiểm thử tối ưu.
-* **Quy tắc tự khắc phục**:
-  1. Thay vì tự chạy browser subagent để thực hiện kiểm thử E2E phức tạp trong admin, ưu tiên xây dựng trước một tài liệu quy trình kiểm thử E2E chi tiết (`test-*-e2e.md`) để bàn giao cho User tự kiểm thử tay nhanh chóng và hiệu quả.
-  2. Chỉ sử dụng browser subagent cho các trường hợp kiểm thử tự động đơn giản, bắt buộc (như xác nhận hiển thị UI cơ bản hoặc screenshot ban đầu) và tối ưu hóa số bước thao tác.
+### MISTAKE-003: Lạm dụng E2E Browser Subagent tốn token
+- Lỗi: Chạy E2E tự động quá phức tạp trong admin.
+- Sửa đổi: Chỉ dùng E2E cho trường hợp đơn giản, ưu tiên lập checklist cho User test tay.
 
-### MISTAKE-004: Nhúng script thủ công bỏ qua hệ thống Dependency của WordPress
-* **Mô tả**: In thẻ `<script>` thủ công để nhúng JS bundle có chứa các import bên ngoài (như `@wordpress/i18n`) thay vì dùng `wp_enqueue_script`, dẫn đến lỗi nghiêm trọng `ReferenceError: wp is not defined` do WordPress chưa kịp nạp thư viện lõi.
-* **Quy tắc tự khắc phục**:
-  1. Mọi asset script/style trong hệ sinh thái WordPress bắt buộc phải được enqueue chính quy thông qua `wp_enqueue_script` / `wp_enqueue_style` với đầy đủ dependencies thay vì in thẻ script/link thủ công.
+### MISTAKE-004: Nhúng script thủ công bỏ qua WP Dependency
+- Lỗi: In script cứng không enqueue dẫn đến lỗi `wp is not defined`.
+- Sửa đổi: Luôn dùng `wp_enqueue_script` / `wp_enqueue_style` với đầy đủ dependencies.
 
-### MISTAKE-005: Tự ý kích hoạt hoặc lạm dụng Chrome DevTools MCP / Browser Subagent
-* **Mô tả**: Tự ý chạy các công cụ browser subagent hoặc chrome-devtools-mcp để tương tác hoặc kiểm thử giao diện mà không có yêu cầu trực tiếp từ người dùng, gây tốn tài nguyên và dễ gặp lỗi xác thực/CDP session.
-* **Quy tắc tự khắc phục**:
-  1. **Tuyệt đối không tự động kích hoạt** browser subagent hoặc Chrome DevTools MCP để kiểm thử trừ khi người dùng yêu cầu rõ ràng.
-  2. Khi người dùng yêu cầu kiểm thử giao diện, hãy ưu tiên hướng dẫn họ tự kiểm thử trực tiếp trên trình duyệt của họ, hoặc chỉ sử dụng browser subagent như là giải pháp cuối cùng sau khi đã thống nhất các điều kiện cần thiết (như URL đăng nhập).
+### MISTAKE-005: Tự ý chạy Chrome DevTools MCP / Browser Subagent
+- Lỗi: Chạy tools browser khi không có yêu cầu.
+- Sửa đổi: Chỉ chạy khi User yêu cầu rõ ràng.
 
-### MISTAKE-006: Thiếu đăng ký entry point Webpack khi tạo block mới
-* **Mô tả**: Khi tạo một block Gutenberg mới trong thư mục `src/` của plugin `skaaa-no-code-design`, chạy build nhưng block không được biên dịch do thiếu khai báo entry point thủ công trong `webpack.config.js`.
-* **Quy tắc tự khắc phục**:
-  1. Bất cứ khi nào tạo block Gutenberg mới, **bắt buộc phải vào kiểm tra và đăng ký entry point tương ứng cho block** trong `webpack.config.js` trước khi chạy lệnh biên dịch `npm run build`.
+### MISTAKE-006: Thiếu đăng ký Webpack entry point
+- Lỗi: Tạo block mới trong `src/` nhưng quên khai báo trong `webpack.config.js`.
+- Sửa đổi: Luôn kiểm tra và đăng ký entry point webpack trước khi build.
 
-### MISTAKE-007: Click pixel không chuẩn, đi lệch kịch bản E2E và lạm dụng Screenshot trong Browser Subagent
-* **Mô tả**: Khi chạy browser subagent, thực hiện các pixel clicks không chuẩn xác, đi lệch khỏi kịch bản E2E được chỉ định, hoặc lạm dụng việc chụp ảnh màn hình (`capture_browser_screenshot`) liên tục để tự xác minh, gây tiêu tốn lượng token cực kỳ lớn không cần thiết.
-* **Quy tắc tự khắc phục**:
-  1. Luôn bám sát từng bước của tài liệu hướng dẫn workflow (`e2e_*.md`), không tự ý làm thêm các tính năng không được yêu cầu.
-  2. Ưu tiên click/fill bằng CSS selectors hoặc Text chính xác thay vì bấm pixel click mù (trừ khi không có cách nào khác).
-  3. **Hạn chế tối đa việc chụp ảnh màn hình (`capture_browser_screenshot`)**: Chỉ được phép sử dụng công cụ chụp ảnh màn hình trong các trường hợp cần thiết (Whitelist) sau:
-     - **Visual & Layout Check**: Xác minh lỗi vỡ giao diện, lệch bố cục, lỗi hiển thị CSS/Tailwind, hoặc kiểm thử độ tương thích Responsive trên các thiết bị.
-     - **Render Output Verification**: Xác nhận hiển thị của các thành phần đồ họa động hoặc canvas (như biểu đồ Chart.js, slider, popup modal) hoạt động ngoài Frontend.
-     - **Error Debugging (Headless)**: Chụp lại màn hình tại thời điểm phát sinh lỗi (Failure) khi chạy test tự động không đầu (CI/CD hoặc Headless Browser) để hỗ trợ debug.
-     - **Nghiệm thu cuối cùng (Final Handoff)**: Chụp 1-2 ảnh duy nhất của giao diện sản phẩm hoàn chỉnh ngoài Frontend để chèn vào báo cáo nghiệm thu (`walkthrough.md`).
-     - *Ngoài các trường hợp trên (như CRUD dữ liệu, cấu hình Admin, kiểm thử sự kiện logic), cấm sử dụng screenshot. Thay vào đó bắt buộc phải dùng DOM (`browser_get_dom`), Console logs, Network requests hoặc truy vấn Database để xác minh.*
+### MISTAKE-007: Lạm dụng Screenshot trong Browser Subagent
+- Lỗi: Chụp ảnh màn hình liên tục gây tốn token lớn.
+- Sửa đổi: Chỉ chụp khi cần check layout, render canvas, failure debug, hoặc handoff.
 
-### MISTAKE-008: Cung cấp ArtifactMetadata cho các tệp tin nguồn ngoài thư mục artifacts
-* **Mô tả**: Sử dụng `ArtifactMetadata` trong `write_to_file` hoặc `replace_file_content` đối với các tệp nằm ngoài thư mục artifacts của conversation, dẫn đến lỗi `invalid tool call error`.
-* **Quy tắc tự khắc phục**:
-  1. Chỉ cung cấp `ArtifactMetadata` đối với các tệp tin markdown lưu tại thư mục `/home/chiconcota/.gemini/antigravity-ide/brain/[conversation-id]/`.
-  2. Đối với mọi file mã nguồn PHP, JS, JSON thông thường của dự án, bắt buộc **bỏ trống** tham số `ArtifactMetadata`.
+### MISTAKE-008: ArtifactMetadata sai chỗ
+- Lỗi: Dùng ArtifactMetadata cho file code nguồn dự án ngoài thư mục artifacts.
+- Sửa đổi: Chỉ dùng cho file markdown trong thư mục artifacts của conversation.
 
-### MISTAKE-009: Tham chiếu biến chưa import (ReferenceError) trong UI React & Thiếu Fail-Safe Fallback
-* **Mô tả**: Import thiếu icon/thành phần trong React (như icon `Plug` từ `lucide-react`) nhưng vẫn tham chiếu trong map config, đồng thời thiếu cơ chế fallback icon an toàn dẫn đến crash toàn bộ trang vẽ logic (lỗi trắng màn hình).
-* **Quy tắc tự khắc phục**:
-  1. Luôn bảo đảm mọi thành phần/icon cấu hình động từ PHP bắt buộc phải được import hợp lệ hoặc có trong danh sách map được định nghĩa ở React code.
-  2. Bắt buộc xây dựng cơ chế **Fail-Safe Fallback** thông minh (ví dụ: trả về icon mặc định `ServerCog` nếu không tìm thấy icon cấu hình) thay vì quăng lỗi crash làm hỏng luồng render của React.
+### MISTAKE-009: Thiếu Fail-Safe Fallback cho Dynamic UI
+- Lỗi: Import thiếu component hoặc thiếu map icon gây crash trang.
+- Sửa đổi: Luôn có fail-safe fallback (VD: icon mặc định `ServerCog` khi lỗi).
+
+### MISTAKE-010: Xung đột bộ gõ tiếng Việt (Style Reflow)
+- Lỗi: Reset hash compile (`previousHash`) liên tục mỗi 5s làm ghi đè CSSOM, gây nhảy con trỏ và mất chữ bộ gõ `fcitx5-lotus`.
+- Sửa đổi: Lưu vết `activeIframeDoc`, chỉ reset hash 1 lần duy nhất khi reload hoặc đổi iframe.
+
+### MISTAKE-012: Thẻ Editor Selector bị CSV trượt Selector
+- Lỗi: Nối chuỗi CSS selector dạng CSV dễ bị trượt vế và áp sai thuộc tính lên toàn bộ iframe wrapper.
+- Sửa đổi: Luôn gom nhóm editor selector dưới `:where(.editor-styles-wrapper)` để đảm bảo tính scoped tuyệt đối.
+
+### MISTAKE-013: Sự kiện Click tự đính thêm dấu # vào URL
+- Lỗi: Sử dụng handler `@click` trên nút bấm hoặc liên kết mà không dùng modifier `.prevent` gây nhảy cuộn trang và đính `#` URL.
+- Sửa đổi: Tất cả handler sự kiện `@click` trong Alpine.js bắt buộc dùng `@click.prevent` để giữ URL luôn sạch.
 
 ---
 

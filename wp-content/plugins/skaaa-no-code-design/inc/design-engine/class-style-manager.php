@@ -56,6 +56,16 @@ class Style_Manager {
 	 */
 	private function extract_block_classes( $blocks, &$classes ) {
 		foreach ( $blocks as $block ) {
+			// 0. Extract classes from raw innerHTML if present
+			if ( ! empty( $block['innerHTML'] ) ) {
+				preg_match_all( '/class=["\']([^"\']+)["\']/', $block['innerHTML'], $html_matches );
+				if ( ! empty( $html_matches[1] ) ) {
+					foreach ( $html_matches[1] as $class_string ) {
+						$classes = array_merge( $classes, explode( ' ', $class_string ) );
+					}
+				}
+			}
+
 			// 1. Check for className and tailwindClasses attributes
 			if ( ! empty( $block['attrs']['tailwindClasses'] ) ) {
 				$classes = array_merge( $classes, explode( ' ', $block['attrs']['tailwindClasses'] ) );

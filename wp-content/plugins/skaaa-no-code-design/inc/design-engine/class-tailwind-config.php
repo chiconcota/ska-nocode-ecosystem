@@ -312,6 +312,12 @@ class Tailwind_Config {
 		$css .= "  --skaaa-box-shadow: {$box_shadow};\n";
 		$css .= "  --skaaa-transition-duration: {$transition_duration};\n";
 		$css .= "}\n";
+		// Gutenberg Editor Width & Block Margin Overrides (Layout Parity - High Specificity, Zero !important)
+		$css .= "html body.skaaaaa-builder .editor-styles-wrapper .block-editor-block-list__layout.is-root-container, .editor-styles-wrapper.editor-styles-wrapper .block-editor-block-list__layout.is-root-container { max-width: 100%; width: 100%; padding: 0; margin: 0; }\n";
+		$css .= "html body.skaaaaa-builder .editor-styles-wrapper .wp-block, .editor-styles-wrapper.editor-styles-wrapper .wp-block { max-width: none; margin-left: 0; margin-right: 0; }\n";
+		$css .= "html body.skaaaaa-builder .editor-styles-wrapper .flex > .block-editor-block-list__block, .editor-styles-wrapper.editor-styles-wrapper .flex > .block-editor-block-list__block, html body.skaaaaa-builder .editor-styles-wrapper .inline-flex > .block-editor-block-list__block, .editor-styles-wrapper.editor-styles-wrapper .inline-flex > .block-editor-block-list__block { width: auto; max-width: none; }\n";
+		$css .= ".editor-styles-wrapper .skaaapine-wrapper { display: contents; }\n";
+
 		$css .= "html body.skaaaaa-builder .skaaa-container, .editor-styles-wrapper .skaaa-container { width: 100%; max-width: var(--skaaa-container-width); margin-left: auto; margin-right: auto; padding: var(--skaaa-content-padding); }\n";
 		$css .= "html body.skaaaaa-builder .skaaa-container-block > * + *, .editor-styles-wrapper .skaaa-container-block > * + * { margin-top: var(--skaaa-block-gap); }\n";
 		if ( is_admin() ) {
@@ -363,6 +369,13 @@ class Tailwind_Config {
 		foreach ( $form_elements as $el ) {
 			$css .= $build_rule( $el ) . " { appearance: none; background-color: transparent; border-width: 0; border-radius: 0; padding: 0; border-color: #e5e7eb; outline: none; font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; }\n";
 		}
+
+		// Animation Keyframes (Tailwind Preflight Parity)
+		$css .= "@keyframes blob { 0% { transform: translate(0px, 0px) scale(1); } 33% { transform: translate(30px, -50px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } 100% { transform: translate(0px, 0px) scale(1); } }\n";
+		$css .= "@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }\n";
+		$css .= "@keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }\n";
+		$css .= "@keyframes pulse { 50% { opacity: .5; } }\n";
+		$css .= "@keyframes bounce { 0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8,0,1,1); } 50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); } }\n";
 
 		return $css;
 	}

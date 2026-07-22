@@ -1,5 +1,5 @@
 # SYSTEM MAP: SKAAA NO-CODE (v2.0.0)
-@status: MILESTONE 2 (DEVELOPMENT) | @git_branch: feature/skaaawind-compiler | @last_update: 2026-07-20
+@status: MILESTONE 2 (DEVELOPMENT) | @git_branch: feature/skaaawind-compiler | @last_update: 2026-07-21
 
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
@@ -30,7 +30,7 @@ wp-content/
 | Module Name | Path | Core Function | Status |
 | :--- | :--- | :--- | :--- |
 | **Skaaa Canvas (Theme)** | `themes/skaaa-canvas/` | Loại bỏ CSS/JS rác của WP, tạo khung canvas sạch. | 🟢 Stable (v1.0.0) |
-| **Skaaa No-Code Design** | `plugins/skaaa-no-code-design/` | Custom Blocks, Tailwind JIT, Skaaapine, Molecules. | 🟢 Stable (v1.2.2) |
+| **Skaaa No-Code Design** | `plugins/skaaa-no-code-design/` | Custom Blocks, Tailwind JIT, Skaaapine, Molecules. | 🟢 Stable (v2.2.3) |
 | **Skaaa Data Pro** | `plugins/skaaa-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.3.1) |
 | **Skaaa Logic Engine** | `plugins/skaaa-logic-engine/` | DAG Workflows, Event Pipeline, SkaaaFX Compiler. | 🟢 Stable (v1.2.6) |
 | **Skaaai (AI Addon)** | `plugins/skaaai/` | Cung cấp các Node AI Prompt & Parser kết nối Gemini/OpenAI. | 🟡 Planning |
@@ -61,7 +61,7 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 5. GLOBAL CONSTRAINTS (FOR AI)
-1. **Decoupled Architecture:** Plugins KHÔNG được gọi trực tiếp class của nhau. Mọi giao tiếp bắt buộc qua WP Hooks (`do_action`, `apply_filters`).
+1. **Decoupled Architecture:** Plugins KHÔNG được gọi trực tiếp class of nhau. Mọi giao tiếp bắt buộc qua WP Hooks (`do_action`, `apply_filters`).
 2. **Flat Tables First:** Mọi cấu trúc dữ liệu mới phải sử dụng bảng phẳng MySQL (`skaaa_data_*`), không lạm dụng `wp_options` hay `wp_postmeta`.
 3. **SemVer Rule:** Tự động tăng số phiên bản (PATCH/MINOR/MAJOR) trong file header khi chỉnh sửa code nguồn của Plugin/Theme.
 4. **Zero-Trash Policy:** Nghiêm cấm tạo file `.md` tự do ngoài 4 thư mục chính. Mọi tài liệu cập nhật phải ghi đè trực tiếp (replace) lên file cũ.
@@ -69,6 +69,8 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-07-22 - 🟢 Done (Debug Editor Canvas Layout & Parity Parity):** Khắc phục triệt để lỗi Gutenberg Canvas Editor bị bóp móp layout (squished text, 100% stretched flex items) bằng cách sửa selector CSV thành scoped `:where(.editor-styles-wrapper)`, gỡ bỏ `!important` trong `class-tailwind-config.php` nhờ tăng CSS specificity (`.editor-styles-wrapper.editor-styles-wrapper`), và xử lý wrapper vô hình `.skaaapine-wrapper { display: contents; }` giúp phần tử grid `md:col-span-7`/`span-5` hiển thị 100% đồng nhất giữa Editor và Frontend (Width = 641.5px). Vá lỗi màu tự do `bg-[#030712]` ở cả PHP và JS. Bổ sung modifier `@click.prevent` cho file `skaaa-landing-test.html` và Post 25 để triệt tiêu hành vi tự đính thêm dấu `#` vào URL. Nâng phiên bản plugin Skaaa No-Code Design lên `v2.2.3`.
+- **2026-07-21 - 🟡 In Progress (SkaaaWind JS Compiler & Parity):** Tải lại Iframe Canvas an toàn, khắc phục triệt để lỗi Gutenberg Iframe Warning và xung đột với bộ gõ tiếng Việt (fcitx5-lotus) nhờ cơ chế gán context Iframe tĩnh lặng (chỉ reset hash compile khi iframe load lại thực tế). Đồng bộ bộ biên dịch PHP JIT và JS JIT hỗ trợ giải mã các mã màu tự do arbitrary hex colors (bg-[#...], text-[#...]) cả ở editor offline lẫn frontend tĩnh. Tạo landing page mẫu skaaa-landing-test.html kiểm thử HTML2Tailwind + Alpine.js module hóa. Nâng version skaaa-no-code-design lên v2.2.1 (Patch).
 - **2026-07-20 - 🟡 In Progress (SkaaaWind JS Compiler Implementation):** Chuyển sang nhánh tính năng `feature/skaaawind-compiler`, xây dựng và được duyệt kế hoạch triển khai bộ biên dịch client-side JIT Tailwind CSS (SkaaaWind JS) chạy offline trên Gutenberg Editor. Sẵn sàng bắt đầu Phase 1.
 - **2026-07-20 - 🟡 Planning (SkaaaWind JS Compiler Research):** Hoàn thành nghiên cứu giải pháp thay thế Tailwind CDN bằng SkaaaWind JS JIT Compiler chạy client-side trong Gutenberg Editor. Thiết lập file project manager `pm_skaaawind_compiler.md` để quản lý và theo dõi tiến trình triển khai ở các phiên làm việc tiếp theo.
 - **2026-07-13 - 🟢 Done (strategic rebranding, database migration, and new site migration):** Hoàn thành việc đổi tên toàn diện codebase và database sang thương hiệu mới **SKAAA** (System Design + Key Database + AI Automation). Phân rã Bridge cũ về các plugin lõi (html2tailwind về Design, REST APIs về Data Pro, Webhooks về Logic). Đóng gói và phát hành bản ZIP phân phối `v2.0.0` thành công. Clone dự án sang Local Site mới sạch rác tại `/home/chiconcota/Local Sites/skaaa-no-code-ecosystem/app/public/` và kích hoạt tự động các package bằng WP-CLI hoạt động ổn định.

@@ -157,9 +157,16 @@ class Core
     {
         wp_enqueue_style('material-symbols-outlined', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap', array(), '1.0.0');
         wp_enqueue_script(
+            'skaaawind-compiler',
+            SKAAA_DESIGN_URL . 'assets/js/skaaawind.js',
+            array(),
+            time(),
+            true
+        );
+        wp_enqueue_script(
             'skaaa-editor-helper',
             SKAAA_DESIGN_URL . 'assets/js/skaaa-editor-helper.js',
-            array(),
+            array('skaaawind-compiler'),
             time(),
             true
         );

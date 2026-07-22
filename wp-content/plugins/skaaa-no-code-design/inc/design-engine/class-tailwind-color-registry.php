@@ -56,7 +56,20 @@ class Tailwind_Color_Registry {
 			'white'   => ['default' => '#ffffff'],
 		);
 
-		return $palette[$color][$shade] ?? ($palette[$color]['default'] ?? '#000');
+		$custom_colors = self::get_custom_colors();
+		if ( isset( $custom_colors[ $color ] ) ) {
+			return $custom_colors[ $color ];
+		}
+
+		if ( isset( $palette[ $color ][ $shade ] ) ) {
+			return $palette[ $color ][ $shade ];
+		}
+
+		if ( isset( $palette[ $color ]['default'] ) ) {
+			return $palette[ $color ]['default'];
+		}
+
+		return null;
 	}
 
 	/**

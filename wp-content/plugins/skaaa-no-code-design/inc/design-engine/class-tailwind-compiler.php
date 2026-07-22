@@ -126,7 +126,11 @@ class Tailwind_Compiler {
 			}
 
 			if ( $css_rule ) {
-				$escaped_class = str_replace( array( ':', '[', ']', '/', '.', '(', ')', ',' ), array( '\:', '\[', '\]', '\/', '\.', '\(', '\)', '\,' ), $class );
+				$escaped_class = str_replace(
+					array( ':', '[', ']', '/', '.', '(', ')', ',', '#', '%', '!', '@', '=' ),
+					array( '\:', '\[', '\]', '\/', '\.', '\(', '\)', '\,', '\#', '\%', '\!', '\@', '\=' ),
+					$class
+				);
 
 				$selector_suffix = $pseudo;
 				
@@ -140,8 +144,7 @@ class Tailwind_Compiler {
 
 				if ( $is_dark ) {
 					$base_selector = 'html.dark body.skaaaaa-builder';
-					// Also support standard WP dark mode class for the editor wrapper if needed. For now html.dark wrapper applies correctly.
-					$editor_base_selector = 'html.dark .editor-styles-wrapper';
+					$editor_base_selector = '.editor-styles-wrapper.dark, .editor-styles-wrapper .dark';
 				}
 
 				if ( strpos( $css_rule, '&' ) === 0 ) {
@@ -194,10 +197,39 @@ class Tailwind_Compiler {
 			return $custom_result;
 		}
 
+		// 0.5 Support Arbitrary Colors: bg-[#1da1f2] or text-[#ff0000]
+		if ( preg_match( '/^(text|bg|border|ring|from|to)-\[#([a-fA-F0-9]{3,8})\](?:\/([0-9]+))?$/', $class, $matches ) ) {
+			$prefix   = $matches[1];
+			$hex      = '#' . $matches[2];
+			$opacity  = isset( $matches[3] ) ? intval( $matches[3] ) : null;
+			
+			$prop_map = array(
+				'bg'     => 'background-color',
+				'text'   => 'color',
+				'border' => 'border-color',
+				'ring'   => '--tw-ring-color',
+				'from'   => '--tw-gradient-from',
+				'to'     => '--tw-gradient-to',
+			);
+
+			if ( isset( $prop_map[ $prefix ] ) ) {
+				$css_prop = $prop_map[ $prefix ];
+				if ( $opacity !== null ) {
+					$rgb   = Tailwind_Color_Registry::hex_to_rgb( $hex );
+					$alpha = round( $opacity / 100, 2 );
+					return "{$css_prop}: rgba({$rgb}, {$alpha});";
+				}
+				return "{$css_prop}: {$hex};";
+			}
+		}
+
 		// 1. Colors (text-*, bg-*)
 		if ( preg_match( '/^(text|bg)-([a-z0-9-]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
 			$type    = $matches[1] === 'text' ? 'color' : 'background-color';
 			$hex     = Tailwind_Color_Registry::get_color_hex( $matches[2], $matches[3] );
+			if ( ! $hex ) {
+				return null;
+			}
 			if ( isset( $matches[4] ) ) {
 				$rgb   = Tailwind_Color_Registry::hex_to_rgb( $hex );
 				$alpha = round( intval( $matches[4] ) / 100, 2 );
@@ -287,6 +319,17 @@ class Tailwind_Compiler {
 
 		// 4.2 Shadows & Z-Index & Container & Max Width & Auto Margin
 		if ( isset( Tailwind_Config::$shadow_map[ $class ] ) ) return Tailwind_Config::$shadow_map[ $class ];
+		if ( preg_match( '/^shadow-([a-z0-9-]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
+			$hex = Tailwind_Color_Registry::get_color_hex( $matches[1], $matches[2] );
+			if ( $hex ) {
+				if ( isset( $matches[3] ) ) {
+					$rgb   = Tailwind_Color_Registry::hex_to_rgb( $hex );
+					$alpha = round( intval( $matches[3] ) / 100, 2 );
+					return "--tw-shadow-color: rgba({$rgb}, {$alpha}); box-shadow: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -2px var(--tw-shadow-color);";
+				}
+				return "--tw-shadow-color: {$hex}; box-shadow: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -2px var(--tw-shadow-color);";
+			}
+		}
 		if ( preg_match( '/^z-(\d+)$/', $class, $matches ) ) return "z-index: {$matches[1]};";
 		if ( $class === 'z-auto' ) return "z-index: auto;";
 		if ( $class === 'container' || $class === 'skaaa-container' ) {
@@ -361,8 +404,11 @@ class Tailwind_Compiler {
 			$width = isset( $matches[2] ) ? $matches[2] . 'px' : '1px';
 			return "border-{$side_map[$matches[1]]}-width: {$width}; border-style: solid;";
 		}
-		if ( preg_match( '/^border-([a-z]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
+		if ( preg_match( '/^border-([a-z0-9-]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
 			$hex = Tailwind_Color_Registry::get_color_hex( $matches[1], $matches[2] );
+			if ( ! $hex ) {
+				return null;
+			}
 			if ( isset( $matches[3] ) ) {
 				$rgb   = Tailwind_Color_Registry::hex_to_rgb( $hex );
 				$alpha = round( intval( $matches[3] ) / 100, 2 );
@@ -435,8 +481,11 @@ class Tailwind_Compiler {
 			);
 			return "background-image: linear-gradient({$dir_map[$matches[1]]}, var(--tw-gradient-stops));";
 		}
-		if ( preg_match( '/^(from|via|to)-([a-z]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
+		if ( preg_match( '/^(from|via|to)-([a-z0-9-]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
 			$hex = Tailwind_Color_Registry::get_color_hex( $matches[2], $matches[3] );
+			if ( ! $hex ) {
+				return null;
+			}
 			if ( isset( $matches[4] ) ) {
 				$rgb   = Tailwind_Color_Registry::hex_to_rgb( $hex );
 				$alpha = round( intval( $matches[4] ) / 100, 2 );
@@ -472,12 +521,16 @@ class Tailwind_Compiler {
 		}
 		if ( in_array( $class, array( 'relative', 'absolute', 'fixed', 'sticky', 'static' ) ) ) return "position: {$class};";
 		
-		if ( preg_match( '/^(inset|inset-x|inset-y|top|right|bottom|left|start|end)-(\d+\.?\d*|full|auto|px)$/', $class, $matches ) ) {
-			if ( $matches[2] === 'full' ) $css_val = '100%';
-			elseif ( $matches[2] === 'auto' ) $css_val = 'auto';
-			elseif ( $matches[2] === 'px' ) $css_val = '1px';
-			elseif ( $matches[2] === '0' ) $css_val = '0px';
-			else $css_val = number_format( floatval( $matches[2] ) * 0.25, 3, '.', '' ) . 'rem';
+		if ( preg_match( '/^(inset|inset-x|inset-y|top|right|bottom|left|start|end)-(\d+\/\d+|\d+\.?\d*|full|auto|px)$/', $class, $matches ) ) {
+			$val = $matches[2];
+			if ( strpos( $val, '/' ) !== false ) {
+				list( $n, $d ) = explode( '/', $val );
+				$css_val = ( floatval( $n ) / floatval( $d ) * 100 ) . '%';
+			} elseif ( $val === 'full' ) $css_val = '100%';
+			elseif ( $val === 'auto' ) $css_val = 'auto';
+			elseif ( $val === 'px' ) $css_val = '1px';
+			elseif ( $val === '0' ) $css_val = '0px';
+			else $css_val = number_format( floatval( $val ) * 0.25, 3, '.', '' ) . 'rem';
 
 			$prop_map = array(
 				'inset'   => "inset: {$css_val};",
@@ -562,6 +615,14 @@ class Tailwind_Compiler {
 		
 		if ( $class === 'sr-only' ) return 'position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;';
 		if ( $class === 'not-sr-only' ) return 'position: static; width: auto; height: auto; padding: 0; margin: 0; overflow: visible; clip: auto; white-space: normal;';
+
+		// 11. Animations & Delays
+		if ( $class === 'animate-blob' ) return 'animation: blob 7s infinite;';
+		if ( $class === 'animate-spin' ) return 'animation: spin 1s linear infinite;';
+		if ( $class === 'animate-ping' ) return 'animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;';
+		if ( $class === 'animate-pulse' ) return 'animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;';
+		if ( $class === 'animate-bounce' ) return 'animation: bounce 1s infinite;';
+		if ( preg_match( '/^(animation-delay|delay)-([0-9]+)$/', $class, $matches ) ) return "animation-delay: {$matches[2]}ms; transition-delay: {$matches[2]}ms;";
 		
 		if ( preg_match( '/^content-\[(.+)\]$/', $class, $matches ) ) {
 			$val = str_replace( '_', ' ', $matches[1] );

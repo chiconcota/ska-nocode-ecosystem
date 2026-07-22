@@ -1,31 +1,29 @@
 # CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ
-*Ngày cập nhật: 2026-07-20*
+*Ngày cập nhật: 2026-07-22*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Git Branch**: `feature/skaaawind-compiler` (Nhánh tính năng mới được tạo từ `main`, trạng thái local sạch).
+- **Git Branch**: `feature/skaaawind-compiler`
 - **Thư mục làm việc**: `/home/chiconcota/Local Sites/skaaa-no-code-ecosystem/app/public/`
+- **Phiên bản Plugin**: `Skaaa No-Code Design v2.2.3 (Patch)`
 - **Công việc đã hoàn thành trong phiên**:
-  1. **Dọn sạch và đồng bộ GitHub**: Thực hiện commit toàn bộ tài liệu còn dở dang và các file `package-lock.json` ngoài `main`, push thành công lên GitHub origin.
-  2. **Khởi tạo nhánh tính năng**: Tạo và checkout sang nhánh `feature/skaaawind-compiler` để cô lập phát triển bộ biên dịch SkaaaWind JS.
-  3. **Thiết lập Kế hoạch triển khai (Plan Approved)**:
-     - Tạo và thông qua kế hoạch [implementation_plan.md](file:///home/chiconcota/.gemini/antigravity-ide/brain/e9181566-848c-4ebe-b42f-c3906a5fd260/implementation_plan.md) chi tiết.
-     - Cập nhật trạng thái project manager [pm_skaaawind_compiler.md](file:///home/chiconcota/Local%20Sites/skaaa-no-code-ecosystem/app/public/.skaaa-ai/1-overview/project-managers/pm_skaaawind_compiler.md) sang `🟡 In Progress (Plan Approved)`.
-     - Cập nhật nhật ký quyết định thiết kế tại [decision-log.md](file:///home/chiconcota/Local%20Sites/skaaa-no-code-ecosystem/app/public/.skaaa-ai/2-memory/decision-log.md) và bản đồ hệ thống [system_map.md](file:///home/chiconcota/Local%20Sites/skaaa-no-code-ecosystem/app/public/.skaaa-ai/1-overview/system_map.md) với thông tin Git branch mới.
+  1. **Editor Canvas Layout Parity**: Sửa lỗi Gutenberg Canvas Editor bị bóp méo layout (dốc chữ đứng dọc, flex items bị giãn 100%) bằng cách chuẩn hóa `editorBaseSelector` sang `:where(.editor-styles-wrapper)` trong cả `skaaawind.js` và `class-tailwind-compiler.php`.
+  2. **Zero !important Refactoring**: Loại bỏ hoàn toàn cờ `!important` trong override layout của `class-tailwind-config.php` nhờ kỹ thuật nhân đôi class (`.editor-styles-wrapper.editor-styles-wrapper`) kết hợp tiền tố `html body.skaaaaa-builder .editor-styles-wrapper`.
+  3. **Skaaapine Wrapper Layout Fix**: Thêm quy tắc `.editor-styles-wrapper .skaaapine-wrapper { display: contents; }` giúp phần tử con grid `md:col-span-7` và `md:col-span-5` lấy lại cấu trúc con trực tiếp của `.grid`. Độ rộng đạt **641.5px** khớp 100% tuyệt đối giữa Editor và Frontend.
+  4. **Arbitrary Color Selector Fix**: Sửa lỗi escape ký tự `#` trong selector CSS ở cả PHP và JS JIT compilers giúp `bg-[#030712]` render chuẩn `rgb(3, 7, 18)`.
+  5. **Hash-less Event Handlers Fix**: Bổ sung modifier `@click.prevent` cho file `skaaa-landing-test.html` và Post 25 để triệt tiêu việc đính `#` vào URL và nhảy cuộn trang lên đầu khi bấm tab/nút.
+  6. **Rebuild JS Bundle**: Đã chạy `npm run build` thành công cho `Skaaa No-Code Design` v2.2.3.
 
 ---
 
 ## 2. Các quyết định thiết kế đã chốt:
-- **Core JIT Decoupling**: Bộ biên dịch `SkaaaWind JS` sẽ viết bằng Vanilla JS thuần (ES6 Class) để tách biệt khỏi framework/WordPress và sẵn sàng cho monorepo/package trong tương lai.
-- **Skaaapine Store Sync**: Tận dụng `SkaaapineStore` để lắng nghe thay đổi Dark Mode (`skaaaTheme`), đồng bộ cập nhật class `.dark` ở HTML root của Editor Canvas Iframe.
-- **Gutenberg block tree subscription**: Quét đệ quy `getBlocks()` trong block editor store để lấy class Tailwind động, sử dụng cơ chế hash check để tối ưu hiệu năng biên dịch.
+- **Iframe Isolation & Scoped CSS**: Selector Editor luôn được cách ly dưới `:where(.editor-styles-wrapper)`, tuyệt đối không dùng raw `body` gây nhiễu theme.
+- **CSS Specificity Over !important**: Ưu tiên tăng độ ưu tiên CSS bằng cấu trúc class lặp lại thay vì dùng `!important`.
+- **Alpine.js Event Handling**: Tất cả các handler sự kiện `@click` phải dùng modifier `@click.prevent` để bảo vệ URL sạch.
 
 ---
 
-## 3. Gợi ý công việc cho phiên tiếp theo (Triển khai SkaaaWind JS)
-1. **Triển khai Phase 1: Porting mã nguồn JIT Compiler sang JS**
-   - Viết nhân biên dịch Vanilla JS JIT trong tệp tin mới [skaaawind.js](file:///home/chiconcota/Local%20Sites/skaaa-no-code-ecosystem/app/public/wp-content/plugins/skaaa-no-code-design/assets/js/skaaawind.js).
-   - Port đầy đủ các map config từ PHP `Tailwind_Config` và regex phân tích modifier, colors, spacing, borders, etc.
-   - Nạp cấu hình brandColors động từ localized config `skaaaEditorConfig`.
-2. **Triển khai Phase 2**:
-   - Đăng ký script `skaaawind.js` và cập nhật dependency cho `skaaa-editor-helper.js` trong [class-core.php](file:///home/chiconcota/Local%20Sites/skaaa-no-code-ecosystem/app/public/wp-content/plugins/skaaa-no-code-design/inc/design-engine/class-core.php).
-   - Viết subscribe watcher quét các block và inject stylesheet trong helper.
+## 3. Gợi ý công việc cho phiên tiếp theo (Single Source of Truth - SSOT)
+1. **Thiết lập Single Source of Truth cho JIT rules (`tailwind-rules.json`)**:
+   - Theo đúng kế hoạch đã chốt với User, chuyển toàn bộ các map cấu hình của Tailwind (colors, spacing, weights, dimensions, keyframe animations) từ PHP và JS về một file JSON duy nhất `tailwind-rules.json`.
+   - Nạp cấu hình JSON động ở Backend PHP qua `json_decode()` và ở Frontend JS qua `wp_localize_script()`.
+   - Giúp đồng bộ 100% giữa PHP và JS Compilers, chỉ cần sửa 1 file JSON để cập nhật cả 2 môi trường.

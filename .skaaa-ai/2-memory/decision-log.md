@@ -11,6 +11,20 @@
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Skaaa Loop, Skaaa Text, Skaaa Button, Skaaa Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
 
+## 2026-07-22 - 🟢 Hoàn thành: Khắc phục triệt để bóp méo Editor Canvas Layout, loại bỏ !important & Fix đính dấu # URL
+- **Decision (Editor Selector Scope & CSS Specificity):** Chuyển đổi `editorBaseSelector` từ dạng chuỗi CSV dễ bị trượt vế sang `:where(.editor-styles-wrapper)`. Đồng thời loại bỏ toàn bộ cờ `!important` trong override layout bằng cách tăng độ ưu tiên CSS tự nhiên (`.editor-styles-wrapper.editor-styles-wrapper` và `html body.skaaaaa-builder .editor-styles-wrapper`).
+- **Decision (Skaaapine Wrapper Display Contents):** Xử lý wrapper trung gian `.skaaapine-wrapper { display: contents; }` trong Editor Canvas để trả các phần tử con `md:col-span-*` về làm con trực tiếp của `.grid`, khôi phục 100% tỷ lệ layout đồng nhất với Frontend (Width = `641.5px`).
+- **Decision (Hash-less Event Handler Protocol):** Áp dụng chuẩn modifier `@click.prevent` của Alpine.js cho toàn bộ nút bấm/tab/mobile menu để ngăn chặn hành vi gán `#` URL và nhảy cuộn trang lên đầu.
+
+## 2026-07-21 - 🟢 Hoàn thành: Triển khai SkaaaWind JS JIT, tối ưu đồng bộ Iframe I/O chống xung đột bộ gõ & Hỗ trợ Arbitrary Colors
+- **Decision (Gutenberg Iframe Warning Elimination):** Quyết định loại bỏ hoàn toàn việc tiêm thẻ style JIT có ID `skaaawind-compiled-css` vào trang cha (Main Document) khi chạy chế độ Iframe. Điều này ngăn Gutenberg quét thấy ID lạ từ main document và tự ý clone vào Iframe gây in cảnh báo ra console.
+- **Decision (Gutenberg Iframe State Protection):** Để tránh xung đột với các bộ gõ tiếng Việt (như `fcitx5-lotus` dùng cổng `uinput` giả lập DOM input) do việc reload/ghi đè DOM/CSSOM liên tục (Style Flashing / CSSOM Reflow): 
+  - Lưu trữ tham chiếu Iframe Document đang hoạt động.
+  - Chỉ reset `previousHash = ""` và thực hiện biên dịch lại từ đầu **đúng một lần duy nhất** khi Iframe thực sự thay đổi document context (khi tải lại trang hoặc dựng lại Iframe).
+  - Khi soạn thảo bình thường trong editor, compiler sẽ giữ nguyên CSSOM tĩnh lặng nếu class không thay đổi, bảo vệ bộ gõ hoạt động ổn định 100%.
+- **Decision (Arbitrary Colors JIT Support):** Bổ sung regex hỗ trợ biên dịch mã màu tự chọn dạng hex arbitrary (`bg-[#...]`, `text-[#...]`, `border-[#...]`...) cho cả bộ PHP compiler (Frontend) và JS compiler (Gutenberg Editor) giúp đồng bộ hiển thị mà không cần tải CDN ngoài.
+- **Decision (Dynamic CDN Fallback Integration):** Kích hoạt cơ chế nạp động Tailwind CDN khẩn cấp vào Iframe khi và chỉ khi phát hiện có class lạ chưa được biên dịch offline (unresolved) nhằm bảo đảm layout hiển thị tốt nhất, trong khi 98% class cơ bản vẫn hoạt động offline 100% không chạm internet.
+
 ## 2026-07-20 - 🟡 In Progress: Phê duyệt kế hoạch triển khai bộ biên dịch SkaaaWind JS (Phase 1-4)
 - **Decision (Plan Approved):** Kế hoạch triển khai [implementation_plan.md](file:///home/chiconcota/.gemini/antigravity-ide/brain/e9181566-848c-4ebe-b42f-c3906a5fd260/implementation_plan.md) đã được phê duyệt, bao gồm việc xây dựng bộ biên dịch local-first, tích hợp subscriber Gutenberg `wp.data.subscribe` để quét block tree và inject stylesheet động vào Editor canvas, thay thế hoàn toàn Tailwind CDN ngoài.
 - **Decision (Core JIT Decoupling):** Quyết định tách nhân biên dịch Core JIT Compiler viết bằng Vanilla JS (ES6 Class) thuần để đảm bảo tính độc lập và di động (Rule 5 Agnostic Core Libraries), có thể đóng gói npm package độc lập sau này.

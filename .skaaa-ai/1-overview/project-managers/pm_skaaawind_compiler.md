@@ -1,5 +1,5 @@
 # PROJECT MANAGER: SKAAAWIND EDITOR JIT COMPILER
-@status: 🟡 In Progress (Plan Approved) | @target_milestone: MILESTONE 2 (PHASE 6) | @last_update: 2026-07-20
+@status: 🟡 In Progress (Ecosystem Core Implemented) | @target_milestone: MILESTONE 2 (PHASE 6) | @last_update: 2026-07-21
 
 
 > [!NOTE]
@@ -33,28 +33,37 @@
 
 ## 3. KẾ HOẠCH HÀNH ĐỘNG (ACTION ITEMS)
 
-- [ ] **Phase 1: Porting mã nguồn JIT Compiler sang JS**
-  - [ ] Khởi tạo file [skaaawind.js](file:///home/chiconcota/Local%20Sites/skaaa-no-code-ecosystem/app/public/wp-content/plugins/skaaa-no-code-design/assets/js/skaaawind.js).
-  - [ ] Port đầy đủ config maps từ PHP `Tailwind_Config`.
-  - [ ] Viết hàm `resolveClass` khớp regex màu sắc, spacing, dimension, border, transition.
-  - [ ] Tích hợp nạp `skaaaEditorConfig.brandColorsJson` vào bộ dịch màu tùy chỉnh.
+- [x] **Phase 1: Porting mã nguồn JIT Compiler sang JS**
+  - [x] Khởi tạo file [skaaawind.js](file:///home/chiconcota/Local%20Sites/skaaa-no-code-ecosystem/app/public/wp-content/plugins/skaaa-no-code-design/assets/js/skaaawind.js).
+  - [x] Port đầy đủ config maps từ PHP `Tailwind_Config`.
+  - [x] Viết hàm `resolveClass` khớp regex màu sắc, spacing, dimension, border, transition.
+  - [x] Tích hợp nạp `skaaaEditorConfig.brandColorsJson` vào bộ dịch màu tùy chỉnh.
 
-- [ ] **Phase 2: Tích hợp Gutenberg Store & Subscriber**
-  - [ ] Đăng ký script `skaaawind.js` làm dependency của `skaaa-editor-helper` trong [class-core.php](file:///home/chiconcota/Local%20Sites/skaaa-no-code-ecosystem/app/public/wp-content/plugins/skaaa-no-code-design/inc/design-engine/class-core.php).
-  - [ ] Viết bộ lọc/quét đệ quy `getBlocks()` trong helper để lấy danh sách class từ Gutenberg.
-  - [ ] Áp dụng cơ chế hash kiểm tra chuỗi class để tránh biên dịch lặp lại vô ích (Performance optimization).
+- [x] **Phase 2: Tích hợp Gutenberg Store & Subscriber**
+  - [x] Đăng ký script `skaaawind.js` làm dependency của `skaaa-editor-helper` trong [class-core.php](file:///home/chiconcota/Local%20Sites/skaaa-no-code-ecosystem/app/public/wp-content/plugins/skaaa-no-code-design/inc/design-engine/class-core.php).
+  - [x] Viết bộ lọc/quét đệ quy `getBlocks()` trong helper để lấy danh sách class từ Gutenberg.
+  - [x] Áp dụng cơ chế hash kiểm tra chuỗi class để tránh biên dịch lặp lại vô ích (Performance optimization).
 
-- [ ] **Phase 3: Bơm Stylesheet đa ngữ cảnh (Iframe Support)**
-  - [ ] Loại bỏ đoạn code tiêm script CDN tailwindcss trong `skaaa-editor-helper.js`.
-  - [ ] Viết hàm `updateEditorStylesheets(css)` tự động tìm và cập nhật thẻ style trong cả main document lẫn các iframe editor canvas.
+- [x] **Phase 3: Bơm Stylesheet đa ngữ cảnh (Iframe Support)**
+  - [x] Loại bỏ đoạn code tiêm script CDN tailwindcss trong `skaaa-editor-helper.js`.
+  - [x] Viết hàm `updateEditorStylesheets(css)` tự động tìm và cập nhật thẻ style trong cả main document lẫn các iframe editor canvas.
 
-- [ ] **Phase 4: Tích Hợp Skaaapine & Live Preview**
-  - [ ] Móc nối với sự kiện thay đổi của `SkaaapineStore` để bắt được các cập nhật state cục bộ.
-  - [ ] Kiểm thử luồng đổi màu tối (Dark Mode) hoạt động mượt mà thời gian thực trong Iframe Editor.
+- [x] **Phase 4: Tích Hợp Skaaapine & Live Preview**
+  - [x] Móc nối với sự kiện thay đổi của `SkaaapineStore` để bắt được các cập nhật state cục bộ.
+  - [x] Kiểm thử luồng đổi màu tối (Dark Mode) hoạt động mượt mà thời gian thực trong Iframe Editor.
 
-- [ ] **Phase 5: Kiểm thử Độ tương thích (Parity Testing)**
-  - [ ] So sánh CSS được biên dịch bởi PHP (ở frontend) và SkaaaWind JS (trong editor) cho 50 class Tailwind phổ dụng.
-  - [ ] Xác nhận không có hiện tượng bể layout hoặc lệch màu sắc giữa 2 môi trường.
+- [x] **Phase 5: Kiểm thử Độ tương thích & Sửa lỗi Layout (Parity Testing & Fixes)**
+  - [x] Sửa lỗi warning Gutenberg Iframe chèn sai style.
+  - [x] Tối ưu hóa sync hash tránh xung đột bộ gõ tiếng Việt `fcitx5-lotus`.
+  - [x] Bổ sung regex arbitrary colors `bg-[#...]` ở cả PHP và JS.
+  - [x] Khắc phục bóp méo Editor Canvas Layout (chỉnh `editorBaseSelector` sang `:where(.editor-styles-wrapper)`).
+  - [x] Loại bỏ `!important` bằng kỹ thuật tăng độ ưu tiên CSS tự nhiên (`.editor-styles-wrapper.editor-styles-wrapper`).
+  - [x] Sửa lỗi wrapper `.skaaapine-wrapper { display: contents; }` trong Editor Canvas giúp đạt tỷ lệ 100% đồng nhất giữa Editor và Frontend (`641.5px` width).
+  - [x] Thêm modifier `@click.prevent` cho file `skaaa-landing-test.html` và Post 25 để triệt tiêu việc tự thêm dấu `#` vào URL.
+
+- [ ] **Phase 6: Thiết lập Single Source of Truth qua JSON (Kế hoạch phiên sau)**
+  - [ ] Khởi tạo file cấu hình chung `tailwind-rules.json`.
+  - [ ] PHP JIT và JS JIT tự động load cấu hình này để phân giải class tự động, loại bỏ nợ kỹ thuật desync.
 
 ---
 

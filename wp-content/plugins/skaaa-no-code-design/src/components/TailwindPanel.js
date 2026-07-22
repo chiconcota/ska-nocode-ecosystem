@@ -239,8 +239,21 @@ export const TailwindPanel = ({ className, setClassName }) => {
         }
     };
 
-    const Tag = ({ value }) => (
-        <span style={{
+    const Tag = ({ value }) => {
+        let isSupported = true;
+        if (window.SkaaaWindCompiler) {
+            try {
+                const compiler = new window.SkaaaWindCompiler();
+                const testResult = compiler.compile(value);
+                if (testResult.unresolved && testResult.unresolved.includes(value)) {
+                    isSupported = false;
+                }
+            } catch (e) {
+                console.error('Error checking class support in SkaaaWind:', e);
+            }
+        }
+
+        const tagStyle = isSupported ? {
             display: 'inline-flex',
             alignItems: 'center',
             backgroundColor: '#f0f0f1',
@@ -251,19 +264,38 @@ export const TailwindPanel = ({ className, setClassName }) => {
             fontSize: '12px',
             color: '#1e1e1e',
             border: '1px solid #ddd'
-        }}>
-            {value}
-            <Button
-                isSmall
-                style={{ minWidth: 'auto', padding: '0', marginLeft: '4px', color: '#666' }}
-                onClick={() => removeClass(value)}
-            >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-            </Button>
-        </span>
-    );
+        } : {
+            display: 'inline-flex',
+            alignItems: 'center',
+            backgroundColor: '#fef2f2',
+            padding: '2px 8px',
+            borderRadius: '4px',
+            marginRight: '4px',
+            marginBottom: '4px',
+            fontSize: '12px',
+            color: '#ef4444',
+            border: '1px solid #fca5a5'
+        };
+
+        const tooltip = isSupported 
+            ? null 
+            : __('This class is not supported offline. Please report it to support.', 'skaaaaa-builder-core');
+
+        return (
+            <span style={tagStyle} title={tooltip}>
+                {value}
+                <Button
+                    isSmall
+                    style={{ minWidth: 'auto', padding: '0', marginLeft: '4px', color: isSupported ? '#666' : '#ef4444' }}
+                    onClick={() => removeClass(value)}
+                >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                </Button>
+            </span>
+        );
+    };
 
     const CategorySection = ({ title, items }) => {
         if (!items || items.length === 0) return null;
@@ -356,6 +388,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
                         onKeyDown={handleKeyDown}
                         onPaste={handlePaste}
                         placeholder={__('Add classes or utility...', 'skaaaaa-builder-core')}
+                        __next40pxDefaultSize={true}
                         style={{ flexGrow: 1 }}
                     />
                     <Button
@@ -427,6 +460,7 @@ export const TailwindPanel = ({ className, setClassName }) => {
                                 setSaveError('');
                             }}
                             placeholder="e.g. Hero Button, Card Shadow..."
+                            __next40pxDefaultSize={true}
                             disabled={isSaving}
                         />
 
