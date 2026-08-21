@@ -1,5 +1,5 @@
 # AGENT SELF-IMPROVEMENT LOG (self-improve.md)
-@status: ACTIVE | @last_update: 2026-07-21
+@status: ACTIVE | @last_update: 2026-08-21
 
 > Nhật ký tự cải thiện hành vi và sửa sai của Agent. Chứa các lỗi thao tác thực tế và quy tắc tự sửa lỗi.
 > **Luật dọn dẹp:** File này không được vượt quá 80 dòng. Các lỗi đã giải quyết (Resolved) sau 3 phiên sẽ được lưu trữ.
@@ -55,6 +55,10 @@
 ### MISTAKE-013: Sự kiện Click tự đính thêm dấu # vào URL
 - Lỗi: Sử dụng handler `@click` trên nút bấm hoặc liên kết mà không dùng modifier `.prevent` gây nhảy cuộn trang và đính `#` URL.
 - Sửa đổi: Tất cả handler sự kiện `@click` trong Alpine.js bắt buộc dùng `@click.prevent` để giữ URL luôn sạch.
+
+### MISTAKE-014: Thẻ HTML tĩnh thô trong Dynamic Block Markup
+- Lỗi: Chèn thẻ HTML wrapper tĩnh thô (`<main>`, `<div>`, `<h1>`, `<p>`) lồng bên trong comment block của Dynamic Blocks làm Gutenberg Block Validation báo lỗi Invalid Content.
+- Sửa đổi: Dynamic Blocks bắt buộc lưu đúng chuẩn comment Gutenberg thuần (Container chỉ chứa inner blocks, Text/Loop dùng dạng tự đóng `<!-- wp:... {...} /-->`).
 
 ---
 
