@@ -186,24 +186,22 @@ class Core
         // Inject Organisms Cache to JS (Zero-Query) - Conditionally via Graceful Fallback
         $organisms_data = array();
 
-        // Only load if Skaaa Data Pro is active
-        if (class_exists('\Skaaa_System_Framework\Dependency_Manager') && \Skaaa_System_Framework\Dependency_Manager::is_data_pro_active()) {
-            $upload_dir = wp_upload_dir();
-            $cache_file = trailingslashit($upload_dir['basedir']) . 'skaaa-data/organisms.json';
+        $upload_dir = wp_upload_dir();
+        $cache_file = trailingslashit($upload_dir['basedir']) . 'skaaa-data/organisms.json';
 
-            if (file_exists($cache_file)) {
-                $file_contents = file_get_contents($cache_file);
-                if (!empty($file_contents)) {
-                    $decoded = json_decode($file_contents, true);
-                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                        foreach ($decoded as $org) {
-                            if (isset($org['id'])) {
-                                $organisms_data[$org['id']] = array(
-                                    'id'       => $org['id'],
-                                    'name'     => !empty($org['name']) ? $org['name'] : $org['id'],
-                                    'category' => !empty($org['category']) ? $org['category'] : '',
-                                );
-                            }
+        if (file_exists($cache_file)) {
+            $file_contents = file_get_contents($cache_file);
+            if (!empty($file_contents)) {
+                $decoded = json_decode($file_contents, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    foreach ($decoded as $org) {
+                        if (isset($org['id'])) {
+                            $organisms_data[$org['id']] = array(
+                                'id'           => $org['id'],
+                                'name'         => !empty($org['name']) ? $org['name'] : $org['id'],
+                                'category'     => !empty($org['category']) ? $org['category'] : '',
+                                'html_content' => !empty($org['html_content']) ? $org['html_content'] : '',
+                            );
                         }
                     }
                 }

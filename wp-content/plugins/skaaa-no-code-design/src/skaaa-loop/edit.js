@@ -1,5 +1,5 @@
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, SelectControl, Button, Placeholder } from '@wordpress/components';
+import { PanelBody, TextControl, SelectControl, Button, Placeholder, ToggleControl } from '@wordpress/components';
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import ServerSideRender from '@wordpress/server-side-render';
@@ -21,21 +21,39 @@ export default function Edit( { attributes, setAttributes } ) {
         ]);
     }, []);
 
+    const isCurrentTableSystem = Boolean(sourceTable && (sourceTable.includes('_sys_') || sourceTable.startsWith('sys_')));
+    const [showSystemTables, setShowSystemTables] = useState(isCurrentTableSystem);
+
     const tableOptions = useMemo(() => {
-        const opts = [{ label: __( '-- Select Data Table --', 'skaaa-no-code-design' ), value: '' }];
+        const defaultOpt = [{ label: __( '-- Select Data Table --', 'skaaa-no-code-design' ), value: '' }];
+        const appOpts = [];
+        const sysOpts = [];
+
         if (window.skaaaDataDictionary) {
             Object.keys(window.skaaaDataDictionary).forEach(key => {
                 const table = window.skaaaDataDictionary[key];
                 const val = key.replace(/^wp_/, '');
-                const labelName = table.__table_info ? table.__table_info.name : val;
-                opts.push({ label: `${labelName} (${val})`, value: val });
+                const isSys = val.includes('_sys_') || val.startsWith('sys_') || Boolean(table.__table_info?.is_system);
+                const rawLabelName = table.__table_info ? table.__table_info.name : val;
+                
+                if (isSys) {
+                    sysOpts.push({ label: `⚙️ ${rawLabelName} (${val})`, value: val });
+                } else {
+                    appOpts.push({ label: `📦 ${rawLabelName} (${val})`, value: val });
+                }
             });
         }
-        if (sourceTable && !opts.find(o => o.value === sourceTable)) {
-            opts.push({ label: `[Custom] ${sourceTable}`, value: sourceTable });
+
+        let combined = [...defaultOpt, ...appOpts];
+        if (showSystemTables) {
+            combined = [...combined, ...sysOpts];
         }
-        return opts;
-    }, [sourceTable]);
+
+        if (sourceTable && !combined.find(o => o.value === sourceTable)) {
+            combined.push({ label: `[Custom] ${sourceTable}`, value: sourceTable });
+        }
+        return combined;
+    }, [sourceTable, showSystemTables]);
 
     const blockProps = useBlockProps();
 
@@ -78,25 +96,33 @@ export default function Edit( { attributes, setAttributes } ) {
     return (
         <div { ...blockProps }>
             <InspectorControls>
-                <PanelBody title={__(__( 'Data configuration', 'skaaa-no-code-design' ), 'skaaa-no-code-design')} initialOpen={true}>
+                <PanelBody title={__( 'Data configuration', 'skaaa-no-code-design' )} initialOpen={true}>
                     {window.skaaaDataDictionary ? (
-                        <SelectControl
-                            label={__(__( 'Source Table (Flat Table)', 'skaaa-no-code-design' ), 'skaaa-no-code-design')}
-                            value={sourceTable}
-                            options={tableOptions}
-                            onChange={(val) => setAttributes({ sourceTable: val })}
-                            help={__(__( 'Select the data table provided by Skaaa Data Pro', 'skaaa-no-code-design' ), 'skaaa-no-code-design')}
-                        />
+                        <>
+                            <SelectControl
+                                label={__( 'Source Table (Flat Table)', 'skaaa-no-code-design' )}
+                                value={sourceTable}
+                                options={tableOptions}
+                                onChange={(val) => setAttributes({ sourceTable: val })}
+                                help={__( 'Select the data table provided by Skaaa Data Pro', 'skaaa-no-code-design' )}
+                            />
+                            <ToggleControl
+                                label={__( 'Show System Tables (Internal)', 'skaaa-no-code-design' )}
+                                help={__( 'Enable to view internal engine tables (sys_apps, sys_workflows, etc.)', 'skaaa-no-code-design' )}
+                                checked={showSystemTables}
+                                onChange={(val) => setShowSystemTables(val)}
+                            />
+                        </>
                     ) : (
                         <TextControl
-                            label={__(__( 'Source Table (Flat Table)', 'skaaa-no-code-design' ), 'skaaa-no-code-design')}
+                            label={__( 'Source Table (Flat Table)', 'skaaa-no-code-design' )}
                             value={sourceTable}
                             onChange={(val) => setAttributes({ sourceTable: val })}
-                            help={__(__( 'For example: skaaa_data_doctors', 'skaaa-no-code-design' ), 'skaaa-no-code-design')}
+                            help={__( 'For example: skaaa_data_doctors', 'skaaa-no-code-design' )}
                         />
                     )}
                     <TextControl
-                        label={__(__( 'Limit', 'skaaa-no-code-design' ), 'skaaa-no-code-design')}
+                        label={__( 'Limit', 'skaaa-no-code-design' )}
                         type="number"
                         value={limit}
                         onChange={(val) => setAttributes({ limit: parseInt(val, 10) || 10 })}

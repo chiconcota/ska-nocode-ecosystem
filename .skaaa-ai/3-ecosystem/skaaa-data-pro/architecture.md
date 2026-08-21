@@ -5,8 +5,8 @@
 - **Tuyệt đối không sử dụng `wp_postmeta`** cho các dữ liệu App (Nhà hàng, Bất động sản, Lịch hẹn...). Phải tự sinh bảng `skaaa_data_*`.
 - **Giữ cấu trúc lai (Hybrid):** Dữ liệu xác thực người dùng (Login, Mật khẩu, Identity) vẫn NẰM ở `wp_users`. Các bảng của Skaaa liên quan đến user chỉ lưu ID (Foreign Key). Không tự làm hệ thống Auth riêng.
 - **Data Providers Pattern:** Không copy dữ liệu của WooCommerce vào Skaaa. Khi cần truy vấn dữ liệu WooCommerce, sử dụng Adapter gọi hàm `wc_get_products()` của WP Core.
-- **Độc Lập UI Admin:** Dashboard của Data Pro tự load Tailwind CDN tĩnh, KHÔNG hook vào CDN chung của Builder Core để tránh gãy Layout khi Core bị tắt.
 - **System Table Schema Protection (Approach A):** Cấm tuyệt đối mọi thay đổi cấu trúc bảng (thêm/sửa/xóa cột, cập nhật tùy chọn select), đổi tên hoặc xóa bảng đối với các bảng hệ thống cốt lõi (ví dụ: `wp_skaaa_data_sys_workflows`, `wp_skaaa_data_sys_apps`) để đảm bảo tính toàn vẹn hệ thống.
+- **Atomic System Tables dbDelta Initialization (2026-08-16 - v1.3.3):** Refactor toàn bộ `App_Manager::maybe_create_system_tables()` chuyển sang tạo và đồng bộ schema cho cả 4 bảng hệ thống (`wp_skaaa_data_sys_organisms`, `wp_skaaa_data_sys_theme_templates`, `wp_skaaa_data_sys_presets`, `wp_skaaa_data_sys_apps`) thông qua `dbDelta()` nguyên tử và cơ chế self-healing column check, ngăn chặn lỗi `is_table_protected` chặn `add_column` trên các môi trường cài đặt mới.
 
 ## 2. WP HOOKS EXPOSED (GIAO TIẾP XUYÊN PLUGIN)
 *Dự kiến triển khai trong Phase 2 & 3:*

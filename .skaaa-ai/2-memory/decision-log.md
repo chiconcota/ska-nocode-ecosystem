@@ -11,6 +11,27 @@
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Skaaa Loop, Skaaa Text, Skaaa Button, Skaaa Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
 
+## 2026-08-21 - 🟢 Hoàn thành: Hotfix v2.0.1 - JIT Editor Recursion, Clean Block Markup & Source Table Separation
+- **Decision (Clean Dynamic Block Markup Protocol - Skaaa No-Code Design v2.3.2):**
+  - **Vấn đề:** Khi chèn thẻ HTML tĩnh thô (`<main>`, `<div>`, `<h1>`, `<p>`) lồng bên trong comment block Gutenberg cho các khối Dynamic / ServerSideRendered block (Container, Loop, Text, Button), cơ chế kiểm tra tính hợp lệ của Gutenberg (Block Validation Parser) báo lỗi *"Block contains unexpected or invalid content"*.
+  - **Quyết định:** Chuẩn hóa toàn bộ cấu trúc markup: `skaaaaa-builder/container` chỉ chứa inner blocks (thẻ HTML wrapper do `render.php` sinh động), các khối `text` và `loop` là dạng tự đóng `<!-- wp:... {...} /-->`.
+- **Decision (Source Table Separation & Toggle Control - Skaaa No-Code Design v2.3.2):**
+  - **Vấn đề:** Dropdown *Source Table* của khối `Skaaa Loop` và `Skaaa Select` liệt kê cả các bảng hệ thống nội bộ (`skaaa_data_sys_tokens`, `sys_apps`, `sys_workflows`, `sys_settings`, `sys_organisms`, `sys_theme_templates`), gây rối mắt cho người dùng và tiềm ẩn rủi ro lộ dữ liệu cấu hình ra ngoài frontend.
+  - **Quyết định:** Mặc định chỉ hiển thị các bảng dữ liệu nghiệp vụ của ứng dụng (`📦 [App Data]`). Thêm `ToggleControl` *"Show System Tables (Internal)"* cho phép Super Admin chủ động hiển thị các bảng hệ thống (`⚙️ [System]`) khi thực sự cần thiết.
+- **Decision (E2E Automated Test Suite & Multi-Scenario Verification):**
+  - Xây dựng bộ test runner tự động `e2e_test_suite.php` kiểm thử 19 assertions cho 3 kịch bản: Complex Glassmorphism Templates, Loop Slots with Mustache Dynamic Binding, và Dedicated Portal Routing App. Toàn bộ 19/19 test cases đạt 100% PASS.
+
+## 2026-08-16 - 🟢 Hoàn thành: Khắc phục Schema Bảng Hệ Thống & Tối ưu JIT Editor cho Khối Skaaa Symbol Reference
+- **Decision (Atomic dbDelta System Tables Schema Creation - Skaaa Data Pro v1.3.3):**
+  - **Vấn đề:** Trên các môi trường cài đặt mới hoặc vừa di chuyển hệ thống, hàm `maybe_create_system_tables()` sử dụng phương pháp `create_custom_table` + `add_column()`. Tuy nhiên, vì các bảng hệ thống (`wp_skaaa_data_sys_*`) được bảo vệ bởi cơ chế `is_table_protected()`, các lệnh `add_column()` bị chặn đứng hoàn toàn. Kết quả là bảng `wp_skaaa_data_sys_organisms` và `wp_skaaa_data_sys_theme_templates` bị thiếu các cột nghiệp vụ (`name`, `type`, `json_content`, `html_content`, `category`, `location`, `organism_id`, `conditions`, `is_active`), khiến tính năng tạo và lưu Organisms/Symbols bị lỗi crash SQL `Unknown column 'name' in 'field list'` (HTTP 500).
+  - **Quyết định:** Refactor toàn bộ `App_Manager::maybe_create_system_tables()` sang sử dụng hàm `dbDelta()` chuẩn của WordPress với định nghĩa đầy đủ 100% các cột ngay từ câu lệnh `CREATE TABLE`. Bổ sung thêm cơ chế tự động kiểm tra và thêm cột còn thiếu (self-healing column checks) cho cả 4 bảng hệ thống (`sys_organisms`, `sys_theme_templates`, `sys_presets`, `sys_apps`) để đảm bảo các môi trường hiện có và cài mới đều có cấu trúc bảng hoàn hảo.
+- **Decision (Organism Reference Editor JIT Parity & Live Canvas DOM Scanner - Skaaa No-Code Design v2.3.1):**
+  - **Vấn đề:** Khi chuyển từ Tailwind CDN sang bộ biên dịch offline `SkaaaWindCompiler`, khối `Skaaa Symbol Reference` (`skaaaaa-builder/organism-ref`) trong Gutenberg Editor hiển thị chữ thô không nhận style CSS (mặc dù ngoài Frontend vẫn nhận bình thường). Lý do: Block Symbol chỉ lưu thuộc tính `{ organismId: "5" }`, còn toàn bộ nội dung HTML được render qua `ServerSideRender`. Bộ biên dịch `runJITCompilation()` chỉ quét cây block của Gutenberg (`getBlocks()`) nên bị sót toàn bộ các class Tailwind nằm bên trong Symbol.
+  - **Quyết định:** Nâng cấp `runJITCompilation()` trong `skaaa-editor-helper.js`:
+    1. Khi duyệt cây block, nếu gặp `skaaaaa-builder/organism-ref` hoặc `skaaaaa-builder/loop`, tự động tra cứu `window.skaaaOrganismsCache[organismId].html_content` để trích xuất toàn bộ class Tailwind bên trong Symbol.
+    2. Bổ sung bộ quét Live Canvas DOM (`activeIframeDoc.querySelectorAll('[class]')`) kết hợp với `MutationObserver` để tự động bắt các node DOM được chèn vào sau khi `ServerSideRender` hoàn tất và kích hoạt biên dịch CSS JIT thời gian thực.
+    3. Cập nhật `class-core.php` để truyền kèm `html_content` vào `window.skaaaOrganismsCache` khi tải Editor.
+
 ## 2026-07-22 - 🟢 Hoàn thành: Sửa lỗi Vertical Grid Height Alignment, Loại bỏ !important & Auto-seed Design Tokens DB
 - **Decision (Frontend Grid Height Alignment):** Thêm điều kiện lọc `:not([class*="grid"]):not([class*="flex"])` vào quy tắc `.skaaa-container-block > * + *` trong `class-tailwind-config.php`, triệt tiêu thuộc tính `margin-top: 24px` bị gán nhầm cho phần tử con trong Flex/Grid, giúp các cột hiển thị phẳng 100% trên cùng đường kẻ ngang cả Editor lẫn Frontend.
 - **Decision (Zero !important Specificity Policy):** Refactor toàn bộ `skaaa-editor-helper.js` loại bỏ 100% cờ `!important` dư thừa. Sử dụng bộ gom nhóm Specificity Scope `.editor-styles-wrapper.editor-styles-wrapper` để đè style mặc định của WP Admin theo đúng Test Case 5.

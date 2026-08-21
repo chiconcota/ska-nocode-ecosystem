@@ -1,6 +1,5 @@
-# SYSTEM MAP: SKAAA NO-CODE (v2.0.0)
-@status: MILESTONE 2 (DEVELOPMENT) | @git_branch: feature/skaaawind-compiler | @last_update: 2026-07-21
-
+# SYSTEM MAP: SKAAA NO-CODE (v2.0.1)
+@status: MILESTONE 2 (DEVELOPMENT) | @git_branch: main | @last_update: 2026-08-21
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core 6.x + PHP 8.2+ (Host & API)
@@ -30,8 +29,8 @@ wp-content/
 | Module Name | Path | Core Function | Status |
 | :--- | :--- | :--- | :--- |
 | **Skaaa Canvas (Theme)** | `themes/skaaa-canvas/` | Loại bỏ CSS/JS rác của WP, tạo khung canvas sạch. | 🟢 Stable (v1.0.0) |
-| **Skaaa No-Code Design** | `plugins/skaaa-no-code-design/` | Custom Blocks, Tailwind JIT, Skaaapine, Molecules. | 🟢 Stable (v2.3.0) |
-| **Skaaa Data Pro** | `plugins/skaaa-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.3.1) |
+| **Skaaa No-Code Design** | `plugins/skaaa-no-code-design/` | Custom Blocks, Tailwind JIT, Skaaapine, Molecules. | 🟢 Stable (v2.3.1) |
+| **Skaaa Data Pro** | `plugins/skaaa-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.3.3) |
 | **Skaaa Logic Engine** | `plugins/skaaa-logic-engine/` | DAG Workflows, Event Pipeline, SkaaaFX Compiler. | 🟢 Stable (v1.2.6) |
 | **Skaaai (AI Addon)** | `plugins/skaaai/` | Cung cấp các Node AI Prompt & Parser kết nối Gemini/OpenAI. | 🟡 Planning |
 
@@ -69,6 +68,13 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-08-21 - 🟢 Done (Hotfix v2.0.1 - JIT CSS Parity, System Tables dbDelta & Source Table Clean Separation):**
+  1. *Skaaa Data Pro (v1.3.3):* Khắc phục lỗi tạo bảng hệ thống trên database mới (`dbDelta` nguyên tử và auto-healing column checks cho `sys_organisms`, `sys_theme_templates`, `sys_presets`, `sys_apps`).
+  2. *Skaaa No-Code Design (v2.3.2):* Cải tiến bộ quét JIT trong Editor hỗ trợ trích xuất class đệ quy từ Organisms/Loop slots và Live Canvas DOM; chuẩn hóa Dynamic Block Markup loại bỏ cảnh báo Block Validation lỗi; phân nhóm Source Table trong khối `Skaaa Loop` và `Skaaa Select` (mặc định ẩn các bảng hệ thống `skaaa_data_sys_*`, bổ sung toggle `Show System Tables (Internal)`).
+  3. *E2E Test Suite:* Thiết lập và vượt qua 100% (19/19 assertions) cho 3 kịch bản: Complex Glassmorphic Templates, Loop Slots with Mustache Hydration, Dedicated Portal App.
+- **2026-08-16 - 🟢 Done (Organism Reference Editor JIT Parity & System Tables Atomic Schema):**
+  1. *Skaaa Data Pro (v1.3.3):* Sửa lỗi `Organisms` không tạo và lưu được trên môi trường mới/sạch do `is_table_protected()` chặn `add_column()`. Refactor `App_Manager::maybe_create_system_tables()` chuyển sang sử dụng `dbDelta()` nguyên tử và bổ sung auto-column existence check cho cả 4 bảng hệ thống (`wp_skaaa_data_sys_organisms`, `wp_skaaa_data_sys_theme_templates`, `wp_skaaa_data_sys_presets`, `wp_skaaa_data_sys_apps`), đảm bảo đầy đủ các cột nghiệp vụ ngay khi khởi tạo.
+  2. *Skaaa No-Code Design (v2.3.1):* Sửa lỗi khối `Skaaa Symbol Reference` (`skaaaaa-builder/organism-ref`) trong Gutenberg Editor không nhận CSS sau khi chuyển sang `SkaaaWindCompiler`. Nâng cấp `runJITCompilation()` trong `skaaa-editor-helper.js` để tự động trích xuất class từ `window.skaaaOrganismsCache[organismId].html_content` và tích hợp bộ quét Live Canvas DOM (`activeIframeDoc.querySelectorAll('[class]')`) kết hợp với `MutationObserver` để tự động biên dịch 100% CSS của các khối ServerSideRendered trong Gutenberg Editor thời gian thực mà không cần tới CDN ngoài.
 - **2026-07-22 - 🟢 Done (Phase 6 - Single Source of Truth via JSON tailwind-rules.json):** Hoàn thành quy hoạch toàn bộ các bảng từ điển cấu hình tĩnh của Tailwind (media queries, basic colors, font weights, shadow map, max-width, margins, flex/grid layout, size map, typography maps, border/ring/gradient/radius/blur maps và palette 22 màu × 11 shades) về một tệp JSON duy nhất `tailwind-rules.json`. Cả PHP JIT Compiler (`Tailwind_Config`, `Tailwind_Color_Registry`) và JS JIT Compiler (`SkaaaWindCompiler` qua `skaaaEditorConfig.tailwindRules`) tự động nạp cấu hình JSON động này, đạt 100% Compiler Parity và triệt tiêu nguy cơ desync giữa Backend và Editor offline. Nâng phiên bản plugin `Skaaa No-Code Design` lên `v2.2.4`.
 - **2026-07-21 - 🟡 In Progress (SkaaaWind JS Compiler & Parity):** Tải lại Iframe Canvas an toàn, khắc phục triệt để lỗi Gutenberg Iframe Warning và xung đột với bộ gõ tiếng Việt (fcitx5-lotus) nhờ cơ chế gán context Iframe tĩnh lặng (chỉ reset hash compile khi iframe load lại thực tế). Đồng bộ bộ biên dịch PHP JIT và JS JIT hỗ trợ giải mã các mã màu tự do arbitrary hex colors (bg-[#...], text-[#...]) cả ở editor offline lẫn frontend tĩnh. Tạo landing page mẫu skaaa-landing-test.html kiểm thử HTML2Tailwind + Alpine.js module hóa. Nâng version skaaa-no-code-design lên v2.2.1 (Patch).
 - **2026-07-20 - 🟡 In Progress (SkaaaWind JS Compiler Implementation):** Chuyển sang nhánh tính năng `feature/skaaawind-compiler`, xây dựng và được duyệt kế hoạch triển khai bộ biên dịch client-side JIT Tailwind CSS (SkaaaWind JS) chạy offline trên Gutenberg Editor. Sẵn sàng bắt đầu Phase 1.

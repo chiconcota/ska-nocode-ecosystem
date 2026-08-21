@@ -148,26 +148,40 @@ class App_Manager {
 
 		self::init(); // Đảm bảo App skaaa_system đã tồn tại
 
-		$db_engine = \Skaaa\Data\Core\Database_Engine::get_instance();
 		$changed = false;
 
-		// 1. Organisms Blocks
-		$table_organisms_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_organisms ) );
-		if ( $table_organisms_exists !== $table_organisms ) {
-			// Nếu chưa có bảng trong MySQL thì tạo mới hoàn toàn
-			$db_engine->create_custom_table( 'organisms', 'dashicons-layout', self::SYSTEM_APP );
-			$db_engine->add_column( $table_organisms, 'Name', 'short_text' );
-			$db_engine->add_column( $table_organisms, 'Title', 'short_text' );
-			$db_engine->add_column( $table_organisms, 'Block_Name', 'short_text' );
-			$db_engine->add_column( $table_organisms, 'Category', 'short_text' );
-			$db_engine->add_column( $table_organisms, 'JSON_Content', 'long_text' );
-			$db_engine->add_column( $table_organisms, 'HTML_Content', 'long_text' );
-			$changed = true;
-		} else {
-			// Migration: Nếu bảng đã có, kiểm tra xem cột category đã có chưa
-			$column_exists = $wpdb->get_results( $wpdb->prepare( "SHOW COLUMNS FROM {$table_organisms} LIKE %s", 'category' ) );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		$charset_collate = $wpdb->get_charset_collate();
+
+		// 1. Organisms Blocks Table
+		$sql_organisms = "CREATE TABLE {$table_organisms} (
+			`id` int(11) NOT NULL AUTO_INCREMENT,
+			`name` varchar(255) NOT NULL DEFAULT '',
+			`type` varchar(50) NOT NULL DEFAULT 'organism',
+			`title` varchar(255) DEFAULT NULL,
+			`block_name` varchar(255) DEFAULT NULL,
+			`category` varchar(255) DEFAULT NULL,
+			`json_content` longtext DEFAULT NULL,
+			`html_content` longtext DEFAULT NULL,
+			`created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY  (`id`)
+		) {$charset_collate};";
+		dbDelta( $sql_organisms );
+
+		// Fallback column check for organisms
+		$required_org_cols = array(
+			'name'         => "VARCHAR(255) NOT NULL DEFAULT ''",
+			'type'         => "VARCHAR(50) NOT NULL DEFAULT 'organism'",
+			'title'        => "VARCHAR(255) DEFAULT NULL",
+			'block_name'   => "VARCHAR(255) DEFAULT NULL",
+			'category'     => "VARCHAR(255) DEFAULT NULL",
+			'json_content' => "LONGTEXT DEFAULT NULL",
+			'html_content' => "LONGTEXT DEFAULT NULL",
+		);
+		foreach ( $required_org_cols as $col => $definition ) {
+			$column_exists = $wpdb->get_results( $wpdb->prepare( "SHOW COLUMNS FROM {$table_organisms} LIKE %s", $col ) );
 			if ( empty( $column_exists ) ) {
-				$wpdb->query( "ALTER TABLE {$table_organisms} ADD COLUMN category VARCHAR(255) DEFAULT NULL" );
+				$wpdb->query( "ALTER TABLE {$table_organisms} ADD COLUMN `{$col}` {$definition}" );
 			}
 		}
 
@@ -208,17 +222,32 @@ class App_Manager {
 		// Tải lại dictionary mới nhất sau mỗi bước (phòng trường hợp db_engine thay đổi trực tiếp Database)
 		$dictionary = get_option( 'skaaa_data_dictionary', array() );
 
-		// 2. Theme Templates
-		$table_templates_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_templates ) );
-		if ( $table_templates_exists !== $table_templates ) {
-			// Nếu chưa có bảng trong MySQL thì tạo mới hoàn toàn
-			$db_engine->create_custom_table( 'theme_templates', 'dashicons-admin-appearance', self::SYSTEM_APP );
-			$db_engine->add_column( $table_templates, 'Name', 'short_text' );
-			$db_engine->add_column( $table_templates, 'Location', 'select', 'header, footer, single, archive, 404, 403, app_layout, custom' );
-			$db_engine->add_column( $table_templates, 'Organism_ID', 'number' );
-			$db_engine->add_column( $table_templates, 'Conditions', 'long_text' );
-			$db_engine->add_column( $table_templates, 'Is Active', 'boolean' );
-			$changed = true;
+		// 2. Theme Templates Table
+		$sql_templates = "CREATE TABLE {$table_templates} (
+			`id` int(11) NOT NULL AUTO_INCREMENT,
+			`name` varchar(255) NOT NULL DEFAULT '',
+			`location` varchar(50) NOT NULL DEFAULT 'header',
+			`organism_id` int(11) DEFAULT NULL,
+			`conditions` longtext DEFAULT NULL,
+			`is_active` tinyint(1) NOT NULL DEFAULT 1,
+			`created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY  (`id`)
+		) {$charset_collate};";
+		dbDelta( $sql_templates );
+
+		// Fallback column check for theme_templates
+		$required_tpl_cols = array(
+			'name'        => "VARCHAR(255) NOT NULL DEFAULT ''",
+			'location'    => "VARCHAR(50) NOT NULL DEFAULT 'header'",
+			'organism_id' => "INT(11) DEFAULT NULL",
+			'conditions'  => "LONGTEXT DEFAULT NULL",
+			'is_active'   => "TINYINT(1) NOT NULL DEFAULT 1",
+		);
+		foreach ( $required_tpl_cols as $col => $definition ) {
+			$column_exists = $wpdb->get_results( $wpdb->prepare( "SHOW COLUMNS FROM {$table_templates} LIKE %s", $col ) );
+			if ( empty( $column_exists ) ) {
+				$wpdb->query( "ALTER TABLE {$table_templates} ADD COLUMN `{$col}` {$definition}" );
+			}
 		}
 
 		// Luôn đảm bảo Dictionary có mặt
@@ -262,15 +291,28 @@ class App_Manager {
 			$changed = false;
 		}
 
-		// 3. Design Tokens (Presets)
-		$table_presets_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_presets ) );
-		if ( $table_presets_exists !== $table_presets ) {
-			// Nếu chưa có bảng trong MySQL thì tạo mới hoàn toàn
-			$db_engine->create_custom_table( 'presets', 'dashicons-art', self::SYSTEM_APP );
-			$db_engine->add_column( $table_presets, 'Name', 'short_text' );
-			$db_engine->add_column( $table_presets, 'Type', 'enum', 'token_color, token_font, token_spacing, token_radius, token_shadow, preset_typography, preset_component' );
-			$db_engine->add_column( $table_presets, 'Value', 'long_text' );
-			$changed = true;
+		// 3. Design Tokens (Presets) Table
+		$sql_presets = "CREATE TABLE {$table_presets} (
+			`id` int(11) NOT NULL AUTO_INCREMENT,
+			`name` varchar(255) NOT NULL DEFAULT '',
+			`type` varchar(50) NOT NULL DEFAULT 'token_color',
+			`value` longtext DEFAULT NULL,
+			`created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY  (`id`)
+		) {$charset_collate};";
+		dbDelta( $sql_presets );
+
+		// Fallback column check for presets
+		$required_preset_cols = array(
+			'name'  => "VARCHAR(255) NOT NULL DEFAULT ''",
+			'type'  => "VARCHAR(50) NOT NULL DEFAULT 'token_color'",
+			'value' => "LONGTEXT DEFAULT NULL",
+		);
+		foreach ( $required_preset_cols as $col => $definition ) {
+			$column_exists = $wpdb->get_results( $wpdb->prepare( "SHOW COLUMNS FROM {$table_presets} LIKE %s", $col ) );
+			if ( empty( $column_exists ) ) {
+				$wpdb->query( "ALTER TABLE {$table_presets} ADD COLUMN `{$col}` {$definition}" );
+			}
 		}
 
 		// Luôn đảm bảo Dictionary có mặt
@@ -306,29 +348,29 @@ class App_Manager {
 
 		$dictionary = get_option( 'skaaa_data_dictionary', array() );
 
-		// 4. Workspaces (Apps)
-		$table_apps_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_apps ) );
-		if ( $table_apps_exists !== $table_apps ) {
-			// Tạo mới bảng qua db_engine
-			$db_engine->create_custom_table( 'apps', 'dashicons-portfolio', self::SYSTEM_APP );
-			$db_engine->add_column( $table_apps, 'App ID', 'short_text' );
-			$db_engine->add_column( $table_apps, 'Name', 'short_text' );
-			$db_engine->add_column( $table_apps, 'Icon', 'short_text' );
-			$db_engine->add_column( $table_apps, 'Unauthorized Redirect URL', 'short_text' );
-			$changed = true;
-		} else {
-			// Đảm bảo các cột luôn tồn tại (phòng trường hợp bảng bị lỗi khởi tạo dở dang)
-			$required_columns = array(
-				'app_id'                    => 'VARCHAR(255) DEFAULT NULL',
-				'name'                      => 'VARCHAR(255) DEFAULT NULL',
-				'icon'                      => 'VARCHAR(255) DEFAULT NULL',
-				'unauthorized_redirect_url' => 'VARCHAR(255) DEFAULT NULL'
-			);
-			foreach ( $required_columns as $col => $definition ) {
-				$column_exists = $wpdb->get_results( $wpdb->prepare( "SHOW COLUMNS FROM {$table_apps} LIKE %s", $col ) );
-				if ( empty( $column_exists ) ) {
-					$wpdb->query( "ALTER TABLE {$table_apps} ADD COLUMN {$col} {$definition}" );
-				}
+		// 4. Workspaces (Apps) Table
+		$sql_apps = "CREATE TABLE {$table_apps} (
+			`id` int(11) NOT NULL AUTO_INCREMENT,
+			`app_id` varchar(255) NOT NULL DEFAULT '',
+			`name` varchar(255) NOT NULL DEFAULT '',
+			`icon` varchar(255) DEFAULT NULL,
+			`unauthorized_redirect_url` varchar(255) DEFAULT NULL,
+			`created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY  (`id`)
+		) {$charset_collate};";
+		dbDelta( $sql_apps );
+
+		// Fallback column check for apps
+		$required_app_cols = array(
+			'app_id'                    => "VARCHAR(255) NOT NULL DEFAULT ''",
+			'name'                      => "VARCHAR(255) NOT NULL DEFAULT ''",
+			'icon'                      => "VARCHAR(255) DEFAULT NULL",
+			'unauthorized_redirect_url' => "VARCHAR(255) DEFAULT NULL",
+		);
+		foreach ( $required_app_cols as $col => $definition ) {
+			$column_exists = $wpdb->get_results( $wpdb->prepare( "SHOW COLUMNS FROM {$table_apps} LIKE %s", $col ) );
+			if ( empty( $column_exists ) ) {
+				$wpdb->query( "ALTER TABLE {$table_apps} ADD COLUMN `{$col}` {$definition}" );
 			}
 		}
 

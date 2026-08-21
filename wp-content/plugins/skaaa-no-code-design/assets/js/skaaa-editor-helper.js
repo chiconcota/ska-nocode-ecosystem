@@ -205,38 +205,110 @@
     }
 
     /**
-     * Run JIT compilation on all classes collected from Gutenberg block tree.
+     * Extract classes from raw HTML string (e.g. from organisms cache or templates)
+     */
+    function extractClassesFromHtml(html, classArray) {
+        if (!html || typeof html !== 'string') return;
+        const classRegex = /class=["']([^"']+)["']/g;
+        let match;
+        while ((match = classRegex.exec(html)) !== null) {
+            if (match[1]) {
+                const parts = match[1].split(/\s+/).filter(Boolean);
+                parts.forEach(cls => classArray.push(cls));
+            }
+        }
+    }
+
+    /**
+     * Run JIT compilation on all classes collected from Gutenberg block tree,
+     * referenced Organisms, and the live editor canvas DOM elements.
      */
     function runJITCompilation() {
         const compiler = getCompiler();
         if (!compiler) return;
 
-        if (!window.wp || !window.wp.data || !window.wp.data.select) return;
-        const select = window.wp.data.select;
-        if (!select('core/block-editor')) return;
-
-        const blocks = select('core/block-editor').getBlocks();
         const classes = [];
 
-        // Recursively scan blocks for tailwind classes
-        function scanBlocks(blockList) {
-            if (!blockList) return;
-            blockList.forEach(block => {
-                if (block.attributes) {
-                    if (block.attributes.tailwindClasses) {
-                        classes.push(block.attributes.tailwindClasses);
-                    }
-                    if (block.attributes.className) {
-                        classes.push(block.attributes.className);
-                    }
+        // 1. Scan Gutenberg Block Tree
+        if (window.wp && window.wp.data && window.wp.data.select) {
+            const select = window.wp.data.select;
+            if (select('core/block-editor')) {
+                const blocks = select('core/block-editor').getBlocks();
+
+                function scanBlocks(blockList) {
+                    if (!blockList) return;
+                    blockList.forEach(block => {
+                        if (block.attributes) {
+                            if (block.attributes.tailwindClasses) {
+                                classes.push(block.attributes.tailwindClasses);
+                            }
+                            if (block.attributes.className) {
+                                classes.push(block.attributes.className);
+                            }
+
+                            // Support for Organism References (Skaaa Symbol)
+                            if (block.name === 'skaaaaa-builder/organism-ref' && block.attributes.organismId) {
+                                const orgId = String(block.attributes.organismId);
+                                const cache = window.skaaaOrganismsCache || {};
+                                const org = cache[orgId] || Object.values(cache).find(o => String(o.id) === orgId);
+                                if (org && org.html_content) {
+                                    extractClassesFromHtml(org.html_content, classes);
+                                }
+                            }
+
+                            // Support for Skaaa Loop Slots referencing Organisms
+                            if (block.name === 'skaaaaa-builder/loop' && Array.isArray(block.attributes.slots)) {
+                                const cache = window.skaaaOrganismsCache || {};
+                                block.attributes.slots.forEach(slot => {
+                                    if (slot && slot.organismId) {
+                                        const orgId = String(slot.organismId);
+                                        const org = cache[orgId] || Object.values(cache).find(o => String(o.id) === orgId);
+                                        if (org && org.html_content) {
+                                            extractClassesFromHtml(org.html_content, classes);
+                                        }
+                                    }
+                                });
+                            }
+
+                            // Support for htmlAttributes (e.g. Alpine x-transition)
+                            if (Array.isArray(block.attributes.htmlAttributes)) {
+                                block.attributes.htmlAttributes.forEach(attr => {
+                                    if (attr && typeof attr.value === 'string') {
+                                        const attrVals = attr.value.split(/\s+/).filter(Boolean);
+                                        attrVals.forEach(v => classes.push(v));
+                                    }
+                                });
+                            }
+                        }
+                        if (block.innerBlocks && block.innerBlocks.length > 0) {
+                            scanBlocks(block.innerBlocks);
+                        }
+                    });
                 }
-                if (block.innerBlocks && block.innerBlocks.length > 0) {
-                    scanBlocks(block.innerBlocks);
-                }
-            });
+
+                scanBlocks(blocks);
+            }
         }
 
-        scanBlocks(blocks);
+        // 2. Scan Live Editor Canvas DOM (Catches ServerSideRendered elements like Organisms, widgets, dynamic blocks)
+        const targetDoc = activeIframeDoc || (document.querySelector('.block-editor-block-list__layout') ? document : null);
+        if (targetDoc) {
+            try {
+                const elements = targetDoc.querySelectorAll('[class]');
+                elements.forEach(el => {
+                    const classAttr = el.getAttribute('class');
+                    if (classAttr && typeof classAttr === 'string') {
+                        // Skip Gutenberg internal UI controls to keep compilation lean
+                        const parts = classAttr.split(/\s+/).filter(Boolean);
+                        parts.forEach(cls => {
+                            if (!cls.startsWith('components-') && !cls.startsWith('block-editor-') && !cls.startsWith('editor-')) {
+                                classes.push(cls);
+                            }
+                        });
+                    }
+                });
+            } catch (e) {}
+        }
 
         // Deduplicate classes
         const uniqueClasses = [...new Set(classes.join(' ').split(/\s+/).filter(Boolean))];
@@ -346,20 +418,22 @@
         // 2. Chạy biên dịch đồng bộ lần đầu
         runJITCompilation();
 
-        // MutationObserver for Dynamic Elements (e.g. video added later)
+        // MutationObserver for Dynamic Elements (e.g. video, ServerSideRendered Organisms)
         const observer = new MutationObserver((mutations) => {
+            let shouldRecompile = false;
             mutations.forEach((mutation) => {
-                mutation.addedNodes.forEach((node) => {
-                    if (node.nodeType === 1) {
-                        if (node.classList.contains('skaaa-video-wrapper') || node.querySelector('.skaaa-video-wrapper')) {
-                            runJITCompilation();
-                        }
-                    }
-                });
+                if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+                    shouldRecompile = true;
+                } else if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    shouldRecompile = true;
+                }
             });
+            if (shouldRecompile) {
+                runJITCompilation();
+            }
         });
 
-        observer.observe(doc.body, { childList: true, subtree: true });
+        observer.observe(doc.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
         console.log('Skaaa Builder: SkaaaWind offline JIT compiler active.');
     }
 

@@ -109,8 +109,8 @@
 4. Kiểm tra Computed Styles trong DevTools.
 
 **Kết quả kỳ vọng (Acceptance Criteria):**
-- [ ] Class `bg-primary` phân giải chính xác mã màu `#3B82F6` lấy từ Theme Options (`tokens.json`).
-- [ ] Compiler gọi `resolveCustomColor()` tra cứu thành công trước khi fallback về `tailwind-rules.json`.
+- [x] Class `bg-primary` phân giải chính xác mã màu `#3B82F6` lấy từ Theme Options (`tokens.json`).
+- [x] Compiler gọi `resolveCustomColor()` tra cứu thành công trước khi fallback về `tailwind-rules.json`.
 
 ---
 

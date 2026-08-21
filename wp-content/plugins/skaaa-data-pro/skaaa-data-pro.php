@@ -3,7 +3,7 @@
  * Plugin Name: Skaaa Data Pro
  * Plugin URI: https://skaaa.net
  * Description: High-performance database system (Flat Tables) and schema automation via Template Gallery.
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Ly Tat Thanh + antigravity AI
  * Author URI: https://lytatthanh.com
  * Text Domain: skaaa-data-pro
@@ -15,7 +15,7 @@ namespace Skaaa\Data;
 defined('ABSPATH') || exit;
 
 // Định nghĩa Path & URL
-define('SKAAA_DATA_PRO_VERSION', '1.3.2');
+define('SKAAA_DATA_PRO_VERSION', '1.3.3');
 define('SKAAA_DATA_PRO_PATH', plugin_dir_path(__FILE__));
 define('SKAAA_DATA_PRO_URL', plugin_dir_url(__FILE__));
 

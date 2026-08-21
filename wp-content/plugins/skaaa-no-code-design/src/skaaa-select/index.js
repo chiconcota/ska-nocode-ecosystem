@@ -155,18 +155,40 @@ registerBlockType(metadata.name, {
             }
         }
 
+        const isCurrentTableSystem = Boolean(currentTable && (currentTable.includes('_sys_') || currentTable.startsWith('sys_')));
+        const { useState } = wp.element;
+        const [showSystemTables, setShowSystemTables] = useState(isCurrentTableSystem);
+
         const tableOptions = useMemo(() => {
-            const opts = [{ label: __( '-- Select Data Table --', 'skaaa-no-code-design' ), value: '' }];
+            const defaultOpt = [{ label: __( '-- Select Data Table --', 'skaaa-no-code-design' ), value: '' }];
+            const appOpts = [];
+            const sysOpts = [];
+
             if (window.skaaaDataDictionary) {
                 Object.keys(window.skaaaDataDictionary).forEach(key => {
                     const table = window.skaaaDataDictionary[key];
                     const val = key.replace(/^wp_/, '');
-                    const labelName = table.__table_info ? table.__table_info.name : val;
-                    opts.push({ label: `${labelName} (${val})`, value: val });
+                    const isSys = val.includes('_sys_') || val.startsWith('sys_') || Boolean(table.__table_info?.is_system);
+                    const rawLabelName = table.__table_info ? table.__table_info.name : val;
+
+                    if (isSys) {
+                        sysOpts.push({ label: `⚙️ ${rawLabelName} (${val})`, value: val });
+                    } else {
+                        appOpts.push({ label: `📦 ${rawLabelName} (${val})`, value: val });
+                    }
                 });
             }
-            return opts;
-        }, []);
+
+            let combined = [...defaultOpt, ...appOpts];
+            if (showSystemTables) {
+                combined = [...combined, ...sysOpts];
+            }
+
+            if (currentTable && !combined.find(o => o.value === currentTable)) {
+                combined.push({ label: `[Custom] ${currentTable}`, value: currentTable });
+            }
+            return combined;
+        }, [currentTable, showSystemTables]);
 
         const columnOptions = useMemo(() => {
             const opts = [{ label: __( '-- Select Column --', 'skaaa-no-code-design' ), value: '' }];
@@ -273,14 +295,20 @@ registerBlockType(metadata.name, {
                                 {!!skaaaDynamicBinding && (
                                     <>
                                         <SelectControl
-                                            label={__(__( 'Data Table', 'skaaa-no-code-design' ), 'skaaaaa-builder-core')}
+                                            label={__( 'Data Table', 'skaaa-no-code-design' )}
                                             value={currentTable}
                                             options={tableOptions}
                                             onChange={(val) => updateDynamicBinding(val, '')}
                                         />
+                                        <ToggleControl
+                                            label={__( 'Show System Tables (Internal)', 'skaaa-no-code-design' )}
+                                            help={__( 'Enable to view internal engine tables (sys_apps, sys_workflows, etc.)', 'skaaa-no-code-design' )}
+                                            checked={showSystemTables}
+                                            onChange={(val) => setShowSystemTables(val)}
+                                        />
                                         {currentTable && (
                                             <SelectControl
-                                                label={__(__( 'Data Column (Option)', 'skaaa-no-code-design' ), 'skaaaaa-builder-core')}
+                                                label={__( 'Data Column (Option)', 'skaaa-no-code-design' )}
                                                 value={currentColumn}
                                                 options={columnOptions}
                                                 onChange={(val) => updateDynamicBinding(currentTable, val)}
