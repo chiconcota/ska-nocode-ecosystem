@@ -1,5 +1,5 @@
 # AGENT SELF-IMPROVEMENT LOG (self-improve.md)
-@status: ACTIVE | @last_update: 2026-08-21
+@status: ACTIVE | @last_update: 2026-09-09
 
 > Nhật ký tự cải thiện hành vi và sửa sai của Agent. Chứa các lỗi thao tác thực tế và quy tắc tự sửa lỗi.
 > **Luật dọn dẹp:** File này không được vượt quá 80 dòng. Các lỗi đã giải quyết (Resolved) sau 3 phiên sẽ được lưu trữ.
@@ -59,6 +59,18 @@
 ### MISTAKE-014: Thẻ HTML tĩnh thô trong Dynamic Block Markup
 - Lỗi: Chèn thẻ HTML wrapper tĩnh thô (`<main>`, `<div>`, `<h1>`, `<p>`) lồng bên trong comment block của Dynamic Blocks làm Gutenberg Block Validation báo lỗi Invalid Content.
 - Sửa đổi: Dynamic Blocks bắt buộc lưu đúng chuẩn comment Gutenberg thuần (Container chỉ chứa inner blocks, Text/Loop dùng dạng tự đóng `<!-- wp:... {...} /-->`).
+
+### MISTAKE-015: Sót cờ !important trong Editor Script
+- Lỗi: Để sót cờ `!important` trong override của `skaaa-editor-helper.js` (vi phạm Clean Slate).
+- Sửa đổi: Tuyệt đối không dùng `!important`. Mọi override CSS phải dùng Specificity Scope (`.editor-styles-wrapper.editor-styles-wrapper` hoặc `body.wp-admin.wp-admin`).
+
+### MISTAKE-016: Đặt @import CSS sau các CSS rule khác
+- Lỗi: Nối chuỗi `@import` sau các CSS rule làm vi phạm chuẩn W3C khiến trình duyệt bỏ qua việc nạp Google Font vào Editor Canvas.
+- Sửa đổi: Mọi chỉ thị `@import` phải luôn đứng ở dòng đầu tiên tuyệt đối của stylesheet trước bất kỳ CSS rule nào.
+
+### MISTAKE-017: Xuất file ZIP đóng gói thiếu số phiên bản
+- Lỗi: `zip-all.js` chỉ xuất tên file tĩnh không có số phiên bản, gây khó khăn cho việc quản lý phát hành.
+- Sửa đổi: Tự động trích xuất version từ file PHP chính và đặt tên file định dạng `${pluginFolder}-v${version}.zip`.
 
 ---
 
