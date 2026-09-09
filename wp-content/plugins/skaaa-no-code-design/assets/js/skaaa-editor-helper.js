@@ -4,11 +4,32 @@
     let lastUnresolvedString = '';
     let activeIframeDoc = null; // Lưu trữ document hiện tại của iframe để tránh gán trùng lặp
     const stylesheetsMap = new Map(); // doc -> CSSStyleSheet
+    const FONT_STYLESHEET_URL = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap';
+
+    /**
+     * Ensure Google Fonts Material Symbols stylesheet is loaded via <link> in document head.
+     */
+    function ensureFontLink(doc) {
+        try {
+            if (!doc) return;
+            let link = doc.getElementById('skaaa-material-symbols-font');
+            if (!link) {
+                link = doc.createElement('link');
+                link.id = 'skaaa-material-symbols-font';
+                link.rel = 'stylesheet';
+                link.href = FONT_STYLESHEET_URL;
+                const container = doc.head || doc.body;
+                if (container) {
+                    container.appendChild(link);
+                }
+            }
+        } catch (e) {
+            console.error('Skaaa font link injection error:', e);
+        }
+    }
 
     // Gutenberg Editor CSS Fixes (will be bundled with compiled JIT CSS)
     const editorFixesCss = `
-        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
-
         /* Nuke Gutenberg Input Overrides with structural specificity (no !important) so Tailwind's !important wins */
         .editor-styles-wrapper .block-editor-block-list__block.wp-block-skaaaaa-builder-input:not([type="checkbox"]):not([type="radio"]),
         .editor-styles-wrapper .block-editor-block-list__block.wp-block-skaaaaa-builder-select select {
@@ -27,64 +48,58 @@
         }
 
         /* Tailwind V4 Layout Parity Shims for Editor */
-        .\\-outline-offset-1 { outline-offset: -1px !important; }
-        .\\-outline-offset-2 { outline-offset: -2px !important; }
-        .focus\:\-outline-offset-1:focus, .focus\:\-outline-offset-1:focus-within { outline-offset: -1px !important; }
-        .focus\:\-outline-offset-2:focus, .focus\:\-outline-offset-2:focus-within { outline-offset: -2px !important; }
+        .editor-styles-wrapper .\\-outline-offset-1 { outline-offset: -1px; }
+        .editor-styles-wrapper .\\-outline-offset-2 { outline-offset: -2px; }
+        .editor-styles-wrapper .focus\\:\\-outline-offset-1:focus, 
+        .editor-styles-wrapper .focus\\:\\-outline-offset-1:focus-within { outline-offset: -1px; }
+        .editor-styles-wrapper .focus\\:\\-outline-offset-2:focus, 
+        .editor-styles-wrapper .focus\\:\\-outline-offset-2:focus-within { outline-offset: -2px; }
 
         /* V4 Polyfill: Indeterminate & Group-Has State for SVG Checkboxes (JIT CSS handles dynamically, this is helper) */
-        .group:has(:checked) .group-has-checked\:opacity-100 { opacity: 1 !important; }
-        .group:has(:disabled) .group-has-disabled\:stroke-gray-950\/25 { stroke: rgba(3, 7, 18, 0.25) !important; }
-        :indeterminate.indeterminate\:bg-indigo-600 { background-color: #4f46e5 !important; }
-        :indeterminate.indeterminate\:border-indigo-600 { border-color: #4f46e5 !important; }
-        :disabled:checked.disabled\:checked\:bg-gray-100 { background-color: #f3f4f6 !important; }
+        .editor-styles-wrapper .group:has(:checked) .group-has-checked\\:opacity-100 { opacity: 1; }
+        .editor-styles-wrapper .group:has(:disabled) .group-has-disabled\\:stroke-gray-950\\/25 { stroke: rgba(3, 7, 18, 0.25); }
+        .editor-styles-wrapper :indeterminate.indeterminate\\:bg-indigo-600 { background-color: #4f46e5; }
+        .editor-styles-wrapper :indeterminate.indeterminate\\:border-indigo-600 { border-color: #4f46e5; }
+        .editor-styles-wrapper :disabled:checked.disabled\\:checked\\:bg-gray-100 { background-color: #f3f4f6; }
 
         /* Ensure outline width utilities force solid style if Preflight is disabled */
-        [class*="outline-1"], [class*="outline-2"], [class*="outline-4"], [class*="outline-8"] {
-            outline-style: solid !important;
-        }
-
-        /* GLOBAL UI REFINEMENT: Remove all vertical lines from Sidebar panels */
-        .components-panel__body {
-            border-left: none !important;
+        .editor-styles-wrapper [class*="outline-1"], 
+        .editor-styles-wrapper [class*="outline-2"], 
+        .editor-styles-wrapper [class*="outline-4"], 
+        .editor-styles-wrapper [class*="outline-8"] {
+            outline-style: solid;
         }
 
         /* Force root container to not be a flexbox */
-        .is-root-container.block-editor-block-list__layout {
-            display: block !important;
+        .editor-styles-wrapper.editor-styles-wrapper .is-root-container.block-editor-block-list__layout {
+            display: block;
         }
 
         /* Remove unwanted 1px border on Skaaa Button blocks in editor */
-        .wp-block-skaaaaa-builder-button:not(.border) {
-            border: none !important;
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-button:not(.border) {
+            border: none;
         }
 
         /* Ensure border class always works (preflight: false may not set border-style: solid) */
-        .wp-block-skaaaaa-builder-container.border {
-            border-style: solid !important;
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-container.border {
+            border-style: solid;
         }
 
-        .wp-block-skaaaaa-builder-video .block-editor-inner-blocks,
-        .wp-block-skaaaaa-builder-video .block-editor-block-list__layout {
-            display: contents !important;
-        }
-
-        [class*='wp-block-skaaaaa-builder'] > .wp-block-html {
-            display: contents !important;
+        /* Video block and nested inner blocks layout preservation */
+        .editor-styles-wrapper .wp-block-skaaaaa-builder-video .block-editor-inner-blocks,
+        .editor-styles-wrapper .wp-block-skaaaaa-builder-video .block-editor-block-list__layout,
+        .editor-styles-wrapper [class*='wp-block-skaaaaa-builder'] > .wp-block-html,
+        .editor-styles-wrapper .skaaapine-wrapper {
+            display: contents;
         }
 
         /* Video block specific editor fixes */
-        .wp-block-skaaaaa-builder-video {
-            isolation: isolate !important;
+        .editor-styles-wrapper.editor-styles-wrapper .wp-block-skaaaaa-builder-video {
+            isolation: isolate;
         }
 
         .wp-block-skaaaaa-builder-video .skaaa-video-wrapper {
             min-width: 100%;
-        }
-
-        /* CHILD BLOCK FLEX & GRID WRAPPER RESET */
-        .skaaapine-wrapper {
-            display: contents !important;
         }
 
         .wp-block-skaaaaa-builder-container > .wp-block {
@@ -321,7 +336,8 @@
             
             // Build absolute unified stylesheet (Resets + Brand colors + Editor Fixes + Compiled classes)
             const brandColorsCss = (window.skaaaEditorConfig && window.skaaaEditorConfig.brandColorsCss) || '';
-            const unifiedCss = `${brandColorsCss}\n${editorFixesCss}\n${compiled.css}`;
+            const fontImport = `@import url('${FONT_STYLESHEET_URL}');`;
+            const unifiedCss = `${fontImport}\n${brandColorsCss}\n${editorFixesCss}\n${compiled.css}`;
 
             updateEditorStylesheets(unifiedCss);
 
@@ -343,6 +359,8 @@
      */
     function updateDocStyle(doc, css) {
         try {
+            ensureFontLink(doc);
+
             let style = doc.getElementById('skaaawind-compiled-css');
             
             if (!style) {
@@ -405,6 +423,8 @@
         if (!doc || doc === window.document) return;
 
         // 1. Tạo đồng bộ thẻ style trong iframe ngay lập tức để bypass Gutenberg warning check
+        ensureFontLink(doc);
+
         let style = doc.getElementById('skaaawind-compiled-css');
         if (!style) {
             style = doc.createElement('style');
@@ -509,33 +529,35 @@
      * Inject UI refinements into the MAIN document.
      */
     function injectMainDocStyles() {
+        ensureFontLink(document);
+
         if (document.getElementById('skaaa-main-ui-refinements')) return;
 
         const style = document.createElement('style');
         style.id = 'skaaa-main-ui-refinements';
         style.innerHTML = `
-            .components-panel__body,
-            .components-panel__row,
-            .interface-complementary-area {
-                border-left: none !important;
+            body.wp-admin.wp-admin .interface-complementary-area .components-panel__body,
+            body.wp-admin.wp-admin .interface-complementary-area .components-panel__row,
+            body.wp-admin.wp-admin .interface-complementary-area {
+                border-left: none;
             }
 
-            body.skaaaaa-builder .interface-complementary-area input[type="text"],
-            body.skaaaaa-builder .interface-complementary-area input[type="number"],
-            body.skaaaaa-builder .interface-complementary-area input[type="url"],
-            body.skaaaaa-builder .interface-complementary-area input[type="email"],
-            body.skaaaaa-builder .interface-complementary-area input[type="search"],
-            body.skaaaaa-builder .interface-complementary-area input.components-text-control__input,
-            body.skaaaaa-builder .interface-complementary-area textarea.components-textarea-control__input,
-            body.skaaaaa-builder .interface-complementary-area select.components-select-control__input,
-            body.skaaaaa-builder .interface-complementary-area .components-base-control__help {
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
-                font-size: 14px !important;
-                overflow: visible !important;
+            body.wp-admin.wp-admin.skaaaaa-builder .interface-complementary-area input[type="text"],
+            body.wp-admin.wp-admin.skaaaaa-builder .interface-complementary-area input[type="number"],
+            body.wp-admin.wp-admin.skaaaaa-builder .interface-complementary-area input[type="url"],
+            body.wp-admin.wp-admin.skaaaaa-builder .interface-complementary-area input[type="email"],
+            body.wp-admin.wp-admin.skaaaaa-builder .interface-complementary-area input[type="search"],
+            body.wp-admin.wp-admin.skaaaaa-builder .interface-complementary-area input.components-text-control__input,
+            body.wp-admin.wp-admin.skaaaaa-builder .interface-complementary-area textarea.components-textarea-control__input,
+            body.wp-admin.wp-admin.skaaaaa-builder .interface-complementary-area select.components-select-control__input,
+            body.wp-admin.wp-admin.skaaaaa-builder .interface-complementary-area .components-base-control__help {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+                font-size: 14px;
+                overflow: visible;
             }
 
-            body.skaaaaa-builder .interface-complementary-area {
-                --wp-admin-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+            body.wp-admin.wp-admin.skaaaaa-builder .interface-complementary-area {
+                --wp-admin-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
             }
 
             .skaaa-editor-active-indicator {

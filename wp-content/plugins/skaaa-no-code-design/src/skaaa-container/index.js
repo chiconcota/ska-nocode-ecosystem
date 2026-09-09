@@ -86,6 +86,7 @@ registerBlockType(metadata.name, {
             'skaaaaa-builder/image',
             'skaaaaa-builder/button',
             'skaaaaa-builder/icon',
+            'skaaaaa-builder/svg',
             'skaaaaa-builder/video',
             'skaaaaa-builder/container',
             'skaaaaa-builder/list',

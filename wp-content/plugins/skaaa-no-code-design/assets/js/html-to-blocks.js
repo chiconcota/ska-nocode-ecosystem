@@ -33,6 +33,7 @@ window.skaaa.bridge = (function() {
         'A': 'skaaaaa-builder/button',
         'FORM': 'skaaaaa-builder/container',
         'TEMPLATE': 'skaaaaa-builder/container',
+        'SVG': 'skaaaaa-builder/svg',
 
         'INPUT': 'skaaaaa-builder/input',
         'SELECT': 'skaaaaa-builder/select',
@@ -98,8 +99,11 @@ window.skaaa.bridge = (function() {
         const tagName = node.tagName.toUpperCase();
 
         if (tagName === 'SVG') {
-            return wp.blocks.createBlock('core/html', {
-                content: node.outerHTML
+            const rawClasses = node.getAttribute('class') || '';
+            const classes = stripUnsupportedClasses(rawClasses);
+            return wp.blocks.createBlock('skaaaaa-builder/svg', {
+                svgCode: node.outerHTML,
+                tailwindClasses: classes || 'w-6 h-6 text-current'
             });
         }
 
@@ -149,7 +153,8 @@ window.skaaa.bridge = (function() {
                     childClasses.includes('material-symbols-outlined') ||
                     childClasses.includes('material-icons-outlined') ||
                     child.tagName === 'IMG' ||
-                    child.tagName === 'BUTTON'
+                    child.tagName === 'BUTTON' ||
+                    child.tagName === 'SVG'
                 );
             });
 
@@ -209,61 +214,75 @@ window.skaaa.bridge = (function() {
         }
 
         if (blockName === 'skaaaaa-builder/button') {
-            // Check for icon inside button
-            const iconSpan = node.querySelector('span.material-symbols-outlined, span.material-icons-outlined');
-            if (iconSpan) {
-                attributes.hasIcon = true;
-                attributes.iconName = iconSpan.textContent.replace(/\s+/g, ' ').trim();
-                
-                // Extract custom icon classes
-                let rawIconClasses = iconSpan.getAttribute('class') || '';
-                rawIconClasses = rawIconClasses.replace(/material-symbols-outlined/g, '')
-                                               .replace(/material-icons-outlined/g, '')
-                                               .replace(/\s+/g, ' ')
-                                               .trim();
-                if (rawIconClasses !== '') {
-                    attributes.iconClasses = rawIconClasses;
+            const hasSvg = node.querySelector('svg');
+            if (hasSvg) {
+                // Promote to container so SVG and text are preserved as separate inner blocks
+                blockName = wp.blocks.getBlockType('skaaaaa-builder/container') ? 'skaaaaa-builder/container' : 'core/group';
+                attributes.tagName = tagName.toLowerCase();
+                if (tagName === 'A') {
+                    attributes.link = {
+                        url: node.getAttribute('href') || '#',
+                        target: node.getAttribute('target') || '_self',
+                        dynamic: { source: 'static', key: '' }
+                    };
                 }
-                
-                // Determine position based on text nodes
-                const childNodes = Array.from(node.childNodes);
-                const iconIndex = childNodes.findIndex(n => n === iconSpan);
-                const textNodesAfter = childNodes.slice(iconIndex + 1).filter(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim().length > 0);
-                
-                if (textNodesAfter.length > 0) {
-                    attributes.iconPosition = 'left';
-                } else {
-                    attributes.iconPosition = 'right';
+            } else {
+                // Check for icon inside button
+                const iconSpan = node.querySelector('span.material-symbols-outlined, span.material-icons-outlined');
+                if (iconSpan) {
+                    attributes.hasIcon = true;
+                    attributes.iconName = iconSpan.textContent.replace(/\s+/g, ' ').trim();
+                    
+                    // Extract custom icon classes
+                    let rawIconClasses = iconSpan.getAttribute('class') || '';
+                    rawIconClasses = rawIconClasses.replace(/material-symbols-outlined/g, '')
+                                                   .replace(/material-icons-outlined/g, '')
+                                                   .replace(/\s+/g, ' ')
+                                                   .trim();
+                    if (rawIconClasses !== '') {
+                        attributes.iconClasses = rawIconClasses;
+                    }
+                    
+                    // Determine position based on text nodes
+                    const childNodes = Array.from(node.childNodes);
+                    const iconIndex = childNodes.findIndex(n => n === iconSpan);
+                    const textNodesAfter = childNodes.slice(iconIndex + 1).filter(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim().length > 0);
+                    
+                    if (textNodesAfter.length > 0) {
+                        attributes.iconPosition = 'left';
+                    } else {
+                        attributes.iconPosition = 'right';
+                    }
+                    
+                    // Remove the span so its text doesn't flow into button text
+                    iconSpan.parentNode.removeChild(iconSpan);
                 }
-                
-                // Remove the span so its text doesn't flow into button text
-                iconSpan.parentNode.removeChild(iconSpan);
-            }
 
-            attributes.text = (node.textContent || '').replace(/\s+/g, ' ').trim();
-            
-            if (tagName === 'A') {
-                attributes.actionType = 'link';
-                attributes.tagName = 'a';
-                attributes.url = node.getAttribute('href') || '#';
-                attributes.target = node.getAttribute('target') || '_self';
-            } else if (tagName === 'BUTTON') {
-                if (node.getAttribute('type') === 'submit') {
-                    attributes.actionType = 'submit';
-                    attributes.tagName = 'button';
-                } else if (node.hasAttribute('data-popup-target')) {
-                    attributes.actionType = 'popup';
-                    attributes.tagName = 'button';
-                } else {
-                    // Force a button that isn't submit or popup to behave as a semantic link
-                    attributes.actionType = 'link'; 
+                attributes.text = (node.textContent || '').replace(/\s+/g, ' ').trim();
+                
+                if (tagName === 'A') {
+                    attributes.actionType = 'link';
                     attributes.tagName = 'a';
+                    attributes.url = node.getAttribute('href') || '#';
+                    attributes.target = node.getAttribute('target') || '_self';
+                } else if (tagName === 'BUTTON') {
+                    if (node.getAttribute('type') === 'submit') {
+                        attributes.actionType = 'submit';
+                        attributes.tagName = 'button';
+                    } else if (node.hasAttribute('data-popup-target')) {
+                        attributes.actionType = 'popup';
+                        attributes.tagName = 'button';
+                    } else {
+                        // Force a button that isn't submit or popup to behave as a semantic link
+                        attributes.actionType = 'link'; 
+                        attributes.tagName = 'a';
+                    }
                 }
             }
         }
 
         if (blockName === 'skaaaaa-builder/icon') {
-            attributes.iconName = node.innerText.trim() || 'star';
+            attributes.iconName = (node.innerText || node.textContent || '').trim() || 'star';
             // Strip font classes from tailwindClasses - render.php tu them material-symbols-outlined
             attributes.tailwindClasses = attributes.tailwindClasses
                 .replace(/material-symbols-outlined/g, '')
@@ -273,7 +292,7 @@ window.skaaa.bridge = (function() {
         }
 
         // Handle inner blocks for non-atomic tags
-        const atomicBlocks = ['skaaaaa-builder/image', 'skaaaaa-builder/icon', 'skaaaaa-builder/button', 'skaaaaa-builder/input', 'skaaaaa-builder/select'];
+        const atomicBlocks = ['skaaaaa-builder/image', 'skaaaaa-builder/icon', 'skaaaaa-builder/svg', 'skaaaaa-builder/button', 'skaaaaa-builder/input', 'skaaaaa-builder/select'];
         
         if (atomicBlocks.includes(blockName)) {
             return wp.blocks.createBlock(blockName, attributes);

@@ -11,6 +11,27 @@
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Skaaa Loop, Skaaa Text, Skaaa Button, Skaaa Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
 
+## 2026-09-09 - 🟢 Hoàn thành: Khối Skaaa SVG (Flat DOM), Khắc phục Font Icon Editor Canvas & Zero !important Directive (v2.4.0)
+- **Decision (Native Skaaa SVG Block - Skaaa No-Code Design v2.4.0):**
+  - **Vấn đề:** Khi convert mã HTML bằng công cụ `html-to-blocks` (`html2tailwind`), các thẻ vector `<svg>` bị nuốt hoặc bị biến dạng thành thẻ code thô / text thô trong Gutenberg Editor, không cho phép chỉnh sửa kích thước hoặc kết hợp linh hoạt cùng biểu tượng Google Material Symbols.
+  - **Quyết định:** Tạo khối Native Block `skaaaaa-builder/svg` (`src/skaaa-svg`) chuẩn Flat DOM (không bọc `<div>` dư thừa quanh thẻ `<svg>`). Cho phép paste/edit trực tiếp chuỗi XML `<svg>`, nhúng đầy đủ Inspector Controls tùy biến class Tailwind, và tích hợp sâu vào `ALLOWED_BLOCKS` của Container / List Item và luồng dịch thuật tự động của `html-to-blocks.js`.
+- **Decision (Editor Canvas Google Material Symbols Font Rendering Fix):**
+  - **Vấn đề:** Trong Gutenberg Editor, khối `Skaaa Icon` hiển thị thành chữ thô (như `verified`, `rocket_launch`) thay vì hình vẽ, mặc dù ở ngoài Frontend và modal chọn icon ở sidebar vẫn hiển thị bình thường.
+  - **Nguyên nhân:** Gutenberg Editor Canvas chạy trong một `<iframe>` cô lập. Thẻ `<link>` nạp Google Font ở trang cha không lọt vào Iframe. Đồng thời, trong `skaaa-editor-helper.js`, khai báo `@import url(...)` bị đặt sau chuỗi `brandColorsCss` (vi phạm thứ tự W3C CSS spec khiến trình duyệt bỏ qua toàn bộ `@import`).
+  - **Quyết định:** Khắc phục triệt để bằng 3 tầng phòng thủ:
+    1. Đăng ký `add_editor_style('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined...')` trong `inc/design-engine/class-core.php` qua hook `admin_init`.
+    2. Đưa khai báo `@import` font lên dòng đầu tiên tuyệt đối của `unifiedCss` trong `assets/js/skaaa-editor-helper.js`.
+    3. Thêm hàm `ensureFontLink(doc)` tự động chèn trực tiếp thẻ `<link id="skaaa-material-symbols-font">` vào `<head>` của từng Iframe Canvas và trang cha.
+- **Decision (Zero !important Directive Enforcement in Editor Helper):**
+  - **Vấn đề:** `assets/js/skaaa-editor-helper.js` còn sót các cờ `!important` trong override layout và giao diện WP Admin.
+  - **Quyết định:** Loại bỏ 100% cờ `!important`, thay thế hoàn toàn bằng cơ chế tăng độ ưu tiên bộ chọn tự nhiên (CSS Specificity Scope: `.editor-styles-wrapper.editor-styles-wrapper` và `body.wp-admin.wp-admin`). Tuân thủ tuyệt đối quy tắc Clean Slate của hệ sinh thái Skaaa. Nâng phiên bản `Skaaa No-Code Design` lên `v2.4.0`.
+
+## 2026-09-08 - 🟢 Hoàn thành: Loại bỏ hoàn toàn Demo Content Generator & Đóng gói Theme Skaaa Canvas (v2.3.3)
+- **Decision (Zero Demo Polluting - Skaaa No-Code Design v2.3.3):**
+  - **Vấn đề:** Khi cài đặt plugin lên website mới, hàm `admin_init` tự ý tạo trang `Skaaa Logic Demo` và 2 bài post mẫu `Related A`, `Related B` qua `demo-content.php`, vi phạm nguyên tắc Clean Slate và gây rác cơ sở dữ liệu của người dùng.
+  - **Quyết định:** Xóa bỏ hoàn toàn tệp `inc/demo-content.php` và gỡ bỏ lệnh nạp tệp này khỏi `skaaa-no-code-design.php`. Đảm bảo hệ sinh thái khi kích hoạt đạt chuẩn Blank Slate 100%. Nâng phiên bản `Skaaa No-Code Design` lên `v2.3.3`.
+  - **Đóng gói hệ sinh thái:** Cập nhật script `zip-all.js` hỗ trợ đóng gói tự động cả 3 plugins và Theme `Skaaa Canvas` thành các file ZIP độc lập.
+
 ## 2026-08-21 - 🟢 Hoàn thành: Hotfix v2.0.1 - JIT Editor Recursion, Clean Block Markup & Source Table Separation
 - **Decision (Clean Dynamic Block Markup Protocol - Skaaa No-Code Design v2.3.2):**
   - **Vấn đề:** Khi chèn thẻ HTML tĩnh thô (`<main>`, `<div>`, `<h1>`, `<p>`) lồng bên trong comment block Gutenberg cho các khối Dynamic / ServerSideRendered block (Container, Loop, Text, Button), cơ chế kiểm tra tính hợp lệ của Gutenberg (Block Validation Parser) báo lỗi *"Block contains unexpected or invalid content"*.

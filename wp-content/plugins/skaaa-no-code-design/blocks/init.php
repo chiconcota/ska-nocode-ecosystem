@@ -22,6 +22,7 @@ function skaaa_builder_core_register_blocks() {
     register_block_type( SKAAA_DESIGN_PATH . 'build/skaaa-text' );
     register_block_type( SKAAA_DESIGN_PATH . 'build/skaaa-image' );
     register_block_type( SKAAA_DESIGN_PATH . 'build/skaaa-icon' );
+    register_block_type( SKAAA_DESIGN_PATH . 'build/skaaa-svg' );
     register_block_type( SKAAA_DESIGN_PATH . 'build/skaaa-button' );
     register_block_type( SKAAA_DESIGN_PATH . 'build/skaaa-video' );
     register_block_type( SKAAA_DESIGN_PATH . 'build/skaaa-list' );

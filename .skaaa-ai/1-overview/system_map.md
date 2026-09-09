@@ -1,5 +1,5 @@
-# SYSTEM MAP: SKAAA NO-CODE (v2.0.1)
-@status: MILESTONE 2 (DEVELOPMENT) | @git_branch: main | @last_update: 2026-08-21
+# SYSTEM MAP: SKAAA NO-CODE (v2.4.0)
+@status: MILESTONE 2 (DEVELOPMENT) | @git_branch: main | @last_update: 2026-09-09
 
 ## 1. TECH STACK (APP BUILDER ARCHITECTURE)
 - **Backend:** WP Core 6.x + PHP 8.2+ (Host & API)
@@ -29,7 +29,7 @@ wp-content/
 | Module Name | Path | Core Function | Status |
 | :--- | :--- | :--- | :--- |
 | **Skaaa Canvas (Theme)** | `themes/skaaa-canvas/` | Loại bỏ CSS/JS rác của WP, tạo khung canvas sạch. | 🟢 Stable (v1.0.0) |
-| **Skaaa No-Code Design** | `plugins/skaaa-no-code-design/` | Custom Blocks, Tailwind JIT, Skaaapine, Molecules. | 🟢 Stable (v2.3.1) |
+| **Skaaa No-Code Design** | `plugins/skaaa-no-code-design/` | Custom Blocks, Tailwind JIT, Skaaapine, Molecules. | 🟢 Stable (v2.4.0) |
 | **Skaaa Data Pro** | `plugins/skaaa-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.3.3) |
 | **Skaaa Logic Engine** | `plugins/skaaa-logic-engine/` | DAG Workflows, Event Pipeline, SkaaaFX Compiler. | 🟢 Stable (v1.2.6) |
 | **Skaaai (AI Addon)** | `plugins/skaaai/` | Cung cấp các Node AI Prompt & Parser kết nối Gemini/OpenAI. | 🟡 Planning |
@@ -68,6 +68,8 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-09-09 - 🟢 Done (Skaaa No-Code Design v2.4.0 - Native Skaaa SVG Block, Editor Font Fix & Zero !important Directive):** Triển khai khối mới `Skaaa SVG` (`skaaaaa-builder/svg`) chuẩn Flat DOM, hỗ trợ bóc tách chuyển đổi mã HTML từ `html-to-blocks` (`html2tailwind`), tích hợp song song cả Icon và SVG; sửa triệt để lỗi Google Material Symbols hiển thị chữ trong Gutenberg Canvas qua 3 tầng (core `add_editor_style`, top-level `@import`, và `ensureFontLink`); loại bỏ 100% cờ `!important` trong `skaaa-editor-helper.js` bằng CSS Specificity Scope.
+- **2026-09-08 - 🟢 Done (Skaaa No-Code Design v2.3.3 - Eliminate Auto Demo Content & Theme Zip Packaging):** Loại bỏ hoàn toàn mã tạo trang và bài viết thử nghiệm tự động `demo-content.php` trong `skaaa-no-code-design` để bảo vệ Clean Slate cho website mới; tích hợp đóng gói đồng bộ Theme `Skaaa Canvas` vào `zip-all.js`.
 - **2026-08-21 - 🟢 Done (Hotfix v2.0.1 - JIT CSS Parity, System Tables dbDelta & Source Table Clean Separation):**
   1. *Skaaa Data Pro (v1.3.3):* Khắc phục lỗi tạo bảng hệ thống trên database mới (`dbDelta` nguyên tử và auto-healing column checks cho `sys_organisms`, `sys_theme_templates`, `sys_presets`, `sys_apps`).
   2. *Skaaa No-Code Design (v2.3.2):* Cải tiến bộ quét JIT trong Editor hỗ trợ trích xuất class đệ quy từ Organisms/Loop slots và Live Canvas DOM; chuẩn hóa Dynamic Block Markup loại bỏ cảnh báo Block Validation lỗi; phân nhóm Source Table trong khối `Skaaa Loop` và `Skaaa Select` (mặc định ẩn các bảng hệ thống `skaaa_data_sys_*`, bổ sung toggle `Show System Tables (Internal)`).

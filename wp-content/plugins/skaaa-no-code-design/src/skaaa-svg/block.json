@@ -1,22 +1,26 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
-    "name": "skaaaaa-builder/icon",
-    "version": "1.0.1",
-    "title": "Skaaa Icon",
+    "name": "skaaaaa-builder/svg",
+    "version": "1.0.0",
+    "title": "Skaaa SVG",
     "category": "skaaa-atomic",
-    "icon": "star-filled",
-    "description": "A Material Icon block with JIT Tailwind support.",
+    "icon": "art",
+    "description": "An inline SVG icon and vector graphic block with JIT Tailwind support.",
     "attributes": {
-        "iconName": {
+        "svgCode": {
             "type": "string",
-            "default": "star"
+            "default": ""
         },
         "tailwindClasses": {
             "type": "string",
-            "default": "material-icons-outlined"
+            "default": "w-6 h-6 text-current"
         },
         "className": {
+            "type": "string",
+            "default": ""
+        },
+        "customStyle": {
             "type": "string",
             "default": ""
         },
@@ -34,7 +38,7 @@
         "html": false,
         "customClassName": false
     },
-    "textdomain": "skaaaaa-builder-core",
+    "textdomain": "skaaa-no-code-design",
     "editorScript": "file:./index.js",
     "render": "file:./render.php"
 }

@@ -34,6 +34,14 @@ Hệ thống Blocks (Gutenberg) cốt lõi của Skaaa Builder. Cung cấp các 
 - **Attributes:** `iconName`, `tailwindClasses`, `customStyle`.
 - **Render (2026-03-27):** Áp dụng vào thẻ `<span>` với class `material-symbols-outlined`. Tích hợp thư viện 4207 icons (Modal Search UI + Quick Grid).
 
+#### 4.1 Skaaa SVG (`skaaaaa-builder/svg`)
+- **Attributes:** `svgCode`, `tailwindClasses`, `className`, `customStyle`, `logic`.
+- **Render (2026-09-09 - v2.4.0):** 
+  - Khối hiển thị vector SVG inline thuần Flat DOM (áp dụng `get_block_wrapper_attributes()` trực tiếp lên thẻ `<svg>`).
+  - Hỗ trợ live preview và Placeholder dán code SVG nhanh trong Gutenberg Editor, thanh `TailwindPanel` điều khiển kích thước, màu sắc (`text-*`, `fill-*`, `stroke-*`), và Panel xem/sửa mã XML trực tiếp.
+  - Tích hợp sâu vào `html2tailwind` (`html-to-blocks.js`): Tự động chuyển đổi các thẻ `<svg>` thành block `skaaaaa-builder/svg`, bóc tách class Tailwind và promote các phần tử cha (Button, Link, Text) thành Container để giữ nguyên vẹn cấu trúc DOM.
+
+
 #### 5. Skaaa Button (`skaaaaa-builder/button`)
 - **Attributes:** `text`, `url`, `tagName`, `tailwindClasses`, `customStyle`, `dynamic`, `logic`.
 - **Action & Icon (2026-04-27):** Rút gọn `actionType` còn `link`, `submit`, và `logic_api` (đã hợp nhất tính năng gọi Popup vào Logic Workflow thông qua Client Response Node). Nhóm Icon vẫn giữ nguyên.

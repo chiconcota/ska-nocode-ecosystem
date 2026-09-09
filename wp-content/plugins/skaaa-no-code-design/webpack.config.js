@@ -8,6 +8,7 @@ module.exports = {
         'skaaa-text/index': path.resolve(process.cwd(), 'src/skaaa-text', 'index.js'),
         'skaaa-image/index': path.resolve(process.cwd(), 'src/skaaa-image', 'index.js'),
         'skaaa-icon/index': path.resolve(process.cwd(), 'src/skaaa-icon', 'index.js'),
+        'skaaa-svg/index': path.resolve(process.cwd(), 'src/skaaa-svg', 'index.js'),
         'skaaa-button/index': path.resolve(process.cwd(), 'src/skaaa-button', 'index.js'),
         'skaaa-video/index': path.resolve(process.cwd(), 'src/skaaa-video', 'index.js'),
         'skaaa-list/index': path.resolve(process.cwd(), 'src/skaaa-list', 'index.js'),

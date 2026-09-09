@@ -82,6 +82,9 @@ class Core
         // Enqueue Material Icons
         add_action('wp_enqueue_scripts', array($this, 'enqueue_design_assets'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_design_assets'));
+        add_action('admin_init', function() {
+            add_editor_style('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+        });
 
         // Force injection with high priority to ensure it comes after theme styles
         add_action('wp_head', array($this, 'inject_tailwind_cdn'), 999);
