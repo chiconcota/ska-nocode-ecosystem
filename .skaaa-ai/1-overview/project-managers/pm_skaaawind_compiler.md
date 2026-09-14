@@ -65,6 +65,12 @@
   - [x] Khởi tạo file cấu hình chung `tailwind-rules.json`.
   - [x] PHP JIT và JS JIT tự động load cấu hình này để phân giải class tự động, loại bỏ nợ kỹ thuật desync.
 
+- [x] **Phase 7: Frontend Responsive Media Query Fix & Alpine Import Integration (v2.4.1)**
+  - [x] Sửa lỗi khởi tạo `Tailwind_Config::$media_queries` tự động trong constructor `Tailwind_Compiler` và fallback trong `compile_classes()`.
+  - [x] Khắc phục triệt để lỗi nuốt các class responsive (`md:`, `sm:`, `lg:`, `xl:`) trên Frontend khi tải trang.
+  - [x] Nâng cấp `html-to-blocks.js` trích xuất thuộc tính `x-data` từ `<body>` và bọc script inline thành block `code`.
+  - [x] Khắc phục lỗi phạm vi (scope shadowing) Alpine.js bằng cách nhận diện tiền tố `:` và bỏ auto-injection `x-data=""` ở block con.
+
 ---
 
 ## 4. TIÊU CHÍ NGHIỆM THU (ACCEPTANCE CRITERIA)

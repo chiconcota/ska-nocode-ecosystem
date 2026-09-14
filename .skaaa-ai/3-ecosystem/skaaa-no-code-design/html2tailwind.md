@@ -20,7 +20,11 @@
 | `ul, ol` | `skaaa-builder/list` | Ánh xạ khối danh sách. |
 | `li` | `skaaa-builder/list-item` | Ánh xạ mục danh sách. |
 
-## 3. Các cải tiến cốt lõi (Cập nhật 2026-04-02)
+## 3. Các cải tiến cốt lõi (Cập nhật 2026-09-14 - v2.4.1)
+- **Body Attributes & Alpine Scope Preservation:** Khi tài liệu HTML có thuộc tính `x-data` trên thẻ `<body>`, bộ parser tự động bóc tách và gán vào thuộc tính `htmlAttributes` của Container gốc (`skaaaaa-builder/container`), tránh mất scope biến toàn cục.
+- **Inline Custom Scripts Preservation:** Trích xuất các đoạn mã JavaScript inline `<script>` trong tài liệu HTML (loại trừ các thư viện CDN ngoài) và chuyển đổi thành block `skaaaaa-builder/code` (`location: inline`) tự động gắn sau các blocks giao diện.
+- **Semantic Button Handling:** Các liên kết thẻ `<a>` có `href="#"` hoặc đóng vai trò tab/filter được chuẩn hóa render thành thẻ `<button type="button">` để tránh nhảy cuộn trang và lỗi URL fragment.
+- **Image Extra Attributes Forwarding:** Chuyển tiếp các thuộc tính `onerror`, `onload`, `loading`, `decoding` trực tiếp vào thẻ `<img>` thay vì nằm ngoài wrapper.
 - **SVG ClassName Crash Fix:** Tránh crash DOM Parser khi copy SVG bằng cách thay thế `node.className` bằng `node.getAttribute('class') || ''` (vì SVGAnimatedString không phải là string thông thường).
 - **Smart Text Detection:** Khi thẻ `<p>` hoặc `<span>` chứa con là Block-level element, tự động thay thế cha thành Container `div` để tránh lỗi vỡ cấu trúc HTML5.
 - **Nested Placement:** Sử dụng API `replaceBlocks(clientId, blocks)` của Gutenberg thay vì `insertBlocks` để các khối convert xong nằm đúng phả hệ dòng cha của khối Import.
