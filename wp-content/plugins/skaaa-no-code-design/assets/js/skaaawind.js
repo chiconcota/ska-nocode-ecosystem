@@ -27,6 +27,12 @@ class SkaaaWindCompiler {
         'bg-transparent': 'background-color: transparent;',
     };
 
+    static fontFamily = {
+        'font-sans': 'font-family: var(--font-primary, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");',
+        'font-serif': 'font-family: var(--font-secondary, ui-serif, Georgia, Cambria, "Times New Roman", Times, serif);',
+        'font-mono': 'font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);',
+    };
+
     static weights = {
         'font-thin': 'font-weight: 100;',
         'font-light': 'font-weight: 300;',
@@ -69,8 +75,12 @@ class SkaaaWindCompiler {
         'grid': 'display: grid;',
         'inline-grid': 'display: inline-grid;',
         'flex-col': 'flex-direction: column;',
+        'flex-col-reverse': 'flex-direction: column-reverse;',
         'flex-row': 'flex-direction: row;',
+        'flex-row-reverse': 'flex-direction: row-reverse;',
         'flex-wrap': 'flex-wrap: wrap;',
+        'flex-wrap-reverse': 'flex-wrap: wrap-reverse;',
+        'flex-nowrap': 'flex-wrap: nowrap;',
         'items-start': 'align-items: flex-start;',
         'items-center': 'align-items: center;',
         'items-end': 'align-items: flex-end;',
@@ -120,6 +130,8 @@ class SkaaaWindCompiler {
         'italic': 'font-style: italic;',
         'not-italic': 'font-style: normal;',
         'truncate': 'overflow: hidden; text-overflow: ellipsis; white-space: nowrap;',
+        'antialiased': '-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;',
+        'subpixel-antialiased': '-webkit-font-smoothing: auto; -moz-osx-font-smoothing: auto;',
     };
 
     static whitespaceMap = {
@@ -234,7 +246,9 @@ class SkaaaWindCompiler {
         'flex-1': 'flex: 1 1 0%;', 'flex-auto': 'flex: 1 1 auto;',
         'flex-initial': 'flex: 0 1 auto;', 'flex-none': 'flex: none;',
         'flex-shrink': 'flex-shrink: 1;', 'flex-shrink-0': 'flex-shrink: 0;',
+        'shrink': 'flex-shrink: 1;', 'shrink-0': 'flex-shrink: 0;',
         'flex-grow': 'flex-grow: 1;', 'flex-grow-0': 'flex-grow: 0;',
+        'grow': 'flex-grow: 1;', 'grow-0': 'flex-grow: 0;',
         'self-auto': 'align-self: auto;', 'self-start': 'align-self: flex-start;',
         'self-end': 'align-self: flex-end;', 'self-center': 'align-self: center;',
         'self-stretch': 'align-self: stretch;',
@@ -303,6 +317,7 @@ class SkaaaWindCompiler {
             const rules = window.skaaaEditorConfig.tailwindRules;
             if (rules.mediaQueries) this.mediaQueries = rules.mediaQueries;
             if (rules.basicColors) this.basicColors = rules.basicColors;
+            if (rules.fontFamily) this.fontFamily = rules.fontFamily;
             if (rules.weights) this.weights = rules.weights;
             if (rules.shadowMap) this.shadowMap = rules.shadowMap;
             if (rules.maxWMap) this.maxWMap = rules.maxWMap;
@@ -495,7 +510,10 @@ class SkaaaWindCompiler {
             return `${type}: rgba(${rgb}, ${alpha});`;
         }
 
-        // 2. Font Weights
+        // 2. Font Weights & Font Families
+        if (SkaaaWindCompiler.fontFamily && SkaaaWindCompiler.fontFamily[className] !== undefined) {
+            return SkaaaWindCompiler.fontFamily[className];
+        }
         if (SkaaaWindCompiler.weights[className] !== undefined) {
             return SkaaaWindCompiler.weights[className];
         }
@@ -570,6 +588,11 @@ class SkaaaWindCompiler {
 
         // 4.2 Shadows & Z-Index & Container & Max Width & Auto Margin
         if (SkaaaWindCompiler.shadowMap[className] !== undefined) return SkaaaWindCompiler.shadowMap[className];
+        matches = className.match(/^shadow-\[(.+)\]$/);
+        if (matches) {
+            const val = matches[1].replace(/_/g, ' ');
+            return `box-shadow: ${val};`;
+        }
         matches = className.match(/^shadow-([a-z0-9-]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/);
         if (matches) {
             const hex = this.getColorHex(matches[1], matches[2]);
@@ -633,6 +656,21 @@ class SkaaaWindCompiler {
         matches = className.match(/^text-([a-z0-9]+)$/);
         if (matches && SkaaaWindCompiler.sizeMap[matches[1]] !== undefined) {
             return SkaaaWindCompiler.sizeMap[matches[1]];
+        }
+        matches = className.match(/^text-\[(.+?)\](?:\/(.+))?$/);
+        if (matches) {
+            const val = matches[1].replace(/_/g, ' ');
+            if (val.startsWith('rgb(') || val.startsWith('rgba(') || val.startsWith('hsl(') || val.startsWith('hsla(') || val.startsWith('#')) {
+                return `color: ${val};`;
+            }
+            if (matches[2]) {
+                let lh = matches[2].replace(/_/g, ' ');
+                if (lh.startsWith('[') && lh.endsWith(']')) {
+                    lh = lh.slice(1, -1);
+                }
+                return `font-size: ${val}; line-height: ${lh};`;
+            }
+            return `font-size: ${val};`;
         }
         if (SkaaaWindCompiler.textAlignMap[className] !== undefined) return SkaaaWindCompiler.textAlignMap[className];
         if (SkaaaWindCompiler.textDecoMap[className] !== undefined) return SkaaaWindCompiler.textDecoMap[className];
@@ -908,6 +946,11 @@ class SkaaaWindCompiler {
 
         // 10. Extras & Accessibility
         if (SkaaaWindCompiler.flexExtra[className] !== undefined) return SkaaaWindCompiler.flexExtra[className];
+        matches = className.match(/^(shrink|grow)-\[(.+)\]$/);
+        if (matches) {
+            const prop = matches[1] === 'shrink' ? 'flex-shrink' : 'flex-grow';
+            return `${prop}: ${matches[2].replace(/_/g, ' ')};`;
+        }
         matches = className.match(/^order-([0-9]+)$/);
         if (matches) return `order: ${matches[1]};`;
         matches = className.match(/^cursor-(pointer|default|wait|text|move|not-allowed|grab|grabbing|auto)$/);

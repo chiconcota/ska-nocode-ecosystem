@@ -4,10 +4,12 @@ export const TAILWIND_CATEGORIES = [
         title: 'Layout & Display',
         classes: [
             'block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'hidden',
-            'flex-row', 'flex-col', 'flex-wrap', 'flex-nowrap',
+            'flex-row', 'flex-row-reverse', 'flex-col', 'flex-col-reverse', 'flex-wrap', 'flex-wrap-reverse', 'flex-nowrap',
             'justify-start', 'justify-end', 'justify-center', 'justify-between', 'justify-around',
             'items-start', 'items-end', 'items-center', 'items-baseline', 'items-stretch',
             'content-center', 'content-start', 'content-end', 'content-between',
+            'shrink', 'shrink-0', 'grow', 'grow-0',
+            'flex-1', 'flex-auto', 'flex-initial', 'flex-none',
             'grid-cols-1', 'grid-cols-2', 'grid-cols-3', 'grid-cols-4', 'grid-cols-6', 'grid-cols-12',
             'col-span-1', 'col-span-2', 'col-span-3', 'col-span-4', 'col-span-6', 'col-span-12', 'col-span-full'
         ]
@@ -55,9 +57,11 @@ export const TAILWIND_CATEGORIES = [
         id: 'typography',
         title: 'Typography',
         classes: [
+            'font-sans', 'font-serif', 'font-mono',
             'text-xs', 'text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl', 'text-3xl', 'text-4xl',
             'font-thin', 'font-light', 'font-normal', 'font-medium', 'font-semibold', 'font-bold', 'font-black',
             'italic', 'not-italic',
+            'antialiased', 'subpixel-antialiased',
             'text-left', 'text-center', 'text-right', 'text-justify',
             'uppercase', 'lowercase', 'capitalize', 'normal-case',
             'underline', 'line-through', 'no-underline',

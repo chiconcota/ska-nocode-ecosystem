@@ -154,7 +154,7 @@ defined( 'ABSPATH' ) || exit;
         <div id="typography" class="p-8 max-w-4xl mx-auto space-y-8">
             <div class="border-b border-slate-200 pb-5">
                 <h2 class="text-2xl font-bold text-slate-900 m-0 border-0 p-0"><?php esc_html_e( 'Typography', 'skaaa-no-code-design' ); ?></h2>
-                <p class="text-slate-500 mt-2"><?php esc_html_e( 'Define Primary and Secondary Fonts from Google Fonts or Upload Custom Fonts.', 'skaaa-no-code-design' ); ?></p>
+                <p class="text-slate-500 mt-2"><?php esc_html_e( 'Define Primary, Secondary and Monospace Fonts from Google Fonts or Upload Custom Fonts.', 'skaaa-no-code-design' ); ?></p>
             </div>
             
             <div class="space-y-6">
@@ -167,6 +167,11 @@ defined( 'ABSPATH' ) || exit;
                     <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Secondary Font (Headings)', 'skaaa-no-code-design' ); ?></label>
                     <input type="text" x-model="formData.typography.secondary" placeholder="e.g. 'Outfit', sans-serif" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
                     <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Used for Title tags H1, H2, H3...', 'skaaa-no-code-design' ); ?></p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <label class="block text-sm font-bold text-slate-700 mb-2"><?php esc_html_e( 'Monospace Font (Code)', 'skaaa-no-code-design' ); ?></label>
+                    <input type="text" x-model="formData.typography.mono" placeholder="e.g. 'IBM Plex Mono', monospace" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:border-indigo-500 outline-none">
+                    <p class="text-xs text-slate-500 mt-2"><?php esc_html_e( 'Used for code blocks, badges, numbers...', 'skaaa-no-code-design' ); ?></p>
                 </div>
                 <!-- Custom Font Upload -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">

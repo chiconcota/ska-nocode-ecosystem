@@ -11,6 +11,35 @@
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Skaaa Loop, Skaaa Text, Skaaa Button, Skaaa Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
 
+## 2026-09-14 - 🟢 Hoàn thành: Bổ sung Cấu hình Monospace Font & Hỗ trợ FontFamily JIT Compiler (v2.4.2)
+- **Decision (Monospace Font Settings UI & Tokens Default):**
+  - **Vấn đề:** Giao diện Theme Options (Design Tokens - tab Typography) chỉ có trường Primary Font và Secondary Font, thiếu ô nhập Monospace Font cho các thành phần code block, thẻ tag, badges.
+  - **Quyết định:** Bổ sung Card nhập liệu *Monospace Font (Code)* trên `design-tokens-app.php` liên kết với `formData.typography.mono`. Bổ sung giá trị mặc định `'mono' => 'IBM Plex Mono, monospace'` vào `Tailwind_Color_Registry::get_typography_config()`.
+- **Decision (Global --font-mono Variable & Code Preflight Reset):**
+  - Khai báo `--font-mono: {$mono_font};` trong `:root` qua `Tailwind_Config::get_core_reset_css()`. Bổ sung reset font mặc định cho các thẻ `code, kbd, samp, pre` trong cả Frontend và Gutenberg Canvas Editor.
+- **Decision (Tailwind FontFamily JIT Resolution):**
+  - Bổ sung nhóm utility classes `fontFamily` (`font-mono`, `font-sans`, `font-serif`) vào `tailwind-rules.json`, `class-tailwind-compiler.php` (PHP) và `skaaawind.js` (JS Editor) đảm bảo 100% Compiler Parity. Cập nhật `tailwind-dictionary.js` phục vụ auto-suggestion.
+- **Decision (Font Smoothing Utilities Parity: antialiased & subpixel-antialiased):**
+  - **Vấn đề:** Các class chuẩn của Tailwind về làm mịn font chữ (`antialiased` và `subpixel-antialiased`) bị đánh dấu unresolved màu đỏ trên Gutenberg Inspector do chưa nằm trong `textMiscMap`.
+  - **Quyết định:** Bổ sung định nghĩa `antialiased` (`-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;`) và `subpixel-antialiased` (`-webkit-font-smoothing: auto; -moz-osx-font-smoothing: auto;`) vào `tailwind-rules.json`, `skaaawind.js` và `tailwind-dictionary.js`.
+- **Decision (Arbitrary Box Shadow Utilities Parity: shadow-[...]):**
+  - **Vấn đề:** Các class đổ bóng tùy biến tự do (arbitrary value) theo cú pháp chuẩn của Tailwind (ví dụ `shadow-[0_4px_20px_-2px_rgba(0,0,0,0.5)]`) bị đánh dấu unresolved màu đỏ do compiler chỉ hỗ trợ các bóng dựng sẵn và bóng màu.
+  - **Quyết định:** Bổ sung regex nhận diện `shadow-[...]` vào cả `class-tailwind-compiler.php` và `skaaawind.js`, tự động chuyển đổi dấu `_` thành khoảng trắng và xuất ra `box-shadow: <value>;` đạt 100% Compiler Parity.
+- **Decision (Arbitrary Font Size Utilities Parity: text-[...]):**
+  - **Vấn đề:** Các class kích thước chữ tùy biến tự do (ví dụ `text-[10px]`, `text-[12px]/[16px]`, `text-[0.875rem]`) bị đánh dấu unresolved màu đỏ do Typography Maps chỉ hỗ trợ các nấc font tĩnh chuẩn (`xs`, `sm`, `base`, `lg`...).
+  - **Quyết định:** Bổ sung regex nhận diện `text-[...]` (và tuỳ chọn line-height dạng `text-[...]/[...]`) vào cả `class-tailwind-compiler.php` và `skaaawind.js`, tự động phân biệt giá trị màu sắc (`rgb/rgba/hsl/#`) và kích thước font chữ để xuất ra `font-size: <size>;` hoặc `color: <color>;` chuẩn xác, đạt 100% Compiler Parity.
+- **Decision (Tailwind v4 Flexbox Shrink & Grow Utilities Parity: shrink-0, shrink, grow, grow-0):**
+  - **Vấn đề:** Class chuẩn Tailwind v4 `shrink-0` bị đánh dấu unresolved màu đỏ trên Gutenberg Inspector do bảng `flexExtra` trước đây chỉ ánh xạ cú pháp legacy `flex-shrink-0` của Tailwind v2.
+  - **Quyết định:** Bổ sung các class chuẩn Tailwind v4 `shrink` (`flex-shrink: 1;`), `shrink-0` (`flex-shrink: 0;`), `grow` (`flex-grow: 1;`), `grow-0` (`flex-grow: 0;`) cùng regex hỗ trợ arbitrary `^(shrink|grow)-\[(.+)\]$` vào `tailwind-rules.json`, `skaaawind.js` và `class-tailwind-compiler.php`. Đồng thời cập nhật `tailwind-dictionary.js` đưa vào nhóm Layout & Display để hiển thị trên panel Skaaa Layout.
+- **Decision (Flexbox Reverse Direction & Wrap Utilities Parity: flex-col-reverse, flex-row-reverse, flex-wrap-reverse, flex-nowrap):**
+  - **Vấn đề:** Class đảo chiều flexbox `flex-col-reverse` bị đánh dấu unresolved màu đỏ do `layoutMap` trước đây mới chỉ đăng ký 2 hướng xuôi (`flex-col`, `flex-row`).
+  - **Quyết định:** Bổ sung `flex-col-reverse` (`flex-direction: column-reverse;`), `flex-row-reverse` (`flex-direction: row-reverse;`), `flex-wrap-reverse` (`flex-wrap: wrap-reverse;`) và `flex-nowrap` (`flex-wrap: nowrap;`) vào `layoutMap` của `tailwind-rules.json`, `skaaawind.js` và `class-tailwind-compiler.php`. Cập nhật `tailwind-dictionary.js`. Giữ nguyên không can thiệp token màu nền (`bg-canvas`) chờ định hướng tiếp theo từ người dùng. Nâng phiên bản `Skaaa No-Code Design` lên `v2.4.2`.
+
+
+
+
+
+
 ## 2026-09-14 - 🟢 Hoàn thành: Khắc phục Lỗi Biên Dịch Media Query Tailwind JIT, Alpine Scope & Chuyển đổi Stitch HTML (v2.4.1)
 - **Decision (Tailwind Compiler Media Query Auto-Initialization - Skaaa No-Code Design v2.4.1):**
   - **Vấn đề:** Khi render trang ngoài frontend, các tiền tố Responsive (`md:flex`, `sm:inline-flex`, `lg:grid-cols-3`...) bị bỏ qua, dẫn đến menu desktop và badge trạng thái bị biến mất.

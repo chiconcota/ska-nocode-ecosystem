@@ -144,6 +144,7 @@ class Tailwind_Color_Registry {
 		$typography = array(
 			'primary' => 'Inter, sans-serif',
 			'secondary' => 'Outfit, sans-serif',
+			'mono' => 'IBM Plex Mono, monospace',
 			'customFontUrl' => ''
 		);
 

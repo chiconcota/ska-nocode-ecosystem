@@ -257,7 +257,10 @@ class Tailwind_Compiler {
 			return "{$type}: rgba({$rgb}, {$alpha});";
 		}
 
-		// 2. Font Weights
+		// 2. Font Weights & Font Families
+		if ( isset( Tailwind_Config::$font_family[ $class ] ) ) {
+			return Tailwind_Config::$font_family[ $class ];
+		}
 		if ( isset( Tailwind_Config::$weights[ $class ] ) ) {
 			return Tailwind_Config::$weights[ $class ];
 		}
@@ -324,6 +327,10 @@ class Tailwind_Compiler {
 
 		// 4.2 Shadows & Z-Index & Container & Max Width & Auto Margin
 		if ( isset( Tailwind_Config::$shadow_map[ $class ] ) ) return Tailwind_Config::$shadow_map[ $class ];
+		if ( preg_match( '/^shadow-\[(.+)\]$/', $class, $matches ) ) {
+			$val = str_replace( '_', ' ', $matches[1] );
+			return "box-shadow: {$val};";
+		}
 		if ( preg_match( '/^shadow-([a-z0-9-]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
 			$hex = Tailwind_Color_Registry::get_color_hex( $matches[1], $matches[2] );
 			if ( $hex ) {
@@ -375,6 +382,20 @@ class Tailwind_Compiler {
 		// 5.5 Typography Maps
 		if ( preg_match( '/^text-([a-z0-9]+)$/', $class, $matches ) && isset( Tailwind_Config::$size_map[ $matches[1] ] ) ) {
 			return Tailwind_Config::$size_map[ $matches[1] ];
+		}
+		if ( preg_match( '/^text-\[(.+?)\](?:\/(.+))?$/', $class, $matches ) ) {
+			$val = str_replace( '_', ' ', $matches[1] );
+			if ( str_starts_with( $val, 'rgb(' ) || str_starts_with( $val, 'rgba(' ) || str_starts_with( $val, 'hsl(' ) || str_starts_with( $val, 'hsla(' ) || str_starts_with( $val, '#' ) ) {
+				return "color: {$val};";
+			}
+			if ( isset( $matches[2] ) ) {
+				$lh = str_replace( '_', ' ', $matches[2] );
+				if ( substr( $lh, 0, 1 ) === '[' && substr( $lh, -1 ) === ']' ) {
+					$lh = substr( $lh, 1, -1 );
+				}
+				return "font-size: {$val}; line-height: {$lh};";
+			}
+			return "font-size: {$val};";
 		}
 		if ( isset( Tailwind_Config::$text_align_map[ $class ] ) ) return Tailwind_Config::$text_align_map[ $class ];
 		if ( isset( Tailwind_Config::$text_deco_map[ $class ] ) ) return Tailwind_Config::$text_deco_map[ $class ];
@@ -612,6 +633,11 @@ class Tailwind_Compiler {
 
 		// 10. Extras & Accessibility
 		if ( isset( Tailwind_Config::$flex_extra[ $class ] ) ) return Tailwind_Config::$flex_extra[ $class ];
+		if ( preg_match( '/^(shrink|grow)-\[(.+)\]$/', $class, $matches ) ) {
+			$prop = $matches[1] === 'shrink' ? 'flex-shrink' : 'flex-grow';
+			$val  = str_replace( '_', ' ', $matches[2] );
+			return "{$prop}: {$val};";
+		}
 		if ( preg_match( '/^order-([0-9]+)$/', $class, $matches ) ) return "order: {$matches[1]};";
 		if ( preg_match( '/^cursor-(pointer|default|wait|text|move|not-allowed|grab|grabbing|auto)$/', $class, $matches ) ) return "cursor: {$matches[1]};";
 		if ( $class === 'pointer-events-none' ) return 'pointer-events: none;';

@@ -17,6 +17,7 @@ class Tailwind_Config {
 
 	public static $media_queries = array();
 	public static $basic_colors = array();
+	public static $font_family = array();
 	public static $weights = array();
 	public static $shadow_map = array();
 	public static $max_w_map = array();
@@ -68,6 +69,7 @@ class Tailwind_Config {
 	private static function populate_static_properties( array $rules ): void {
 		self::$media_queries      = $rules['mediaQueries'] ?? array();
 		self::$basic_colors       = $rules['basicColors'] ?? array();
+		self::$font_family        = $rules['fontFamily'] ?? array();
 		self::$weights            = $rules['weights'] ?? array();
 		self::$shadow_map         = $rules['shadowMap'] ?? array();
 		self::$max_w_map          = $rules['maxWMap'] ?? array();
@@ -114,6 +116,7 @@ class Tailwind_Config {
 		$typography = Tailwind_Color_Registry::get_typography_config();
 		$primary_font = wp_strip_all_tags( $typography['primary'] );
 		$secondary_font = wp_strip_all_tags( $typography['secondary'] );
+		$mono_font = isset( $typography['mono'] ) ? wp_strip_all_tags( $typography['mono'] ) : 'IBM Plex Mono, monospace';
 		$custom_font_url = esc_url( $typography['customFontUrl'] );
 		
 		if ( ! empty( $custom_font_url ) ) {
@@ -139,6 +142,7 @@ class Tailwind_Config {
 		$css .= ":root {\n";
 		$css .= "  --font-primary: {$primary_font};\n";
 		$css .= "  --font-secondary: {$secondary_font};\n";
+		$css .= "  --font-mono: {$mono_font};\n";
 		$css .= "  --skaaa-container-width: {$container_width};\n";
 		$css .= "  --skaaa-block-gap: {$block_gap};\n";
 		$css .= "  --skaaa-content-padding: {$content_padding};\n";
@@ -157,9 +161,11 @@ class Tailwind_Config {
 		if ( is_admin() ) {
 			$css .= ".editor-styles-wrapper { font-family: var(--font-primary), ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; }\n";
 			$css .= ".editor-styles-wrapper h1, .editor-styles-wrapper h2, .editor-styles-wrapper h3, .editor-styles-wrapper h4, .editor-styles-wrapper h5, .editor-styles-wrapper h6 { font-family: var(--font-secondary), ui-sans-serif, system-ui, sans-serif; }\n";
+			$css .= ".editor-styles-wrapper code, .editor-styles-wrapper kbd, .editor-styles-wrapper samp, .editor-styles-wrapper pre { font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; }\n";
 		} else {
 			$css .= "html body.skaaaaa-builder { font-family: var(--font-primary), ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; }\n";
 			$css .= "html body.skaaaaa-builder h1, html body.skaaaaa-builder h2, html body.skaaaaa-builder h3, html body.skaaaaa-builder h4, html body.skaaaaa-builder h5, html body.skaaaaa-builder h6 { font-family: var(--font-secondary), ui-sans-serif, system-ui, sans-serif; }\n";
+			$css .= "html body.skaaaaa-builder code, html body.skaaaaa-builder kbd, html body.skaaaaa-builder samp, html body.skaaaaa-builder pre { font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; }\n";
 		}
 
 		$prefixes = array(

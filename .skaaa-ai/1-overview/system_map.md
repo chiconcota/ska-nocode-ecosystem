@@ -29,7 +29,7 @@ wp-content/
 | Module Name | Path | Core Function | Status |
 | :--- | :--- | :--- | :--- |
 | **Skaaa Canvas (Theme)** | `themes/skaaa-canvas/` | Loại bỏ CSS/JS rác của WP, tạo khung canvas sạch. | 🟢 Stable (v1.0.0) |
-| **Skaaa No-Code Design** | `plugins/skaaa-no-code-design/` | Custom Blocks, Tailwind JIT, Skaaapine, Molecules. | 🟢 Stable (v2.4.1) |
+| **Skaaa No-Code Design** | `plugins/skaaa-no-code-design/` | Custom Blocks, Tailwind JIT, Skaaapine, Molecules. | 🟢 Stable (v2.4.2) |
 | **Skaaa Data Pro** | `plugins/skaaa-data-pro/` | Quản lý bảng phẳng MySQL, Schema, Smart Objects. | 🟢 Stable (v1.3.3) |
 | **Skaaa Logic Engine** | `plugins/skaaa-logic-engine/` | DAG Workflows, Event Pipeline, SkaaaFX Compiler. | 🟢 Stable (v1.2.6) |
 | **Skaaai (AI Addon)** | `plugins/skaaai/` | Cung cấp các Node AI Prompt & Parser kết nối Gemini/OpenAI. | 🟡 Planning |
@@ -68,6 +68,7 @@ Dưới đây là danh sách các tính năng và kiến trúc cốt lõi đã h
 ---
 
 ## 6. RECENT LOGS (LATEST SHIELD)
+- **2026-09-14 - 🟢 Done (Skaaa No-Code Design v2.4.2 - Monospace Font, FontFamily, Font Smoothing, Arbitrary Shadow, Font Size & v4 Flex Layout JIT Parity):** Tích hợp cấu hình Monospace Font (Code) trên giao diện Theme Options (Design Tokens). Khai báo biến CSS toàn cục `--font-mono` và CSS reset cho các thẻ `code, kbd, samp, pre`. Bổ sung nhóm utility classes `fontFamily` (`font-mono`, `font-sans`, `font-serif`), Font Smoothing (`antialiased`, `subpixel-antialiased`), Arbitrary Box Shadow (`shadow-[...]`), Arbitrary Font Size (`text-[...]`), các tiện ích Flexbox v4 (`shrink`, `shrink-0`, `grow`, `grow-0`, arbitrary `shrink-[...]`/`grow-[...]`), cùng các hướng đảo ngược Flexbox (`flex-col-reverse`, `flex-row-reverse`, `flex-wrap-reverse`, `flex-nowrap`) vào `tailwind-rules.json`, PHP JIT Compiler và SkaaaWind JS Compiler đảm bảo 100% Compiler Parity. Cập nhật `tailwind-dictionary.js` phục vụ auto-suggestion trong Editor. Giữ nguyên không can thiệp token màu nền `bg-canvas`.
 - **2026-09-14 - 🟢 Done:** Khắc phục triệt để lỗi biên dịch Tailwind Responsive (mất menu desktop navbar và status pill), lỗi Alpine.js scope (`x-data` nesting), chuyển tiếp thuộc tính ảnh (`onerror`) và trích xuất inline script / body attributes trong công cụ `html2tailwind` (`html-to-blocks.js`), giúp trang thiết kế Stitch (`index-lytatthanh.html`) hiển thị 100% nguyên vẹn giao diện và tương tác động client-side (lọc tab bài viết, tìm kiếm thời gian thực). Nâng version `skaaa-no-code-design` lên `v2.4.1`.
 - **2026-09-09 - 🟢 Done (Skaaa No-Code Design v2.4.0 - Native Skaaa SVG Block, Editor Font Fix & Zero !important Directive):** Triển khai khối mới `Skaaa SVG` (`skaaaaa-builder/svg`) chuẩn Flat DOM, hỗ trợ bóc tách chuyển đổi mã HTML từ `html-to-blocks` (`html2tailwind`), tích hợp song song cả Icon và SVG; sửa triệt để lỗi Google Material Symbols hiển thị chữ trong Gutenberg Canvas qua 3 tầng (core `add_editor_style`, top-level `@import`, và `ensureFontLink`); loại bỏ 100% cờ `!important` trong `skaaa-editor-helper.js` bằng CSS Specificity Scope.
 - **2026-09-08 - 🟢 Done (Skaaa No-Code Design v2.3.3 - Eliminate Auto Demo Content & Theme Zip Packaging):** Loại bỏ hoàn toàn mã tạo trang và bài viết thử nghiệm tự động `demo-content.php` trong `skaaa-no-code-design` để bảo vệ Clean Slate cho website mới; tích hợp đóng gói đồng bộ Theme `Skaaa Canvas` vào `zip-all.js`.
