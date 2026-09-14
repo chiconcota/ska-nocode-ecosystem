@@ -11,6 +11,20 @@
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Skaaa Loop, Skaaa Text, Skaaa Button, Skaaa Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
 
+## 2026-09-14 - 🟢 Hoàn thành: Khắc phục Lỗi Biên Dịch Media Query Tailwind JIT, Alpine Scope & Chuyển đổi Stitch HTML (v2.4.1)
+- **Decision (Tailwind Compiler Media Query Auto-Initialization - Skaaa No-Code Design v2.4.1):**
+  - **Vấn đề:** Khi render trang ngoài frontend, các tiền tố Responsive (`md:flex`, `sm:inline-flex`, `lg:grid-cols-3`...) bị bỏ qua, dẫn đến menu desktop và badge trạng thái bị biến mất.
+  - **Nguyên nhân:** Biến tĩnh `Tailwind_Config::$media_queries` không được tự động khởi tạo trên frontend nếu `Tailwind_Config::init()` chưa được gọi trước `compile_classes()`.
+  - **Quyết định:** Bổ sung gọi `Tailwind_Config::init()` ngay trong constructor của `Tailwind_Compiler` và kiểm tra fallback trong `compile_classes()`.
+- **Decision (Alpine.js Scope Isolation & `:` Prefix Recognition):**
+  - **Vấn đề:** Các thuộc tính viết tắt của Alpine như `:class`, `:key` không được coi là thuộc tính Alpine, đồng thời `blocks/init.php` tự ý tiêm `x-data=""` vào mọi block con có thuộc tính Alpine làm gãy phạm vi dữ liệu (scope shadowing) của component cha.
+  - **Quyết định:** Bổ sung tiền tố `:` vào bộ lọc Alpine; loại bỏ việc tự động tiêm `x-data=""` vào các block con để component con kế thừa trọn vẹn context dữ liệu cha (`portfolioApp()`).
+- **Decision (html-to-blocks Script & Body Attributes Preservation):**
+  - **Vấn đề:** Công cụ chuyển đổi `html2tailwind` (`html-to-blocks.js`) khi import code từ Stitch loại bỏ sạch thẻ `<script>` và bỏ quên `x-data` trên thẻ `<body>`, làm mất hoàn toàn hàm logic JavaScript client-side.
+  - **Quyết định:** Nâng cấp `html-to-blocks.js` trích xuất `x-data` từ `<body>` vào thuộc tính của Container gốc; đồng thời trích xuất các thẻ script inline tạo thành block `skaaaaa-builder/code` đính kèm theo trang.
+- **Decision (Semantic Button & Image Attribute Forwarding):**
+  - Khối `skaaa-button` tự động render thẻ `<button type="button">` khi `url` là `#` hoặc `tagName` là `button` để tránh nhảy trang. Khối `skaaa-image` chuyển tiếp các thuộc tính `onerror`, `onload`, `loading` vào thẻ `<img>` thay vì bọc ngoài wrapper. Nâng phiên bản `Skaaa No-Code Design` lên `v2.4.1`.
+
 ## 2026-09-09 - 🟢 Hoàn thành: Khối Skaaa SVG (Flat DOM), Khắc phục Font Icon Editor Canvas & Zero !important Directive (v2.4.0)
 - **Decision (Native Skaaa SVG Block - Skaaa No-Code Design v2.4.0):**
   - **Vấn đề:** Khi convert mã HTML bằng công cụ `html-to-blocks` (`html2tailwind`), các thẻ vector `<svg>` bị nuốt hoặc bị biến dạng thành thẻ code thô / text thô trong Gutenberg Editor, không cho phép chỉnh sửa kích thước hoặc kết hợp linh hoạt cùng biểu tượng Google Material Symbols.

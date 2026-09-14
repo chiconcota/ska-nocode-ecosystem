@@ -21,6 +21,7 @@ class Tailwind_Compiler {
 	 * Constructor.
 	 */
 	public function __construct() {
+		Tailwind_Config::init();
 		$this->init_hooks();
 	}
 
@@ -40,6 +41,10 @@ class Tailwind_Compiler {
 	public function compile_classes( $classes ): array {
 		if ( empty( $classes ) ) {
 			return array( 'css' => '', 'unresolved' => array() );
+		}
+
+		if ( empty( Tailwind_Config::$media_queries ) ) {
+			Tailwind_Config::init();
 		}
 
 		$class_list = array_unique( array_filter( preg_split( '/\s+/', $classes ) ) );

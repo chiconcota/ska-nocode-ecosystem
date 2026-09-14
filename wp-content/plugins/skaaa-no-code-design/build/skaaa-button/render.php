@@ -26,11 +26,15 @@ $iconPosition = $attributes['iconPosition'] ?? 'left';
 $iconClasses  = $attributes['iconClasses'] ?? '';
 $actionType   = $attributes['actionType'] ?? 'link';
 
-// Force tagName based on actionType to guarantee semantic HTML (prevent <button href="..."> bugs)
-if ( $actionType === 'link' ) {
-    $tagName = 'a';
+// Guarantee semantic HTML: Render as button if tagName is button or url is '#' (e.g. tabs, filters)
+if ( ( isset( $attributes['tagName'] ) && 'button' === $attributes['tagName'] ) || 'button' === $actionType || empty( $url ) || '#' === $url ) {
+    if ( ! empty( $attributes['link']['url'] ) && '#' !== $attributes['link']['url'] ) {
+        $tagName = 'a';
+    } else {
+        $tagName = 'button';
+    }
 } else {
-    $tagName = 'button';
+    $tagName = 'a';
 }
 
 // Robust Fallback: Check for non-empty tailwindClasses first, then fallback to className (legacy).
@@ -75,7 +79,7 @@ if ( $hasIcon && $iconPosition === 'right' && ! empty( $iconName ) ) {
 }
 
 if ( $tagName === 'button' ) {
-    $type_attr = '';
+    $type_attr = ' type="button"';
     if ( $actionType === 'submit' ) {
         $type_attr = ' type="submit"';
         $fieldName = $attributes['fieldName'] ?? '';

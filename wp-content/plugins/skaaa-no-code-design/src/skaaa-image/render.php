@@ -58,10 +58,19 @@ $custom_style = ! empty( $attributes['customStyle'] ) ? ' style="' . esc_attr( $
 $wrapper_tag = ! empty( $link_url ) ? 'a' : 'div';
 $link_attrs  = ! empty( $link_url ) ? ' href="' . esc_attr( $link_url ) . '"' . $link_target : '';
 
+$img_extra_attrs = '';
+if ( ! empty( $attributes['htmlAttributes'] ) && is_array( $attributes['htmlAttributes'] ) ) {
+    foreach ( $attributes['htmlAttributes'] as $attr ) {
+        if ( ! empty( $attr['key'] ) && in_array( $attr['key'], array( 'onerror', 'onload', 'loading', 'decoding', 'sizes', 'srcset' ), true ) ) {
+            $img_extra_attrs .= ' ' . esc_attr( $attr['key'] ) . '="' . esc_attr( $attr['value'] ?? '' ) . '"';
+        }
+    }
+}
+
 // 5. Render HTML
 echo '<' . $wrapper_tag . ' ' . $wrapper_attributes . $custom_style . $link_attrs . '>';
 if ( ! empty( $image_url ) ) {
-    echo     '<img ' . $img_attributes . $src . $alt . ' />';
+    echo     '<img ' . $img_attributes . $src . $alt . $img_extra_attrs . ' />';
 } else {
     echo     '<div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">Icon Image</div>';
 }

@@ -191,7 +191,7 @@ function skaaa_builder_render_html_attributes( $block_content, $block ) {
         if ( ! empty( $block['attrs']['htmlAttributes'] ) && is_array( $block['attrs']['htmlAttributes'] ) ) {
             foreach ( $block['attrs']['htmlAttributes'] as $attr ) {
                 if ( ! empty( $attr['key'] ) ) {
-                    if ( str_starts_with( $attr['key'], 'x-' ) || str_starts_with( $attr['key'], '@' ) ) {
+                    if ( str_starts_with( $attr['key'], 'x-' ) || str_starts_with( $attr['key'], '@' ) || str_starts_with( $attr['key'], ':' ) ) {
                         $has_alpine = true;
                     }
                     if ( $attr['key'] === 'x-data' ) {
@@ -205,16 +205,9 @@ function skaaa_builder_render_html_attributes( $block_content, $block ) {
             }
         }
         
-        // Portal Visibility logic removed.
-
-        
         // Zero-overhead enqueuing
         if ( $has_alpine ) {
             wp_enqueue_script( 'skaaa-alpine' );
-            if ( ! $has_x_data ) {
-                // Auto-inject x-data for Alpine v3 compliance if missing
-                $html_attrs .= ' x-data=""';
-            }
         }
 
         // Inject into the very first HTML opening tag

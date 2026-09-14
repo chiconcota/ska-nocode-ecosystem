@@ -55,18 +55,37 @@ window.skaaa.bridge = (function() {
      */
     const cleanHTML = (html) => {
         let bodyClass = '';
+        let bodyHtmlAttrs = [];
+        let scripts = [];
         let content = html;
+
+        // Extract inline custom scripts BEFORE stripping them
+        const scriptMatches = html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gim);
+        for (const match of scriptMatches) {
+            const scriptAttrs = match[1] || '';
+            const scriptCode = (match[2] || '').trim();
+            // Only keep inline custom code (exclude external CDN libraries like tailwindcdn, alpinejs)
+            if (!scriptAttrs.includes('src=') && scriptCode && !scriptCode.includes('cdn.tailwindcss.com')) {
+                scripts.push(scriptCode);
+            }
+        }
 
         // If it's a full document, extract body content and classes
         if (html.includes('<body')) {
-            const bodyMatch = html.match(/<body[^>]*class=["']([^"']+)["'][^>]*>([\s\S]*?)<\/body>/i);
-            const contentMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+            const bodyTagMatch = html.match(/<body([^>]*)>([\s\S]*?)<\/body>/i);
+            if (bodyTagMatch) {
+                const bodyAttrsStr = bodyTagMatch[1] || '';
+                content = bodyTagMatch[2];
 
-            if (bodyMatch) {
-                bodyClass = stripUnsupportedClasses(bodyMatch[1]);
-                content = bodyMatch[2];
-            } else if (contentMatch) {
-                content = contentMatch[1];
+                const classMatch = bodyAttrsStr.match(/class=["']([^"']+)["']/i);
+                if (classMatch) {
+                    bodyClass = stripUnsupportedClasses(classMatch[1]);
+                }
+
+                const xDataMatch = bodyAttrsStr.match(/x-data=(["'])([\s\S]*?)\1/i);
+                if (xDataMatch) {
+                    bodyHtmlAttrs.push({ key: 'x-data', value: xDataMatch[2] });
+                }
             }
         }
 
@@ -76,7 +95,7 @@ window.skaaa.bridge = (function() {
             .replace(/<!--[\s\S]*?-->/g, "") // Remove comments
             .trim();
 
-        return { content, bodyClass };
+        return { content, bodyClass, bodyHtmlAttrs, scripts };
     };
 
     /**
@@ -320,7 +339,7 @@ window.skaaa.bridge = (function() {
      * Entry point for conversion.
      */
     const convert = (html, clientId = null) => {
-        const { content, bodyClass } = cleanHTML(html);
+        const { content, bodyClass, bodyHtmlAttrs, scripts } = cleanHTML(html);
         const parser = new DOMParser();
         const doc = parser.parseFromString(content, 'text/html');
         
@@ -328,14 +347,33 @@ window.skaaa.bridge = (function() {
             .map(child => transformNode(child))
             .filter(block => block !== null);
 
-        // If we have body classes, wrap everything in a root container to preserve global styles
-        if (bodyClass && blocks.length > 0) {
+        // If we have body classes or body HTML attributes (e.g. x-data), wrap everything in a root container
+        if ((bodyClass || (bodyHtmlAttrs && bodyHtmlAttrs.length > 0)) && blocks.length > 0) {
             const rootBlockType = wp.blocks.getBlockType('skaaaaa-builder/container') ? 'skaaaaa-builder/container' : 'core/group';
-            const rootContainer = wp.blocks.createBlock(rootBlockType, {
-                tailwindClasses: bodyClass,
+            const rootAttrs = {
                 tagName: 'div'
-            }, blocks);
+            };
+            if (bodyClass) {
+                rootAttrs.tailwindClasses = bodyClass;
+            }
+            if (bodyHtmlAttrs && bodyHtmlAttrs.length > 0) {
+                rootAttrs.htmlAttributes = bodyHtmlAttrs;
+            }
+            const rootContainer = wp.blocks.createBlock(rootBlockType, rootAttrs, blocks);
             blocks = [rootContainer];
+        }
+
+        // If custom inline scripts were extracted, convert them into a skaaaaa-builder/code block
+        if (scripts && scripts.length > 0) {
+            scripts.forEach(code => {
+                if (wp.blocks.getBlockType('skaaaaa-builder/code')) {
+                    blocks.push(wp.blocks.createBlock('skaaaaa-builder/code', {
+                        codeType: 'inline',
+                        inlineCode: '<script>\n' + code + '\n</script>',
+                        location: 'inline'
+                    }));
+                }
+            });
         }
 
         if (blocks.length > 0) {
