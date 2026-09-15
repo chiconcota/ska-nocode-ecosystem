@@ -1,8 +1,8 @@
 # CHECKPOINT - PHẦN BÀN GIAO TIẾN ĐỘ
-*Ngày cập nhật: 2026-09-14*
+*Ngày cập nhật: 2026-09-15*
 
 ## 1. Trạng thái hiện tại (Status)
-- **Git Branch**: `main` (Đã commit sạch và đẩy tag `v2.4.1` lên `origin`)
+- **Git Branch**: `main` (Đã commit sạch và đẩy tag `v2.4.4` lên `origin`)
 - **Thư mục làm việc**: `/home/chiconcota/Local Sites/skaaa-no-code-ecosystem/app/public/`
 - **Phiên bản Plugin & Theme**: 
   - `Skaaa No-Code Design v2.4.4` (Mới nâng cấp)
