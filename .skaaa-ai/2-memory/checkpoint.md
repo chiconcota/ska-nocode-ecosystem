@@ -5,7 +5,7 @@
 - **Git Branch**: `main` (Đã commit sạch và đẩy tag `v2.4.1` lên `origin`)
 - **Thư mục làm việc**: `/home/chiconcota/Local Sites/skaaa-no-code-ecosystem/app/public/`
 - **Phiên bản Plugin & Theme**: 
-  - `Skaaa No-Code Design v2.4.2` (Mới nâng cấp)
+  - `Skaaa No-Code Design v2.4.4` (Mới nâng cấp)
   - `Skaaa Data Pro v1.3.3`
   - `Skaaa Logic Engine v1.3.0`
   - `Skaaa Canvas Theme v1.0.0`
@@ -54,6 +54,15 @@
      - Cập nhật `tailwind-dictionary.js` trong nhóm Layout & Display.
      - Biên dịch và đồng bộ webpack sang `build/`, kiểm thử đạt 100% Compiler Parity (0 unresolved classes).
      - *Lưu ý*: Tiếp tục giữ nguyên không can thiệp token `bg-canvas` theo chỉ đạo của người dùng.
+  13. **Bổ sung Border Width Directional & Arbitrary (`border-x`, `border-y`, `border-s`, `border-e`, arbitrary `border-y-[...]`, `border-[...]`) (v2.4.3)**:
+     - Bổ sung nhận diện 2 trục `x` (`border-left-width`, `border-right-width`) và `y` (`border-top-width`, `border-bottom-width`), cùng logical properties `s` (`border-inline-start-width`) và `e` (`border-inline-end-width`) vào cả `class-tailwind-compiler.php` và `skaaawind.js`.
+     - Hỗ trợ các nấc độ dày `border-x/y-0/2/4/8` và cú pháp arbitrary `border-x-[...]`, `border-y-[...]`, `border-[...]` (tự động phân biệt với mã màu hex).
+     - Cập nhật `tailwind-dictionary.js` trong nhóm *Borders & Radius*.
+     - Biên dịch và đồng bộ webpack sang `build/`, kiểm thử 100% Compiler Parity trên cả PHP và JS (0 unresolved classes).
+  14. **Bổ sung Gradient Middle Color Stop `via-[#...]` & Chuẩn hóa Gradient Stops Parity (v2.4.4)**:
+     - Bổ sung `via` vào regex phân giải màu tùy biến arbitrary `^(text|bg|border|ring|from|via|to)-\[#...\]` và `resolveCustomColor` trên cả PHP JIT (`class-tailwind-compiler.php`, `class-tailwind-color-registry.php`) và JS JIT (`skaaawind.js`).
+     - Chuẩn hóa đầu ra biến CSS cho bộ 3 gradient stops: `from-[#...]` (`--tw-gradient-from`, `--tw-gradient-stops`), `via-[#...]` (`--tw-gradient-stops`), và `to-[#...]` (`--tw-gradient-to`).
+     - Biên dịch và đồng bộ webpack sang `build/`, kiểm thử đạt 100% Compiler Parity (0 unresolved classes).
 
 ---
 

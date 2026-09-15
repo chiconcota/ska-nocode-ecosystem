@@ -73,7 +73,7 @@ export const TAILWIND_CATEGORIES = [
         title: 'Borders & Radius',
         classes: [
             'border-0', 'border', 'border-2', 'border-4', 'border-8',
-            'border-t', 'border-r', 'border-b', 'border-l',
+            'border-t', 'border-r', 'border-b', 'border-l', 'border-x', 'border-y',
             'border-solid', 'border-dashed', 'border-dotted', 'border-none',
             'rounded-none', 'rounded-sm', 'rounded', 'rounded-md', 'rounded-lg', 'rounded-xl', 'rounded-2xl', 'rounded-3xl', 'rounded-full'
         ]

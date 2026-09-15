@@ -207,18 +207,8 @@ class Tailwind_Color_Registry {
 			return null;
 		}
 
-		$css_prop_map = array(
-			'bg'     => 'background-color',
-			'text'   => 'color',
-			'border' => 'border-color',
-			'ring'   => '--tw-ring-color',
-			'shadow' => '--tw-shadow-color',
-			'from'   => '--tw-gradient-from',
-			'to'     => '--tw-gradient-to',
-		);
-
 		// Pattern: {prefix}-{color_name} hoặc {prefix}-{color_name}/{opacity}
-		if ( ! preg_match( '/^(bg|text|border|ring|shadow|from|to)-([a-z0-9-]+?)(?:\/([0-9]+))?$/', $class, $matches ) ) {
+		if ( ! preg_match( '/^(bg|text|border|ring|shadow|from|via|to)-([a-z0-9-]+?)(?:\/([0-9]+))?$/', $class, $matches ) ) {
 			return null;
 		}
 
@@ -226,20 +216,42 @@ class Tailwind_Color_Registry {
 		$color_name = $matches[2];
 		$opacity    = isset( $matches[3] ) ? intval( $matches[3] ) : null;
 
-		if ( ! isset( $custom_colors[ $color_name ] ) || ! isset( $css_prop_map[ $prefix ] ) ) {
+		if ( ! isset( $custom_colors[ $color_name ] ) ) {
 			return null;
 		}
 
-		$hex      = $custom_colors[ $color_name ];
-		$css_prop = $css_prop_map[ $prefix ];
-
+		$hex = $custom_colors[ $color_name ];
 		if ( null !== $opacity ) {
-			$rgb = self::hex_to_rgb( $hex );
+			$rgb   = self::hex_to_rgb( $hex );
 			$alpha = round( $opacity / 100, 2 );
-			return "{$css_prop}: rgba({$rgb}, {$alpha});";
+			$color = "rgba({$rgb}, {$alpha})";
+		} else {
+			$color = $hex;
 		}
 
-		return "{$css_prop}: {$hex};";
+		if ( $prefix === 'from' ) {
+			return "--tw-gradient-from: {$color}; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);";
+		}
+		if ( $prefix === 'via' ) {
+			return "--tw-gradient-stops: var(--tw-gradient-from), {$color}, var(--tw-gradient-to, transparent);";
+		}
+		if ( $prefix === 'to' ) {
+			return "--tw-gradient-to: {$color};";
+		}
+
+		$css_prop_map = array(
+			'bg'     => 'background-color',
+			'text'   => 'color',
+			'border' => 'border-color',
+			'ring'   => '--tw-ring-color',
+			'shadow' => '--tw-shadow-color',
+		);
+
+		if ( isset( $css_prop_map[ $prefix ] ) ) {
+			return "{$css_prop_map[ $prefix ]}: {$color};";
+		}
+
+		return null;
 	}
 
 	/**

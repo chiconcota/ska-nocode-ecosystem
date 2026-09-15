@@ -379,7 +379,7 @@ class SkaaaWindCompiler {
             return null;
         }
 
-        const matches = className.match(/^(bg|text|border|ring|shadow|from|to)-([a-z0-9-]+?)(?:\/([0-9]+))?$/);
+        const matches = className.match(/^(bg|text|border|ring|shadow|from|via|to)-([a-z0-9-]+?)(?:\/([0-9]+))?$/);
         if (!matches) {
             return null;
         }
@@ -388,20 +388,42 @@ class SkaaaWindCompiler {
         const colorName = matches[2];
         const opacity = matches[3] ? parseInt(matches[3]) : null;
 
-        if (!customColors[colorName] || !SkaaaWindCompiler.cssPropMap[prefix]) {
+        if (!customColors[colorName]) {
             return null;
         }
 
         const hex = customColors[colorName];
-        const cssProp = SkaaaWindCompiler.cssPropMap[prefix];
-
+        let color;
         if (opacity !== null) {
             const rgb = this.hexToRgb(hex);
             const alpha = (opacity / 100).toFixed(2);
-            return `${cssProp}: rgba(${rgb}, ${alpha});`;
+            color = `rgba(${rgb}, ${alpha})`;
+        } else {
+            color = hex;
         }
 
-        return `${cssProp}: ${hex};`;
+        if (prefix === 'from') {
+            return `--tw-gradient-from: ${color}; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);`;
+        }
+        if (prefix === 'via') {
+            return `--tw-gradient-stops: var(--tw-gradient-from), ${color}, var(--tw-gradient-to, transparent);`;
+        }
+        if (prefix === 'to') {
+            return `--tw-gradient-to: ${color};`;
+        }
+
+        const cssPropMap = {
+            'bg': 'background-color',
+            'text': 'color',
+            'border': 'border-color',
+            'ring': '--tw-ring-color',
+            'shadow': '--tw-shadow-color',
+        };
+
+        if (cssPropMap[prefix]) {
+            return `${cssPropMap[prefix]}: ${color};`;
+        }
+        return null;
     }
 
     resolveSpacing(prefix, value) {
@@ -455,29 +477,39 @@ class SkaaaWindCompiler {
         }
 
         // 0.5 Support Arbitrary Colors: bg-[#1da1f2] or text-[#ff0000]
-        let arbitraryColorMatches = className.match(/^(bg|text|border|ring|from|to)-\[#([a-fA-F0-9]{3,8})\](?:\/([0-9]+))?$/);
+        let arbitraryColorMatches = className.match(/^(bg|text|border|ring|from|via|to)-\[#([a-fA-F0-9]{3,8})\](?:\/([0-9]+))?$/);
         if (arbitraryColorMatches) {
             const prefix = arbitraryColorMatches[1];
             const hex = '#' + arbitraryColorMatches[2];
             const opacity = arbitraryColorMatches[3] ? parseInt(arbitraryColorMatches[3]) : null;
-            
+            let color;
+            if (opacity !== null) {
+                const rgb = this.hexToRgb(hex);
+                const alpha = (opacity / 100).toFixed(2);
+                color = `rgba(${rgb}, ${alpha})`;
+            } else {
+                color = hex;
+            }
+
+            if (prefix === 'from') {
+                return `--tw-gradient-from: ${color}; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);`;
+            }
+            if (prefix === 'via') {
+                return `--tw-gradient-stops: var(--tw-gradient-from), ${color}, var(--tw-gradient-to, transparent);`;
+            }
+            if (prefix === 'to') {
+                return `--tw-gradient-to: ${color};`;
+            }
+
             const propMap = {
                 'bg': 'background-color',
                 'text': 'color',
                 'border': 'border-color',
                 'ring': '--tw-ring-color',
-                'from': '--tw-gradient-from',
-                'to': '--tw-gradient-to',
             };
 
             if (propMap[prefix] !== undefined) {
-                const cssProp = propMap[prefix];
-                if (opacity !== null) {
-                    const rgb = this.hexToRgb(hex);
-                    const alpha = (opacity / 100).toFixed(2);
-                    return `${cssProp}: rgba(${rgb}, ${alpha});`;
-                }
-                return `${cssProp}: ${hex};`;
+                return `${propMap[prefix]}: ${color};`;
             }
         }
 
@@ -709,11 +741,48 @@ class SkaaaWindCompiler {
         if (SkaaaWindCompiler.borderStyleMap[className] !== undefined) return SkaaaWindCompiler.borderStyleMap[className];
         matches = className.match(/^border-([0-9]+)$/);
         if (matches) return `border-width: ${matches[1]}px; border-style: solid;`;
-        matches = className.match(/^border-([trbl])(?:-([0-9]+))?$/);
+        matches = className.match(/^border-\[(.+)\]$/);
         if (matches) {
-            const sideMap = { 't': 'top', 'r': 'right', 'b': 'bottom', 'l': 'left' };
+            const val = matches[1].replace(/_/g, ' ');
+            if (!/^(#|rgb|hsl)/.test(val)) {
+                return `border-width: ${val}; border-style: solid;`;
+            }
+        }
+        matches = className.match(/^border-([trblxyse])(?:-([0-9]+))?$/);
+        if (matches) {
             const width = matches[2] !== undefined ? matches[2] + 'px' : '1px';
+            if (matches[1] === 'x') {
+                return `border-left-width: ${width}; border-right-width: ${width}; border-style: solid;`;
+            }
+            if (matches[1] === 'y') {
+                return `border-top-width: ${width}; border-bottom-width: ${width}; border-style: solid;`;
+            }
+            if (matches[1] === 's') {
+                return `border-inline-start-width: ${width}; border-style: solid;`;
+            }
+            if (matches[1] === 'e') {
+                return `border-inline-end-width: ${width}; border-style: solid;`;
+            }
+            const sideMap = { 't': 'top', 'r': 'right', 'b': 'bottom', 'l': 'left' };
             return `border-${sideMap[matches[1]]}-width: ${width}; border-style: solid;`;
+        }
+        matches = className.match(/^border-([trblxyse])-\[(.+)\]$/);
+        if (matches) {
+            const val = matches[2].replace(/_/g, ' ');
+            if (matches[1] === 'x') {
+                return `border-left-width: ${val}; border-right-width: ${val}; border-style: solid;`;
+            }
+            if (matches[1] === 'y') {
+                return `border-top-width: ${val}; border-bottom-width: ${val}; border-style: solid;`;
+            }
+            if (matches[1] === 's') {
+                return `border-inline-start-width: ${val}; border-style: solid;`;
+            }
+            if (matches[1] === 'e') {
+                return `border-inline-end-width: ${val}; border-style: solid;`;
+            }
+            const sideMap = { 't': 'top', 'r': 'right', 'b': 'bottom', 'l': 'left' };
+            return `border-${sideMap[matches[1]]}-width: ${val}; border-style: solid;`;
         }
         matches = className.match(/^border-([a-z0-9-]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/);
         if (matches) {

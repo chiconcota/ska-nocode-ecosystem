@@ -11,6 +11,23 @@
 - **8. Macro Pattern Injector (Atomic Preservation):** Thiết lập việc tự động tạo view bằng cách rải các khối Atomic (Skaaa Loop, Skaaa Text, Skaaa Button, Skaaa Modal) đã cấu hình sẵn Event, thay vì dùng các khối đóng hộp (Blackbox block) để bảo vệ tuyệt đối quyền tuỳ biến tự do (FSE) của Power User.
 
 
+## 2026-09-15 - 🟢 Hoàn thành: Bổ sung Gradient Middle Stop via-[#...] & Chuẩn hóa Gradient Stops Parity (v2.4.4)
+- **Decision (Tailwind Gradient Stops Arbitrary Resolution: via-[#...], from-[#...], to-[#...]):**
+  - **Vấn đề:** Khi người dùng sử dụng điểm dừng màu trung gian `via-[#171c26]` trong dải màu Gradient, class bị báo đỏ (unresolved) do regex arbitrary hex `^(text|bg|border|ring|from|to)-\[#...\]` trước đây chỉ chứa `from` và `to`, thiếu `via`. Đồng thời `from` và `via` chưa xuất chuỗi biến CSS `--tw-gradient-stops` chuẩn xác.
+  - **Quyết định:**
+    1. Bổ sung `via` vào regex `^(text|bg|border|ring|from|via|to)-\[#...\]` và `resolveCustomColor` trên cả `class-tailwind-compiler.php`, `class-tailwind-color-registry.php` (PHP) và `skaaawind.js` (JS).
+    2. Chuẩn hóa đầu ra CSS cho bộ ba gradient stops: `from` (`--tw-gradient-from`, `--tw-gradient-stops`), `via` (`--tw-gradient-stops`), và `to` (`--tw-gradient-to`), hỗ trợ cả nấc opacity `/N`.
+    3. Biên dịch và đồng bộ Webpack sang `build/`, kiểm thử 100% Compiler Parity (0 unresolved classes). Nâng phiên bản `Skaaa No-Code Design` lên `v2.4.4`.
+
+## 2026-09-15 - 🟢 Hoàn thành: Bổ sung Border Width Directional & Arbitrary JIT Compiler Parity (v2.4.3)
+- **Decision (Tailwind Border Width Directional & Arbitrary Resolution: border-x, border-y, border-s, border-e, border-[...]):**
+  - **Vấn đề:** Khi người dùng nhập class `border-y` (hoặc `border-x`), Inspector hiển thị viền đỏ và tooltip cảnh báo "This class is not supported offline. Please report it to support." do regex `^border-([trbl])` trước đây chỉ xử lý 4 cạnh đơn lẻ (`top`, `right`, `bottom`, `left`), thiếu 2 trục tọa độ `x` (ngang) và `y` (dọc), cùng 2 cạnh logic `s` (start), `e` (end), và cú pháp arbitrary `border-[...]`.
+  - **Quyết định:**
+    1. Mở rộng regex nhận diện `^border-([trblxyse])(?:-([0-9]+))?$` trên cả `class-tailwind-compiler.php` (PHP) và `skaaawind.js` (JS). Tự động phân giải `x` thành `border-left-width` + `border-right-width`, `y` thành `border-top-width` + `border-bottom-width`, `s` thành `border-inline-start-width`, `e` thành `border-inline-end-width`.
+    2. Bổ sung regex hỗ trợ arbitrary `border-[...]` (cho độ dày tùy biến) và `border-([trblxyse])-[...]` (cho độ dày theo hướng tùy biến) với cơ chế tự động phân biệt giá trị màu sắc (`#`, `rgb`, `hsl`).
+    3. Cập nhật `tailwind-dictionary.js` bổ sung `border-x`, `border-y` vào nhóm *Borders & Radius*.
+    4. Biên dịch và đồng bộ Webpack sang `build/`, kiểm thử đạt 100% Compiler Parity (0 unresolved classes). Nâng phiên bản `Skaaa No-Code Design` lên `v2.4.3`.
+
 ## 2026-09-14 - 🟢 Hoàn thành: Bổ sung Cấu hình Monospace Font & Hỗ trợ FontFamily JIT Compiler (v2.4.2)
 - **Decision (Monospace Font Settings UI & Tokens Default):**
   - **Vấn đề:** Giao diện Theme Options (Design Tokens - tab Typography) chỉ có trường Primary Font và Secondary Font, thiếu ô nhập Monospace Font cho các thành phần code block, thẻ tag, badges.

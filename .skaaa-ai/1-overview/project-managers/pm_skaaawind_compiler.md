@@ -1,5 +1,5 @@
 # PROJECT MANAGER: SKAAAWIND EDITOR JIT COMPILER
-@status: 🟡 In Progress (Ecosystem Core Implemented) | @target_milestone: MILESTONE 2 (PHASE 6) | @last_update: 2026-07-21
+@status: 🟡 In Progress (Ecosystem Core Implemented) | @target_milestone: MILESTONE 2 (PHASE 6) | @last_update: 2026-09-15
 
 
 > [!NOTE]
@@ -70,6 +70,14 @@
   - [x] Khắc phục triệt để lỗi nuốt các class responsive (`md:`, `sm:`, `lg:`, `xl:`) trên Frontend khi tải trang.
   - [x] Nâng cấp `html-to-blocks.js` trích xuất thuộc tính `x-data` từ `<body>` và bọc script inline thành block `code`.
   - [x] Khắc phục lỗi phạm vi (scope shadowing) Alpine.js bằng cách nhận diện tiền tố `:` và bỏ auto-injection `x-data=""` ở block con.
+
+- [x] **Phase 8: Mở rộng Compiler Parity (v2.4.2 - v2.4.4)**
+  - [x] Tích hợp Monospace Font & FontFamily utilities (`font-mono`, `font-sans`, `font-serif`).
+  - [x] Bổ sung Font Smoothing (`antialiased`, `subpixel-antialiased`).
+  - [x] Bổ sung Arbitrary Box Shadow (`shadow-[...]`) và Arbitrary Font Size (`text-[...]`).
+  - [x] Bổ sung Flexbox Shrink & Grow v4 (`shrink`, `shrink-0`, `grow`, `grow-0`, arbitrary `shrink-[...]`/`grow-[...]`) và đảo chiều (`flex-col-reverse`, `flex-row-reverse`, `flex-wrap-reverse`, `flex-nowrap`).
+  - [x] Bổ sung Border Width Directional & Arbitrary (`border-x`, `border-y`, `border-s`, `border-e`, arbitrary `border-y-[...]`, `border-[...]`).
+  - [x] Bổ sung Gradient Middle Stop (`via-[#...]`) và chuẩn hóa đầu ra biến CSS cho bộ ba gradient stops (`from`, `via`, `to`).
 
 ---
 

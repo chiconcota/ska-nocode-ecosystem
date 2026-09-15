@@ -203,28 +203,37 @@ class Tailwind_Compiler {
 		}
 
 		// 0.5 Support Arbitrary Colors: bg-[#1da1f2] or text-[#ff0000]
-		if ( preg_match( '/^(text|bg|border|ring|from|to)-\[#([a-fA-F0-9]{3,8})\](?:\/([0-9]+))?$/', $class, $matches ) ) {
+		if ( preg_match( '/^(text|bg|border|ring|from|via|to)-\[#([a-fA-F0-9]{3,8})\](?:\/([0-9]+))?$/', $class, $matches ) ) {
 			$prefix   = $matches[1];
 			$hex      = '#' . $matches[2];
 			$opacity  = isset( $matches[3] ) ? intval( $matches[3] ) : null;
-			
+			if ( $opacity !== null ) {
+				$rgb   = Tailwind_Color_Registry::hex_to_rgb( $hex );
+				$alpha = round( $opacity / 100, 2 );
+				$color = "rgba({$rgb}, {$alpha})";
+			} else {
+				$color = $hex;
+			}
+
+			if ( $prefix === 'from' ) {
+				return "--tw-gradient-from: {$color}; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);";
+			}
+			if ( $prefix === 'via' ) {
+				return "--tw-gradient-stops: var(--tw-gradient-from), {$color}, var(--tw-gradient-to, transparent);";
+			}
+			if ( $prefix === 'to' ) {
+				return "--tw-gradient-to: {$color};";
+			}
+
 			$prop_map = array(
 				'bg'     => 'background-color',
 				'text'   => 'color',
 				'border' => 'border-color',
 				'ring'   => '--tw-ring-color',
-				'from'   => '--tw-gradient-from',
-				'to'     => '--tw-gradient-to',
 			);
 
 			if ( isset( $prop_map[ $prefix ] ) ) {
-				$css_prop = $prop_map[ $prefix ];
-				if ( $opacity !== null ) {
-					$rgb   = Tailwind_Color_Registry::hex_to_rgb( $hex );
-					$alpha = round( $opacity / 100, 2 );
-					return "{$css_prop}: rgba({$rgb}, {$alpha});";
-				}
-				return "{$css_prop}: {$hex};";
+				return "{$prop_map[ $prefix ]}: {$color};";
 			}
 		}
 
@@ -425,10 +434,45 @@ class Tailwind_Compiler {
 		if ( $class === 'border' ) return 'border-width: 1px; border-style: solid;';
 		if ( isset( Tailwind_Config::$border_style_map[ $class ] ) ) return Tailwind_Config::$border_style_map[ $class ];
 		if ( preg_match( '/^border-([0-9]+)$/', $class, $matches ) ) return "border-width: {$matches[1]}px; border-style: solid;";
-		if ( preg_match( '/^border-([trbl])(?:-([0-9]+))?$/', $class, $matches ) ) {
-			$side_map = array( 't' => 'top', 'r' => 'right', 'b' => 'bottom', 'l' => 'left' );
+		if ( preg_match( '/^border-\[(.+)\]$/', $class, $matches ) ) {
+			$val = str_replace( '_', ' ', $matches[1] );
+			if ( ! preg_match( '/^(#|rgb|hsl)/', $val ) ) {
+				return "border-width: {$val}; border-style: solid;";
+			}
+		}
+		if ( preg_match( '/^border-([trblxyse])(?:-([0-9]+))?$/', $class, $matches ) ) {
 			$width = isset( $matches[2] ) ? $matches[2] . 'px' : '1px';
+			if ( $matches[1] === 'x' ) {
+				return "border-left-width: {$width}; border-right-width: {$width}; border-style: solid;";
+			}
+			if ( $matches[1] === 'y' ) {
+				return "border-top-width: {$width}; border-bottom-width: {$width}; border-style: solid;";
+			}
+			if ( $matches[1] === 's' ) {
+				return "border-inline-start-width: {$width}; border-style: solid;";
+			}
+			if ( $matches[1] === 'e' ) {
+				return "border-inline-end-width: {$width}; border-style: solid;";
+			}
+			$side_map = array( 't' => 'top', 'r' => 'right', 'b' => 'bottom', 'l' => 'left' );
 			return "border-{$side_map[$matches[1]]}-width: {$width}; border-style: solid;";
+		}
+		if ( preg_match( '/^border-([trblxyse])-\[(.+)\]$/', $class, $matches ) ) {
+			$val = str_replace( '_', ' ', $matches[2] );
+			if ( $matches[1] === 'x' ) {
+				return "border-left-width: {$val}; border-right-width: {$val}; border-style: solid;";
+			}
+			if ( $matches[1] === 'y' ) {
+				return "border-top-width: {$val}; border-bottom-width: {$val}; border-style: solid;";
+			}
+			if ( $matches[1] === 's' ) {
+				return "border-inline-start-width: {$val}; border-style: solid;";
+			}
+			if ( $matches[1] === 'e' ) {
+				return "border-inline-end-width: {$val}; border-style: solid;";
+			}
+			$side_map = array( 't' => 'top', 'r' => 'right', 'b' => 'bottom', 'l' => 'left' );
+			return "border-{$side_map[$matches[1]]}-width: {$val}; border-style: solid;";
 		}
 		if ( preg_match( '/^border-([a-z0-9-]+)-([1-9]00|950|50)(?:\/([0-9]+))?$/', $class, $matches ) ) {
 			$hex = Tailwind_Color_Registry::get_color_hex( $matches[1], $matches[2] );
